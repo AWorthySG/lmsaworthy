@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- ━━━ PRIMARY META ━━━ -->
+    <title>A Worthy | Singapore's Premier Learning Platform — O-Level English, GP & Economics</title>
+    <meta name="description" content="A Worthy is Singapore's most engaging LMS for O-Level English, H1 General Paper, H1 & H2 Economics. Practice drills, 20+ games, AI essay grader, live classroom, leaderboard and more." />
+    <meta name="keywords" content="Singapore tuition, O-Level English, General Paper, H1 Economics, H2 Economics, A-Level, LMS, learning management system, online tuition, GP essay, practice drills" />
+    <meta name="author" content="A Worthy Learning Platform" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://lms-aworthy.vercel.app/" />
+
+    <!-- ━━━ OPEN GRAPH (Facebook / LinkedIn / WhatsApp) ━━━ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lms-aworthy.vercel.app/" />
+    <meta property="og:title" content="A Worthy | Singapore's Premier Learning Platform" />
+    <meta property="og:description" content="Master O-Level English, General Paper, H1 & H2 Economics with practice drills, 20+ games, AI essay grader, live classroom, and a leaderboard that keeps you motivated." />
+    <meta property="og:image" content="https://lms-aworthy.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="A Worthy" />
+    <meta property="og:locale" content="en_SG" />
+
+    <!-- ━━━ TWITTER CARD ━━━ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="A Worthy | Singapore's Premier Learning Platform" />
+    <meta name="twitter:description" content="Master O-Level English, GP & Economics with Singapore's most engaging LMS. Games, drills, AI grader & live classroom." />
+    <meta name="twitter:image" content="https://lms-aworthy.vercel.app/og-image.png" />
+
+    <!-- ━━━ PWA & MOBILE ━━━ -->
+    <link rel="icon" type="image/jpeg" href="/logo-aworthy.jpeg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#2D3A8C" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="A Worthy" />
+    <link rel="apple-touch-icon" href="/logo-aworthy.jpeg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- ━━━ STRUCTURED DATA (JSON-LD) ━━━ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "A Worthy Learning Platform",
+      "url": "https://lms-aworthy.vercel.app/",
+      "description": "Singapore's premier online learning platform for O-Level English, H1 General Paper, H1 & H2 Economics.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "SG"
+      },
+      "offers": {
+        "@type": "Offer",
+        "category": "Education",
+        "areaServed": "SG"
+      }
+    }
+    </script>
+
+    <!-- ━━━ FONTS ━━━ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Fraunces:opsz,wght@9..144,100..900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      /* Safari vh fix: use dvh (dynamic viewport height) where supported */
+      html, body, #root { height: 100%; height: 100dvh; overflow: hidden; }
+      body {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        overflow: auto; letter-spacing: -0.015em;
+        background: #F8F7F4;
+        background-image: radial-gradient(circle at 1px 1px, rgba(15,23,42,0.012) 1px, transparent 0);
+        background-size: 32px 32px;
+      }
+      h1, h2, h3, h4, h5, h6 { font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: -0.035em; font-weight: 800; }
+      /* Editorial serif accent — for pull quotes, hero subtitles, special moments */
+      .font-editorial { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; letter-spacing: -0.01em; }
+      /* Extreme label — ultra-light Bricolage for uppercase micro-labels */
+      .font-label { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 200; letter-spacing: 0.12em; text-transform: uppercase; font-size: 10px; }
+      code, pre, .mono { font-family: 'JetBrains Mono', monospace; }
+      ::-webkit-scrollbar { width: 5px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #C8CCD4; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+      /* Glass effect for sticky headers */
+      .glass-header { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: rgba(248,247,244,0.85) !important; }
+      html.dark .glass-header { background: rgba(11,15,26,0.85) !important; }
+      ::selection { background: #D4E0FF; color: #1E1E2E; }
+      /* Prevent iOS zoom on input focus — 16px is the threshold */
+      input, textarea, select { font-size: 16px !important; }
+      input, textarea, select, button { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; letter-spacing: -0.01em; }
+      /* Safe area padding for notched iPhones */
+      @supports (padding: env(safe-area-inset-top)) {
+        body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+      }
+      /* Prevent ALL browser gestures on canvas — critical for Apple Pencil / stylus on Safari + Chrome */
+      canvas {
+        touch-action: none !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -ms-touch-action: none !important;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-overflow-scrolling: auto;
+        overscroll-behavior: none;
+      }
+      /* Prevent iOS Safari rubber-banding and text selection near canvas */
+      canvas:active, canvas:focus { outline: none !important; -webkit-tap-highlight-color: transparent; }
+
+      /* ━━━ ANIMATIONS — subtle, purposeful, varied timing ━━━ */
+
+      /* Micro-interactions */
+      @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+      @keyframes fadeSlideIn { from { opacity:0; transform:translateX(8px); } to { opacity:1; transform:translateX(0); } }
+
+      /* Page transition — gentle fade + slight rise */
+      @keyframes pageIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+      .page-enter { animation: pageIn 0.3s ease both; }
+
+      /* Staggered items — used on lists, grids. Set --i per item. */
+      @keyframes itemIn { from { opacity:0; transform:translateY(10px) scale(0.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+      .card-enter { animation: itemIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--i, 0) * 50ms); }
+      .stagger-item { animation: itemIn 0.2s ease both; animation-delay: calc(var(--i, 0) * 30ms); }
+
+      /* Fade up — for sections appearing on load */
+      @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+      .fade-up { animation: fadeUp 0.4s ease both; }
+
+      /* Scale in — for modals, toasts, results */
+      @keyframes scaleIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+      .scale-pop { animation: scaleIn 0.25s ease both; }
+
+      /* Progress bar fill */
+      @keyframes barGrow { from { width: 0%; } }
+      .bar-grow { animation: barGrow 0.6s ease both; }
+
+      /* Shimmer — loading skeleton */
+      @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+      .shimmer { background: linear-gradient(90deg, #F2F1EE 25%, #EAE8E4 50%, #F2F1EE 75%); background-size: 200% 100%; animation: shimmer 1.8s ease infinite; }
+
+      /* Live indicator — subtle breathing */
+      @keyframes breathe { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+      .live-dot { animation: breathe 2.5s ease infinite; }
+
+      /* Spin — loading spinner */
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ━━━ GLOBAL TRANSITIONS ━━━ */
+
+      /* Buttons — quick, no bounce */
+      button { transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease, opacity 0.12s ease; }
+      button:active:not(:disabled) { opacity: 0.8; }
+
+      /* Links — underline reveal */
+      .link-hover { position: relative; }
+      .link-hover::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 0; height: 1px; background: currentColor; transition: width 0.2s ease; }
+      .link-hover:hover::after { width: 100%; }
+
+      /* Focus ring — accessible, not decorative */
+      input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible {
+        outline: 2px solid #2D3A8C; outline-offset: 2px;
+      }
+
+      /* ━━━ DARK MODE ━━━ */
+      html.dark body { background: #0B0F1A; color: #E8E8ED; }
+      html.dark body { background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.015) 1px, transparent 0); }
+      html.dark ::-webkit-scrollbar-thumb { background: #2A3352; }
+      html.dark ::selection { background: #2D3A8C; color: #EEF0FF; }
+
+      /* Card hover — subtle border + shadow */
+      .card-hover { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+      .card-hover:hover { border-color: #C8CCD4; box-shadow: 0 2px 8px rgba(15,23,42,0.06); }
+
+      /* Enhanced card interactions */
+      .card-lift { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease; }
+      .card-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,0.10); }
+      .card-lift:active { transform: translateY(0px); transition-duration: 0.1s; }
+
+      /* Confetti celebration */
+      @keyframes confettiFall {
+        0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+      }
+      .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden; }
+      .confetti-piece {
+        position: absolute;
+        width: 10px; height: 10px;
+        top: -10px;
+        animation: confettiFall 3s ease-in forwards;
+      }
+
+      /* Back to top button */
+      .back-to-top {
+        position: fixed; bottom: 80px; right: 20px; width: 40px; height: 40px;
+        border-radius: 50%; background: #2D3A8C; color: #fff; border: none;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 4px 12px rgba(45,58,140,0.3); z-index: 50;
+        opacity: 0; transform: translateY(10px); transition: opacity 0.3s, transform 0.3s;
+        font-size: 18; font-weight: 800;
+      }
+      .back-to-top.visible { opacity: 1; transform: translateY(0); }
+      .back-to-top:hover { background: #4F5BD5; }
+
+      /* ━━━ ENHANCED INTERACTIVE STATES ━━━ */
+
+      /* Smooth page-level scroll */
+      main { scroll-behavior: smooth; }
+
+      /* Better table styling */
+      table { border-collapse: collapse; width: 100%; }
+      th { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; }
+
+      /* Tooltip-style title attributes */
+      [title]:not(button) { cursor: help; }
+
+      /* Improved focus states for accessibility */
+      a:focus-visible { outline: 2px solid #2D3A8C; outline-offset: 3px; border-radius: 4px; }
+
+      /* ━━━ LOADING SKELETON ━━━ */
+      .skeleton {
+        background: linear-gradient(90deg, #F2F1EE 25%, #E8E6E2 50%, #F2F1EE 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s ease infinite;
+        border-radius: 8px;
+      }
+      html.dark .skeleton {
+        background: linear-gradient(90deg, #1A2035 25%, #222840 50%, #1A2035 75%);
+        background-size: 200% 100%;
+      }
+
+      /* ━━━ NOTIFICATION PULSE ━━━ */
+      @keyframes notifPulse {
+        0% { box-shadow: 0 0 0 0 rgba(45,58,140,0.4); }
+        70% { box-shadow: 0 0 0 6px rgba(45,58,140,0); }
+        100% { box-shadow: 0 0 0 0 rgba(45,58,140,0); }
+      }
+      .notif-pulse { animation: notifPulse 2s ease infinite; }
+
+      /* Print styles for parent reports */
+      @media print {
+        body { background: #fff !important; }
+        aside, nav, .glass-header, .back-to-top, button { display: none !important; }
+        main { padding: 0 !important; max-height: none !important; overflow: visible !important; }
+        * { color: #000 !important; border-color: #ccc !important; box-shadow: none !important; }
+      }
+
+      /* ━━━ REDUCED MOTION ━━━ */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>
