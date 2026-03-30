@@ -1,0 +1,16 @@
+{
+  "projectId": "prj_HeJFcEnUgQqlhC5MHKY44853FRIP",
+  "orgId": "team_eU4Uk5HtOeWuJ8MtD7Io4Cbs",
+  "projectName": "lms-app",
+  "settings": {
+    "createdAt": 1774151123737,
+    "framework": "vite",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}

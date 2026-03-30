@@ -42,6 +42,7 @@ const Compass = icc("fluent-emoji-flat:world-map");
 const Broadcast = icc("fluent-emoji-flat:satellite-antenna");
 const List = ic("fluent:navigation-24-filled");
 const ArrowLeft = ic("fluent:arrow-left-24-filled");
+const ArrowRight = ic("fluent:arrow-right-24-filled");
 const CaretRight = ic("fluent:chevron-right-24-filled");
 const CaretDown = ic("fluent:chevron-down-24-filled");
 const Monitor = icc("fluent-emoji-flat:desktop-computer");
@@ -98,6 +99,7 @@ const ArrowUUpRight = ic("fluent:arrow-redo-24-filled");
 
 // Communication
 const ChatCircle = icc("fluent-emoji-flat:left-speech-bubble");
+const Bell = icc("fluent-emoji-flat:bell");
 const ChatText = icc("fluent-emoji-flat:speech-balloon");
 const Handshake = icc("fluent-emoji-flat:handshake");
 const Megaphone = icc("fluent-emoji-flat:megaphone");
@@ -149,6 +151,7 @@ const CalendarBlank = icc("fluent-emoji-flat:calendar");
 const CalendarCheck = icc("fluent-emoji-flat:spiral-calendar");
 const Clock = icc("fluent-emoji-flat:alarm-clock");
 const Timer = icc("fluent-emoji-flat:stopwatch");
+const ClockAlert = icc("fluent-emoji-flat:alarm-clock");
 
 // Users & People
 const Users = icc("fluent-emoji-flat:family");
@@ -1116,18 +1119,38 @@ function StatCard({ icon: Icon, value, label, color }) {
 
 /* ━━━ TOAST ━━━ */
 function ToastItem({ toast, dispatch }) {
+  const DURATION = 3500;
+  const [progress, setProgress] = React.useState(100);
   React.useEffect(() => {
-    const t = setTimeout(() => dispatch({ type: "REMOVE_TOAST", payload: toast.id }), 3200);
-    return () => clearTimeout(t);
+    const dismiss = setTimeout(() => dispatch({ type: "REMOVE_TOAST", payload: toast.id }), DURATION);
+    const start = Date.now();
+    const tick = setInterval(() => {
+      const elapsed = Date.now() - start;
+      setProgress(Math.max(0, 100 - (elapsed / DURATION) * 100));
+    }, 50);
+    return () => { clearTimeout(dismiss); clearInterval(tick); };
   }, [toast.id, dispatch]);
-  const colors = { success: T.success, error: T.danger, info: T.accent };
-  const bgs = { success: T.successBg, error: T.dangerBg, info: T.accentLight };
+
+  const meta = {
+    success: { color: T.success, bg: T.successBg, icon: <CheckCircle size={18} weight="fill" /> },
+    error:   { color: T.danger,  bg: T.dangerBg,  icon: <XCircle size={18} weight="fill" /> },
+    info:    { color: T.accent,  bg: T.accentLight, icon: <Sparkle size={18} weight="fill" /> },
+  };
+  const { color, bg, icon } = meta[toast.variant] || meta.info;
+
   return (
-    <div className="scale-pop" style={{ padding: "12px 20px", borderRadius: T.r2, background: bgs[toast.variant] || T.bgCard, color: colors[toast.variant] || T.text, fontSize: 13, fontWeight: 600, boxShadow: T.shadow3, display: "flex", alignItems: "center", gap: 8, border: `1px solid ${colors[toast.variant] || T.border}20`, minWidth: 240 }}>
-      {toast.variant === "success" && <CheckCircle size={16} weight="fill" />}
-      {toast.variant === "error" && <XCircle size={16} weight="fill" />}
-      {toast.variant === "info" && <Sparkle size={16} weight="fill" />}
-      {toast.message}
+    <div className="scale-pop" style={{ borderRadius: T.r2, background: bg, boxShadow: T.shadow3, border: `1px solid ${color}25`, minWidth: 260, maxWidth: 340, overflow: "hidden", position: "relative" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 16px 10px" }}>
+        <span style={{ color, flexShrink: 0 }}>{icon}</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color, flex: 1, lineHeight: 1.4 }}>{toast.message}</span>
+        <button onClick={() => dispatch({ type: "REMOVE_TOAST", payload: toast.id })} style={{ background: "none", border: "none", cursor: "pointer", padding: 2, color: color + "80", flexShrink: 0 }}>
+          <X size={14} />
+        </button>
+      </div>
+      {/* Progress bar */}
+      <div style={{ height: 3, background: color + "20" }}>
+        <div style={{ height: "100%", background: color, width: `${progress}%`, transition: "width 0.05s linear", borderRadius: 2 }} />
+      </div>
     </div>
   );
 }
@@ -1960,20 +1983,61 @@ function Dashboard({ state, dispatch }) {
   const subjectProgress = SUBJECTS.map((s) => ({ ...s, progress: Math.floor(Math.random() * 40 + 30) }));
   const actIcons = { award: Trophy, upload: Upload, check: CheckCircle, play: Play, exam: Exam, plus: Plus };
 
+  const pendingSubmissions = state.submissions.filter(s => s.status === "submitted").length;
+  const activeHomework = state.homework.filter(h => h.status === "active").length;
+  const todaySessions = state.sessions.filter(s => s.date === new Date().toISOString().split("T")[0]).length;
+
   return (
     <div>
       {/* 3D Hero Scene */}
       <HeroScene3D />
 
-      {/* Hero text */}
-      <div style={{ marginBottom: 32, paddingBottom: 28, borderBottom: `1px solid ${T.border}` }}>
-        <div className="font-label" style={{ color: T.gold, marginBottom: 8 }}>The A-Worthy World</div>
-        <h1 style={{ color: T.text, fontSize: 36, fontWeight: 800, margin: "0 0 10px", letterSpacing: "-0.035em", fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1.1 }}>{state.role === "tutor" ? "Welcome back, Creator J" : "Welcome, Student"}</h1>
-        <p style={{ color: T.textSec, fontSize: 16, margin: 0, fontWeight: 300, lineHeight: 1.6, fontFamily: "'Fraunces', serif", fontStyle: "italic" }}>Our A-Worthy World of learning and achievement.</p>
+      {/* Tutor Hero Card */}
+      <div style={{ borderRadius: T.r3, background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #2D3A8C 100%)", padding: "28px 32px", marginBottom: 24, position: "relative", overflow: "hidden" }}>
+        {/* Decorative circles */}
+        <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", background: "rgba(212,162,84,0.08)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: -60, right: 80, width: 160, height: 160, borderRadius: "50%", background: "rgba(45,58,140,0.3)", pointerEvents: "none" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8, fontFamily: "'Bricolage Grotesque', sans-serif" }}>✦ The A-Worthy World</div>
+              <h1 style={{ color: "#fff", fontSize: 30, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1.15 }}>Welcome back, Creator J</h1>
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, margin: 0, fontWeight: 300, fontFamily: "'Fraunces', serif", fontStyle: "italic" }}>Your students are waiting — let's make today count.</p>
+            </div>
+            {/* Alert pills */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
+              {pendingSubmissions > 0 && (
+                <button onClick={() => dispatch({ type: "SET_PAGE", payload: "homework" })} style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 20, padding: "6px 14px", cursor: "pointer", color: "#FCA5A5", fontSize: 12, fontWeight: 700 }}>
+                  <Bell size={13} weight="fill" />{pendingSubmissions} to grade
+                </button>
+              )}
+              {activeHomework > 0 && (
+                <button onClick={() => dispatch({ type: "SET_PAGE", payload: "homework" })} style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: 20, padding: "6px 14px", cursor: "pointer", color: "#FDE68A", fontSize: 12, fontWeight: 700 }}>
+                  <ClipboardText size={13} weight="fill" />{activeHomework} active tasks
+                </button>
+              )}
+            </div>
+          </div>
+          {/* Quick action buttons */}
+          <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap" }}>
+            {[
+              { label: "Take Attendance", icon: CalendarCheck, page: "attendance", color: "#60A5FA" },
+              { label: "Grade Homework", icon: ClipboardText, page: "homework", color: "#86EFAC" },
+              { label: "View Progress", icon: ChartBar, page: "progress", color: "#C4B5FD" },
+              { label: "Community", icon: Handshake, page: "community", color: T.gold },
+            ].map(a => (
+              <button key={a.label} onClick={() => dispatch({ type: "SET_PAGE", payload: a.page })} style={{ display: "flex", alignItems: "center", gap: 7, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: T.r2, padding: "9px 16px", cursor: "pointer", color: a.color, fontSize: 12, fontWeight: 700, transition: "all 0.15s", backdropFilter: "blur(4px)" }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.14)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.transform = "none"; }}>
+                <a.icon size={14} weight="duotone" />{a.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Stats — card grid with icon containers */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginBottom: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 28 }}>
         {[
           { icon: FolderSimpleStar, value: state.resources.length, label: "Resources", color: T.accent, bg: T.accentLight, page: "library" },
           { icon: PlayCircle, value: state.videoLessons.length, label: "Videos", color: "#A85A38", bg: "#F6EAE4", page: "videos" },
@@ -1982,7 +2046,9 @@ function Dashboard({ state, dispatch }) {
           { icon: CalendarCheck, value: state.sessions.length, label: "Sessions", color: "#3B6EA6", bg: "#E8EFF6", page: "attendance" },
           { icon: Handshake, value: (state.posts || []).length, label: "Community", color: "#2E8058", bg: "#E4F0EA", page: "community" },
         ].map((s, i) => (
-          <div key={s.label} className="card-lift card-enter" style={{ "--i": i, cursor: "pointer", padding: "16px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}` }} onClick={() => dispatch({ type: "SET_PAGE", payload: s.page })}>
+          <div key={s.label} className="card-lift card-enter" style={{ "--i": i, cursor: "pointer", padding: "16px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, transition: "all 0.2s" }} onClick={() => dispatch({ type: "SET_PAGE", payload: s.page })}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = s.color + "60"; e.currentTarget.style.boxShadow = `0 4px 20px ${s.color}18`; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = "none"; }}>
             <div style={{ width: 36, height: 36, borderRadius: T.r2, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
               <s.icon size={18} color={s.color} />
             </div>
@@ -3507,20 +3573,42 @@ function Leaderboard({ state, dispatch }) {
     .map(s => ({ ...s, xp: calcStudentXP(s, state), badges: getStudentBadges(s, state) }))
     .sort((a, b) => b.xp - a.xp);
 
+  const [lbFilter, setLbFilter] = React.useState("all");
+  const filteredRanked = lbFilter === "all" ? ranked : ranked.filter(s => s.subjects && s.subjects.includes(lbFilter));
+
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
-        <div>
-          <h1 style={{ fontSize: 26, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Class Leaderboard</h1>
-          <p style={{ color: T.textSec, margin: "4px 0 0", fontSize: 14 }}>XP earned through quizzes, attendance, and engagement</p>
+      {/* Header */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
+          <div style={{ width: 40, height: 40, borderRadius: T.r2, background: "linear-gradient(135deg, #D4A254, #F0C060)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(212,162,84,0.3)" }}>
+            <Trophy size={20} weight="fill" color="#fff" />
+          </div>
+          <div>
+            <h1 style={{ fontSize: 26, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Class Leaderboard</h1>
+            <p style={{ color: T.textSec, margin: 0, fontSize: 13 }}>XP earned through quizzes, attendance &amp; engagement</p>
+          </div>
         </div>
-        <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, padding: "12px 16px", fontSize: 12, color: T.textSec, lineHeight: 1.8 }}>
-          <div style={{ fontWeight: 700, color: T.text, marginBottom: 4 }}>How to earn XP</div>
-          <div>⚡ 10 XP per correct quiz answer</div>
-          <div>💯 +50 XP bonus for perfect score</div>
-          <div>✅ 20 XP per session attended</div>
-          <div>⏰ 10 XP for late attendance</div>
-          <div>📚 5 XP per resource accessed</div>
+        {/* XP info strip */}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 14 }}>
+          {[
+            { emoji: "⚡", text: "10 XP / quiz answer" },
+            { emoji: "💯", text: "+50 XP perfect score" },
+            { emoji: "✅", text: "20 XP / session" },
+            { emoji: "📚", text: "5 XP / resource" },
+          ].map(x => (
+            <div key={x.text} style={{ display: "flex", alignItems: "center", gap: 5, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 20, padding: "5px 12px", fontSize: 11, fontWeight: 600, color: T.textSec }}>
+              <span>{x.emoji}</span><span>{x.text}</span>
+            </div>
+          ))}
+        </div>
+        {/* Subject filter tabs */}
+        <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
+          {[{ id: "all", label: "All Subjects" }, ...SUBJECTS.map(s => ({ id: s.id, label: s.name }))].map(tab => (
+            <button key={tab.id} onClick={() => setLbFilter(tab.id)} style={{ padding: "6px 14px", borderRadius: 20, border: `1px solid ${lbFilter === tab.id ? T.accent : T.border}`, background: lbFilter === tab.id ? T.accentLight : T.bgCard, color: lbFilter === tab.id ? T.accentText : T.textSec, fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}>
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -3541,14 +3629,17 @@ function Leaderboard({ state, dispatch }) {
 
       {/* Full rankings */}
       <Card elevated style={{ padding: 0, overflow: "hidden", marginBottom: 28 }}>
-        <div style={{ padding: "16px 24px", borderBottom: `1px solid ${T.border}` }}>
+        <div style={{ padding: "16px 24px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h3 style={{ margin: 0, fontWeight: 700, fontSize: 16 }}>Full Rankings</h3>
+          <span style={{ fontSize: 12, color: T.textTer, fontWeight: 500 }}>{filteredRanked.length} student{filteredRanked.length !== 1 ? "s" : ""}</span>
         </div>
-        {ranked.map((student, idx) => {
+        {filteredRanked.map((student, idx) => {
           const lv = getLevel(student.xp);
           const rankDisplay = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`;
           return (
-            <div key={student.id} style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderBottom: idx < ranked.length - 1 ? `1px solid ${T.border}` : "none", background: idx === 0 ? `${lv.bg}99` : T.bgCard }}>
+            <div key={student.id} style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderBottom: idx < filteredRanked.length - 1 ? `1px solid ${T.border}` : "none", background: idx === 0 ? `${lv.bg}99` : T.bgCard, transition: "background 0.15s" }}
+              onMouseEnter={e => { if (idx !== 0) e.currentTarget.style.background = T.bgMuted; }}
+              onMouseLeave={e => { if (idx !== 0) e.currentTarget.style.background = T.bgCard; }}>
               <div style={{ width: 40, fontSize: idx < 3 ? 22 : 13, fontWeight: 700, color: idx < 3 ? "inherit" : T.textSec, textAlign: "center", flexShrink: 0 }}>{rankDisplay}</div>
               <StudentAvatar student={student} size={44} />
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -12222,40 +12313,86 @@ function StudentHomework({ state, dispatch }) {
   }
 
   // ═══ LIST VIEW — all homework ═══
+  const overdueCount = hw.filter(h => h.dueDate < today && getMySubmission(h.id)?.status !== "graded").length;
+  const submittedCount = hw.filter(h => { const s = getMySubmission(h.id); return s?.status === "submitted" || s?.status === "graded"; }).length;
+  const pendingCount = hw.length - submittedCount;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 16 }}>
+      {/* Header */}
       <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>My Homework</h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>View assignments and submit your work</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+          <div style={{ width: 38, height: 38, borderRadius: T.r2, background: T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ClipboardText size={20} weight="duotone" color={T.accent} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>My Homework</h1>
+            <p style={{ color: T.textSec, fontSize: 13, margin: 0 }}>View assignments and submit your work</p>
+          </div>
+        </div>
+        {/* Summary pills */}
+        <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 5, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 20, padding: "5px 12px", fontSize: 11, fontWeight: 600, color: T.textSec }}>
+            <ClipboardText size={12} color={T.accent} />{hw.length} total
+          </div>
+          {pendingCount > 0 && <div style={{ display: "flex", alignItems: "center", gap: 5, background: T.warningBg, border: `1px solid ${T.warning}33`, borderRadius: 20, padding: "5px 12px", fontSize: 11, fontWeight: 700, color: T.warning }}>
+            <Clock size={12} weight="fill" />{pendingCount} pending
+          </div>}
+          {overdueCount > 0 && <div style={{ display: "flex", alignItems: "center", gap: 5, background: T.dangerBg, border: `1px solid ${T.danger}33`, borderRadius: 20, padding: "5px 12px", fontSize: 11, fontWeight: 700, color: T.danger }}>
+            <Warning size={12} weight="fill" />{overdueCount} overdue
+          </div>}
+          {submittedCount > 0 && <div style={{ display: "flex", alignItems: "center", gap: 5, background: T.successBg, border: `1px solid ${T.success}33`, borderRadius: 20, padding: "5px 12px", fontSize: 11, fontWeight: 700, color: T.success }}>
+            <CheckCircle size={12} weight="fill" />{submittedCount} done
+          </div>}
+        </div>
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
-        {hw.length === 0 && <div style={{ textAlign: "center", padding: 40, color: T.textTer }}>No homework assigned yet. Enjoy! 🎉</div>}
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
+        {hw.length === 0 && (
+          <div style={{ textAlign: "center", padding: "48px 20px", color: T.textTer }}>
+            <CheckCircle size={40} color={T.success} style={{ marginBottom: 12, opacity: 0.5 }} />
+            <div style={{ fontSize: 16, fontWeight: 700, color: T.textSec, marginBottom: 4 }}>All clear!</div>
+            <div style={{ fontSize: 13 }}>No homework assigned yet. Enjoy your free time! 🎉</div>
+          </div>
+        )}
         {hw.map(h => {
           const sub = getMySubmission(h.id);
           const subTheme = SUBJ_THEME[h.subject] || T.eng;
-          const isOverdue = h.dueDate < today;
+          const isOverdue = h.dueDate < today && sub?.status !== "graded";
           const statusInfo = sub ? HW_STATUS[sub.status] : HW_STATUS.not_started;
+          const daysUntilDue = Math.ceil((new Date(h.dueDate) - new Date(today)) / 86400000);
+          const urgency = isOverdue ? "overdue" : daysUntilDue <= 2 ? "urgent" : "normal";
+          const urgencyBorder = urgency === "overdue" ? T.danger + "55" : urgency === "urgent" ? T.warning + "55" : T.border;
+          const urgencyBg = urgency === "overdue" ? T.dangerBg : urgency === "urgent" ? T.warningBg : T.bgCard;
           return (
             <button key={h.id} onClick={() => openHw(h)}
-              className="card-hover"
-              style={{ display: "flex", gap: 14, padding: "14px 16px", borderRadius: T.r2, border: `1px solid ${isOverdue && sub?.status !== "graded" ? T.danger + "44" : T.border}`, background: T.bgCard, cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s" }}>
-              <div style={{ width: 40, height: 40, borderRadius: T.r2, background: subTheme.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <ClipboardText size={20} color={subTheme.accent} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: subTheme.accent }}>{getSubject(h.subject)?.name}</span>
-                  {h.topic && <span style={{ fontSize: 10, color: T.textTer }}>· {h.topic}</span>}
+              style={{ display: "flex", gap: 0, padding: 0, borderRadius: T.r2, border: `1px solid ${urgencyBorder}`, background: urgencyBg, cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.18s", overflow: "hidden" }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = T.shadow2; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
+              {/* Subject accent bar */}
+              <div style={{ width: 4, background: subTheme.accent, flexShrink: 0 }} />
+              <div style={{ display: "flex", gap: 12, padding: "14px 16px", flex: 1, alignItems: "center" }}>
+                <div style={{ width: 40, height: 40, borderRadius: T.r2, background: subTheme.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <ClipboardText size={20} color={subTheme.accent} />
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{h.title}</div>
-                <div style={{ fontSize: 11, color: isOverdue && sub?.status !== "graded" ? T.danger : T.textTer }}>
-                  Due {h.dueDate}{isOverdue && sub?.status !== "graded" ? " — OVERDUE" : ""}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: subTheme.accent, background: subTheme.bg, padding: "2px 8px", borderRadius: 20 }}>{getSubject(h.subject)?.name}</span>
+                    {h.topic && <span style={{ fontSize: 10, color: T.textTer }}>{h.topic}</span>}
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{h.title}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <Clock size={11} color={isOverdue ? T.danger : daysUntilDue <= 2 ? T.warning : T.textTer} />
+                    <span style={{ fontSize: 11, fontWeight: isOverdue ? 700 : 400, color: isOverdue ? T.danger : daysUntilDue <= 2 ? T.warning : T.textTer }}>
+                      {isOverdue ? `Overdue by ${Math.abs(daysUntilDue)} day${Math.abs(daysUntilDue) !== 1 ? "s" : ""}` : daysUntilDue === 0 ? "Due today!" : daysUntilDue === 1 ? "Due tomorrow" : `Due ${h.dueDate}`}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", gap: 4, flexShrink: 0 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: statusInfo.color, background: statusInfo.bg, padding: "3px 10px", borderRadius: 20 }}>{statusInfo.label}</span>
-                {sub?.grade && <span style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{sub.grade}</span>}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", gap: 6, flexShrink: 0 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: statusInfo.color, background: statusInfo.bg, padding: "3px 10px", borderRadius: 20 }}>{statusInfo.label}</span>
+                  {sub?.grade && <span style={{ fontSize: 18, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{sub.grade}</span>}
+                  <ArrowRight size={14} color={T.textTer} />
+                </div>
               </div>
             </button>
           );
