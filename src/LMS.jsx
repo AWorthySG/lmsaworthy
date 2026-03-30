@@ -14941,36 +14941,58 @@ function LMS({ authUser, userProfile }) {
       <BackToTop />
 
       {/* ═══ GLOBAL SEARCH OVERLAY (Cmd+K) ═══ */}
-      {showSearch && (
-        <div onClick={() => setShowSearch(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)", zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: "15vh" }}>
-          <div onClick={e => e.stopPropagation()} className="scale-pop" style={{ width: "100%", maxWidth: 480, background: darkMode ? "#0B0F1A" : T.bgCard, borderRadius: T.r3, boxShadow: "0 20px 60px rgba(0,0,0,0.3)", border: `1px solid ${T.border}`, overflow: "hidden" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 18px", borderBottom: `1px solid ${T.border}` }}>
-              <MagnifyingGlass size={18} color={T.textTer} />
-              <input ref={searchRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search resources, homework, pages..."
-                style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 15, color: T.text, fontFamily: "'Plus Jakarta Sans', sans-serif" }} />
-              <kbd style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer }}>ESC</kbd>
-            </div>
-            {searchResults.length > 0 ? (
-              <div style={{ maxHeight: 320, overflowY: "auto" }}>
-                {searchResults.map((r, i) => (
-                  <button key={i} onClick={() => { dispatch({ type: "SET_PAGE", payload: r.page }); setShowSearch(false); setSearchQuery(""); }}
-                    style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 18px", border: "none", borderBottom: `1px solid ${T.border}`, background: "none", cursor: "pointer", textAlign: "left", fontSize: 13, color: T.text, transition: "background 0.1s" }}
-                    onMouseEnter={e => e.currentTarget.style.background = T.bgMuted}
-                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                    <span style={{ fontSize: 16 }}>{r.type}</span>
-                    <span style={{ flex: 1 }}>{r.label}</span>
-                    <span style={{ fontSize: 10, color: T.textTer }}>↵</span>
-                  </button>
-                ))}
+      <AnimatePresence>
+        {showSearch && (
+          <motion.div onClick={() => setShowSearch(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: "8vh" }}>
+            <motion.div onClick={e => e.stopPropagation()} initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }} transition={{ duration: 0.2, ease: "easeOut" }} style={{ width: "100%", maxWidth: 520, background: darkMode ? "#0B0F1A" : T.bgCard, borderRadius: T.r3, boxShadow: "0 25px 80px rgba(0,0,0,0.4)", border: `1px solid ${T.border}`, overflow: "hidden" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 20px", borderBottom: `1px solid ${T.border}`, background: T.bgMuted }}>
+                <MagnifyingGlass size={18} color={T.accent} />
+                <input ref={searchRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search resources, homework, pages, students..."
+                  autoFocus
+                  style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 15, color: T.text, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 500 }} />
+                <kbd style={{ fontSize: 9, padding: "3px 8px", borderRadius: 4, background: T.bgCard, border: `1px solid ${T.border}`, color: T.textTer, fontWeight: 600 }}>ESC</kbd>
               </div>
-            ) : searchQuery.trim().length > 1 ? (
-              <div style={{ padding: "24px 18px", textAlign: "center", fontSize: 13, color: T.textTer }}>No results for "{searchQuery}"</div>
-            ) : (
-              <div style={{ padding: "24px 18px", textAlign: "center", fontSize: 12, color: T.textTer }}>Type to search across all content...</div>
-            )}
-          </div>
-        </div>
-      )}
+              {searchResults.length > 0 ? (
+                <div style={{ maxHeight: 360, overflowY: "auto" }}>
+                  {searchResults.map((r, i) => (
+                    <motion.button key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.02 }} onClick={() => { dispatch({ type: "SET_PAGE", payload: r.page }); setShowSearch(false); setSearchQuery(""); }}
+                      style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", padding: "14px 20px", border: "none", borderBottom: `1px solid ${T.border}`, background: "none", cursor: "pointer", textAlign: "left", fontSize: 13, color: T.text, transition: "all 0.15s" }}
+                      onMouseEnter={e => { e.currentTarget.style.background = T.bgMuted; e.currentTarget.style.paddingLeft = "24px"; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.paddingLeft = "20px"; }}>
+                      <span style={{ fontSize: 18, minWidth: 24 }}>{r.type}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</div>
+                        {r.category && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{r.category}</div>}
+                      </div>
+                      <span style={{ fontSize: 11, color: T.textTer, fontWeight: 500 }}>↵</span>
+                    </motion.button>
+                  ))}
+                </div>
+              ) : searchQuery.trim().length > 1 ? (
+                <div style={{ padding: "32px 20px", textAlign: "center", fontSize: 13, color: T.textTer }}>No results for "{searchQuery}"</div>
+              ) : (
+                <div style={{ padding: "20px" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Quick Access</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
+                    {[
+                      { label: "Dashboard", page: "dashboard", emoji: "🏠" },
+                      { label: "Homework", page: "homework", emoji: "📋" },
+                      { label: "Leaderboard", page: "leaderboard", emoji: "🏆" },
+                      { label: "Community", page: "community", emoji: "👥" },
+                    ].map(q => (
+                      <button key={q.page} onClick={() => { dispatch({ type: "SET_PAGE", payload: q.page }); setShowSearch(false); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, cursor: "pointer", fontSize: 12, fontWeight: 600, color: T.text, transition: "all 0.15s" }}
+                        onMouseEnter={e => { e.currentTarget.style.background = T.border; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = T.bgMuted; e.currentTarget.style.transform = "none"; }}>
+                        <span>{q.emoji}</span>{q.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ═══ MOBILE BOTTOM NAVIGATION ═══ */}
       {isMobileLayout && (
