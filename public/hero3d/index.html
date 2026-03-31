@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Worthy — 3D Hero Scene</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a12; overflow-x: hidden; font-family: 'Inter', sans-serif; }
+    /* Demo page — the hero fills the viewport */
+    #hero-section {
+      width: 100%;
+      height: 100vh;
+    }
+    /* Below the hero — demo content */
+    .demo-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 80px 20px;
+      color: #a0a0b0;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .demo-content h2 {
+      color: #e8e8f0;
+      font-family: 'Poppins', sans-serif;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO SECTION — the 3D scene renders here -->
+  <div id="hero-section" class="hero3d-container">
+    <div class="hero3d-loading">Initialising exam hall</div>
+  </div>
+
+  <!-- Demo content below the hero -->
+  <div class="demo-content">
+    <h2>A Worthy — O Level English Tuition</h2>
+    <p>
+      We don't just teach English — we engineer exam performance. Every question type has a framework.
+      Every framework has been refined through hundreds of student hours. The 3D scene above visualises
+      our approach: systematic, structured, and designed to get results.
+    </p>
+  </div>
+
+  <script type="module">
+    import { initHeroScene } from './scene.js';
+
+    // Wait for fonts to load, then initialise
+    document.fonts.ready.then(() => {
+      const container = document.getElementById('hero-section');
+      // Remove loading indicator
+      const loading = container.querySelector('.hero3d-loading');
+      if (loading) loading.remove();
+      // Launch the 3D scene
+      initHeroScene(container);
+    });
+  </script>
+
+</body>
+</html>

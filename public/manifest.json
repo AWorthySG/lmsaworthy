@@ -1,0 +1,21 @@
+{
+  "name": "A Worthy Learning Platform",
+  "short_name": "A Worthy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F7F5",
+  "theme_color": "#D97042",
+  "description": "Master every question type with structured frameworks for O-Level English, GP, and Economics.",
+  "icons": [
+    {
+      "src": "/logo-aworthy.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo-aworthy.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
