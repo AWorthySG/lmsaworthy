@@ -49,6 +49,7 @@ import GoalSetting from "./pages/study/GoalSetting.jsx";
 import MistakeJournal from "./pages/study/MistakeJournal.jsx";
 import RevisionChecklist from "./pages/study/RevisionChecklist.jsx";
 import FormulaCards from "./pages/tools/FormulaCards.jsx";
+import Certificates from "./pages/Certificates.jsx";
 
 export default function LMSAuthWrapper() {
   const [authUser, setAuthUser] = useState(undefined); // undefined=loading, null=logged out, object=logged in
@@ -258,6 +259,7 @@ function LMS({ authUser, userProfile }) {
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
       case "formulas": return <FormulaCards />;
+      case "certificates": return <Certificates state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} />;
     }
   };

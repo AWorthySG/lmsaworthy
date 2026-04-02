@@ -3,7 +3,7 @@ import {
   Books, VideoCamera, Lightning, Scroll, RocketLaunch, BookmarkSimple,
   Sparkle, GraduationCap, Timer, Lightbulb, Hash,
   Confetti, Crown, PencilSimpleLine, Handshake,
-  CalendarCheck, ChartLineUp, Eye, Scales,
+  CalendarCheck, ChartLineUp, Eye, Scales, Medal,
 } from '../icons/icons.jsx';
 
 export const NAV = [
@@ -66,6 +66,7 @@ export const NAV = [
   { group: "Manage", tutorOnly: true, items: [
     { id: "homework", label: "Homework", icon: ClipboardText },
     { id: "attendance", label: "Attendance", icon: CalendarCheck },
+    { id: "certificates", label: "Certificates", icon: Medal },
     { id: "progress", label: "Progress", icon: ChartLineUp },
     { id: "analytics", label: "Analytics", icon: ChartLineUp },
     { id: "parentview", label: "Parent View", icon: Eye },
@@ -89,6 +90,7 @@ export const PAGE_TO_PATH = {
   notes: "/notes", modelessays: "/model-essays",
   goals: "/goals", mistakes: "/mistake-journal", checklist: "/revision-checklist",
   formulas: "/formula-cards",
+  certificates: "/certificates",
   "games-eng": "/games/eng", "games-gp": "/games/gp",
   "games-h1econ": "/games/h1econ", "games-h2econ": "/games/h2econ", events: "/events",
 };
