@@ -1,0 +1,11 @@
+export { default as ConfettiEffect } from './ConfettiEffect.jsx';
+export { default as BurstAnimation } from './BurstAnimation.jsx';
+export { default as ConfettiCanvas } from './ConfettiCanvas.jsx';
+export { CelebrationOverlay, triggerCelebration } from './CelebrationOverlay.jsx';
+export { default as ShareableProgressCard } from './ShareableProgressCard.jsx';
+export { default as XPBar } from './XPBar.jsx';
+export { default as BadgeChip } from './BadgeChip.jsx';
+export { default as StudentAvatar } from './StudentAvatar.jsx';
+export { default as PodiumCard } from './PodiumCard.jsx';
+export { default as StreakCalendar } from './StreakCalendar.jsx';
+export { default as DailyRewardModal } from './DailyRewardModal.jsx';
