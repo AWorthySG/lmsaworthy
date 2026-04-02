@@ -72,9 +72,6 @@ function LoginScreen() {
           min-height: 100dvh;
           background: #0B0F1A;
           position: relative;
-          overflow-x: hidden;
-          overflow-y: auto;
-          -webkit-overflow-scrolling: touch;
         }
         .login-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 
@@ -82,7 +79,6 @@ function LoginScreen() {
         .login-layout {
           position: relative; z-index: 1;
           display: flex; flex-direction: column; align-items: center;
-          min-height: 100dvh;
           padding: 32px 20px 20px;
           gap: 32px;
         }
