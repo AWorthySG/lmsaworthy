@@ -1,8 +1,7 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
 
-// NOTE: AVATAR_OPTIONS must be provided by a shared helpers/constants module
-import { AVATAR_OPTIONS } from '../../helpers.js';
+import { AVATAR_OPTIONS } from '../../data/gamification.js';
 
 export default function StudentAvatar({ student, size = 40, radius = "50%" }) {
   const av = student?.avatar ? AVATAR_OPTIONS.find(a => a.id === student.avatar) : null;

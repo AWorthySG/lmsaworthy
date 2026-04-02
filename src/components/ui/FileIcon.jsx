@@ -1,6 +1,6 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
-import { FilePdf, FileVideo, FileDoc } from '../../icons/icons.js';
+import { FilePdf, FileVideo, FileDoc } from '../../icons/icons.jsx';
 
 export default function FileIcon({ type, size = 18 }) {
   if (type === "pdf") return <FilePdf size={size} weight="duotone" color="#DC2626" />;

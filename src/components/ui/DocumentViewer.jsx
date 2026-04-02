@@ -1,6 +1,6 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
-import { FileDoc, DownloadSimple, ArrowSquareOut, Warning, X } from '../../icons/icons.js';
+import { FileDoc, DownloadSimple, ArrowSquareOut, Warning, X } from '../../icons/icons.jsx';
 import Btn from './Btn.jsx';
 import FileIcon from './FileIcon.jsx';
 import { SubjectBadge } from './Badge.jsx';

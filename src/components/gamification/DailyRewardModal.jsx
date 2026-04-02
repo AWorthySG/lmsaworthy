@@ -1,8 +1,7 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
 
-// NOTE: DAILY_REWARDS and getStreakReward must be provided by a shared helpers/constants module
-import { DAILY_REWARDS, getStreakReward } from '../../helpers.js';
+import { DAILY_REWARDS, getStreakReward } from '../../data/gamification.js';
 
 export default function DailyRewardModal({ wallet, onClaim, onClose }) {
   const today = new Date().toISOString().split("T")[0];

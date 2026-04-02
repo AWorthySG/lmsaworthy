@@ -10,7 +10,7 @@ import {
   initialPosts,
   initialHomework,
   initialSubmissions,
-} from "../data/seedResources.js";
+} from "../data/seedData.js";
 
 export const DEFAULT_STATE = {
   page: "dashboard",

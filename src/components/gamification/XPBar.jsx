@@ -2,8 +2,8 @@ import React from 'react';
 import { T } from '../../theme/theme.js';
 import Progress from '../ui/Progress.jsx';
 
-// NOTE: getLevel, getLevelProgress, and LEVELS must be provided by a shared helpers module
-import { getLevel, getLevelProgress, LEVELS } from '../../helpers.js';
+import { getLevel, getLevelProgress } from '../../utils/gamificationUtils.js';
+import { LEVELS } from '../../data/gamification.js';
 
 export default function XPBar({ xp, compact }) {
   const lv = getLevel(xp);

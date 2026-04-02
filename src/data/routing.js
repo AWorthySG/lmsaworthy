@@ -4,7 +4,7 @@ import {
   Sparkle, GraduationCap, Timer, Lightbulb, Hash,
   Confetti, Crown, PencilSimpleLine, Handshake,
   CalendarCheck, ChartLineUp, Eye, Scales,
-} from '../icons/icons.js';
+} from '../icons/icons.jsx';
 
 export const NAV = [
   { group: "Home", items: [

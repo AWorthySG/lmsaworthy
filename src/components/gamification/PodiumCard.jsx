@@ -2,8 +2,7 @@ import React from 'react';
 import { T } from '../../theme/theme.js';
 import StudentAvatar from './StudentAvatar.jsx';
 
-// NOTE: getLevel must be provided by a shared helpers module
-import { getLevel } from '../../helpers.js';
+import { getLevel } from '../../utils/gamificationUtils.js';
 
 export default function PodiumCard({ student, rank, xp }) {
   const lv = getLevel(xp);

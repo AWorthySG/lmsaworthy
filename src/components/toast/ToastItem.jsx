@@ -1,6 +1,6 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
-import { CheckCircle, XCircle, Sparkle, X } from '../../icons/icons.js';
+import { CheckCircle, XCircle, Sparkle, X } from '../../icons/icons.jsx';
 
 export default function ToastItem({ toast, dispatch }) {
   const DURATION = 3500;

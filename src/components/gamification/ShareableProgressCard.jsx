@@ -2,9 +2,8 @@ import React, { useRef, useState } from 'react';
 import { T } from '../../theme/theme.js';
 import html2canvas from 'html2canvas-pro';
 
-// NOTE: getExamCountdowns and getStreakReward must be provided by a shared helpers module
-// For now they are imported from LMS helpers
-import { getExamCountdowns, getStreakReward } from '../../helpers.js';
+import { getExamCountdowns } from '../../utils/helpers.js';
+import { getStreakReward } from '../../data/gamification.js';
 
 export default function ShareableProgressCard({ state }) {
   const cardRef = useRef(null);
