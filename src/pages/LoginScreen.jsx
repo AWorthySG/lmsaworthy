@@ -52,7 +52,8 @@ function LoginScreen({ onLogin }) {
   ];
 
   return (
-    <div style={{ minHeight: "100dvh", display: "flex", background: "#0B0F1A", position: "relative", overflow: "hidden" }}>
+    <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", background: "#0B0F1A", position: "relative", overflow: "hidden" }}>
+      <style>{`@media(min-width:768px){.login-layout{flex-direction:row!important;}}`}</style>
       <style>{`
         @keyframes loginFloat { 0%,100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-18px) rotate(3deg); } }
         @keyframes loginPulse { 0%,100% { opacity: 0.04; transform: scale(1); } 50% { opacity: 0.09; transform: scale(1.05); } }
@@ -79,8 +80,9 @@ function LoginScreen({ onLogin }) {
       <div style={{ position: "absolute", bottom: "22%", left: "18%", width: 40, height: 40, borderRadius: "50%", border: "1px solid rgba(212,162,84,0.12)", animation: "loginFloat 11s ease-in-out infinite 3s", pointerEvents: "none" }} />
       <div style={{ position: "absolute", top: "65%", right: "15%", width: 50, height: 50, borderRadius: 8, border: "1px solid rgba(13,148,136,0.12)", animation: "loginFloat 7s ease-in-out infinite 1s", transform: "rotate(-10deg)", pointerEvents: "none" }} />
 
+      <div className="login-layout" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
       {/* Left panel — brand + features */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "60px 56px", position: "relative", zIndex: 1, animation: "loginFadeUp 0.6s ease both" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "40px 24px", position: "relative", zIndex: 1, animation: "loginFadeUp 0.6s ease both" }}>
         {/* Logo */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 40 }}>
           <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 44, objectFit: "contain", borderRadius: 10, boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }} />
@@ -122,7 +124,7 @@ function LoginScreen({ onLogin }) {
       </div>
 
       {/* Right panel — auth form */}
-      <div style={{ width: 440, display: "flex", alignItems: "center", justifyContent: "center", padding: "32px 40px", position: "relative", zIndex: 1, animation: "loginFadeUp 0.6s ease 0.1s both" }}>
+      <div style={{ width: "100%", maxWidth: 440, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", position: "relative", zIndex: 1, animation: "loginFadeUp 0.6s ease 0.1s both", margin: "0 auto" }}>
         <div style={{ width: "100%", background: "rgba(254,254,254,0.04)", borderRadius: 20, padding: "36px 32px", border: "1px solid rgba(254,254,254,0.09)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", boxShadow: "0 24px 64px rgba(0,0,0,0.4)" }}>
 
           {/* Form header */}
@@ -205,8 +207,10 @@ function LoginScreen({ onLogin }) {
         </div>
       </div>
 
+      </div>{/* end login-layout */}
+
       {/* Bottom attribution */}
-      <div style={{ position: "absolute", bottom: 20, left: 56, fontSize: 10, color: "rgba(254,254,254,0.15)", fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 300, letterSpacing: "0.06em" }}>
+      <div style={{ padding: "16px 24px", textAlign: "center", fontSize: 10, color: "rgba(254,254,254,0.15)", fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 300, letterSpacing: "0.06em", position: "relative", zIndex: 1 }}>
         © {new Date().getFullYear()} A Worthy Learning Platform · Singapore
       </div>
     </div>
