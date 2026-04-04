@@ -7,7 +7,8 @@ import { House, Books, VideoCamera, Lightning, Target, Lightbulb, RocketLaunch, 
 import { Card, Btn, Badge, SubjectBadge, Progress, StatCard, SubjectIllustration } from '../components/ui';
 import { XPBar, BadgeChip, StudentAvatar, PodiumCard, StreakCalendar, ShareableProgressCard, triggerCelebration } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
-import { getSubject, getSubjectTheme, formatDate, getExamCountdowns, getDailyChallenge, getWeeklyProgress, getWordOfTheDay } from '../utils/helpers.js';
+import { getSubject, getSubjectTheme, formatDate, getExamCountdowns, getDailyChallenge, getWeeklyProgress, getWordOfTheDay, generateStudyPlan } from '../utils/helpers.js';
+import PomodoroTimer from './tools/PomodoroTimer.jsx';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import { LEVELS, BADGE_DEFS, AVATAR_OPTIONS } from '../data/gamification.js';
 import { ACTIVITY_FEED } from '../data/seedData.js';

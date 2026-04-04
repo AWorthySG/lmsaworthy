@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
-import { CalendarCheck, CalendarBlank, Plus, X, CheckCircle, Warning, Clock, Users } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, PageHeader, Select, Input, Textarea, StatCard } from '../components/ui';
+import { CalendarCheck, CalendarBlank, Plus, X, CheckCircle, Warning, Clock, Users, XCircle, CaretRight, Notebook } from '../icons/icons.jsx';
+import { Card, Btn, Badge, SubjectBadge, PageHeader, Select, Input, Textarea, StatCard, Progress, EmptyState } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
 import { formatDate, getSubjectTheme } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';

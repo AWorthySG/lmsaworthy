@@ -6,6 +6,7 @@ import { Card, Btn, Badge, Select, PageHeader } from '../components/ui';
 import { PodiumCard, BadgeChip, XPBar, StudentAvatar } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
 import { LEVELS, BADGE_DEFS } from '../data/gamification.js';
+import { SUBJECTS } from '../data/subjects.js';
 
 function Leaderboard({ state, dispatch }) {
   const ranked = [...state.students]

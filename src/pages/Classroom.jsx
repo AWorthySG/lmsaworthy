@@ -5,11 +5,22 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 import mammoth from 'mammoth';
 import { T } from '../theme/theme.js';
-import { Broadcast, Pencil, Cursor, HighlighterCircle, Eraser, Circle, Square, Minus, ArrowUUpLeft, ArrowUUpRight, PaintBucket, Upload, DownloadSimple, Trash, X, Plus, VideoOn, VideoCameraSlash, Microphone, MicrophoneSlash, Screencast, Phone, PhoneDisconnect, Users, Monitor } from '../icons/icons.jsx';
+import { Broadcast, Pencil, Cursor, HighlighterCircle, Eraser, Circle, Square, Minus, ArrowUUpLeft, ArrowUUpRight, PaintBucket, Upload, DownloadSimple, Trash, X, Plus, VideoOn, VideoCameraSlash, Microphone, MicrophoneSlash, Screencast, Phone, PhoneDisconnect, Users, Monitor, Dot, Chalkboard } from '../icons/icons.jsx';
 import { Card, Btn, Input, PageHeader, Badge } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
 import { firebaseDb, ref, push, onChildAdded, set, onValue } from '../config/firebase.js';
 import useWindowWidth from '../hooks/useWindowWidth.js';
+
+const DRAW_COLORS = ["#1B1B1B", "#DC2626", "#2563EB", "#16A34A", "#D97706", "#7C3AED", "#DB2777", "#0D9488", "#FFFFFF"];
+
+class WhiteboardErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return <div style={{ padding: 32, textAlign: "center", color: T.textSec }}>Whiteboard failed to load. Please refresh.</div>;
+    return this.props.children;
+  }
+}
 
 function Whiteboard({ sessionId, studentNames }) {
   const canvasRef = useRef(null);
