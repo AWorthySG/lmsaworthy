@@ -4,9 +4,9 @@ import html2canvas from 'html2canvas-pro';
 import { T } from '../theme/theme.js';
 import { Users, ChartLineUp, CalendarCheck, Trophy, Star, CheckCircle, ArrowSquareOut } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
-import { ShareableProgressCard, StudentAvatar, XPBar, BadgeChip } from '../components/gamification';
+import { ShareableProgressCard, StudentAvatar, XPBar, BadgeChip, StreakCalendar } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
-import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
+import { getSubject, getSubjectTheme, formatDate, getExamCountdowns } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 import { LEVELS } from '../data/gamification.js';
 

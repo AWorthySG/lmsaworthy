@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
-import { Confetti, Trophy, Crown, Medal, Star, Gift, CalendarBlank, Users, ArrowLeft, CheckCircle, Flame } from '../icons/icons.jsx';
+import { Confetti, Trophy, Crown, Medal, Star, Gift, CalendarBlank, Users, ArrowLeft, CheckCircle, Flame, CaretRight, RocketLaunch } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, BackBtn, Progress, StatCard } from '../components/ui';
 import { StudentAvatar, XPBar } from '../components/gamification';
 import { calcStudentXP } from '../utils/gamificationUtils.js';

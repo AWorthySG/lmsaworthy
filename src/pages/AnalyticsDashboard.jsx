@@ -6,8 +6,8 @@ import { ChartLineUp, ChartBar, ChartPie, Users, Trophy, CalendarCheck, Gauge } 
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
 import { StudentAvatar, XPBar } from '../components/gamification';
 import { calcStudentXP, getLevel } from '../utils/gamificationUtils.js';
-import { getSubject, getSubjectTheme } from '../utils/helpers.js';
-import { SUBJECTS } from '../data/subjects.js';
+import { getSubject, getSubjectTheme, getExamCountdowns } from '../utils/helpers.js';
+import { SUBJECTS, TOPICS } from '../data/subjects.js';
 
 function AnalyticsDashboard({ state }) {
   const students = state.students || [];

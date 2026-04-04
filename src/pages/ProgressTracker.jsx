@@ -3,13 +3,13 @@ import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import html2canvas from 'html2canvas-pro';
 import { T } from '../theme/theme.js';
-import { ChartLineUp, ChartBar, Trophy, Star, CheckCircle, ArrowSquareOut, Users, CalendarCheck } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
+import { ChartLineUp, ChartBar, Trophy, Star, CheckCircle, ArrowSquareOut, Users, CalendarCheck, PencilSimpleLine, Notebook, CaretRight } from '../icons/icons.jsx';
+import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard, BackBtn, FileIcon, Input, Textarea } from '../components/ui';
 import { ShareableProgressCard, XPBar, BadgeChip, StudentAvatar } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
 import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
-import { LEVELS, BADGE_DEFS } from '../data/gamification.js';
+import { LEVELS, BADGE_DEFS, AVATAR_OPTIONS } from '../data/gamification.js';
 
 function ProgressTracker({ state, dispatch }) {
   const [sel, setSel] = useState(null);

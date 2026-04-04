@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
-import { Exam, Clock, CheckCircle, ArrowLeft, ArrowRight, Trophy } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, PageHeader, BackBtn } from '../components/ui';
+import { Exam, Clock, CheckCircle, ArrowLeft, ArrowRight, Trophy, Timer, Play } from '../icons/icons.jsx';
+import { Card, Btn, Badge, SubjectBadge, PageHeader, BackBtn, Textarea } from '../components/ui';
 import { SUBJECTS } from '../data/subjects.js';
 import useTimer from '../hooks/useTimer.js';
 
