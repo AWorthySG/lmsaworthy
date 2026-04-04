@@ -4,7 +4,7 @@ import { T } from '../theme/theme.js';
 import { Books, BookOpen, Folder, FolderOpen, FilePdf, FileDoc, FileVideo, Upload, DownloadSimple, Tag, BookmarkSimple, MagnifyingGlass, Plus, X, ArrowLeft, CaretRight, CheckCircle } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, BackBtn, EmptyState, FileIcon, Input, Select, Textarea, DocumentViewer } from '../components/ui';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
-import { getSubject, formatDate } from '../utils/helpers.js';
+import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
 
 function ContentLibrary({ state, dispatch }) {
   const [search, setSearch] = useState("");

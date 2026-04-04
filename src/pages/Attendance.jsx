@@ -4,7 +4,7 @@ import { T } from '../theme/theme.js';
 import { CalendarCheck, CalendarBlank, Plus, X, CheckCircle, Warning, Clock, Users } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, Select, Input, Textarea, StatCard } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
-import { formatDate } from '../utils/helpers.js';
+import { formatDate, getSubjectTheme } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 
 function Attendance({ state, dispatch }) {

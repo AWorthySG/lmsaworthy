@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
 import { VideoCamera, PlayCircle, Play, CheckCircle, CaretRight, ArrowLeft } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, BackBtn } from '../components/ui';
+import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, BackBtn, EmptyState } from '../components/ui';
+import { EmptyStateIllustration } from '../components/ui/EmptyState.jsx';
 import { SUBJECTS } from '../data/subjects.js';
+import { getSubjectTheme } from '../utils/helpers.js';
 
 function VideoLessons({ state, dispatch }) {
   const [sel, setSel] = useState(null);

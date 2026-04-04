@@ -4,7 +4,7 @@ import { T } from '../theme/theme.js';
 import { ChatCircle, ChatText, Handshake, Megaphone, ThumbsUp, PushPin, Plus, X, Star } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, Input, Textarea, Select } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
-import { formatDate } from '../utils/helpers.js';
+import { formatDate, getSubjectTheme } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 import { COMMUNITY_REACTIONS } from '../data/gamification.js';
 

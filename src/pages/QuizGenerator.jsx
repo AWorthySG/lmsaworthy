@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { T } from '../theme/theme.js';
-import { Lightning, Plus, X, CheckCircle, XCircle, Clock, Trophy, Star, ArrowRight, ArrowLeft } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Input, Select, Textarea } from '../components/ui';
+import { Lightning, Plus, X, CheckCircle, XCircle, Clock, Trophy, Star, ArrowRight, ArrowLeft, Trash } from '../icons/icons.jsx';
+import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Input, Select, Textarea, BackBtn } from '../components/ui';
 import { ConfettiEffect, triggerCelebration } from '../components/gamification';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import useTimer from '../hooks/useTimer.js';

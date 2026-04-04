@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { T } from '../theme/theme.js';
 import { House, Books, VideoCamera, Lightning, Target, Lightbulb, RocketLaunch, Flame, Trophy, Crown, Medal, Star, Sparkle, Gift, Confetti, CheckCircle, ChartLineUp, CalendarBlank, Clock, ArrowRight, Brain, GraduationCap, BookOpen, ClipboardText, Scroll, PencilSimpleLine, Notebook, Bell, CalendarCheck, ChartBar, Handshake, FolderSimpleStar, PlayCircle, Users, Upload, Play, Exam, Plus, CaretRight } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, Progress, StatCard } from '../components/ui';
+import { Card, Btn, Badge, SubjectBadge, Progress, StatCard, SubjectIllustration } from '../components/ui';
 import { XPBar, BadgeChip, StudentAvatar, PodiumCard, StreakCalendar, ShareableProgressCard, triggerCelebration } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
 import { getSubject, getSubjectTheme, formatDate, getExamCountdowns, getDailyChallenge, getWeeklyProgress, getWordOfTheDay } from '../utils/helpers.js';
