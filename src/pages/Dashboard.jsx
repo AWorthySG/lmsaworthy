@@ -87,7 +87,7 @@ function HeroScene3D() {
 
 
 /* ━━━ STUDENT DASHBOARD ━━━ */
-function StudentDashboard({ state, dispatch }) {
+function StudentDashboard({ state, dispatch, authUser, userProfile }) {
   const today = new Date().toISOString().split("T")[0];
   const myHomework = state.homework.filter(h => h.status === "active");
   const mySubs = state.submissions;
@@ -104,7 +104,7 @@ function StudentDashboard({ state, dispatch }) {
         const hour = new Date().getHours();
         const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
         const greetEmoji = hour < 12 ? "🌅" : hour < 17 ? "☀️" : "🌙";
-        const firstName = (state.user?.displayName || state.user?.email || "Scholar").split(" ")[0].split("@")[0];
+        const firstName = (userProfile?.name || authUser?.displayName || authUser?.email || "Scholar").split(" ")[0].split("@")[0];
         const pendingCount = myHomework.filter(h => !mySubs.find(s => s.homeworkId === h.id && (s.status === "graded" || s.status === "submitted"))).length;
         return (
           <div style={{ marginBottom: 24, background: "linear-gradient(135deg, #0F172A 0%, #1E2A4A 45%, #2D3A8C 100%)", borderRadius: T.r4, padding: "28px 24px 22px", position: "relative", overflow: "hidden" }}>
@@ -340,9 +340,9 @@ function StudentDashboard({ state, dispatch }) {
   );
 }
 
-function Dashboard({ state, dispatch }) {
+function Dashboard({ state, dispatch, authUser, userProfile }) {
   // If student role, show student dashboard
-  if (state.role === "student") return <StudentDashboard state={state} dispatch={dispatch} />;
+  if (state.role === "student") return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
 
   const subjectProgress = SUBJECTS.map((s) => ({ ...s, progress: Math.floor(Math.random() * 40 + 30) }));
   const actIcons = { award: Trophy, upload: Upload, check: CheckCircle, play: Play, exam: Exam, plus: Plus };

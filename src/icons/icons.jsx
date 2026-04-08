@@ -139,3 +139,4 @@ export const CheckSquare = icc("fluent-emoji-flat:check-box-with-check");
 export const Dot = ic("fluent:circle-small-24-filled");
 export const Waveform = icc("flat-color-icons:voice-presentation");
 export const ListChecks = icc("fluent-emoji-flat:check-box-with-check");
+export const Gear = icc("fluent-emoji-flat:gear");

@@ -9,7 +9,9 @@ import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
 import { NAV, PAGE_TO_PATH, PATH_TO_PAGE } from "./data/routing.js";
 import useWindowWidth from "./hooks/useWindowWidth.js";
-import { requestPushPermission, sendLocalNotification } from "./utils/notifications.js";
+import { requestPushPermission, sendLocalNotification, sendHomeworkReminders } from "./utils/notifications.js";
+import useFirebaseSync from "./hooks/useFirebaseSync.js";
+import { PageErrorBoundary } from "./components/ui";
 import { EmptyStateIllustration } from "./components/ui/EmptyState.jsx";
 import ToastContainer from "./components/toast/ToastContainer.jsx";
 import BackToTop from "./components/ui/BackToTop.jsx";
@@ -50,6 +52,7 @@ import MistakeJournal from "./pages/study/MistakeJournal.jsx";
 import RevisionChecklist from "./pages/study/RevisionChecklist.jsx";
 import FormulaCards from "./pages/tools/FormulaCards.jsx";
 import Certificates from "./pages/Certificates.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
 
 export default function LMSAuthWrapper() {
   const [authUser, setAuthUser] = useState(undefined); // undefined=loading, null=logged out, object=logged in
@@ -75,13 +78,18 @@ export default function LMSAuthWrapper() {
     return unsub;
   }, []);
 
-  // Loading state
+  // Loading state with skeleton
   if (authUser === undefined) {
     return (
       <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0B0F1A" }}>
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center", width: 240 }}>
           <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, objectFit: "contain", marginBottom: 12, borderRadius: 8 }} />
-          <div style={{ fontSize: 12, color: "rgba(254,254,254,0.3)", fontWeight: 200, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Loading</div>
+          <div style={{ fontSize: 12, color: "rgba(254,254,254,0.3)", fontWeight: 200, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 20 }}>Loading</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "100%" }} />
+            <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "80%" }} />
+            <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "60%" }} />
+          </div>
         </div>
       </div>
     );
@@ -102,6 +110,8 @@ function LMS({ authUser, userProfile }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
   // Persist state changes to localStorage
   useEffect(() => { savePersistedState(state); }, [state]);
+  // Sync state to/from Firebase per user
+  useFirebaseSync(authUser, state, dispatch);
   // Set role from user profile on login
   useEffect(() => {
     if (userProfile?.role && state.role !== userProfile.role) {
@@ -170,13 +180,7 @@ function LMS({ authUser, userProfile }) {
   useEffect(() => { requestPushPermission(); }, []);
 
   // Push notifications for homework due dates
-  useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
-    state.homework.filter(h => h.status === "active" && h.dueDate === tomorrow).forEach(h => {
-      sendLocalNotification("📋 Homework Due Tomorrow", `"${h.title}" is due ${h.dueDate}`);
-    });
-  }, []);
+  useEffect(() => { sendHomeworkReminders(state.homework); }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -213,7 +217,7 @@ function LMS({ authUser, userProfile }) {
 
   const renderPage = () => {
     switch (page) {
-      case "dashboard": return <Dashboard state={state} dispatch={dispatch} />;
+      case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
       case "library": return <ContentLibrary state={state} dispatch={dispatch} />;
       case "videos": return <VideoLessons state={state} dispatch={dispatch} />;
       case "quizzes": return <QuizGenerator state={state} dispatch={dispatch} />;
@@ -260,7 +264,8 @@ function LMS({ authUser, userProfile }) {
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
       case "formulas": return <FormulaCards />;
       case "certificates": return <Certificates state={state} dispatch={dispatch} />;
-      default: return <Dashboard state={state} dispatch={dispatch} />;
+      case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} />;
+      default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
     }
   };
 
@@ -489,7 +494,9 @@ function LMS({ authUser, userProfile }) {
             transition={{ duration: 0.2, ease: "easeOut" }}
             style={{ maxWidth: 1080, margin: "0 auto", paddingTop: isMobileLayout ? 8 : 24 }}
           >
-            {renderPage()}
+            <PageErrorBoundary onNavigate={() => dispatch({ type: "SET_PAGE", payload: "dashboard" })}>
+              {renderPage()}
+            </PageErrorBoundary>
           </motion.div>
         </AnimatePresence>
       </main>

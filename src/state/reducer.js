@@ -178,6 +178,9 @@ export function appReducer(state, action) {
         },
       };
     }
+    case "MERGE_FIREBASE_STATE": {
+      return { ...state, ...action.payload };
+    }
     default: return state;
   }
 }
