@@ -458,7 +458,7 @@ function LMS({ authUser, userProfile }) {
           {/* Notification bell */}
           <div style={{ position: "relative" }}>
             <button onClick={() => setShowNotifs(n => !n)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", position: "relative", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
-              <Icon icon="fluent-emoji-flat:bell" width={20} height={20} />
+              <Bell size={20} color={T.textSec} />
               {notifications.length > 0 && <div style={{ position: "absolute", top: -2, right: -2, width: 14, height: 14, borderRadius: "50%", background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{notifications.length}</div>}
             </button>
             {showNotifs && (
