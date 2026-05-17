@@ -101,6 +101,10 @@ export function appReducer(state, action) {
     case "CLEAR_AI_GRADE": {
       return { ...state, submissions: state.submissions.map(s => s.id === action.payload ? { ...s, aiGrade: null } : s) };
     }
+    case "UPDATE_HOMEWORK_RUBRIC": {
+      const { homeworkId, rubric } = action.payload;
+      return { ...state, homework: state.homework.map(h => h.id === homeworkId ? { ...h, rubric } : h) };
+    }
     case "SUBMIT_HOMEWORK": {
       const { submissionId, studentNotes, fileUrls } = action.payload;
       return { ...state, submissions: state.submissions.map(s => s.id === submissionId ? { ...s, status: "submitted", submittedAt: new Date().toISOString().split("T")[0], studentNotes, fileUrls: fileUrls || s.fileUrls || [] } : s) };

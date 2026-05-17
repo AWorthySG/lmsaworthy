@@ -34,6 +34,9 @@ function TutorHomework({ state, dispatch }) {
   const [fAssignIds, setFAssignIds] = useState([]);
   // AI grading state
   const [aiBusyId, setAiBusyId] = useState(null);
+  // Detail-view rubric editor
+  const [rubricEditing, setRubricEditing] = useState(false);
+  const [rubricDraft, setRubricDraft] = useState("");
 
   // Auto-fill rubric when subject or topic changes (unless tutor has manually edited it)
   useEffect(() => {
@@ -51,7 +54,15 @@ function TutorHomework({ state, dispatch }) {
   const pendingGrading = state.submissions.filter(s => s.status === "submitted").length;
   const overdueCount = hw.filter(h => h.dueDate < today && getSubs(h.id).some(s => s.status !== "graded")).length;
 
-  function openDetail(h) { setSelectedHw(h); setGradingId(null); setView("detail"); }
+  function openDetail(h) { setSelectedHw(h); setGradingId(null); setRubricEditing(false); setView("detail"); }
+
+  function saveRubric() {
+    if (!selectedHw) return;
+    dispatch({ type: "UPDATE_HOMEWORK_RUBRIC", payload: { homeworkId: selectedHw.id, rubric: rubricDraft } });
+    setSelectedHw({ ...selectedHw, rubric: rubricDraft });
+    setRubricEditing(false);
+    dispatch({ type: "ADD_TOAST", payload: { message: "Rubric updated", variant: "success" } });
+  }
 
   function submitGrade(subId) {
     dispatch({ type: "GRADE_SUBMISSION", payload: { submissionId: subId, grade: gradeVal, gradeComment } });
@@ -304,6 +315,62 @@ function TutorHomework({ state, dispatch }) {
                 <div style={{ marginTop: 10, fontSize: 13, color: T.text, lineHeight: 1.7, whiteSpace: "pre-line" }}>{selectedHw.instructions}</div>
               )}
             </div>
+
+            {/* Rubric card — collapsed by default, edit in place */}
+            <details style={{ background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, padding: "10px 14px" }}>
+              <summary style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", listStyle: "none" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: T.text }}>Marking Rubric</span>
+                  <span style={{ fontSize: 10, color: T.textTer }}>
+                    {selectedHw.rubric?.trim() ? `${selectedHw.rubric.trim().split(/\s+/).length} words` : "not set — auto-grade will use defaults"}
+                  </span>
+                </div>
+                <span style={{ fontSize: 11, color: T.accent, fontWeight: 600 }}>{rubricEditing ? "" : "View / Edit"}</span>
+              </summary>
+              <div style={{ marginTop: 10 }}>
+                {rubricEditing ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <textarea
+                      value={rubricDraft}
+                      onChange={(e) => setRubricDraft(e.target.value)}
+                      rows={10}
+                      style={{ width: "100%", padding: "10px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 12, resize: "vertical", boxSizing: "border-box", lineHeight: 1.5, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }} />
+                    <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                      <button onClick={() => setRubricDraft(getDefaultRubricForHomework(selectedHw.subject, selectedHw.topic))}
+                        style={{ background: "none", border: "none", color: T.accent, fontSize: 11, fontWeight: 600, cursor: "pointer" }}>
+                        Use default for {getSubject(selectedHw.subject)?.name}
+                      </button>
+                      <div style={{ flex: 1 }} />
+                      <button onClick={() => setRubricEditing(false)}
+                        style={{ padding: "6px 14px", borderRadius: T.r1, background: T.bgCard, color: T.textSec, border: `1px solid ${T.border}`, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                        Cancel
+                      </button>
+                      <button onClick={saveRubric}
+                        style={{ padding: "6px 14px", borderRadius: T.r1, background: T.success, color: "#fff", border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    {selectedHw.rubric?.trim() ? (
+                      <div style={{ fontSize: 12, color: T.text, lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "'JetBrains Mono', ui-monospace, monospace", background: T.bgMuted, padding: "10px 12px", borderRadius: T.r1 }}>
+                        {selectedHw.rubric}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 12, color: T.textTer, lineHeight: 1.5 }}>
+                        No rubric set. Add one so the AI auto-grade has clear criteria to mark against.
+                      </div>
+                    )}
+                    <button
+                      onClick={() => { setRubricDraft(selectedHw.rubric || getDefaultRubricForHomework(selectedHw.subject, selectedHw.topic)); setRubricEditing(true); }}
+                      style={{ marginTop: 8, padding: "6px 14px", borderRadius: T.r1, background: T.bgMuted, color: T.text, border: `1px solid ${T.border}`, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                      {selectedHw.rubric?.trim() ? "Edit rubric" : "Add rubric"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </details>
 
             {/* Submissions table */}
             <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginTop: 4 }}>Submissions ({subs.length})</div>
