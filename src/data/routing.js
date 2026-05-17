@@ -65,6 +65,7 @@ export const NAV = [
   ]},
   { group: "Manage", tutorOnly: true, items: [
     { id: "homework", label: "Homework", icon: ClipboardText },
+    { id: "aimarker", label: "AI Marker", icon: GraduationCap, highlight: true },
     { id: "attendance", label: "Attendance", icon: CalendarCheck },
     { id: "certificates", label: "Certificates", icon: Medal },
     { id: "progress", label: "Progress", icon: ChartLineUp },
@@ -81,6 +82,7 @@ export const PAGE_TO_PATH = {
   "practice-h1econ": "/practice/h1econ", "practice-h2econ": "/practice/h2econ",
   timedwrite: "/timedwrite",
   vocab: "/vocab", connector: "/connector", essaygrader: "/essaygrader",
+  aimarker: "/ai-marker",
   homework: "/homework", pastpapers: "/past-papers", microlearning: "/microlearning",
   "pastpapers-eng": "/past-papers/eng", "pastpapers-gp": "/past-papers/gp",
   "pastpapers-h1econ": "/past-papers/h1econ", "pastpapers-h2econ": "/past-papers/h2econ",

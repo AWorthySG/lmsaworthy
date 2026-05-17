@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
 import { ArrowLeft, Plus, ClipboardText, Clock, Warning } from '../../icons/icons.jsx';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
+import { getDefaultRubricForHomework } from '../../grading/rubrics.js';
+import { extractFromUrl, mergeExtractions } from '../../grading/extractText.js';
+import { gradeSubmission as gradeSubmissionAPI } from '../../grading/gradeClient.js';
 
 const HW_STATUS = {
   not_started: { label: "Not Started", color: "#8E99AE", bg: "#EFF1F7" },
@@ -25,8 +28,18 @@ function TutorHomework({ state, dispatch }) {
   const [fTopic, setFTopic] = useState("");
   const [fDue, setFDue] = useState("");
   const [fInstructions, setFInstructions] = useState("");
+  const [fRubric, setFRubric] = useState("");
+  const [fRubricEdited, setFRubricEdited] = useState(false);
   const [fAssignAll, setFAssignAll] = useState(true);
   const [fAssignIds, setFAssignIds] = useState([]);
+  // AI grading state
+  const [aiBusyId, setAiBusyId] = useState(null);
+
+  // Auto-fill rubric when subject or topic changes (unless tutor has manually edited it)
+  useEffect(() => {
+    if (view !== "create" || fRubricEdited) return;
+    setFRubric(getDefaultRubricForHomework(fSubj, fTopic));
+  }, [fSubj, fTopic, view, fRubricEdited]);
 
   const hw = state.homework.filter(h => h.status === "active");
   const filtered = filterSubj === "all" ? hw : hw.filter(h => h.subject === filterSubj);
@@ -47,15 +60,53 @@ function TutorHomework({ state, dispatch }) {
   }
 
   function openCreate() {
-    setFTitle(""); setFSubj("eng"); setFTopic(""); setFDue(""); setFInstructions(""); setFAssignAll(true); setFAssignIds([]);
+    setFTitle(""); setFSubj("eng"); setFTopic(""); setFDue(""); setFInstructions("");
+    setFRubric(getDefaultRubricForHomework("eng", "")); setFRubricEdited(false);
+    setFAssignAll(true); setFAssignIds([]);
     setView("create");
   }
 
   function saveHomework() {
     if (!fTitle.trim() || !fDue) return;
-    dispatch({ type: "ADD_HOMEWORK", payload: { title: fTitle, subject: fSubj, topic: fTopic || TOPICS[fSubj]?.[0] || "", dueDate: fDue, instructions: fInstructions, attachedResources: [], assignedTo: fAssignAll ? "all" : fAssignIds } });
+    dispatch({ type: "ADD_HOMEWORK", payload: { title: fTitle, subject: fSubj, topic: fTopic || TOPICS[fSubj]?.[0] || "", dueDate: fDue, instructions: fInstructions, rubric: fRubric, attachedResources: [], assignedTo: fAssignAll ? "all" : fAssignIds } });
     dispatch({ type: "ADD_TOAST", payload: { message: "Homework assigned!", variant: "success" } });
     setView("list");
+  }
+
+  async function runAiGrade(sub) {
+    if (!selectedHw) return;
+    setAiBusyId(sub.id);
+    try {
+      if (!sub.fileUrls || sub.fileUrls.length === 0) {
+        if (!sub.studentNotes?.trim()) throw new Error("This submission has no attached files or text to mark.");
+      }
+      // Extract content from each attached file (in parallel)
+      const extractions = await Promise.all(
+        (sub.fileUrls || []).map(f => extractFromUrl(f.url, f.name).catch(e => ({ warnings: [`Couldn't read ${f.name}: ${e.message}`] })))
+      );
+      const merged = mergeExtractions(extractions);
+      // Append student notes as additional text context if present
+      const combinedText = [merged.text, sub.studentNotes ? `\n\n[Student note: ${sub.studentNotes}]` : ""].filter(Boolean).join("");
+      const result = await gradeSubmissionAPI({
+        subject: selectedHw.subject,
+        topic: selectedHw.topic,
+        question: selectedHw.title,
+        rubric: selectedHw.rubric || "",
+        instructions: selectedHw.instructions || "",
+        text: combinedText,
+        images: merged.images,
+      });
+      dispatch({ type: "SAVE_AI_GRADE", payload: { submissionId: sub.id, aiGrade: result } });
+      // Pre-fill the grading panel with AI's suggestion
+      setGradingId(sub.id);
+      setGradeVal(result.grade || "");
+      setGradeComment(result.summary || "");
+      dispatch({ type: "ADD_TOAST", payload: { message: "AI marking ready — review and adjust.", variant: "success" } });
+    } catch (err) {
+      dispatch({ type: "ADD_TOAST", payload: { message: "Auto-grade failed: " + (err.message || err), variant: "error" } });
+    } finally {
+      setAiBusyId(null);
+    }
   }
 
   const subjStudents = state.students.filter(s => s.subjects?.includes(fSubj));
@@ -190,6 +241,24 @@ function TutorHomework({ state, dispatch }) {
               <label style={{ fontSize: 11, fontWeight: 700, color: T.text, display: "block", marginBottom: 4 }}>Instructions</label>
               <textarea value={fInstructions} onChange={e => setFInstructions(e.target.value)} rows={4} placeholder="Describe the homework task, requirements, and any guidelines..." style={{ width: "100%", padding: "10px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 13, resize: "vertical", boxSizing: "border-box", lineHeight: 1.6 }} />
             </div>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                <label style={{ fontSize: 11, fontWeight: 700, color: T.text }}>Marking Rubric <span style={{ color: T.textTer, fontWeight: 500 }}>· used by AI auto-grade</span></label>
+                <button type="button" onClick={() => { setFRubric(getDefaultRubricForHomework(fSubj, fTopic)); setFRubricEdited(false); }}
+                  style={{ background: "none", border: "none", color: T.accent, fontSize: 11, fontWeight: 600, cursor: "pointer", padding: 0 }}>
+                  Reset to default
+                </button>
+              </div>
+              <textarea
+                value={fRubric}
+                onChange={e => { setFRubric(e.target.value); setFRubricEdited(true); }}
+                rows={9}
+                placeholder="The rubric the AI will use when marking. Defaults are filled in based on subject + topic — edit freely."
+                style={{ width: "100%", padding: "10px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 12, resize: "vertical", boxSizing: "border-box", lineHeight: 1.5, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }} />
+              <div style={{ fontSize: 10, color: T.textTer, marginTop: 4 }}>
+                Add a model answer or "look for X, Y, Z" notes for sharper marking. Leave blank to skip AI marking on this homework.
+              </div>
+            </div>
             {/* Assign to */}
             <div>
               <label style={{ fontSize: 11, fontWeight: 700, color: T.text, display: "block", marginBottom: 6 }}>Assign To</label>
@@ -253,11 +322,25 @@ function TutorHomework({ state, dispatch }) {
                       </div>
                       <span style={{ fontSize: 10, fontWeight: 700, color: statusInfo.color, background: statusInfo.bg, padding: "3px 10px", borderRadius: 20 }}>{statusInfo.label}</span>
                       {sub.grade && <span style={{ fontSize: 14, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{sub.grade}</span>}
+                      {sub.aiGrade && !sub.grade && (
+                        <span title="AI suggested grade — pending tutor review" style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", background: "#F3E8FF", padding: "3px 8px", borderRadius: 20 }}>
+                          AI: {sub.aiGrade.grade}
+                        </span>
+                      )}
                       {sub.status === "submitted" && (
-                        <button onClick={() => { setGradingId(isGrading ? null : sub.id); setGradeVal(""); setGradeComment(""); }}
-                          style={{ padding: "4px 12px", borderRadius: T.r1, background: T.gradPrimary, color: "#fff", fontWeight: 700, fontSize: 11, border: "none", cursor: "pointer" }}>
-                          Grade
-                        </button>
+                        <>
+                          <button
+                            onClick={() => runAiGrade(sub)}
+                            disabled={aiBusyId === sub.id}
+                            title={selectedHw.rubric ? "Auto-grade with AI using the rubric" : "No rubric set — add one in the homework details for sharper marking."}
+                            style={{ padding: "4px 10px", borderRadius: T.r1, background: aiBusyId === sub.id ? T.bgMuted : "#7C3AED", color: aiBusyId === sub.id ? T.textTer : "#fff", fontWeight: 700, fontSize: 11, border: "none", cursor: aiBusyId === sub.id ? "wait" : "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                            {aiBusyId === sub.id ? "Marking..." : "✨ Auto-grade"}
+                          </button>
+                          <button onClick={() => { setGradingId(isGrading ? null : sub.id); setGradeVal(sub.aiGrade?.grade || ""); setGradeComment(sub.aiGrade?.summary || ""); }}
+                            style={{ padding: "4px 12px", borderRadius: T.r1, background: T.gradPrimary, color: "#fff", fontWeight: 700, fontSize: 11, border: "none", cursor: "pointer" }}>
+                            Grade
+                          </button>
+                        </>
                       )}
                     </div>
                     {/* Student uploaded files */}
@@ -280,6 +363,64 @@ function TutorHomework({ state, dispatch }) {
                       <div style={{ padding: "0 16px 10px 60px" }}>
                         <div style={{ background: T.successBg, borderRadius: T.r1, padding: "8px 10px", fontSize: 12, color: T.text, lineHeight: 1.5, borderLeft: `3px solid ${T.success}` }}>
                           <span style={{ fontWeight: 700, color: T.success }}>Feedback: </span>{sub.gradeComment}
+                        </div>
+                      </div>
+                    )}
+                    {/* AI feedback panel */}
+                    {sub.aiGrade && (
+                      <div style={{ padding: "0 16px 12px 60px", animation: "fadeSlideIn 0.15s ease" }}>
+                        <div style={{ background: "#FAF7FF", border: "1px solid #7C3AED33", borderLeft: "3px solid #7C3AED", borderRadius: T.r1, padding: "10px 14px" }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                              <span style={{ fontSize: 11, fontWeight: 800, color: "#7C3AED", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI Suggestion</span>
+                              <span style={{ fontSize: 16, fontWeight: 800, color: "#7C3AED" }}>{sub.aiGrade.grade}</span>
+                              {typeof sub.aiGrade.overallPercent === "number" && <span style={{ fontSize: 11, color: T.textTer }}>{sub.aiGrade.overallPercent}%</span>}
+                            </div>
+                            <button onClick={() => dispatch({ type: "CLEAR_AI_GRADE", payload: sub.id })} style={{ background: "none", border: "none", color: T.textTer, fontSize: 11, cursor: "pointer" }}>Clear</button>
+                          </div>
+                          {sub.aiGrade.summary && <div style={{ fontSize: 12, color: T.text, marginBottom: 8, lineHeight: 1.5 }}>{sub.aiGrade.summary}</div>}
+                          {sub.aiGrade.criteria?.length > 0 && (
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 6, marginBottom: 8 }}>
+                              {sub.aiGrade.criteria.map((c, i) => (
+                                <div key={i} style={{ background: "#fff", borderRadius: T.r1, padding: "6px 10px", border: "1px solid #EAE8E4" }}>
+                                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontWeight: 700, color: T.text }}>
+                                    <span>{c.label}</span>
+                                    <span style={{ color: "#7C3AED" }}>{c.score}/{c.max}</span>
+                                  </div>
+                                  {c.comment && <div style={{ fontSize: 10, color: T.textSec, marginTop: 2, lineHeight: 1.4 }}>{c.comment}</div>}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {(sub.aiGrade.strengths?.length > 0 || sub.aiGrade.improvements?.length > 0) && (
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 8 }}>
+                              {sub.aiGrade.strengths?.length > 0 && (
+                                <div>
+                                  <div style={{ fontSize: 10, fontWeight: 800, color: T.success, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 3 }}>Strengths</div>
+                                  <ul style={{ margin: 0, padding: "0 0 0 16px", fontSize: 11, color: T.text, lineHeight: 1.5 }}>
+                                    {sub.aiGrade.strengths.map((s, i) => <li key={i}>{s}</li>)}
+                                  </ul>
+                                </div>
+                              )}
+                              {sub.aiGrade.improvements?.length > 0 && (
+                                <div>
+                                  <div style={{ fontSize: 10, fontWeight: 800, color: T.warning, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 3 }}>To improve</div>
+                                  <ul style={{ margin: 0, padding: "0 0 0 16px", fontSize: 11, color: T.text, lineHeight: 1.5 }}>
+                                    {sub.aiGrade.improvements.map((s, i) => <li key={i}>{s}</li>)}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          {sub.aiGrade.report && (
+                            <details style={{ marginTop: 4 }}>
+                              <summary style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", cursor: "pointer" }}>Full AI report</summary>
+                              <div style={{ marginTop: 6, fontSize: 12, color: T.text, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{sub.aiGrade.report}</div>
+                            </details>
+                          )}
+                          <div style={{ fontSize: 10, color: T.textTer, marginTop: 8, fontStyle: "italic" }}>
+                            AI marking is a draft. Always review before saving. Model: {sub.aiGrade.model || "claude"}.
+                          </div>
                         </div>
                       </div>
                     )}
