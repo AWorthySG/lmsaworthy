@@ -157,7 +157,7 @@ function DebateArenaGame() {
           {strengthAnswered && (
             <>
               <div className="fade-up" style={{ padding: "10px 16px", background: T.bgMuted, borderRadius: T.r2, fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>
-                💡 <strong>Exam tip:</strong> {forArgs[strengthIdx].strength === "strong" ? "Strong arguments use specific evidence, measurable impact, or expert consensus." : forArgs[strengthIdx].strength === "moderate" ? "Moderate arguments are valid but lack specificity or could be countered." : "Weak arguments are vague, anecdotal, or easily dismissed."}
+                <Lightbulb size={14} color={T.textSec} style={{ display: "inline" }} /> <strong>Exam tip:</strong> {forArgs[strengthIdx].strength === "strong" ? "Strong arguments use specific evidence, measurable impact, or expert consensus." : forArgs[strengthIdx].strength === "moderate" ? "Moderate arguments are valid but lack specificity or could be countered." : "Weak arguments are vague, anecdotal, or easily dismissed."}
               </div>
               <button onClick={nextStrength} style={{ padding: "10px 24px", borderRadius: T.r5, background: T.gradPrimary, color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer", alignSelf: "flex-start" }}>
                 {strengthIdx + 1 >= forArgs.length ? "Phase 3: Rebuttals →" : "Next Argument →"}
@@ -172,7 +172,7 @@ function DebateArenaGame() {
         <>
           <div style={{ fontSize: 12, fontWeight: 700, color: T.textSec }}>Your opponent argues: (Round {rebuttalIdx + 1}/{topic.rebuttals.length})</div>
           <div style={{ background: "#FEF2F2", borderRadius: T.r2, padding: "14px 18px", border: "1px solid #E0526233" }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#E05262", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>Sword Counter-Argument</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#E05262", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><Sword size={12} color="#E05262" /> Counter-Argument</div>
             <div style={{ fontSize: 14, fontWeight: 600, color: T.text, lineHeight: 1.6 }}>{topic.rebuttals[rebuttalIdx].attack}</div>
           </div>
           <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec }}>Choose the best rebuttal:</div>
@@ -203,7 +203,7 @@ function DebateArenaGame() {
         <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
           <div style={{ position: "relative", zIndex: 1 }}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>Sword</div>
+            <div style={{ marginBottom: 8 }}><Sword size={48} color={gradeColors[grade]} /></div>
             <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
               <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
             </div>
