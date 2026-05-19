@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Shield, Sword, HeartBreak } from '../../../icons/icons.jsx';
 
 function ThesisDefenceGame() {
   const questions = [
@@ -68,7 +69,7 @@ function ThesisDefenceGame() {
       <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>{hp > 0 ? "🛡️" : "💥"}</div>
+          <div style={{ marginBottom: 8 }}>{hp > 0 ? <Shield size={48} color={gradeColors[grade]} /> : <HeartBreak size={48} color={T.danger} />}</div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
             <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
           </div>
@@ -102,7 +103,7 @@ function ThesisDefenceGame() {
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>SCORE</div>
           </div>
           <div style={{ display: "flex", gap: 3 }}>
-            {Array.from({ length: 3 }, (_, i) => <span key={i} style={{ fontSize: 16, opacity: i < hp ? 1 : 0.2 }}>{i < hp ? "🛡️" : "💔"}</span>)}
+            {Array.from({ length: 3 }, (_, i) => <span key={i} style={{ opacity: i < hp ? 1 : 0.2, display: "inline-flex" }}>{i < hp ? <Shield size={16} color="#D4A254" /> : <HeartBreak size={16} color="#999" />}</span>)}
           </div>
         </div>
       </div>
@@ -115,7 +116,7 @@ function ThesisDefenceGame() {
       {/* Counter-argument attack */}
       <div style={{ background: "#FEF2F2", borderRadius: T.r2, padding: "16px 18px", border: `1px solid #E0526233`, position: "relative" }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: "#E05262", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-          <span>⚔️</span> Counter-Argument
+          <Sword size={14} color="#E05262" /> Counter-Argument
         </div>
         <div style={{ fontSize: 14, color: T.text, lineHeight: 1.7, fontWeight: 500 }}>{counter.attack}</div>
       </div>

@@ -172,7 +172,7 @@ function HeadlineSifterGame() {
               {pct >= 90 ? "🏆 Master Media Analyst — you can spot misinformation instantly!" : pct >= 70 ? "👁️ Sharp eye — a few more tricky ones to master." : pct >= 50 ? "📰 Good start — review the red flag indicators above." : "📚 Keep practising — media literacy is a crucial skill."}
             </div>
             <div style={{ marginTop: 12, padding: "10px 14px", background: T.accentLight, borderRadius: T.r2, fontSize: 11, color: T.accentText, textAlign: "left", lineHeight: 1.6 }}>
-              📝 <strong>GP Paper 2 Tip:</strong> When evaluating sources in comprehension, check for: specific data, named sources, hedged language ("may", "suggests"), and established publications. These are the same signals tested here.
+              <PencilLine size={14} color={T.accentText} style={{ display: "inline" }} /> <strong>GP Paper 2 Tip:</strong> When evaluating sources in comprehension, check for: specific data, named sources, hedged language ("may", "suggests"), and established publications. These are the same signals tested here.
             </div>
           </div>
         </div>

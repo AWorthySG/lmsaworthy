@@ -191,7 +191,7 @@ function LoginScreen() {
           <div className="login-features">
             {FEATURES.map((f, i) => (
               <div key={i} className="login-feature-card" style={{ padding: "14px 16px", borderRadius: 12, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", backdropFilter: "blur(8px)" }}>
-                <div style={{ fontSize: 20, marginBottom: 6 }}>{f.icon}</div>
+                <div style={{ marginBottom: 6 }}>{f.icon}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(254,254,254,0.85)", marginBottom: 2 }}>{f.title}</div>
                 <div style={{ fontSize: 10, color: "rgba(254,254,254,0.35)", lineHeight: 1.4 }}>{f.desc}</div>
               </div>
@@ -247,7 +247,7 @@ function LoginScreen() {
 
               {error && (
                 <div style={{ fontSize: 12, color: "#ff7b7b", marginBottom: 16, padding: "10px 14px", background: "rgba(255,107,107,0.1)", borderRadius: 10, border: "1px solid rgba(255,107,107,0.2)", display: "flex", alignItems: "center", gap: 8 }}>
-                  <span>⚠</span> {error}
+                  <Warning size={14} /> {error}
                 </div>
               )}
 

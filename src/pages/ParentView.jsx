@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import html2canvas from 'html2canvas-pro';
 import { T } from '../theme/theme.js';
-import { Users, ChartLineUp, CalendarCheck, Trophy, Star, CheckCircle, ArrowSquareOut } from '../icons/icons.jsx';
+import { Users, ChartLineUp, CalendarCheck, Trophy, Star, CheckCircle, ArrowSquareOut, Flame, ClipboardText, CalendarBlank, PencilSimpleLine, Timer } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
 import { ShareableProgressCard, StudentAvatar, XPBar, BadgeChip, StreakCalendar } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
@@ -35,13 +35,13 @@ function ParentView({ state }) {
       {/* Key Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
         {[
-          { label: "Study Streak", value: `${wallet.streak} days`, icon: "🔥", color: T.accent },
-          { label: "Coins Earned", value: wallet.coins, icon: "🪙", color: T.gold },
-          { label: "Homework Graded", value: gradedSubs.length, icon: "📋", color: T.success },
-          { label: "Sessions Attended", value: attended, icon: "📅", color: T.teal },
+          { label: "Study Streak", value: `${wallet.streak} days`, icon: <Flame size={12} />, color: T.accent },
+          { label: "Coins Earned", value: wallet.coins, icon: <Star size={12} />, color: T.gold },
+          { label: "Homework Graded", value: gradedSubs.length, icon: <ClipboardText size={12} />, color: T.success },
+          { label: "Sessions Attended", value: attended, icon: <CalendarBlank size={12} />, color: T.teal },
         ].map(s => (
           <div key={s.label} style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px", border: `1px solid ${T.border}`, textAlign: "center" }}>
-            <div style={{ fontSize: 10, color: T.textTer, fontWeight: 600, marginBottom: 4 }}>{s.icon} {s.label}</div>
+            <div style={{ fontSize: 10, color: T.textTer, fontWeight: 600, marginBottom: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{s.icon} {s.label}</div>
             <div style={{ fontSize: 24, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
           </div>
         ))}
@@ -50,7 +50,7 @@ function ParentView({ state }) {
       {/* Recent Grades */}
       {gradedSubs.length > 0 && (
         <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px 18px", border: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif" }}>📝 Recent Grades</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><PencilSimpleLine size={15} color={T.accent} /> Recent Grades</div>
           {gradedSubs.slice(0, 5).map(sub => {
             const hw = state.homework.find(h => h.id === sub.homeworkId);
             return (
