@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { T } from "./theme/theme.js";
-import { List, CaretDown, House, Books, ClipboardText, Handshake, Crown, Bell, MagnifyingGlass } from "./icons/icons.jsx";
+import { List, CaretDown, House, Books, ClipboardText, Handshake, Crown, Bell, MagnifyingGlass, Flame, Megaphone, PencilSimpleLine, Gift, Trophy, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
@@ -196,11 +196,11 @@ function LMS({ authUser, userProfile }) {
 
   // Global search results
   const searchResults = searchQuery.trim().length > 1 ? [
-    ...state.resources.filter(r => r.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 3).map(r => ({ type: "📄", label: r.title, page: "library" })),
-    ...state.homework.filter(h => h.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(h => ({ type: "📋", label: h.title, page: "homework" })),
-    ...state.videoLessons.filter(v => v.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(v => ({ type: "🎬", label: v.title, page: "videos" })),
-    ...(state.posts || []).filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(p => ({ type: "💬", label: p.title, page: "community" })),
-    ...NAV.flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(searchQuery.toLowerCase())).map(i => ({ type: "🔗", label: i.label, page: i.id })),
+    ...state.resources.filter(r => r.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 3).map(r => ({ type: "file", label: r.title, page: "library" })),
+    ...state.homework.filter(h => h.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
+    ...state.videoLessons.filter(v => v.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(v => ({ type: "video", label: v.title, page: "videos" })),
+    ...(state.posts || []).filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(p => ({ type: "chat", label: p.title, page: "community" })),
+    ...NAV.flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(searchQuery.toLowerCase())).map(i => ({ type: "link", label: i.label, page: i.id })),
   ].slice(0, 8) : [];
 
   // Notification badge counts
@@ -395,12 +395,12 @@ function LMS({ authUser, userProfile }) {
               onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(212,162,84,0.35)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)"; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(212,162,84,0.15)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: 14 }}>🪙</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: "#D4A254" }}>$</span>
                 <span style={{ fontSize: 13, fontWeight: 800, color: "#D4A254", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{state.wallet.coins}</span>
                 <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>coins</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: 14 }}>🔥</span>
+                <Flame size={14} color="#818CF8" />
                 <span style={{ fontSize: 13, fontWeight: 800, color: "#818CF8", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{state.wallet.streak}</span>
                 <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>day streak</span>
               </div>
@@ -530,7 +530,9 @@ function LMS({ authUser, userProfile }) {
                       style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", padding: "14px 20px", border: "none", borderBottom: `1px solid ${T.border}`, background: "none", cursor: "pointer", textAlign: "left", fontSize: 13, color: T.text, transition: "all 0.15s" }}
                       onMouseEnter={e => { e.currentTarget.style.background = T.bgMuted; e.currentTarget.style.paddingLeft = "24px"; }}
                       onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.paddingLeft = "20px"; }}>
-                      <span style={{ fontSize: 18, minWidth: 24 }}>{r.type}</span>
+                      <span style={{ minWidth: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {r.type === "file" ? <FilePdf size={18} color={T.textSec} /> : r.type === "clipboard" ? <ClipboardText size={18} color={T.textSec} /> : r.type === "video" ? <PlayCircle size={18} color={T.textSec} /> : r.type === "chat" ? <ChatCircle size={18} color={T.textSec} /> : <ArrowSquareOut size={18} color={T.textSec} />}
+                      </span>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</div>
                         {r.category && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{r.category}</div>}

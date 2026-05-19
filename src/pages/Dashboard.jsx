@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { T } from '../theme/theme.js';
-import { House, Books, VideoCamera, Lightning, Target, Lightbulb, RocketLaunch, Flame, Trophy, Crown, Medal, Star, Sparkle, Gift, Confetti, CheckCircle, ChartLineUp, CalendarBlank, Clock, ArrowRight, Brain, GraduationCap, BookOpen, ClipboardText, Scroll, PencilSimpleLine, Notebook, Bell, CalendarCheck, ChartBar, Handshake, FolderSimpleStar, PlayCircle, Users, Upload, Play, Exam, Plus, CaretRight } from '../icons/icons.jsx';
+import { House, Books, VideoCamera, Lightning, Target, Lightbulb, RocketLaunch, Flame, Trophy, Crown, Medal, Star, Sparkle, Gift, Confetti, CheckCircle, ChartLineUp, CalendarBlank, Clock, ArrowRight, Brain, GraduationCap, BookOpen, ClipboardText, Scroll, PencilSimpleLine, Notebook, Bell, CalendarCheck, ChartBar, Handshake, FolderSimpleStar, PlayCircle, Users, Upload, Play, Exam, Plus, CaretRight, Timer, Megaphone, ChatText, Eye, FlowArrow } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, StatCard, SubjectIllustration } from '../components/ui';
 import { XPBar, BadgeChip, StudentAvatar, PodiumCard, StreakCalendar, ShareableProgressCard, triggerCelebration } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
@@ -72,9 +72,9 @@ function HeroScene3D() {
       {/* Frosted stat bar */}
       <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "flex-start", gap: 0, background: "rgba(255,255,255,0.05)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
         {[
-          { label: "Subjects", value: "5", icon: "📚" },
-          { label: "Question Types", value: "Every", icon: "🎯" },
-          { label: "Approach", value: "Structured", icon: "🏗️" },
+          { label: "Subjects", value: "5", icon: <BookOpen size={13} color="rgba(255,255,255,0.9)" /> },
+          { label: "Question Types", value: "Every", icon: <Target size={13} color="rgba(255,255,255,0.9)" /> },
+          { label: "Approach", value: "Structured", icon: <FlowArrow size={13} color="rgba(255,255,255,0.9)" /> },
         ].map((s, i) => (
           <div key={s.label} style={{ flex: 1, textAlign: "center", padding: "12px 20px", borderRight: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{s.icon} {s.value}</div>
@@ -104,7 +104,6 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
       {(() => {
         const hour = new Date().getHours();
         const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-        const greetEmoji = hour < 12 ? "🌅" : hour < 17 ? "☀️" : "🌙";
         const firstName = (userProfile?.name || authUser?.displayName || authUser?.email || "Scholar").split(" ")[0].split("@")[0];
         const pendingCount = myHomework.filter(h => !mySubs.find(s => s.homeworkId === h.id && (s.status === "graded" || s.status === "submitted"))).length;
         return (
@@ -129,7 +128,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
                 )}
               </div>
               <h1 style={{ fontSize: 26, fontWeight: 800, color: "#fff", fontFamily: "'Bricolage Grotesque', sans-serif", margin: "0 0 4px", letterSpacing: "-0.03em" }}>
-                {greetEmoji} {greeting}, {firstName}!
+                {greeting}, {firstName}!
               </h1>
               <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: "0 0 18px", fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 300 }}>
                 {new Date().toLocaleDateString("en-SG", { weekday: "long", day: "numeric", month: "long" })} · Keep up the great work!
@@ -138,14 +137,14 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
               {/* Stat pills — 4 stats */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
                 {[
-                  { value: state.wallet.coins, label: "Coins", emoji: "🪙", color: "#D4A254" },
-                  { value: state.wallet.streak, label: "Streak", emoji: "🔥", color: "#818CF8" },
-                  { value: gradedHw.length, label: "Graded", emoji: "✅", color: "#22C55E" },
-                  { value: state.wallet.level || 1, label: "Level", emoji: "⭐", color: "#F59E0B" },
+                  { value: state.wallet.coins, label: "Coins", icon: <span style={{ fontWeight: 700, fontSize: 10 }}>$</span>, color: "#D4A254" },
+                  { value: state.wallet.streak, label: "Streak", icon: <Flame size={10} color="#818CF8" />, color: "#818CF8" },
+                  { value: gradedHw.length, label: "Graded", icon: <CheckCircle size={10} color="#22C55E" />, color: "#22C55E" },
+                  { value: state.wallet.level || 1, label: "Level", icon: <Star size={10} color="#F59E0B" />, color: "#F59E0B" },
                 ].map(stat => (
                   <div key={stat.label} style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 12, padding: "12px 10px", border: "1px solid rgba(255,255,255,0.08)", textAlign: "center" }}>
                     <div style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1 }}>{stat.value}</div>
-                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: 4, letterSpacing: "0.05em" }}>{stat.emoji} {stat.label}</div>
+                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: 4, letterSpacing: "0.05em", display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{stat.icon} {stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -159,7 +158,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
         const exams = getExamCountdowns().slice(0, 3);
         return exams.length > 0 && (
           <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif" }}>⏳ Exam Countdown</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Timer size={14} color={T.text} /> Exam Countdown</div>
             <div style={{ display: "flex", gap: 8 }}>
               {exams.map((e, i) => {
                 const theme = T[e.subject] || T.eng;
@@ -183,9 +182,9 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
         const theme = T[challenge.subject] || T.eng;
         return (
           <div style={{ marginBottom: 20, background: "linear-gradient(135deg, #0F172A, #1E2A4A)", borderRadius: T.r3, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: -10, right: -10, fontSize: 60, opacity: 0.06 }}>🎯</div>
+            <div style={{ position: "absolute", top: -10, right: -10, opacity: 0.06 }}><Target size={60} /></div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-              <span style={{ fontSize: 12 }}>🎯</span>
+              <Target size={12} color="#D4A254" />
               <span style={{ fontSize: 10, fontWeight: 700, color: "#D4A254", textTransform: "uppercase", letterSpacing: 1 }}>Daily Challenge</span>
               <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", marginLeft: "auto", background: "rgba(255,255,255,0.06)", padding: "2px 8px", borderRadius: 10 }}>{challenge.type}</span>
             </div>

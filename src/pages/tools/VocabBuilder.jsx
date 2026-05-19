@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../theme/theme.js';
-import { Eye } from '../../icons/icons.jsx';
+import { Eye, Brain, Target, ArrowFatUp } from '../../icons/icons.jsx';
 import { VOCAB_DRILLS } from '../../data/vocabDrills.js';
 import { initSRCard, calculateNextReview, getReviewQueue, loadSRData, saveSRData } from '../../utils/spacedRepetition.js';
 
@@ -123,7 +123,7 @@ function VocabBuilder() {
             <button onClick={startReview} disabled={dueCount === 0}
               style={{ padding: "20px", borderRadius: T.r2, border: `2px solid ${dueCount > 0 ? "#6366F1" : T.border}`, background: dueCount > 0 ? "linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05))" : T.bgCard, cursor: dueCount > 0 ? "pointer" : "default", textAlign: "left", opacity: dueCount === 0 ? 0.5 : 1, gridColumn: "1 / -1", position: "relative", overflow: "hidden" }}>
               {dueCount > 0 && <div style={{ position: "absolute", top: 10, right: 12, background: "#6366F1", color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 20 }}>{dueCount} due</div>}
-              <div style={{ fontSize: 22, marginBottom: 6 }}>🧠</div>
+              <div style={{ fontSize: 22, marginBottom: 6 }}><Brain size={22} color="#6366F1" /></div>
               <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4 }}>Spaced Repetition Review</div>
               <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.5 }}>
                 {dueCount > 0
@@ -134,14 +134,14 @@ function VocabBuilder() {
 
             {/* Synonym Match */}
             <button onClick={() => startQuiz("synonym")} style={{ padding: "20px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgCard, cursor: "pointer", textAlign: "left" }}>
-              <div style={{ fontSize: 22, marginBottom: 6 }}>🎯</div>
+              <div style={{ fontSize: 22, marginBottom: 6 }}><Target size={22} color={T.accent} /></div>
               <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4 }}>Synonym Match</div>
               <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.5 }}>Given a word, pick the closest synonym. Tests comprehension and vocabulary range.</div>
             </button>
 
             {/* Upgrade Your Phrase */}
             <button onClick={() => startQuiz("upgrade")} style={{ padding: "20px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgCard, cursor: "pointer", textAlign: "left" }}>
-              <div style={{ fontSize: 22, marginBottom: 6 }}>⬆️</div>
+              <div style={{ fontSize: 22, marginBottom: 6 }}><ArrowFatUp size={22} color={T.accent} /></div>
               <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4 }}>Upgrade Your Phrase</div>
               <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.5 }}>See the weak version and the strong upgrade. Learn how to elevate your language.</div>
             </button>
