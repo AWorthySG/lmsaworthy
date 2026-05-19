@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { T } from '../../theme/theme.js';
 import { GAME_INSTRUCTIONS, SUBJECT_GAMES } from '../../data/gameData.js';
+import { ClipboardText, Lightbulb, Trophy, GameController } from '../../icons/icons.jsx';
 
 // English games
 import {
@@ -121,7 +122,7 @@ function GameHub({ subject }) {
             {/* Rules */}
             <div className="card-enter" style={{ "--i": 0, background: T.bgCard, borderRadius: T.r2, padding: "20px 22px", border: `1px solid ${T.border}`, marginBottom: 12 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: 16 }}>📋</span> How to Play
+                <ClipboardText size={16} color={T.text} /> How to Play
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {instr.rules.map((rule, i) => (
@@ -137,7 +138,7 @@ function GameHub({ subject }) {
             {instr.tips && (
               <div className="card-enter" style={{ "--i": 1, background: T.accentLight, borderRadius: T.r2, padding: "14px 18px", border: `1px solid ${T.accent}22`, marginBottom: 12 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: T.accent, marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
-                  <span>💡</span> Pro Tips
+                  <Lightbulb size={14} color={T.accent} /> Pro Tips
                 </div>
                 <div style={{ fontSize: 12, color: T.accentText, lineHeight: 1.7 }}>{instr.tips}</div>
               </div>
@@ -147,7 +148,7 @@ function GameHub({ subject }) {
             {instr.scoring && (
               <div className="card-enter" style={{ "--i": 2, background: T.bgMuted, borderRadius: T.r2, padding: "14px 18px", marginBottom: 20 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: T.textSec, marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
-                  <span>🏆</span> Scoring
+                  <Trophy size={14} color={T.textSec} /> Scoring
                 </div>
                 <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>{instr.scoring}</div>
               </div>
@@ -177,7 +178,7 @@ function GameHub({ subject }) {
           </div>
           <button onClick={() => setShowingInstructions(true)} title="View instructions"
             style={{ padding: "5px 12px", borderRadius: T.r1, background: T.bgMuted, border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 11, fontWeight: 600, color: T.textSec, display: "flex", alignItems: "center", gap: 4 }}>
-            📋 Rules
+            <ClipboardText size={14} /> Rules
           </button>
         </div>
         <div style={{ flex: 1, minHeight: 0, overflowY: "auto", maxWidth: 640 }}>
@@ -202,7 +203,7 @@ function GameHub({ subject }) {
       </div>
 
       <div className="grain" style={{ background: `linear-gradient(135deg, ${T.bgMuted}, ${T.accentLight}44)`, borderRadius: T.r3, padding: "22px 26px", color: T.text, border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: -20, right: -20, fontSize: 80, opacity: 0.06 }}>🎮</div>
+        <div style={{ position: "absolute", top: -20, right: -20, opacity: 0.06 }}><GameController size={80} /></div>
         <div style={{ position: "absolute", bottom: -10, left: -10, width: 80, height: 80, borderRadius: "50%", background: `${T.accent}08` }} />
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${T.accent}, #F8B55A, ${T.accent})`, opacity: 0.6 }} />
         <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 1.2, textTransform: "uppercase", color: T.accent, marginBottom: 6 }}>Learn by Playing</div>

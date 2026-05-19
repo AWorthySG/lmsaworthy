@@ -201,7 +201,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
         return (
           <div style={{ marginBottom: 16, background: T.bgCard, borderRadius: T.r2, padding: "14px 16px", border: `1px solid ${T.border}`, borderLeft: `3px solid ${theme.accent}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: T.gold, textTransform: "uppercase", letterSpacing: 0.5 }}>📖 Word of the Day</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: T.gold, textTransform: "uppercase", letterSpacing: 0.5, display: "inline-flex", alignItems: "center", gap: 4 }}><BookOpen size={10} color={T.gold} /> Word of the Day</span>
               <span style={{ fontSize: 9, color: T.textTer }}>{getSubject(wotd.subject)?.name}</span>
             </div>
             <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{wotd.word}</div>
@@ -228,7 +228,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
           {pendingHw.map(h => (
             <div key={h.id} onClick={() => dispatch({ type: "SET_PAGE", payload: "homework" })}
               style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, marginBottom: 6, cursor: "pointer" }}>
-              <span style={{ fontSize: 18 }}>📋</span>
+              <ClipboardText size={18} color={T.textSec} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{h.title}</div>
                 <div style={{ fontSize: 11, color: h.dueDate < today ? T.danger : T.textTer }}>Due {h.dueDate}{h.dueDate < today ? " — OVERDUE" : ""}</div>
@@ -264,18 +264,18 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10, marginBottom: 4 }}>
         {[
-          { label: "Practice Drills", sub: "GP & English", page: "practice", icon: "🎯", bg: "linear-gradient(135deg, #FFF4EC, #FDE8D8)", border: "#F0DDD0", accent: "#EA580C" },
-          { label: "Games", sub: "20+ games", page: "games-eng", icon: "🚀", bg: "linear-gradient(135deg, #EEF0FF, #DDE1FF)", border: "#C8CEFF", accent: "#4F5BD5" },
-          { label: "Infographics", sub: "Visual notes", page: "infographics", icon: "✨", bg: "linear-gradient(135deg, #FFF8EC, #FEF0D0)", border: "#F0E8D0", accent: "#D97706" },
-          { label: "Events", sub: "Prizes & more", page: "events", icon: "🎉", bg: "linear-gradient(135deg, #FFF0F0, #FFE0E0)", border: "#F0D8D8", accent: "#DC2626" },
-          { label: "Community", sub: "Chat & share", page: "community", icon: "🤝", bg: "linear-gradient(135deg, #ECFAF2, #D4F5E4)", border: "#C0EDCE", accent: "#16A34A" },
+          { label: "Practice Drills", sub: "GP & English", page: "practice", icon: <Target size={26} color="#EA580C" />, bg: "linear-gradient(135deg, #FFF4EC, #FDE8D8)", border: "#F0DDD0", accent: "#EA580C" },
+          { label: "Games", sub: "20+ games", page: "games-eng", icon: <RocketLaunch size={26} color="#4F5BD5" />, bg: "linear-gradient(135deg, #EEF0FF, #DDE1FF)", border: "#C8CEFF", accent: "#4F5BD5" },
+          { label: "Infographics", sub: "Visual notes", page: "infographics", icon: <Sparkle size={26} color="#D97706" />, bg: "linear-gradient(135deg, #FFF8EC, #FEF0D0)", border: "#F0E8D0", accent: "#D97706" },
+          { label: "Events", sub: "Prizes & more", page: "events", icon: <Confetti size={26} color="#DC2626" />, bg: "linear-gradient(135deg, #FFF0F0, #FFE0E0)", border: "#F0D8D8", accent: "#DC2626" },
+          { label: "Community", sub: "Chat & share", page: "community", icon: <Handshake size={26} color="#16A34A" />, bg: "linear-gradient(135deg, #ECFAF2, #D4F5E4)", border: "#C0EDCE", accent: "#16A34A" },
         ].map((a, i) => (
           <button key={a.page} onClick={() => dispatch({ type: "SET_PAGE", payload: a.page })}
             className="card-lift card-enter"
             style={{ "--i": i, padding: "16px 12px", borderRadius: T.r3, background: a.bg, border: `1px solid ${a.border}`, cursor: "pointer", textAlign: "center", transition: "transform 0.15s ease, box-shadow 0.15s ease" }}
             onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = T.shadow3; }}
             onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-            <div style={{ fontSize: 26, marginBottom: 6 }}>{a.icon}</div>
+            <div style={{ marginBottom: 6 }}>{a.icon}</div>
             <div style={{ fontSize: 12, fontWeight: 700, color: T.text, marginBottom: 2 }}>{a.label}</div>
             <div style={{ fontSize: 10, color: T.textTer, fontWeight: 500 }}>{a.sub}</div>
           </button>
@@ -284,7 +284,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
 
       {/* Study Plan */}
       <div style={{ marginTop: 20 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif" }}>📅 Your Study Plan</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><CalendarBlank size={15} color={T.text} /> Your Study Plan</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {generateStudyPlan(state).slice(0, 5).map((day, i) => {
             const theme = T[day.subjectId] || T.eng;
@@ -313,18 +313,18 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
         const wp = getWeeklyProgress(state);
         return (
           <div style={{ marginTop: 20, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif" }}>📊 This Week's Progress</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><ChartLineUp size={15} color={T.text} /> This Week's Progress</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
               {[
-                { label: "Homework", value: wp.hwCompleted, icon: "📋", color: T.accent },
-                { label: "Notes", value: wp.notesCreated, icon: "📝", color: T.teal },
-                { label: "Reviews", value: wp.reviewsGiven, icon: "👀", color: T.success },
-                { label: "Streak", value: `${wp.streakDays}d`, icon: "🔥", color: T.gold },
-                { label: "Coins", value: `+${wp.coinsEarned}`, icon: "🪙", color: T.goldDark },
+                { label: "Homework", value: wp.hwCompleted, icon: <ClipboardText size={10} color={T.accent} />, color: T.accent },
+                { label: "Notes", value: wp.notesCreated, icon: <PencilSimpleLine size={10} color={T.teal} />, color: T.teal },
+                { label: "Reviews", value: wp.reviewsGiven, icon: <Eye size={10} color={T.success} />, color: T.success },
+                { label: "Streak", value: `${wp.streakDays}d`, icon: <Flame size={10} color={T.gold} />, color: T.gold },
+                { label: "Coins", value: `+${wp.coinsEarned}`, icon: <span style={{ fontWeight: 700, fontSize: 10, color: T.goldDark }}>$</span>, color: T.goldDark },
               ].map(s => (
                 <div key={s.label} style={{ textAlign: "center", padding: "8px", borderRadius: T.r1, background: T.bgMuted }}>
                   <div style={{ fontSize: 18, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
-                  <div style={{ fontSize: 10, color: T.textTer }}>{s.icon} {s.label}</div>
+                  <div style={{ fontSize: 10, color: T.textTer, display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{s.icon} {s.label}</div>
                 </div>
               ))}
             </div>
@@ -364,7 +364,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8, fontFamily: "'Bricolage Grotesque', sans-serif" }}>✦ The A-Worthy World</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 5 }}><Star size={11} color={T.gold} /> The A-Worthy World</div>
               <h1 style={{ color: "#fff", fontSize: 30, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1.15 }}>Welcome back, Creator J</h1>
               <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, margin: 0, fontWeight: 300, fontFamily: "'Fraunces', serif", fontStyle: "italic" }}>Your students are waiting — let's make today count.</p>
             </div>
@@ -499,15 +499,16 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, marginBottom: 28 }}>
         <Card elevated style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.02em" }}>🏆 Class Standings</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: 6 }}><Trophy size={16} color={T.gold} /> Class Standings</h3>
             <button onClick={() => dispatch({ type: "SET_PAGE", payload: "leaderboard" })} style={{ background: T.accentLight, border: "none", borderRadius: 20, padding: "5px 14px", fontSize: 11, fontWeight: 700, color: T.accentText, cursor: "pointer", transition: "all 0.15s" }}>Full Leaderboard →</button>
           </div>
           {[...state.students].map(s => ({ ...s, xp: calcStudentXP(s, state) })).sort((a, b) => b.xp - a.xp).map((student, idx) => {
             const lv = getLevel(student.xp);
-            const rankIcon = ["🥇", "🥈", "🥉"][idx] || `#${idx + 1}`;
+            const rankColors = ["#D4A254", "#A0AEC0", "#CD7F32"];
+            const rankIcon = idx < 3 ? <Medal size={18} color={rankColors[idx]} /> : `#${idx + 1}`;
             return (
               <div key={student.id} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: idx < state.students.length - 1 ? 14 : 0 }}>
-                <span style={{ width: 24, fontSize: idx < 3 ? 18 : 12, textAlign: "center" }}>{rankIcon}</span>
+                <span style={{ width: 24, fontSize: idx < 3 ? 18 : 12, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}>{rankIcon}</span>
                 <StudentAvatar student={student} size={32} />
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
@@ -523,7 +524,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
 
         <Card elevated style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.02em" }}>💬 Community</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: 6 }}><ChatText size={16} color={T.text} /> Community</h3>
             <button onClick={() => dispatch({ type: "SET_PAGE", payload: "community" })} style={{ background: T.accentLight, border: "none", borderRadius: 20, padding: "5px 14px", fontSize: 11, fontWeight: 700, color: T.accentText, cursor: "pointer", transition: "all 0.15s" }}>View All →</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -532,7 +533,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
                 onMouseEnter={e => e.currentTarget.style.background = T.bgHover}
                 onMouseLeave={e => e.currentTarget.style.background = T.bgMuted}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                  {post.isAnnouncement && <span style={{ fontSize: 10, fontWeight: 700, color: "#92400E", background: "#FEF3C7", padding: "1px 5px", borderRadius: 20 }}>📢</span>}
+                  {post.isAnnouncement && <span style={{ fontSize: 10, fontWeight: 700, color: "#92400E", background: "#FEF3C7", padding: "1px 5px", borderRadius: 20, display: "inline-flex", alignItems: "center" }}><Megaphone size={10} color="#92400E" /></span>}
                   <span style={{ fontSize: 12, fontWeight: 650, color: T.text }}>{post.title}</span>
                 </div>
                 <div style={{ fontSize: 11, color: T.textTer }}>{post.author} · {post.comments.length} comments</div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
-import { Crown, Trophy, Medal, Star, Flame, ArrowFatUp } from '../icons/icons.jsx';
+import { Crown, Trophy, Medal, Star, Flame, ArrowFatUp, Lightning, CheckCircle, Books } from '../icons/icons.jsx';
 import { Card, Btn, Badge, Select, PageHeader } from '../components/ui';
 import { PodiumCard, BadgeChip, XPBar, StudentAvatar } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
@@ -32,13 +32,13 @@ function Leaderboard({ state, dispatch }) {
         {/* XP info strip */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 14 }}>
           {[
-            { emoji: "⚡", text: "10 XP / quiz answer" },
-            { emoji: "💯", text: "+50 XP perfect score" },
-            { emoji: "✅", text: "20 XP / session" },
-            { emoji: "📚", text: "5 XP / resource" },
+            { icon: <Lightning size={13} color={T.accent} />, text: "10 XP / quiz answer" },
+            { icon: <Star size={13} color="#D4940A" />, text: "+50 XP perfect score" },
+            { icon: <CheckCircle size={13} color={T.success} />, text: "20 XP / session" },
+            { icon: <Books size={13} color={T.accent} />, text: "5 XP / resource" },
           ].map(x => (
             <div key={x.text} style={{ display: "flex", alignItems: "center", gap: 5, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 20, padding: "5px 12px", fontSize: 11, fontWeight: 600, color: T.textSec }}>
-              <span>{x.emoji}</span><span>{x.text}</span>
+              {x.icon}<span>{x.text}</span>
             </div>
           ))}
         </div>
@@ -75,7 +75,8 @@ function Leaderboard({ state, dispatch }) {
         </div>
         {filteredRanked.map((student, idx) => {
           const lv = getLevel(student.xp);
-          const rankDisplay = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`;
+          const rankIcon = idx === 0 ? <Crown size={20} color="#D4A254" /> : idx === 1 ? <Medal size={20} color="#94A3B8" /> : idx === 2 ? <Medal size={20} color="#CD7F32" /> : null;
+          const rankDisplay = rankIcon || `#${idx + 1}`;
           return (
             <div key={student.id} style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderBottom: idx < filteredRanked.length - 1 ? `1px solid ${T.border}` : "none", background: idx === 0 ? `${lv.bg}99` : T.bgCard, transition: "background 0.15s" }}
               onMouseEnter={e => { if (idx !== 0) e.currentTarget.style.background = T.bgMuted; }}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { T } from '../theme/theme.js';
-import { ChartLineUp, ChartBar, ChartPie, Users, Trophy, CalendarCheck, Gauge } from '../icons/icons.jsx';
+import { ChartLineUp, ChartBar, ChartPie, Users, Trophy, CalendarCheck, Gauge, Target, Flame, CalendarBlank, Timer, Star } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
 import { StudentAvatar, XPBar } from '../components/gamification';
 import { calcStudentXP, getLevel } from '../utils/gamificationUtils.js';
@@ -71,13 +71,13 @@ function AnalyticsDashboard({ state }) {
       {/* Key metrics */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
         {[
-          { label: "Exam Readiness", value: `${examReadiness}%`, color: examReadiness >= 70 ? T.success : examReadiness >= 40 ? T.warning : T.danger, icon: "🎯" },
-          { label: "Study Streak", value: `${state.wallet.streak}d`, color: T.accent, icon: "🔥" },
-          { label: "Attendance", value: `${attendanceRate}%`, color: attendanceRate >= 80 ? T.success : T.warning, icon: "📅" },
-          { label: "This Week", value: `${totalMinsWeek}m`, color: T.teal, icon: "⏱️" },
+          { label: "Exam Readiness", value: `${examReadiness}%`, color: examReadiness >= 70 ? T.success : examReadiness >= 40 ? T.warning : T.danger, icon: <Target size={12} /> },
+          { label: "Study Streak", value: `${state.wallet.streak}d`, color: T.accent, icon: <Flame size={12} /> },
+          { label: "Attendance", value: `${attendanceRate}%`, color: attendanceRate >= 80 ? T.success : T.warning, icon: <CalendarBlank size={12} /> },
+          { label: "This Week", value: `${totalMinsWeek}m`, color: T.teal, icon: <Timer size={12} /> },
         ].map(m => (
           <div key={m.label} style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px", border: `1px solid ${T.border}`, textAlign: "center" }}>
-            <div style={{ fontSize: 10, color: T.textTer, fontWeight: 600, marginBottom: 4 }}>{m.icon} {m.label}</div>
+            <div style={{ fontSize: 10, color: T.textTer, fontWeight: 600, marginBottom: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{m.icon} {m.label}</div>
             <div style={{ fontSize: 26, fontWeight: 800, color: m.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{m.value}</div>
           </div>
         ))}
@@ -85,7 +85,7 @@ function AnalyticsDashboard({ state }) {
 
       {/* Exam Readiness Gauge */}
       <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}` }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif" }}>🎯 Exam Readiness Score</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Target size={16} color={T.accent} /> Exam Readiness Score</div>
         <div style={{ height: 12, background: T.bgMuted, borderRadius: 10, overflow: "hidden", position: "relative", marginBottom: 8 }}>
           <div style={{ height: "100%", borderRadius: 10, background: examReadiness >= 70 ? `linear-gradient(90deg, ${T.success}, #22C55E)` : examReadiness >= 40 ? `linear-gradient(90deg, ${T.warning}, #F59E0B)` : `linear-gradient(90deg, ${T.danger}, #EF4444)`, width: `${examReadiness}%`, transition: "width 0.5s ease" }} />
         </div>
@@ -99,7 +99,7 @@ function AnalyticsDashboard({ state }) {
 
       {/* Topic Mastery Heatmap */}
       <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}` }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 14, fontFamily: "'Bricolage Grotesque', sans-serif" }}>📊 Topic Mastery</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 14, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><ChartBar size={16} color={T.accent} /> Topic Mastery</div>
         {SUBJECTS.map(subj => {
           const topics = topicMastery[subj.id] || [];
           if (topics.length === 0) return null;
@@ -114,7 +114,7 @@ function AnalyticsDashboard({ state }) {
                   return (
                     <div key={t.topic} title={`${t.topic}: ${t.mastery !== null ? Math.round(t.mastery) + "%" : "No data"} (${t.count} graded)`}
                       style={{ padding: "6px 10px", borderRadius: T.r1, background: colors[level] + "33", border: `1px solid ${colors[level]}55`, fontSize: 10, fontWeight: 600, color: level === 0 ? T.textTer : T.text, cursor: "default" }}>
-                      {t.topic} {level > 0 && <span style={{ fontSize: 8 }}>{["", "🔴", "🟡", "🟢", "⭐"][level]}</span>}
+                      {t.topic} {level > 0 && <span>{level === 1 ? <span style={{ color: "#DC2626", fontSize: 8 }}>●</span> : level === 2 ? <span style={{ color: "#D97706", fontSize: 8 }}>●</span> : level === 3 ? <span style={{ color: "#16A34A", fontSize: 8 }}>●</span> : <Star size={9} color="#D4940A" />}</span>}
                     </div>
                   );
                 })}
@@ -123,13 +123,13 @@ function AnalyticsDashboard({ state }) {
           );
         })}
         <div style={{ display: "flex", gap: 8, marginTop: 8, fontSize: 10, color: T.textTer }}>
-          <span>⬜ No data</span><span>🔴 Needs work</span><span>🟡 Developing</span><span>🟢 Good</span><span>⭐ Mastered</span>
+          <span>&#9633; No data</span><span style={{ color: "#DC2626" }}>● Needs work</span><span style={{ color: "#D97706" }}>● Developing</span><span style={{ color: "#16A34A" }}>● Good</span><span style={{ display: "inline-flex", alignItems: "center", gap: 2 }}><Star size={10} color="#D4940A" /> Mastered</span>
         </div>
       </div>
 
       {/* Exam countdown */}
       <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}` }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif" }}>⏳ Exam Countdown</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Timer size={16} color={T.accent} /> Exam Countdown</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {getExamCountdowns().map((e, i) => {
             const theme = T[e.subject] || T.eng;

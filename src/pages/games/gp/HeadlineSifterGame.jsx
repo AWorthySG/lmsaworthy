@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { T } from '../../../theme/theme.js';
 import { ConfettiEffect } from '../../../components/gamification';
+import { Newspaper, Flame, Lightning, Flag, Timer, PencilLine, CheckCircle, Warning, Prohibit } from '../../../icons/icons.jsx';
 
 function HeadlineSifterGame() {
   const headlines = [
@@ -42,9 +43,9 @@ function HeadlineSifterGame() {
     return () => clearInterval(timerRef.current);
   }, [current, answered]);
   const categories = [
-    { id: "reliable", label: "Reliable", emoji: "✅", color: "#3BAA7E", bg: "#EAF6F2" },
-    { id: "biased", label: "Biased", emoji: "⚠️", color: "#E5A832", bg: "#FFF8EC" },
-    { id: "misleading", label: "Misleading", emoji: "🚫", color: "#E05262", bg: "#FDEFF1" },
+    { id: "reliable", label: "Reliable", emoji: <CheckCircle size={24} color="#3BAA7E" />, color: "#3BAA7E", bg: "#EAF6F2" },
+    { id: "biased", label: "Biased", emoji: <Warning size={24} color="#E5A832" />, color: "#E5A832", bg: "#FFF8EC" },
+    { id: "misleading", label: "Misleading", emoji: <Prohibit size={24} color="#E05262" />, color: "#E05262", bg: "#FDEFF1" },
     { id: "satire", label: "Satire", emoji: "😂", color: "#7C6FDB", bg: "#F0EDFF" },
   ];
   const catLookup = Object.fromEntries(categories.map(c => [c.id, c]));
@@ -74,14 +75,14 @@ function HeadlineSifterGame() {
       {/* HUD */}
       <div className="grain" style={{ background: "linear-gradient(135deg, #0F172A, #1E2A4A)", borderRadius: T.r3, padding: "14px 20px", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center", overflow: "hidden", position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ fontSize: 28 }}>📰</div>
+          <Newspaper size={28} color="#fff" />
           <div>
             <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1 }}>Headline Sifter</div>
             <div style={{ fontSize: 14, fontWeight: 700 }}>{done ? "Complete" : `${current + 1} of ${deck.length}`}</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254" }}>🔥 {streak}x</div>}
+          {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254", display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> {streak}x</div>}
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: 16, fontWeight: 800, color: "#51cf66" }}>{score}</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>CORRECT</div>
@@ -111,14 +112,14 @@ function HeadlineSifterGame() {
             {!answered && <div style={{ position: "absolute", top: 12, right: 16, fontSize: 18, fontWeight: 800, color: timeLeft <= 5 ? "#E05262" : timeLeft <= 8 ? "#E5A832" : "#C8BEA8", fontFamily: "'JetBrains Mono', monospace" }}>{timeLeft}s</div>}
             <div style={{ fontSize: 9, fontWeight: 700, color: "#9A8E78", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12, display: "flex", justifyContent: "space-between" }}>
               <span>{h.source}</span>
-              {answered && timeLeft >= 10 && answered !== "timeout" && <span style={{ color: "#D4A254", fontWeight: 800 }}>⚡ SPEED BONUS</span>}
+              {answered && timeLeft >= 10 && answered !== "timeout" && <span style={{ color: "#D4A254", fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 4 }}><Lightning size={14} color="#D4A254" /> SPEED BONUS</span>}
             </div>
             <div style={{ fontSize: 19, fontWeight: 800, color: "#1A1D2B", lineHeight: 1.45, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{h.text}</div>
             {/* Red flag indicators after answer */}
             {answered && h.redFlags.length > 0 && (
               <div style={{ marginTop: 12, display: "flex", gap: 6, flexWrap: "wrap" }}>
                 {h.redFlags.map((f, i) => (
-                  <span key={i} className="scale-pop" style={{ animationDelay: `${i * 80}ms`, fontSize: 10, fontWeight: 700, color: "#E05262", background: "#FDEFF1", padding: "2px 8px", borderRadius: 20, border: "1px solid #E0526233" }}>🚩 {f}</span>
+                  <span key={i} className="scale-pop" style={{ animationDelay: `${i * 80}ms`, fontSize: 10, fontWeight: 700, color: "#E05262", background: "#FDEFF1", padding: "2px 8px", borderRadius: 20, border: "1px solid #E0526233", display: "inline-flex", alignItems: "center", gap: 3 }}><Flag size={10} color="#E05262" /> {f}</span>
                 ))}
               </div>
             )}
@@ -151,7 +152,7 @@ function HeadlineSifterGame() {
           {/* Timeout */}
           {answered === "timeout" && (
             <div className="fade-up" style={{ background: T.dangerBg, borderRadius: T.r2, padding: "12px 16px", textAlign: "center", borderLeft: `4px solid ${T.danger}` }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: T.danger }}>⏰ Time's up!</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: T.danger, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Timer size={14} color={T.danger} /> Time's up!</div>
               <div style={{ fontSize: 12, color: T.text, marginTop: 4 }}>This headline is <strong>{catLookup[h.answer].label}</strong>: {h.explain}</div>
             </div>
           )}

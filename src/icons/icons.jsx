@@ -128,6 +128,28 @@ export const ClockAlert = ic("ph:clock-countdown-bold");
 export const Users = ic("ph:users-bold");
 export const ArrowSquareOut = ic("ph:arrow-square-out-bold");
 
+// Additional Game/UI icons
+export const Newspaper = ic("ph:newspaper-bold");
+export const Shield = ic("ph:shield-bold");
+export const ShieldCheck = ic("ph:shield-check-bold");
+export const Sword = ic("ph:sword-bold");
+export const Flag = ic("ph:flag-bold");
+export const Prohibit = ic("ph:prohibit-bold");
+export const MapTrifold = ic("ph:map-trifold-bold");
+export const Factory = ic("ph:factory-bold");
+export const Buildings = ic("ph:buildings-bold");
+export const Heart = ic("ph:heart-bold");
+export const HeartBreak = ic("ph:heart-break-bold");
+export const ShoppingCart = ic("ph:shopping-cart-bold");
+export const MaskHappy = ic("ph:mask-happy-bold");
+export const Scissors = ic("ph:scissors-bold");
+export const GameController = ic("ph:game-controller-bold");
+export const Palette = ic("ph:palette-bold");
+export const Gem = ic("ph:diamond-bold");
+export const Waves = ic("ph:waves-bold");
+export const Siren = ic("ph:siren-bold");
+export const PencilLine = ic("ph:pencil-line-bold");
+
 // Misc
 export const Atom = ic("ph:atom-bold");
 export const FlowArrow = ic("ph:flow-arrow-bold");

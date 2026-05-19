@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../theme/theme.js';
+import { Target, RocketLaunch, ChartLineUp, Trophy, Warning } from '../icons/icons.jsx';
 import { firebaseAuth, firebaseDb, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, ref, set } from '../config/firebase.js';
 
 function LoginScreen() {
@@ -41,10 +42,10 @@ function LoginScreen() {
   }
 
   const FEATURES = [
-    { icon: "🎯", title: "Practice Drills", desc: "Structured question-type frameworks" },
-    { icon: "🎮", title: "20+ Games", desc: "Gamified learning for every subject" },
-    { icon: "📊", title: "Live Analytics", desc: "Track progress across all subjects" },
-    { icon: "🏆", title: "Leaderboard", desc: "Compete and celebrate achievements" },
+    { icon: <Target size={20} color="#D4A254" />, title: "Practice Drills", desc: "Structured question-type frameworks" },
+    { icon: <RocketLaunch size={20} color="#D4A254" />, title: "20+ Games", desc: "Gamified learning for every subject" },
+    { icon: <ChartLineUp size={20} color="#D4A254" />, title: "Live Analytics", desc: "Track progress across all subjects" },
+    { icon: <Trophy size={20} color="#D4A254" />, title: "Leaderboard", desc: "Compete and celebrate achievements" },
   ];
 
   const inputStyle = {

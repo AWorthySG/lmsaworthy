@@ -423,7 +423,7 @@ function LMS({ authUser, userProfile }) {
                   style={{ flex: 1, padding: "8px", borderRadius: T.r1, background: T.bgCard, border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 11, fontWeight: 600, color: T.textSec, textAlign: "center", transition: "all 0.15s" }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = T.accent; e.currentTarget.style.color = T.accent; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.textSec; }}>
-                  {state.role === "tutor" ? "👁 Student" : "✏️ Tutor"}
+                  {state.role === "tutor" ? "Student View" : "Tutor View"}
                 </button>
               )}
               <button onClick={() => signOut(firebaseAuth)}
@@ -454,7 +454,7 @@ function LMS({ authUser, userProfile }) {
           </button>
           {/* Dark mode toggle */}
           <button onClick={() => setDarkMode(d => !d)} title={darkMode ? "Light mode" : "Dark mode"} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", minWidth: 40, minHeight: 40, alignItems: "center", justifyContent: "center", fontSize: 16 }}>
-            {darkMode ? "☀️" : "🌙"}
+            <Icon icon={darkMode ? "ph:sun-bold" : "ph:moon-bold"} width={18} height={18} />
           </button>
           {/* Notification bell */}
           <div style={{ position: "relative" }}>
@@ -470,7 +470,7 @@ function LMS({ authUser, userProfile }) {
                 ) : notifications.map((n, i) => (
                   <button key={i} onClick={() => { dispatch({ type: "SET_PAGE", payload: n.page }); setShowNotifs(false); if (n.type === "reward") setShowRewardModal(true); }}
                     style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", borderBottom: `1px solid ${T.border}`, background: "none", border: "none", borderBottomStyle: "solid", borderBottomWidth: 1, borderBottomColor: T.border, cursor: "pointer", width: "100%", textAlign: "left" }}>
-                    <span style={{ fontSize: 14 }}>{n.type === "homework" ? "📋" : n.type === "grading" ? "✏️" : "🎁"}</span>
+                    <span style={{ display: "flex", alignItems: "center" }}>{n.type === "homework" ? <ClipboardText size={16} color={T.textSec} /> : n.type === "grading" ? <PencilSimpleLine size={16} color={T.textSec} /> : <Gift size={16} color={T.textSec} />}</span>
                     <span style={{ fontSize: 12, color: T.text, lineHeight: 1.4 }}>{n.msg}</span>
                   </button>
                 ))}
@@ -481,7 +481,7 @@ function LMS({ authUser, userProfile }) {
         {/* Tutor Announcement Banner */}
         {state.announcement && (
           <div style={{ maxWidth: 1080, margin: "0 auto 8px", padding: "10px 16px", borderRadius: T.r2, background: "linear-gradient(135deg, #0F172A, #1E2A4A)", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
-            <span style={{ fontSize: 16 }}>📢</span>
+            <Megaphone size={16} color="#fff" />
             <span style={{ flex: 1, fontWeight: 600 }}>{state.announcement}</span>
             {state.role === "tutor" && <button onClick={() => dispatch({ type: "SET_ANNOUNCEMENT", payload: null })} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>Dismiss</button>}
           </div>
@@ -548,15 +548,15 @@ function LMS({ authUser, userProfile }) {
                   <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Quick Access</div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
                     {[
-                      { label: "Dashboard", page: "dashboard", emoji: "🏠" },
-                      { label: "Homework", page: "homework", emoji: "📋" },
-                      { label: "Leaderboard", page: "leaderboard", emoji: "🏆" },
-                      { label: "Community", page: "community", emoji: "👥" },
+                      { label: "Dashboard", page: "dashboard", icon: House },
+                      { label: "Homework", page: "homework", icon: ClipboardText },
+                      { label: "Leaderboard", page: "leaderboard", icon: Trophy },
+                      { label: "Community", page: "community", icon: Users },
                     ].map(q => (
                       <button key={q.page} onClick={() => { dispatch({ type: "SET_PAGE", payload: q.page }); setShowSearch(false); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, cursor: "pointer", fontSize: 12, fontWeight: 600, color: T.text, transition: "all 0.15s" }}
                         onMouseEnter={e => { e.currentTarget.style.background = T.border; e.currentTarget.style.transform = "translateY(-1px)"; }}
                         onMouseLeave={e => { e.currentTarget.style.background = T.bgMuted; e.currentTarget.style.transform = "none"; }}>
-                        <span>{q.emoji}</span>{q.label}
+                        <q.icon size={16} color={T.textSec} />{q.label}
                       </button>
                     ))}
                   </div>
