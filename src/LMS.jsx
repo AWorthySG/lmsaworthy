@@ -15,6 +15,7 @@ import { PageErrorBoundary } from "./components/ui";
 import { EmptyStateIllustration } from "./components/ui/EmptyState.jsx";
 import ToastContainer from "./components/toast/ToastContainer.jsx";
 import BackToTop from "./components/ui/BackToTop.jsx";
+import InstallPrompt from "./components/ui/InstallPrompt.jsx";
 import { CelebrationOverlay } from "./components/gamification/CelebrationOverlay.jsx";
 import DailyRewardModal from "./components/gamification/DailyRewardModal.jsx";
 import LoginScreen from "./pages/LoginScreen.jsx";
@@ -506,6 +507,9 @@ function LMS({ authUser, userProfile }) {
 
       {/* Back to top button */}
       <BackToTop />
+
+      {/* PWA install prompt */}
+      <InstallPrompt />
 
       {/* ═══ GLOBAL SEARCH OVERLAY (Cmd+K) ═══ */}
       <AnimatePresence>
