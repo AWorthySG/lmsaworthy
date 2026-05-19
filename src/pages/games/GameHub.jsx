@@ -43,9 +43,9 @@ const icc = (name) => React.memo(({ size = 20, style: s, className }) => (
   <Icon icon={name} width={size} height={size} style={{ flexShrink: 0, ...s }} className={className} />
 ));
 
-const ArrowLeft = ic("fluent:arrow-left-24-filled");
-const CaretRight = ic("fluent:chevron-right-24-filled");
-const Play = icc("fluent-emoji-flat:play-button");
+const ArrowLeft = ic("ph:arrow-left-bold");
+const CaretRight = ic("ph:caret-right-bold");
+const Play = ic("ph:play-bold");
 
 const SUBJECT_NAMES = {
   eng: "O-Level English",

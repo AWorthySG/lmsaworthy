@@ -1,6 +1,13 @@
 // Service Worker — enables offline caching, PWA install, and push notifications
-const CACHE_NAME = 'aworthy-lms-v4';
-const APP_SHELL = ['/', '/index.html', '/logo-aworthy.jpeg', '/manifest.json'];
+const CACHE_NAME = 'aworthy-lms-v5';
+const APP_SHELL = [
+  '/',
+  '/index.html',
+  '/logo-aworthy.jpeg',
+  '/manifest.json',
+  '/icon-192x192.png',
+  '/icon-512x512.png',
+];
 
 self.addEventListener('install', e => {
   // Pre-cache app shell for offline support

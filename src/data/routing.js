@@ -3,7 +3,7 @@ import {
   Books, VideoCamera, Lightning, Scroll, RocketLaunch, BookmarkSimple,
   Sparkle, GraduationCap, Timer, Lightbulb, Hash,
   Confetti, Crown, PencilSimpleLine, Handshake,
-  CalendarCheck, ChartLineUp, Eye, Scales, Medal,
+  CalendarCheck, ChartLineUp, Eye, Scales, Medal, Gear,
 } from '../icons/icons.jsx';
 
 export const NAV = [
@@ -71,6 +71,9 @@ export const NAV = [
     { id: "analytics", label: "Analytics", icon: ChartLineUp },
     { id: "parentview", label: "Parent View", icon: Eye },
   ]},
+  { group: "System", items: [
+    { id: "settings", label: "Settings", icon: Gear },
+  ]},
 ];
 
 export const PAGE_TO_PATH = {
@@ -93,6 +96,7 @@ export const PAGE_TO_PATH = {
   certificates: "/certificates",
   "games-eng": "/games/eng", "games-gp": "/games/gp",
   "games-h1econ": "/games/h1econ", "games-h2econ": "/games/h2econ", events: "/events",
+  settings: "/settings",
 };
 
 export const PATH_TO_PAGE = Object.fromEntries(Object.entries(PAGE_TO_PATH).map(([k, v]) => [v, k]));

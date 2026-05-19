@@ -15,3 +15,4 @@ export { default as LoadingSkeleton } from './LoadingSkeleton.jsx';
 export { default as SimpleQRDisplay } from './SimpleQRDisplay.jsx';
 export { default as BackToTop } from './BackToTop.jsx';
 export { default as SubjectIllustration } from './SubjectIllustration.jsx';
+export { default as PageErrorBoundary } from './PageErrorBoundary.jsx';

@@ -9,10 +9,10 @@ import {
 } from "../config/canva.js";
 
 const CERT_TYPES = [
-  { id: "completion", label: "Course Completion", icon: "fluent-emoji-flat:graduation-cap", desc: "Awarded for completing a subject module" },
-  { id: "achievement", label: "Achievement Award", icon: "fluent-emoji-flat:trophy", desc: "For outstanding quiz or exam performance" },
-  { id: "streak", label: "Streak Champion", icon: "fluent-emoji-flat:fire", desc: "Maintained a study streak milestone" },
-  { id: "participation", label: "Participation", icon: "fluent-emoji-flat:star", desc: "Active engagement in community & events" },
+  { id: "completion", label: "Course Completion", icon: "ph:graduation-cap-bold", desc: "Awarded for completing a subject module" },
+  { id: "achievement", label: "Achievement Award", icon: "ph:trophy-bold", desc: "For outstanding quiz or exam performance" },
+  { id: "streak", label: "Streak Champion", icon: "ph:flame-bold", desc: "Maintained a study streak milestone" },
+  { id: "participation", label: "Participation", icon: "ph:star-bold", desc: "Active engagement in community & events" },
 ];
 
 export default function Certificates({ state, dispatch }) {
@@ -357,7 +357,7 @@ export default function Certificates({ state, dispatch }) {
 
               {!generatedDesign && !exportUrl && (
                 <div style={{ textAlign: "center", padding: "40px 20px", color: T.textTer }}>
-                  <Icon icon="fluent-emoji-flat:framed-picture" width={56} style={{ marginBottom: 12, opacity: 0.5 }} />
+                  <Icon icon="ph:frame-corners-bold" width={56} style={{ marginBottom: 12, opacity: 0.5, color: T.textTer }} />
                   <div style={{ fontSize: 13, fontWeight: 600 }}>
                     Select a template and student, then generate to see the preview
                   </div>
