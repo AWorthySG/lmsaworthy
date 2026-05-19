@@ -38,6 +38,7 @@ import TimedEssayWriter from "./pages/tools/TimedEssayWriter.jsx";
 import VocabBuilder from "./pages/tools/VocabBuilder.jsx";
 import ExampleConnector from "./pages/tools/ExampleConnector.jsx";
 import EssayGrader from "./pages/tools/EssayGrader.jsx";
+import AIMarker from "./pages/tools/AIMarker.jsx";
 import Homework from "./pages/homework/Homework.jsx";
 import GameHub from "./pages/games/GameHub.jsx";
 import Events from "./pages/Events.jsx";
@@ -238,6 +239,7 @@ function LMS({ authUser, userProfile }) {
       case "vocab": return <VocabBuilder />;
       case "connector": return <ExampleConnector />;
       case "essaygrader": return <EssayGrader />;
+      case "aimarker": return <AIMarker />;
       case "homework": return <Homework state={state} dispatch={dispatch} />;
       case "games-eng": return <GameHub subject="eng" />;
       // case "games-ipeng": return <GameHub subject="ipeng" />;
