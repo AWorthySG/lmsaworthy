@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Confetti } from '../../../icons/icons.jsx';
 
 function DeviceSpotterGame() {
   const passages = [
@@ -57,7 +58,7 @@ function DeviceSpotterGame() {
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec }}>Found: {found.length} / {passage.devices.length} devices</span>
-        {done && <span className="scale-pop" style={{ fontSize: 12, fontWeight: 700, color: T.success }}>🎉 All found!</span>}
+        {done && <span className="scale-pop" style={{ fontSize: 12, fontWeight: 700, color: T.success, display: "inline-flex", alignItems: "center", gap: 4 }}><Confetti size={14} color={T.success} /> All found!</span>}
       </div>
       <div style={{ height: 6, background: T.bgMuted, borderRadius: 8 }}><div style={{ height: "100%", background: T.success, borderRadius: 8, width: `${(found.length / passage.devices.length) * 100}%`, transition: "width 0.4s" }} /></div>
       {/* Passage with clickable phrases */}

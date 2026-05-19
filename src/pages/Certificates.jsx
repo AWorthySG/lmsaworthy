@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { T } from "../theme/theme.js";
 import { Icon } from "@iconify/react";
 import PageHeader from "../components/ui/PageHeader.jsx";
+import { Palette } from "../icons/icons.jsx";
 import {
   isCanvaConnected, startCanvaAuth, exchangeCanvaCode, clearCanvaTokens,
   listTemplates, getTemplateFields, createAutofill, checkAutofillStatus,
@@ -213,7 +214,7 @@ export default function Certificates({ state, dispatch }) {
       {/* Not connected — show connect prompt */}
       {!connected && (
         <div style={styles.connectCard}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🎨</div>
+          <div style={{ marginBottom: 16 }}><Palette size={48} color={T.accent} /></div>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: T.text, margin: "0 0 8px", fontFamily: "'Bricolage Grotesque', sans-serif" }}>
             Connect to Canva
           </h2>

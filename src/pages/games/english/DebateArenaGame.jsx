@@ -214,7 +214,7 @@ function DebateArenaGame() {
               <span style={{ color: T.textSec }}>Rebuttals: <strong>{rebuttalScore}/{topic.rebuttals.length * 2}</strong></span>
             </div>
             <div style={{ marginTop: 12, padding: "10px 14px", background: T.accentLight, borderRadius: T.r2, fontSize: 11, color: T.accentText, textAlign: "left", lineHeight: 1.6 }}>
-              📝 <strong>O-Level Tip:</strong> In argumentative essays, the best rebuttals acknowledge the counter-argument before refuting it: "While it is true that [counter]... however, [your rebuttal with evidence]." This shows maturity and earns higher marks.
+              <PencilLine size={14} color={T.accentText} style={{ display: "inline" }} /> <strong>O-Level Tip:</strong> In argumentative essays, the best rebuttals acknowledge the counter-argument before refuting it: "While it is true that [counter]... however, [your rebuttal with evidence]." This shows maturity and earns higher marks.
             </div>
           </div>
         </div>

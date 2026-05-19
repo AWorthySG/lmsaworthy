@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Flame, Heart, HeartBreak, Confetti, Scissors } from '../../../icons/icons.jsx';
 
 function ShrinkRayGame() {
   const passages = [
@@ -65,10 +66,10 @@ function ShrinkRayGame() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {combo > 1 && <div className="scale-pop" style={{ background: "rgba(239,131,84,0.2)", borderRadius: 20, padding: "4px 12px", fontSize: 13, fontWeight: 800, color: "#D4A254" }}>🔥 {combo}x combo</div>}
+          {combo > 1 && <div className="scale-pop" style={{ background: "rgba(239,131,84,0.2)", borderRadius: 20, padding: "4px 12px", fontSize: 13, fontWeight: 800, color: "#D4A254", display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> {combo}x combo</div>}
           <div style={{ display: "flex", gap: 3 }}>
             {Array.from({ length: 3 }, (_, i) => (
-              <div key={i} style={{ width: 28, height: 28, borderRadius: "50%", background: i < lives ? "rgba(255,100,100,0.2)" : "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, transition: "all 0.3s", transform: i < lives ? "scale(1)" : "scale(0.7)" }}>{i < lives ? "❤️" : "🖤"}</div>
+              <div key={i} style={{ width: 28, height: 28, borderRadius: "50%", background: i < lives ? "rgba(255,100,100,0.2)" : "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s", transform: i < lives ? "scale(1)" : "scale(0.7)" }}>{i < lives ? <Heart size={14} color="#ff6464" /> : <Heart size={14} color="#555" />}</div>
             ))}
           </div>
         </div>
@@ -108,10 +109,10 @@ function ShrinkRayGame() {
         <div className="scale-pop" style={{ background: T.successBg, borderRadius: T.r3, padding: "28px", textAlign: "center", color: T.text, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 30% 50%, rgba(81,207,102,0.15), transparent 60%)" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>🎉</div>
+            <div style={{ marginBottom: 8 }}><Confetti size={48} color={T.success} /></div>
             <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 6 }}>Summary Complete!</div>
             <div style={{ fontSize: 13, color: T.textSec }}>{words.length} words → {remaining} words · All essential points preserved</div>
-            {combo > 3 && <div style={{ marginTop: 10, fontSize: 12, fontWeight: 700, color: "#D4A254" }}>🔥 Best combo: {combo}x</div>}
+            {combo > 3 && <div style={{ marginTop: 10, fontSize: 12, fontWeight: 700, color: "#D4A254", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> Best combo: {combo}x</div>}
           </div>
         </div>
       )}
@@ -119,7 +120,7 @@ function ShrinkRayGame() {
         <div className="scale-pop" style={{ background: T.dangerBg, borderRadius: T.r3, padding: "28px", textAlign: "center", color: T.text, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 70% 50%, rgba(224,82,98,0.15), transparent 60%)" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>💔</div>
+            <div style={{ marginBottom: 8 }}><HeartBreak size={48} color={T.danger} /></div>
             <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 6 }}>Out of Lives!</div>
             <div style={{ fontSize: 13, color: T.textSec }}>Essential information was removed 3 times. The green-highlighted words below are key points.</div>
           </div>
@@ -127,7 +128,7 @@ function ShrinkRayGame() {
       )}
 
       <div style={{ fontSize: 11, color: T.textTer, display: "flex", alignItems: "center", gap: 6 }}>
-        <span>✂️</span> Click redundant words to zap them · Essential words fight back · Build combos for bonus points
+        <Scissors size={14} color={T.textTer} /> Click redundant words to zap them · Essential words fight back · Build combos for bonus points
       </div>
     </div>
   );

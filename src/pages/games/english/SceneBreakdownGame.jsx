@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { MaskHappy } from '../../../icons/icons.jsx';
 
 function SceneBreakdownGame() {
   const scenes = [
@@ -42,7 +43,7 @@ function SceneBreakdownGame() {
       <div style={{ fontSize: 13, fontWeight: 600, color: T.textSec }}>For each character, select their primary motivation:</div>
       {scene.characters.map((ch, i) => (
         <div key={i} style={{ background: T.bgCard, borderRadius: T.r2, padding: "14px 16px", border: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 8 }}>🎭 {ch.name}</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><MaskHappy size={16} color={T.text} /> {ch.name}</div>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             {motivationOptions.map(m => {
               const isSelected = answers[ch.name] === m;

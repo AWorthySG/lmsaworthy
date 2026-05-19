@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
-import { Lightning, Flame } from '../../../icons/icons.jsx';
+import { Lightning, Flame, Dice } from '../../../icons/icons.jsx';
 
 function MarketPlaygroundGame() {
   const [price, setPrice] = useState(50);
@@ -123,7 +123,7 @@ function MarketPlaygroundGame() {
       {shockLabel && <div className="fade-up" style={{ background: "linear-gradient(135deg, rgba(239,131,84,0.08), rgba(248,181,90,0.08))", borderRadius: T.r2, padding: "12px 16px", fontSize: 13, fontWeight: 700, color: T.accent, textAlign: "center", border: `1px solid ${T.accent}22` }}>{shockLabel}</div>}
 
       <button onClick={applyShock} className="glow-pulse" style={{ padding: "12px 24px", borderRadius: T.r5, background: T.gradPrimary, color: "#fff", fontWeight: 700, fontSize: 14, border: "none", cursor: "pointer", alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 8 }}>
-        🎲 Random Shock — Round {round + 1}
+        <Dice size={16} color="#fff" /> Random Shock — Round {round + 1}
       </button>
     </div>
   );

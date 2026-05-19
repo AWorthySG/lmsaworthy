@@ -149,6 +149,7 @@ export const Gem = ic("ph:diamond-bold");
 export const Waves = ic("ph:waves-bold");
 export const Siren = ic("ph:siren-bold");
 export const PencilLine = ic("ph:pencil-line-bold");
+export const Dice = ic("ph:dice-five-bold");
 
 // Misc
 export const Atom = ic("ph:atom-bold");

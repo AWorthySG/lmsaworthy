@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../../theme/theme.js';
 import { ConfettiEffect } from '../../../components/gamification';
-import { Flame, Newspaper, ShoppingCart, Factory, CheckCircle, XCircle, PencilLine, Target } from '../../../icons/icons.jsx';
+import { Flame, Newspaper, ShoppingCart, Factory, CheckCircle, XCircle, PencilLine, Target, ArrowLeft, ArrowRight } from '../../../icons/icons.jsx';
 
 function DdSsShifterGame() {
   const scenarios = [
@@ -131,12 +131,12 @@ function DdSsShifterGame() {
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => selectDirection("left")} className="card-hover"
               style={{ flex: 1, padding: "16px", borderRadius: T.r2, border: `2px solid ${T.danger}33`, background: T.bgCard, cursor: "pointer", textAlign: "center" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>⬅️</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }}><ArrowLeft size={24} color={T.danger} /></div>
               <div style={{ fontSize: 12, fontWeight: 700, color: T.danger }}>Shift LEFT (Decrease)</div>
             </button>
             <button onClick={() => selectDirection("right")} className="card-hover"
               style={{ flex: 1, padding: "16px", borderRadius: T.r2, border: `2px solid ${T.success}33`, background: T.bgCard, cursor: "pointer", textAlign: "center" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>➡️</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }}><ArrowRight size={24} color={T.success} /></div>
               <div style={{ fontSize: 12, fontWeight: 700, color: T.success }}>Shift RIGHT (Increase)</div>
             </button>
           </div>

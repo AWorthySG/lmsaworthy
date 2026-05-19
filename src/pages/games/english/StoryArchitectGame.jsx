@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Warning, Trash, CheckCircle, XCircle, Target, PencilLine } from '../../../icons/icons.jsx';
 
 function StoryArchitectGame() {
   const stories = [
@@ -106,7 +107,7 @@ function StoryArchitectGame() {
                 <div style={{ fontSize: 9, fontWeight: 700, color: stageColors[stage], textTransform: "uppercase", letterSpacing: 0.5 }}>{stage}</div>
                 {block ? <div style={{ fontSize: 12, color: T.text, lineHeight: 1.5 }}>{block.text}</div> : <div style={{ fontSize: 11, color: T.textTer, fontStyle: "italic" }}>Empty</div>}
               </div>
-              {done && block && <span style={{ fontSize: 12 }}>{isCorrect ? "✅" : "❌"}</span>}
+              {done && block && (isCorrect ? <CheckCircle size={14} color={T.success} /> : <XCircle size={14} color={T.danger} />)}
               {done && block && !isCorrect && <span style={{ fontSize: 9, color: T.textTer }}>{block.stage}</span>}
             </div>
           );
@@ -118,12 +119,12 @@ function StoryArchitectGame() {
         <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ fontSize: 11, fontWeight: 700, color: T.textSec }}>Available scenes:</span>
-            <span style={{ fontSize: 10, color: T.danger, fontWeight: 600 }}>⚠️ One scene is a red herring!</span>
+            <span style={{ fontSize: 10, color: T.danger, fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 3 }}><Warning size={12} color={T.danger} /> One scene is a red herring!</span>
           </div>
           {available.map(b => (
             <div key={b.id} style={{ display: "flex", gap: 6 }}>
               <button onClick={() => placeBlock(b)} className="card-hover" style={{ flex: 1, padding: "10px 12px", borderRadius: T.r2, background: T.bgCard, border: `1px solid ${T.border}`, cursor: "pointer", textAlign: "left", fontSize: 12, color: T.text, lineHeight: 1.5 }}>{b.text}</button>
-              <button onClick={() => discardBlock(b)} title="Discard as red herring" style={{ width: 36, borderRadius: T.r2, background: T.dangerBg, border: `1px solid ${T.danger}33`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>🗑️</button>
+              <button onClick={() => discardBlock(b)} title="Discard as red herring" style={{ width: 36, borderRadius: T.r2, background: T.dangerBg, border: `1px solid ${T.danger}33`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Trash size={16} color={T.danger} /></button>
             </div>
           ))}
         </div>
@@ -132,7 +133,7 @@ function StoryArchitectGame() {
       {/* Discarded block */}
       {discarded && !done && (
         <div style={{ background: T.dangerBg, borderRadius: T.r2, padding: "8px 14px", fontSize: 12, color: T.danger, display: "flex", alignItems: "center", gap: 8 }}>
-          <span>🗑️ Discarded: "{discarded.text.slice(0, 50)}..."</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Trash size={14} color={T.danger} /> Discarded: "{discarded.text.slice(0, 50)}..."</span>
           <button onClick={() => setDiscarded(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, fontWeight: 700, color: T.accent }}>Undo</button>
         </div>
       )}
@@ -148,17 +149,17 @@ function StoryArchitectGame() {
             <div style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{totalScore} / {maxScore}</div>
             <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 8, fontSize: 11, color: T.textSec }}>
               <span>Arc: {correct}/6</span>
-              <span>Red herring: {redHerringCorrect ? "✅" : "❌"}</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>Red herring: {redHerringCorrect ? <CheckCircle size={12} color={T.success} /> : <XCircle size={12} color={T.danger} />}</span>
               <span>Time bonus: +{timeBonus}</span>
             </div>
             {!redHerringCorrect && discarded && (
               <div style={{ marginTop: 10, padding: "8px 14px", background: T.dangerBg, borderRadius: T.r2, fontSize: 11, color: T.danger, textAlign: "left" }}>
-                🗑️ You discarded a real scene! The red herring was: "{story.redHerring.text}" — {story.redHerring.why}
+                <Trash size={12} color={T.danger} style={{ display: "inline" }} /> You discarded a real scene! The red herring was: "{story.redHerring.text}" — {story.redHerring.why}
               </div>
             )}
             {redHerringCorrect && (
               <div style={{ marginTop: 10, padding: "8px 14px", background: T.successBg, borderRadius: T.r2, fontSize: 11, color: T.success, textAlign: "left" }}>
-                🎯 Correct! "{story.redHerring.text}" — {story.redHerring.why}
+                <Target size={12} color={T.success} style={{ display: "inline" }} /> Correct! "{story.redHerring.text}" — {story.redHerring.why}
               </div>
             )}
             {/* Why each scene belongs */}
@@ -171,7 +172,7 @@ function StoryArchitectGame() {
               ))}
             </div>
             <div style={{ marginTop: 12, padding: "10px 14px", background: T.accentLight, borderRadius: T.r2, fontSize: 11, color: T.accentText, textAlign: "left", lineHeight: 1.6 }}>
-              📝 <strong>O-Level Tip:</strong> In narrative writing, every scene must serve a purpose: advance the plot, reveal character, or build tension. Irrelevant content (like the red herring) loses marks — examiners call this "padding."
+              <PencilLine size={14} color={T.accentText} style={{ display: "inline" }} /> <strong>O-Level Tip:</strong> In narrative writing, every scene must serve a purpose: advance the plot, reveal character, or build tension. Irrelevant content (like the red herring) loses marks — examiners call this "padding."
             </div>
           </div>
         </div>
