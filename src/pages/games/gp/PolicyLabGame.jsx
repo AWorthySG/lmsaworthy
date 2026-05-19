@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Buildings, ClipboardText, Lightning, Lightbulb, PencilLine } from '../../../icons/icons.jsx';
 
 function PolicyLabGame() {
   const scenarios = [
@@ -89,7 +90,7 @@ function PolicyLabGame() {
       <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>🏛️</div>
+          <div style={{ marginBottom: 8 }}><Buildings size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
             <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
           </div>
@@ -109,7 +110,7 @@ function PolicyLabGame() {
             {grade === "S" ? "Outstanding — you balanced all stakeholders while navigating crises." : grade === "A" ? "Strong performance — good trade-off management." : grade === "B" ? "Solid — but some stakeholders suffered." : "Review the trade-offs — every policy benefits someone at someone else's expense."}
           </div>
           <div style={{ marginTop: 12, padding: "10px 14px", background: T.accentLight, borderRadius: T.r2, fontSize: 11, color: T.accentText, textAlign: "left", lineHeight: 1.6 }}>
-            📝 <strong>GP Exam Tip:</strong> In Paper 1, always acknowledge trade-offs. The best essays say "While Policy X improves A, it may worsen B, suggesting that..." This game mirrors how real policy arguments are evaluated.
+            <PencilLine size={14} color={T.accentText} style={{ display: "inline" }} /> <strong>GP Exam Tip:</strong> In Paper 1, always acknowledge trade-offs. The best essays say "While Policy X improves A, it may worsen B, suggesting that..." This game mirrors how real policy arguments are evaluated.
           </div>
         </div>
       </div>
@@ -137,12 +138,12 @@ function PolicyLabGame() {
       {/* Context */}
       {round === 1 && (
         <div style={{ background: T.bgMuted, borderRadius: T.r2, padding: "12px 16px", fontSize: 12, color: T.textSec, lineHeight: 1.6, border: `1px solid ${T.border}` }}>
-          📋 {scenario.context}
+          <ClipboardText size={14} color={T.textSec} style={{ display: "inline" }} /> {scenario.context}
         </div>
       )}
 
       {/* Crisis banner */}
-      {crisisMsg && <div className="fade-up" style={{ background: T.dangerBg, borderRadius: T.r2, padding: "10px 16px", fontSize: 13, fontWeight: 700, color: T.danger, textAlign: "center", border: `1px solid ${T.danger}33` }}>⚡ Crisis: {crisisMsg}</div>}
+      {crisisMsg && <div className="fade-up" style={{ background: T.dangerBg, borderRadius: T.r2, padding: "10px 16px", fontSize: 13, fontWeight: 700, color: T.danger, textAlign: "center", border: `1px solid ${T.danger}33`, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Lightning size={14} color={T.danger} /> Crisis: {crisisMsg}</div>}
 
       {/* Meters — visual bars */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
@@ -169,7 +170,7 @@ function PolicyLabGame() {
             {roundPolicies.map((p, i) => (
               <button key={i} onClick={() => selectPolicy(p)} className="card-hover card-enter" style={{ "--i": i, padding: "14px 16px", borderRadius: T.r2, background: T.bgCard, border: `1px solid ${T.border}`, cursor: "pointer", textAlign: "left", transition: "all 0.15s" }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{p.label}</div>
-                <div style={{ fontSize: 11, color: T.accent, fontWeight: 600, marginTop: 4, fontStyle: "italic" }}>💡 {p.hint}</div>
+                <div style={{ fontSize: 11, color: T.accent, fontWeight: 600, marginTop: 4, fontStyle: "italic", display: "flex", alignItems: "center", gap: 4 }}><Lightbulb size={12} color={T.accent} /> {p.hint}</div>
               </button>
             ))}
           </div>

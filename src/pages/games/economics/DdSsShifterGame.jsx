@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../../theme/theme.js';
 import { ConfettiEffect } from '../../../components/gamification';
+import { Flame, Newspaper, ShoppingCart, Factory, CheckCircle, XCircle, PencilLine, Target } from '../../../icons/icons.jsx';
 
 function DdSsShifterGame() {
   const scenarios = [
@@ -84,7 +85,7 @@ function DdSsShifterGame() {
           <div style={{ fontSize: 14, fontWeight: 700 }}>Scenario {current + 1} / {deck.length}</div>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254" }}>🔥 {streak}x</div>}
+          {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254", display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> {streak}x</div>}
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: 16, fontWeight: 800, color: "#51cf66" }}>{totalPoints}</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>POINTS</div>
@@ -99,7 +100,7 @@ function DdSsShifterGame() {
 
       {/* Event card */}
       <div className="card-enter" style={{ background: "#FFFEF8", borderRadius: T.r3, padding: "24px 22px", border: "1px solid #E8E4D8", boxShadow: T.shadow2 }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: "#2B7A5B", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>📰 Breaking News</div>
+        <div style={{ fontSize: 9, fontWeight: 700, color: "#2B7A5B", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10, display: "flex", alignItems: "center", gap: 4 }}><Newspaper size={12} color="#2B7A5B" /> Breaking News</div>
         <div style={{ fontSize: 16, fontWeight: 700, color: T.text, lineHeight: 1.55, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.event}</div>
       </div>
 
@@ -109,13 +110,13 @@ function DdSsShifterGame() {
           <div style={{ fontSize: 12, fontWeight: 700, color: T.textSec, marginBottom: 8 }}>Step 1: Which curve shifts?</div>
           <div style={{ display: "flex", gap: 8 }}>
             {[
-              { id: "D", label: "Demand (D)", color: "#3D7DD6", emoji: "🛒" },
-              { id: "S", label: "Supply (S)", color: "#3BAA7E", emoji: "🏭" },
-              { id: "both", label: "Both D & S", color: "#7C6FDB", emoji: "🔄" },
+              { id: "D", label: "Demand (D)", color: "#3D7DD6", icon: <ShoppingCart size={24} color="#3D7DD6" /> },
+              { id: "S", label: "Supply (S)", color: "#3BAA7E", icon: <Factory size={24} color="#3BAA7E" /> },
+              { id: "both", label: "Both D & S", color: "#7C6FDB", icon: null },
             ].map(opt => (
               <button key={opt.id} onClick={() => selectCurve(opt.id)} className="card-hover"
                 style={{ flex: 1, padding: "16px 10px", borderRadius: T.r2, border: `2px solid ${opt.color}33`, background: T.bgCard, cursor: "pointer", textAlign: "center" }}>
-                <div style={{ fontSize: 24, marginBottom: 4 }}>{opt.emoji}</div>
+                <div style={{ marginBottom: 4 }}>{opt.icon || <span style={{ fontSize: 24 }}>D&S</span>}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: opt.color }}>{opt.label}</div>
               </button>
             ))}
@@ -179,7 +180,7 @@ function DdSsShifterGame() {
           <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {/* Score banner */}
             <div style={{ background: perfect ? T.successBg : T.bgCard, borderRadius: T.r2, padding: "14px 18px", textAlign: "center", border: `1px solid ${perfect ? "#51cf6633" : T.border}` }}>
-              <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: perfect ? T.success : T.text }}>{perfect ? "🎯 Perfect!" : `${pts}/4 points`}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: perfect ? T.success : T.text, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{perfect ? <><Target size={22} color={T.success} /> Perfect!</> : `${pts}/4 points`}</div>
             </div>
 
             {/* Animated DD-SS Diagram */}
@@ -226,7 +227,7 @@ function DdSsShifterGame() {
                 { label: "Quantity", yours: answers.qty, correct: s.qtyEffect, ok: answers.qty === s.qtyEffect },
               ].map((r, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: i < 3 ? 6 : 0 }}>
-                  <span style={{ fontSize: 14 }}>{r.ok ? "✅" : "❌"}</span>
+                  {r.ok ? <CheckCircle size={14} color={T.success} /> : <XCircle size={14} color={T.danger} />}
                   <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, width: 60 }}>{r.label}:</span>
                   {!r.ok && <span style={{ fontSize: 12, color: T.danger, textDecoration: "line-through" }}>{r.yours}</span>}
                   <span style={{ fontSize: 12, fontWeight: 700, color: r.ok ? T.success : T.accent }}>{r.correct}</span>
@@ -242,7 +243,7 @@ function DdSsShifterGame() {
 
             {/* Exam tip */}
             <div style={{ padding: "8px 14px", background: T.accentLight, borderRadius: T.r2, fontSize: 11, color: T.accentText, lineHeight: 1.6 }}>
-              📝 <strong>H2 Exam Tip:</strong> Always draw the diagram. Show the original and new curves, label the shift direction, and mark old (E₁) and new (E₂) equilibrium points with P and Q changes.
+              <PencilLine size={14} color={T.accentText} style={{ display: "inline" }} /> <strong>H2 Exam Tip:</strong> Always draw the diagram. Show the original and new curves, label the shift direction, and mark old (E₁) and new (E₂) equilibrium points with P and Q changes.
             </div>
 
             <button onClick={nextScenario} style={{ padding: "10px 24px", borderRadius: T.r5, background: T.gradPrimary, color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer", alignSelf: "flex-start" }}>

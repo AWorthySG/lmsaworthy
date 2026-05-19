@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Trophy, ChartLineUp, Handshake, Lightbulb } from '../../../icons/icons.jsx';
 
 function PriceWarsGame() {
   const maxRounds = 8;
@@ -75,7 +76,7 @@ function PriceWarsGame() {
       <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>{myRank === 1 ? "🏆" : "📊"}</div>
+          <div style={{ marginBottom: 8 }}>{myRank === 1 ? <Trophy size={48} color={gradeColors[grade]} /> : <ChartLineUp size={48} color={gradeColors[grade]} />}</div>
           <div style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>Final Standings</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 16, textAlign: "left", maxWidth: 300, margin: "16px auto 0" }}>
             {rank.map((r, i) => (
@@ -135,10 +136,10 @@ function PriceWarsGame() {
       {/* AI mood indicator */}
       <div style={{ display: "flex", gap: 8 }}>
         <div style={{ flex: 1, background: rivalAMood === "cooperative" ? T.successBg : T.dangerBg, borderRadius: T.r1, padding: "6px 12px", fontSize: 11, fontWeight: 600, color: rivalAMood === "cooperative" ? T.success : T.danger, textAlign: "center" }}>
-          Rival A: {rivalAMood === "cooperative" ? "🤝 Cooperative" : "😤 Retaliating"}
+          Rival A: {rivalAMood === "cooperative" ? <><Handshake size={14} color={T.success} style={{ display: "inline" }} /> Cooperative</> : "Retaliating"}
         </div>
         <div style={{ flex: 1, background: rivalBMood === "cooperative" ? T.successBg : T.dangerBg, borderRadius: T.r1, padding: "6px 12px", fontSize: 11, fontWeight: 600, color: rivalBMood === "cooperative" ? T.success : T.danger, textAlign: "center" }}>
-          Rival B: {rivalBMood === "cooperative" ? "🤝 Cooperative" : "😤 Retaliating"}
+          Rival B: {rivalBMood === "cooperative" ? <><Handshake size={14} color={T.success} style={{ display: "inline" }} /> Cooperative</> : "Retaliating"}
         </div>
       </div>
 
@@ -156,7 +157,7 @@ function PriceWarsGame() {
       </div>
 
       <div style={{ fontSize: 11, color: T.textTer, padding: "8px 12px", background: T.bgMuted, borderRadius: T.r1, lineHeight: 1.6 }}>
-        💡 <strong>Prisoner's Dilemma:</strong> If everyone prices high, profits are shared. If you undercut, you profit short-term but rivals may retaliate. Sustained cooperation maximises total industry profit.
+        <Lightbulb size={14} color={T.textTer} style={{ display: "inline" }} /> <strong>Prisoner's Dilemma:</strong> If everyone prices high, profits are shared. If you undercut, you profit short-term but rivals may retaliate. Sustained cooperation maximises total industry profit.
       </div>
     </div>
   );

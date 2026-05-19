@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
-import { ArrowLeft } from '../../icons/icons.jsx';
+import { ArrowLeft, PencilSimpleLine } from '../../icons/icons.jsx';
 import { SUBJECTS } from '../../data/subjects.js';
 import { MICRO_MODULES } from '../../data/microModules.js';
 import { getSubject } from '../../utils/helpers.js';
@@ -28,7 +28,7 @@ function MicrolearningPage({ state, dispatch, defaultSubject }) {
           <div style={{ fontSize: 15, color: T.text, lineHeight: 1.8, whiteSpace: "pre-line" }}>{activeModule.content}</div>
         </div>
         <div style={{ background: T.accentLight, borderRadius: T.r2, padding: "14px 18px", border: `1px solid ${T.accent}22` }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: T.accent, marginBottom: 4 }}>📝 Exam Tip</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.accent, marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}><PencilSimpleLine size={12} color={T.accent} /> Exam Tip</div>
           <div style={{ fontSize: 13, color: T.accentText, lineHeight: 1.6 }}>{activeModule.examTip}</div>
         </div>
       </div>

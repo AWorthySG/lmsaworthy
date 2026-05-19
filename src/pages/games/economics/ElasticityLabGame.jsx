@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { MagnifyingGlass, Trophy } from '../../../icons/icons.jsx';
 
 function ElasticityLabGame() {
   const products = [
@@ -54,10 +55,10 @@ function ElasticityLabGame() {
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       {/* Tab switcher */}
       <div style={{ display: "flex", gap: 4, background: T.bgMuted, borderRadius: T.r2, padding: 3 }}>
-        {[{ id: "explore", label: "🔬 Explore" }, { id: "challenge", label: "🏆 Challenge" }].map(t => (
+        {[{ id: "explore", label: "Explore", icon: <MagnifyingGlass size={14} /> }, { id: "challenge", label: "Challenge", icon: <Trophy size={14} /> }].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ flex: 1, padding: "8px 12px", borderRadius: T.r1, border: "none", background: tab === t.id ? T.bgCard : "transparent", color: tab === t.id ? T.text : T.textSec, fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", transition: "all 0.2s", boxShadow: tab === t.id ? T.shadow1 : "none" }}>
-            {t.label}
+            style={{ flex: 1, padding: "8px 12px", borderRadius: T.r1, border: "none", background: tab === t.id ? T.bgCard : "transparent", color: tab === t.id ? T.text : T.textSec, fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", transition: "all 0.2s", boxShadow: tab === t.id ? T.shadow1 : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+            {t.icon} {t.label}
           </button>
         ))}
       </div>

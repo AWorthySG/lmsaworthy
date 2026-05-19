@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Lightning, HeartBreak, Flame, Heart, CheckCircle, Timer } from '../../../icons/icons.jsx';
 
 function VocabBlitzGame() {
   const allWords = [
@@ -89,12 +90,12 @@ function VocabBlitzGame() {
       <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>{lives > 0 ? "⚡" : "💔"}</div>
+          <div style={{ marginBottom: 8 }}>{lives > 0 ? <Lightning size={48} color={gradeColors[grade]} /> : <HeartBreak size={48} color={T.danger} />}</div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
             <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
           </div>
           <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{score} pts</div>
-          <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>{current} words · Best combo: 🔥{bestCombo}x</div>
+          <div style={{ fontSize: 14, color: T.textSec, marginTop: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{current} words · Best combo: <Flame size={14} color={T.textSec} />{bestCombo}x</div>
           <div style={{ fontSize: 12, color: T.textTer, marginTop: 12 }}>
             {grade === "S" ? "Vocabulary master! Band 5 material." : grade === "A" ? "Excellent range — keep building!" : "Practice makes perfect — try again to improve."}
           </div>
@@ -115,13 +116,13 @@ function VocabBlitzGame() {
           <div style={{ fontSize: 14, fontWeight: 700 }}>{current + 1} / {total}</div>
         </div>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          {combo > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254" }}>🔥 {combo}x</div>}
+          {combo > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254", display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> {combo}x</div>}
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#D4A254", fontFamily: "'JetBrains Mono', monospace" }}>{score}</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>SCORE</div>
           </div>
           <div style={{ display: "flex", gap: 3 }}>
-            {Array.from({ length: 3 }, (_, i) => <span key={i} style={{ fontSize: 16, opacity: i < lives ? 1 : 0.2, transition: "opacity 0.3s" }}>{i < lives ? "❤️" : "🖤"}</span>)}
+            {Array.from({ length: 3 }, (_, i) => <span key={i} style={{ opacity: i < lives ? 1 : 0.2, transition: "opacity 0.3s", display: "inline-flex" }}>{i < lives ? <Heart size={16} color="#ff6b6b" /> : <Heart size={16} color="#555" />}</span>)}
           </div>
         </div>
       </div>
@@ -134,7 +135,7 @@ function VocabBlitzGame() {
       {/* Word card */}
       <div className="card-enter" style={{ background: T.bgCard, borderRadius: T.r3, padding: "32px 28px", border: `1px solid ${T.border}`, textAlign: "center", boxShadow: T.shadow2, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 12, right: 16, fontSize: 24, fontWeight: 800, color: timerColor, fontFamily: "'JetBrains Mono', monospace" }}>{timeLeft}s</div>
-        {speedBonus && <div className="scale-pop" style={{ position: "absolute", top: 12, left: 16, fontSize: 11, fontWeight: 800, color: "#D4A254", background: "rgba(248,181,90,0.15)", padding: "2px 10px", borderRadius: 20 }}>⚡ SPEED BONUS x2</div>}
+        {speedBonus && <div className="scale-pop" style={{ position: "absolute", top: 12, left: 16, fontSize: 11, fontWeight: 800, color: "#D4A254", background: "rgba(248,181,90,0.15)", padding: "2px 10px", borderRadius: 20, display: "flex", alignItems: "center", gap: 3 }}><Lightning size={12} color="#D4A254" /> SPEED BONUS x2</div>}
         <div style={{ fontSize: 36, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.03em" }}>{w.word}</div>
         <div style={{ fontSize: 12, color: T.textTer, marginTop: 8 }}>Select the correct definition</div>
       </div>
@@ -155,7 +156,7 @@ function VocabBlitzGame() {
                 opacity: answered && !isCorrect ? 0.5 : 1, transition: "all 0.2s",
                 transform: isCorrect ? "scale(1.02)" : "scale(1)",
               }}>
-              {isCorrect && "✅ "}{opt}
+              {isCorrect && <><CheckCircle size={14} color="#3BAA7E" style={{ display: "inline", marginRight: 4 }} /></>}{opt}
             </button>
           );
         })}
@@ -164,7 +165,7 @@ function VocabBlitzGame() {
       {/* Timeout message */}
       {answered === "timeout" && (
         <div className="fade-up" style={{ background: T.dangerBg, borderRadius: T.r2, padding: "12px 16px", textAlign: "center", borderLeft: `4px solid ${T.danger}` }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.danger }}>⏰ Time's up!</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.danger, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Timer size={14} color={T.danger} /> Time's up!</div>
           <div style={{ fontSize: 12, color: T.text, marginTop: 4 }}>The answer was: <strong>{w.def}</strong></div>
         </div>
       )}

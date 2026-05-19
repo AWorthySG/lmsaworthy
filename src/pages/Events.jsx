@@ -53,7 +53,7 @@ function Events({ state, dispatch }) {
         <div style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Hero banner */}
           <div style={{ background: T.bgMuted, borderRadius: T.r3, padding: "24px 28px", color: T.text, border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: -20, right: -20, fontSize: 100, opacity: 0.08 }}>🏆</div>
+            <div style={{ position: "absolute", top: -20, right: -20, opacity: 0.08 }}><Trophy size={100} /></div>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#D4A254", marginBottom: 6 }}>Earn Prizes · Compete · Level Up</div>
             <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 8 }}>Upcoming Events & Challenges</div>
             <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6 }}>
@@ -209,7 +209,7 @@ function Events({ state, dispatch }) {
               )}
               {ev.participants.sort((a, b) => (b.score || 0) - (a.score || 0)).map((p, i) => {
                 const st = getStudent(p.studentId);
-                const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : null;
+                const medal = i === 0 ? <Crown size={16} color="#D4A254" /> : i === 1 ? <Medal size={16} color="#94A3B8" /> : i === 2 ? <Medal size={16} color="#CD7F32" /> : null;
                 return (
                   <div key={p.studentId} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < ev.participants.length - 1 ? `1px solid ${T.border}` : "none" }}>
                     <div style={{ width: 24, textAlign: "center", fontSize: medal ? 16 : 12, fontWeight: 700, color: T.textTer }}>{medal || (i + 1)}</div>

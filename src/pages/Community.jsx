@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { T } from '../theme/theme.js';
-import { ChatCircle, ChatText, Handshake, Megaphone, ThumbsUp, PushPin, Plus, X, Star } from '../icons/icons.jsx';
+import { ChatCircle, ChatText, Handshake, Megaphone, ThumbsUp, PushPin, Plus, X, Star, ClipboardText } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, Input, Textarea, Select } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
 import { formatDate, getSubjectTheme, getSubject } from '../utils/helpers.js';
@@ -18,7 +18,7 @@ function Community({ state, dispatch }) {
 
   const filterTabs = [
     { id: "all", label: "All Posts" },
-    { id: "announcements", label: "📢 Announcements" },
+    { id: "announcements", label: "Announcements" },
     ...SUBJECTS.map(s => ({ id: s.id, label: s.name })),
   ];
 
@@ -138,8 +138,8 @@ function Community({ state, dispatch }) {
                       <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
                         <span style={{ fontWeight: 700, fontSize: 13 }}>{post.author}</span>
                         {post.authorType === "tutor" && <span style={{ fontSize: 10, fontWeight: 700, color: T.accentText, background: T.accentLight, padding: "2px 6px", borderRadius: 20 }}>Tutor</span>}
-                        {post.isAnnouncement && <span style={{ fontSize: 10, fontWeight: 700, color: "#92400E", background: "#FEF3C7", padding: "2px 6px", borderRadius: 20 }}>📢 Announcement</span>}
-                        {post.pinned && <span style={{ fontSize: 10, color: T.accent, fontWeight: 600 }}>📌 Pinned</span>}
+                        {post.isAnnouncement && <span style={{ fontSize: 10, fontWeight: 700, color: "#92400E", background: "#FEF3C7", padding: "2px 6px", borderRadius: 20, display: "inline-flex", alignItems: "center", gap: 3 }}><Megaphone size={10} /> Announcement</span>}
+                        {post.pinned && <span style={{ fontSize: 10, color: T.accent, fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 3 }}><PushPin size={10} /> Pinned</span>}
                       </div>
                       <div style={{ fontSize: 11, color: T.textTer }}>{formatDate(post.createdAt)}</div>
                     </div>
@@ -148,7 +148,7 @@ function Community({ state, dispatch }) {
                     {post.subject && subjectTheme && (
                       <span style={{ fontSize: 10, fontWeight: 700, color: subjectTheme.text, background: subjectTheme.bg, padding: "3px 8px", borderRadius: 20 }}>{getSubject(post.subject)?.name}</span>
                     )}
-                    <button onClick={() => dispatch({ type: "PIN_POST", payload: post.id })} title={post.pinned ? "Unpin" : "Pin post"} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: post.pinned ? T.accent : T.textTer, fontSize: 15, lineHeight: 1 }}>📌</button>
+                    <button onClick={() => dispatch({ type: "PIN_POST", payload: post.id })} title={post.pinned ? "Unpin" : "Pin post"} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: post.pinned ? T.accent : T.textTer, fontSize: 15, lineHeight: 1 }}><PushPin size={15} color={post.pinned ? T.accent : T.textTer} /></button>
                   </div>
                 </div>
                 <h3 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: T.text, lineHeight: 1.4 }}>{post.title}</h3>

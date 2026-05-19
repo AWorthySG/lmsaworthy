@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Buildings, CheckCircle, XCircle, MagnifyingGlass, Lightning, Confetti, PencilLine } from '../../../icons/icons.jsx';
 
 function ExternalityCityGame() {
   const types = [
@@ -149,7 +150,7 @@ function ExternalityCityGame() {
       <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>🏙️</div>
+          <div style={{ marginBottom: 8 }}><Buildings size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
             <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
           </div>
@@ -157,21 +158,21 @@ function ExternalityCityGame() {
           <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>rounds completed · {discoveries.length} adjacency effects discovered</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 12 }}>
             {roundScores.map((passed, i) => (
-              <div key={i} style={{ width: 28, height: 28, borderRadius: "50%", background: passed ? T.successBg : T.dangerBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, border: `1px solid ${passed ? T.success + "33" : T.danger + "33"}` }}>
-                {passed ? "✅" : "❌"}
+              <div key={i} style={{ width: 28, height: 28, borderRadius: "50%", background: passed ? T.successBg : T.dangerBg, display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${passed ? T.success + "33" : T.danger + "33"}` }}>
+                {passed ? <CheckCircle size={14} color={T.success} /> : <XCircle size={14} color={T.danger} />}
               </div>
             ))}
           </div>
           {discoveries.length > 0 && (
             <div style={{ marginTop: 12, textAlign: "left" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, marginBottom: 6 }}>🔬 Discovered Effects:</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><MagnifyingGlass size={12} color={T.textSec} /> Discovered Effects:</div>
               {discoveries.includes("hospital-house") && <div style={{ fontSize: 11, color: T.text, marginBottom: 2 }}>🏥+🏠 Hospital near Housing = +3 welfare</div>}
               {discoveries.includes("mall-mall") && <div style={{ fontSize: 11, color: T.text, marginBottom: 2 }}>🛒+🛒 Adjacent Malls = -3 GDP (competition)</div>}
               {discoveries.includes("factory-factory") && <div style={{ fontSize: 11, color: T.text, marginBottom: 2 }}>🏭+🏭 Factory cluster = -3 extra welfare (pollution compounds)</div>}
             </div>
           )}
           <div style={{ marginTop: 12, padding: "10px 14px", background: T.accentLight, borderRadius: T.r2, fontSize: 11, color: T.accentText, textAlign: "left", lineHeight: 1.6 }}>
-            📝 <strong>H1 Exam Tip:</strong> Externalities compound when activities cluster (pollution zones). Government tools like Pigouvian taxes internalise the externality by making polluters pay the social cost — exactly what the Pollution Tax policy does in this game.
+            <PencilLine size={14} color={T.accentText} style={{ display: "inline" }} /> <strong>H1 Exam Tip:</strong> Externalities compound when activities cluster (pollution zones). Government tools like Pigouvian taxes internalise the externality by making polluters pay the social cost — exactly what the Pollution Tax policy does in this game.
           </div>
         </div>
       </div>
@@ -196,7 +197,7 @@ function ExternalityCityGame() {
       {/* Event banner */}
       {currentRound.event && (
         <div className="fade-up" style={{ background: T.warningBg, borderRadius: T.r2, padding: "10px 14px", fontSize: 12, fontWeight: 700, color: T.warning, textAlign: "center", border: `1px solid ${T.warning}33` }}>
-          ⚡ {currentRound.event.label}
+          <Lightning size={14} color={T.warning} style={{ display: "inline" }} /> {currentRound.event.label}
         </div>
       )}
 
@@ -250,7 +251,7 @@ function ExternalityCityGame() {
       {/* Policy tools (available from round 3) */}
       {round >= 2 && !submitted && (
         <div>
-          <div style={{ fontSize: 10, fontWeight: 700, color: T.textSec, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>🏛️ Government Policy (pick one):</div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: T.textSec, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><Buildings size={12} color={T.textSec} /> Government Policy (pick one):</div>
           <div style={{ display: "flex", gap: 6 }}>
             {policies.map(p => (
               <button key={p.label} onClick={() => setActivePolicy(activePolicy === p.label ? null : p.label)}
@@ -278,7 +279,7 @@ function ExternalityCityGame() {
         <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ background: roundScores[roundScores.length - 1] ? T.successBg : T.dangerBg, borderRadius: T.r2, padding: "14px 18px", textAlign: "center", border: `1px solid ${roundScores[roundScores.length - 1] ? T.success + "33" : T.danger + "33"}` }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: roundScores[roundScores.length - 1] ? T.success : T.danger }}>
-              {roundScores[roundScores.length - 1] ? "🎉 Goal Achieved!" : "Goal Not Met"}
+              {roundScores[roundScores.length - 1] ? <><Confetti size={18} color={T.success} style={{ display: "inline" }} /> Goal Achieved!</> : "Goal Not Met"}
             </div>
             <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>GDP: {stats.gdp} · Welfare: {stats.welfare} · Budget left: ${budget}{activePolicy ? ` · Policy: ${activePolicy}` : ""}</div>
           </div>

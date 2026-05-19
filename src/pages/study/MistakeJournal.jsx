@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
+import { PushPin, CheckCircle, XCircle, Lightbulb } from '../../icons/icons.jsx';
 import { EmptyStateIllustration } from '../../components/ui';
 
 function MistakeJournal({ state, dispatch }) {
@@ -35,7 +36,7 @@ function MistakeJournal({ state, dispatch }) {
         <>
           {unreviewed.length > 0 && (
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: T.danger, marginBottom: 8 }}>📌 Needs Review</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: T.danger, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><PushPin size={14} color={T.danger} /> Needs Review</div>
               {unreviewed.map(m => {
                 const theme = T[m.subject] || T.eng;
                 return (
@@ -46,8 +47,8 @@ function MistakeJournal({ state, dispatch }) {
                         <span style={{ fontSize: 10, color: T.textTer }}>{m.date}</span>
                       </div>
                       <div style={{ fontSize: 13, color: T.text, lineHeight: 1.5 }}>{m.question}</div>
-                      {m.correctAnswer && <div style={{ fontSize: 12, color: T.success, marginTop: 4, fontWeight: 600 }}>✓ Correct: {m.correctAnswer}</div>}
-                      {m.yourAnswer && <div style={{ fontSize: 12, color: T.danger, marginTop: 2 }}>✗ Your answer: {m.yourAnswer}</div>}
+                      {m.correctAnswer && <div style={{ fontSize: 12, color: T.success, marginTop: 4, fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}><CheckCircle size={12} color={T.success} /> Correct: {m.correctAnswer}</div>}
+                      {m.yourAnswer && <div style={{ fontSize: 12, color: T.danger, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}><XCircle size={12} color={T.danger} /> Your answer: {m.yourAnswer}</div>}
                     </div>
                     <button onClick={() => dispatch({ type: "TOGGLE_MISTAKE_REVIEWED", payload: m.id })} style={{ padding: "6px 12px", borderRadius: T.r1, background: T.bgMuted, border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 10, fontWeight: 700, color: T.textSec, alignSelf: "flex-start", whiteSpace: "nowrap" }}>Mark Reviewed</button>
                   </div>
@@ -57,7 +58,7 @@ function MistakeJournal({ state, dispatch }) {
           )}
           {reviewed.length > 0 && (
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: T.success, marginBottom: 8 }}>✅ Reviewed ({reviewed.length})</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: T.success, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><CheckCircle size={14} color={T.success} /> Reviewed ({reviewed.length})</div>
               {reviewed.slice(0, 5).map(m => (
                 <div key={m.id} style={{ padding: "8px 14px", background: T.bgMuted, borderRadius: T.r1, marginBottom: 4, fontSize: 12, color: T.textTer, display: "flex", justifyContent: "space-between" }}>
                   <span>{m.question?.slice(0, 60)}...</span>
@@ -69,8 +70,8 @@ function MistakeJournal({ state, dispatch }) {
         </>
       )}
 
-      <div style={{ padding: "12px 16px", background: T.accentLight, borderRadius: T.r2, fontSize: 12, color: T.accentText, lineHeight: 1.6 }}>
-        💡 <strong>Study tip:</strong> Review your mistake journal before every practice session. Students who actively review errors improve 30% faster than those who just practice new questions.
+      <div style={{ padding: "12px 16px", background: T.accentLight, borderRadius: T.r2, fontSize: 12, color: T.accentText, lineHeight: 1.6, display: "flex", alignItems: "flex-start", gap: 6 }}>
+        <Lightbulb size={14} color={T.accentText} style={{ flexShrink: 0, marginTop: 2 }} /> <span><strong>Study tip:</strong> Review your mistake journal before every practice session. Students who actively review errors improve 30% faster than those who just practice new questions.</span>
       </div>
     </div>
   );

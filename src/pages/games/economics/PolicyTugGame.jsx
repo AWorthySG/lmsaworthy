@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Scales, Lightning, PencilLine } from '../../../icons/icons.jsx';
 
 function PolicyTugGame() {
   const maxRounds = 8;
@@ -66,7 +67,7 @@ function PolicyTugGame() {
       <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>⚖️</div>
+          <div style={{ marginBottom: 8 }}><Scales size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
             <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
           </div>
@@ -102,7 +103,7 @@ function PolicyTugGame() {
             </div>
           )}
           <div style={{ marginTop: 12, padding: "10px 14px", background: T.accentLight, borderRadius: T.r2, fontSize: 11, color: T.accentText, textAlign: "left", lineHeight: 1.6 }}>
-            📝 <strong>H1 Exam Tip:</strong> In essays on macroeconomic policy, always evaluate: (1) Time lag — fiscal policy takes months to implement, monetary policy acts faster. (2) Side effects — lowering interest rates fights recession but may cause asset bubbles. (3) Crowding out — government spending may displace private investment.
+            <PencilLine size={14} color={T.accentText} style={{ display: "inline" }} /> <strong>H1 Exam Tip:</strong> In essays on macroeconomic policy, always evaluate: (1) Time lag — fiscal policy takes months to implement, monetary policy acts faster. (2) Side effects — lowering interest rates fights recession but may cause asset bubbles. (3) Crowding out — government spending may displace private investment.
           </div>
         </div>
       </div>
@@ -152,7 +153,7 @@ function PolicyTugGame() {
       {/* Shock banner */}
       {shockMsg && (
         <div className="fade-up" style={{ background: T.accentLight, borderRadius: T.r2, padding: "10px 16px", fontSize: 13, fontWeight: 700, color: T.accent, textAlign: "center", border: `1px solid ${T.accent}22` }}>
-          ⚡ Random Shock: {shockMsg}
+          <Lightning size={14} color={T.accent} style={{ display: "inline" }} /> Random Shock: {shockMsg}
         </div>
       )}
 

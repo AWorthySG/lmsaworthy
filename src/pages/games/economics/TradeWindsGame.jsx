@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Waves, CheckCircle, XCircle } from '../../../icons/icons.jsx';
 
 function TradeWindsGame() {
   const challenges = [
@@ -93,7 +94,7 @@ function TradeWindsGame() {
       <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>🌊</div>
+          <div style={{ marginBottom: 8 }}><Waves size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
             <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
           </div>
@@ -102,7 +103,7 @@ function TradeWindsGame() {
           <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 12 }}>
             {roundScores.map((passed, i) => (
               <div key={i} style={{ width: 28, height: 28, borderRadius: "50%", background: passed ? T.successBg : T.dangerBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, border: `1px solid ${passed ? T.success + "33" : T.danger + "33"}` }}>
-                {passed ? "✅" : "❌"}
+                {passed ? <CheckCircle size={14} color={T.success} /> : <XCircle size={14} color={T.danger} />}
               </div>
             ))}
           </div>

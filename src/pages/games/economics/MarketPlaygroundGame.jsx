@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Lightning, Flame } from '../../../icons/icons.jsx';
 
 function MarketPlaygroundGame() {
   const [price, setPrice] = useState(50);
@@ -112,7 +113,7 @@ function MarketPlaygroundGame() {
 
           {/* Status badge */}
           <div className={isEq ? "scale-pop" : ""} style={{ background: isEq ? T.successBg : surplus > 0 ? T.warningBg : T.dangerBg, borderRadius: T.r2, padding: "12px 16px", textAlign: "center", color: isEq ? "#fff" : T.text, border: `1px solid ${isEq ? "#51cf6633" : surplus > 0 ? T.warning + "33" : T.danger + "33"}`, transition: "all 0.3s" }}>
-            <div style={{ fontSize: isEq ? 18 : 14, fontWeight: 800 }}>{isEq ? "⚡ EQUILIBRIUM!" : surplus > 0 ? `📦 Surplus of ${Math.abs(surplus)}` : `🔥 Shortage of ${Math.abs(surplus)}`}</div>
+            <div style={{ fontSize: isEq ? 18 : 14, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{isEq ? <><Lightning size={18} color={T.success} /> EQUILIBRIUM!</> : surplus > 0 ? `Surplus of ${Math.abs(surplus)}` : <><Flame size={14} color={T.danger} /> Shortage of {Math.abs(surplus)}</>}</div>
             <div style={{ fontSize: 10, marginTop: 2, color: T.textSec }}>{isEq ? "Qd = Qs — market clears perfectly" : surplus > 0 ? "Qs > Qd — lower the price!" : "Qd > Qs — raise the price!"}</div>
           </div>
         </div>

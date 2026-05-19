@@ -5,7 +5,7 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 import mammoth from 'mammoth';
 import { T } from '../theme/theme.js';
-import { Broadcast, Pencil, Cursor, HighlighterCircle, Eraser, Circle, Square, Minus, ArrowUUpLeft, ArrowUUpRight, PaintBucket, Upload, DownloadSimple, Trash, X, Plus, VideoOn, VideoCameraSlash, Microphone, MicrophoneSlash, Screencast, Phone, PhoneDisconnect, Users, Monitor, Dot, Chalkboard } from '../icons/icons.jsx';
+import { Broadcast, Pencil, Cursor, HighlighterCircle, Eraser, Circle, Square, Minus, ArrowUUpLeft, ArrowUUpRight, PaintBucket, Upload, DownloadSimple, Trash, X, Plus, VideoOn, VideoCameraSlash, Microphone, MicrophoneSlash, Screencast, Phone, PhoneDisconnect, Users, Monitor, Dot, Chalkboard, ClipboardText, PencilSimpleLine } from '../icons/icons.jsx';
 import { Card, Btn, Input, PageHeader, Badge } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
 import { firebaseDb, ref, push, onChildAdded, set, onValue } from '../config/firebase.js';
@@ -680,7 +680,7 @@ function Whiteboard({ sessionId, studentNames }) {
       ctx.font = "bold 14px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("📄 " + file.name, cw / 2, ch / 2);
+      ctx.fillText(file.name, cw / 2, ch / 2);
     }
     e.target.value = "";
   }
@@ -1025,12 +1025,12 @@ function Classroom({ state, dispatch, userProfile }) {
         {/* Info cards */}
         <div style={{ display: "flex", gap: 10, maxWidth: 480, width: "100%" }}>
           {[
-            { icon: "✏️", label: "Whiteboard", desc: "Draw, annotate, upload" },
-            { icon: "🎥", label: "Video & Audio", desc: "Live voice and camera" },
-            { icon: "🌐", label: "Cross-Device", desc: "Sync across all devices" },
+            { icon: <PencilSimpleLine size={20} color={T.accent} />, label: "Whiteboard", desc: "Draw, annotate, upload" },
+            { icon: <VideoOn size={20} color={T.accent} />, label: "Video & Audio", desc: "Live voice and camera" },
+            { icon: <Broadcast size={20} color={T.accent} />, label: "Cross-Device", desc: "Sync across all devices" },
           ].map((f, i) => (
             <div key={i} className="card-enter" style={{ "--i": i, flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "12px 10px", border: `1px solid ${T.border}`, textAlign: "center" }}>
-              <div style={{ fontSize: 20, marginBottom: 4 }}>{f.icon}</div>
+              <div style={{ marginBottom: 4, display: "flex", justifyContent: "center" }}>{f.icon}</div>
               <div style={{ fontSize: 11, fontWeight: 600, color: T.text, marginBottom: 2 }}>{f.label}</div>
               <div style={{ fontSize: 10, color: T.textTer }}>{f.desc}</div>
             </div>
@@ -1056,7 +1056,7 @@ function Classroom({ state, dispatch, userProfile }) {
               <span style={{ fontWeight: 700, color: T.navy }}>Whiteboard</span>
               <span style={{ color: T.textTer }}>·</span>
               <span style={{ fontSize: 12, fontWeight: 700, color: T.accent, fontFamily: "'JetBrains Mono', monospace", letterSpacing: 2, background: T.accentLight, padding: "2px 8px", borderRadius: T.r1 }}>{sessionCode}</span>
-              <button onClick={() => { navigator.clipboard?.writeText(sessionCode); }} title="Copy session code" style={{ background: "none", border: "none", cursor: "pointer", padding: 2, fontSize: 12 }}>📋</button>
+              <button onClick={() => { navigator.clipboard?.writeText(sessionCode); }} title="Copy session code" style={{ background: "none", border: "none", cursor: "pointer", padding: 2, display: "flex", alignItems: "center" }}><ClipboardText size={14} color={T.textSec} /></button>
             </div>
           </div>
         )}

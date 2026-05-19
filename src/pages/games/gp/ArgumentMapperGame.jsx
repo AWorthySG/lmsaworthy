@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../../theme/theme.js';
 import { ConfettiEffect } from '../../../components/gamification';
+import { MapTrifold, Flame, CheckCircle, XCircle, Warning, Gem, Target } from '../../../icons/icons.jsx';
 
 function ArgumentMapperGame() {
   const claims = [
@@ -47,9 +48,9 @@ function ArgumentMapperGame() {
   const [showConfetti, setShowConfetti] = useState(false);
 
   const categories = [
-    { id: "for", label: "FOR", emoji: "✅", color: "#3D9470", bg: "#EBF3EF" },
-    { id: "against", label: "AGAINST", emoji: "❌", color: "#C04848", bg: "#F8ECEC" },
-    { id: "fallacy", label: "FALLACY", emoji: "⚠️", color: "#C49030", bg: "#F9F3E6" },
+    { id: "for", label: "FOR", emoji: <CheckCircle size={22} color="#3D9470" />, color: "#3D9470", bg: "#EBF3EF" },
+    { id: "against", label: "AGAINST", emoji: <XCircle size={22} color="#C04848" />, color: "#C04848", bg: "#F8ECEC" },
+    { id: "fallacy", label: "FALLACY", emoji: <Warning size={22} color="#C49030" />, color: "#C49030", bg: "#F9F3E6" },
   ];
   const catLookup = Object.fromEntries(categories.map(c => [c.id, c]));
 
@@ -106,14 +107,14 @@ function ArgumentMapperGame() {
       {/* HUD */}
       <div style={{ background: T.bgMuted, borderRadius: T.r3, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", border: `1px solid ${T.border}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ fontSize: 28 }}>🗺️</div>
+          <MapTrifold size={28} color={T.textTer} />
           <div>
             <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Argument Mapper</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{done ? "Complete" : `Card ${current + 1} of ${deck.length}`}</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          {streak > 1 && <div style={{ background: T.accentLight, borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: T.accent }}>🔥 {streak}x</div>}
+          {streak > 1 && <div style={{ background: T.accentLight, borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: T.accent, display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color={T.accent} /> {streak}x</div>}
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{score}</div>
             <div style={{ fontSize: 8, color: T.textTer }}>CORRECT</div>
@@ -145,7 +146,7 @@ function ArgumentMapperGame() {
                 </button>
               ))}
               <span style={{ fontSize: 10, color: T.textTer, marginLeft: 4 }}>
-                {wager === 1 ? "Safe bet" : wager === 2 ? "Double or nothing" : "💎 All in!"}
+                {wager === 1 ? "Safe bet" : wager === 2 ? "Double or nothing" : <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}><Gem size={12} color={T.textTer} /> All in!</span>}
               </span>
             </div>
           )}
@@ -157,7 +158,7 @@ function ArgumentMapperGame() {
             {/* After answer: fallacy badge */}
             {answered && card.category === "fallacy" && card.fallacyType && !showFallacyStep && (
               <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#C49030", background: "#F9F3E6", padding: "3px 10px", borderRadius: 20, border: "1px solid #C4903033" }}>⚠️ {card.fallacyType}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#C49030", background: "#F9F3E6", padding: "3px 10px", borderRadius: 20, border: "1px solid #C4903033", display: "inline-flex", alignItems: "center", gap: 3 }}><Warning size={12} color="#C49030" /> {card.fallacyType}</span>
                 {fallacyGuess && fallacyGuess === card.fallacyType && <span style={{ fontSize: 11, fontWeight: 700, color: T.success }}>+2 bonus!</span>}
                 {fallacyGuess && fallacyGuess !== card.fallacyType && <span style={{ fontSize: 11, fontWeight: 600, color: T.textTer }}>You guessed: {fallacyGuess}</span>}
               </div>
@@ -167,7 +168,7 @@ function ArgumentMapperGame() {
           {/* Fallacy Subtype Identification Step */}
           {showFallacyStep && (
             <div className="fade-up" style={{ background: "#F9F3E6", borderRadius: T.r2, padding: "16px 18px", border: "1px solid #C4903033" }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#C49030", marginBottom: 10 }}>🎯 Bonus Round: What TYPE of fallacy is this?</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#C49030", marginBottom: 10, display: "flex", alignItems: "center", gap: 4 }}><Target size={14} color="#C49030" /> Bonus Round: What TYPE of fallacy is this?</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                 {fallacyTypes.map(ft => (
                   <button key={ft} onClick={() => submitFallacyGuess(ft)}
@@ -222,7 +223,7 @@ function ArgumentMapperGame() {
             </div>
             <div style={{ fontSize: 42, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text, letterSpacing: "-0.04em" }}>{pct}%</div>
             <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>{score} / {deck.length} arguments correctly identified</div>
-            {bestStreak > 2 && <div style={{ fontSize: 12, color: T.accent, fontWeight: 700, marginTop: 8 }}>🔥 Best streak: {bestStreak}x</div>}
+            {bestStreak > 2 && <div style={{ fontSize: 12, color: T.accent, fontWeight: 700, marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Flame size={14} color={T.accent} /> Best streak: {bestStreak}x</div>}
             <div style={{ fontSize: 12, color: T.textTer, marginTop: 8 }}>
               {pct >= 90 ? "Master analyst — you can spot fallacies and weigh arguments with precision!" : pct >= 70 ? "Sharp critical thinker — a few tricky ones slipped through." : pct >= 50 ? "Good start — review the logical fallacy types." : "Keep practising — identifying fallacies is a crucial GP skill."}
             </div>

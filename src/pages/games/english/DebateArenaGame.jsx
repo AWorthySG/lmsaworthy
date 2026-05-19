@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Flame, CheckCircle, XCircle, Sword, Target, Lightbulb, PencilLine } from '../../../icons/icons.jsx';
 
 function DebateArenaGame() {
   const topics = [
@@ -98,7 +99,7 @@ function DebateArenaGame() {
           <div style={{ fontSize: 14, fontWeight: 700 }}>"{topic.claim}"</div>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254" }}>🔥 {streak}x</div>}
+          {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254", display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> {streak}x</div>}
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: 16, fontWeight: 800, color: "#D4A254", fontFamily: "'JetBrains Mono', monospace" }}>{totalScore}</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>PTS</div>
@@ -121,8 +122,8 @@ function DebateArenaGame() {
             <div className="card-enter" style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px", border: `1px solid ${T.border}`, boxShadow: T.shadow2 }}>
               <div style={{ fontSize: 14, fontWeight: 600, color: T.text, lineHeight: 1.6, marginBottom: 12 }}>{pool[0].text}</div>
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={() => place(pool[0], "for")} style={{ flex: 1, padding: "10px", borderRadius: T.r2, background: "#EAF6F2", border: `2px solid #3BAA7E44`, color: "#3BAA7E", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>✅ FOR</button>
-                <button onClick={() => place(pool[0], "against")} style={{ flex: 1, padding: "10px", borderRadius: T.r2, background: "#FDEFF1", border: `2px solid #E0526244`, color: "#E05262", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>❌ AGAINST</button>
+                <button onClick={() => place(pool[0], "for")} style={{ flex: 1, padding: "10px", borderRadius: T.r2, background: "#EAF6F2", border: `2px solid #3BAA7E44`, color: "#3BAA7E", fontWeight: 700, fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><CheckCircle size={14} color="#3BAA7E" /> FOR</button>
+                <button onClick={() => place(pool[0], "against")} style={{ flex: 1, padding: "10px", borderRadius: T.r2, background: "#FDEFF1", border: `2px solid #E0526244`, color: "#E05262", fontWeight: 700, fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><XCircle size={14} color="#E05262" /> AGAINST</button>
               </div>
             </div>
           ) : (
@@ -141,13 +142,13 @@ function DebateArenaGame() {
           <div className="card-enter" style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px", border: `1px solid ${T.border}`, boxShadow: T.shadow2 }}>
             <div style={{ fontSize: 14, fontWeight: 600, color: T.text, lineHeight: 1.6, marginBottom: 12 }}>"{forArgs[strengthIdx].text}"</div>
             <div style={{ display: "flex", gap: 6 }}>
-              {[{ id: "strong", label: "💪 Strong", color: "#3BAA7E" }, { id: "moderate", label: "➖ Moderate", color: "#E5A832" }, { id: "weak", label: "🤷 Weak", color: "#E05262" }].map(s => {
+              {[{ id: "strong", label: "Strong", icon: <Target size={14} color="#3BAA7E" />, color: "#3BAA7E" }, { id: "moderate", label: "Moderate", icon: null, color: "#E5A832" }, { id: "weak", label: "Weak", icon: null, color: "#E05262" }].map(s => {
                 const isCorrect = strengthAnswered && s.id === forArgs[strengthIdx].strength;
                 const isWrong = strengthAnswered && strengthAnswered !== true && s.id !== forArgs[strengthIdx].strength;
                 return (
                   <button key={s.id} onClick={() => answerStrength(s.id)}
-                    style={{ flex: 1, padding: "10px 8px", borderRadius: T.r2, border: `2px solid ${isCorrect ? s.color : strengthAnswered ? T.border : s.color + "33"}`, background: isCorrect ? s.color + "15" : T.bgCard, cursor: strengthAnswered ? "default" : "pointer", fontSize: 12, fontWeight: 700, color: isCorrect ? s.color : T.text, opacity: strengthAnswered && !isCorrect ? 0.4 : 1, transition: "all 0.2s" }}>
-                    {s.label}
+                    style={{ flex: 1, padding: "10px 8px", borderRadius: T.r2, border: `2px solid ${isCorrect ? s.color : strengthAnswered ? T.border : s.color + "33"}`, background: isCorrect ? s.color + "15" : T.bgCard, cursor: strengthAnswered ? "default" : "pointer", fontSize: 12, fontWeight: 700, color: isCorrect ? s.color : T.text, opacity: strengthAnswered && !isCorrect ? 0.4 : 1, transition: "all 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
+                    {s.icon} {s.label}
                   </button>
                 );
               })}
@@ -171,7 +172,7 @@ function DebateArenaGame() {
         <>
           <div style={{ fontSize: 12, fontWeight: 700, color: T.textSec }}>Your opponent argues: (Round {rebuttalIdx + 1}/{topic.rebuttals.length})</div>
           <div style={{ background: "#FEF2F2", borderRadius: T.r2, padding: "14px 18px", border: "1px solid #E0526233" }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#E05262", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>⚔️ Counter-Argument</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#E05262", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>Sword Counter-Argument</div>
             <div style={{ fontSize: 14, fontWeight: 600, color: T.text, lineHeight: 1.6 }}>{topic.rebuttals[rebuttalIdx].attack}</div>
           </div>
           <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec }}>Choose the best rebuttal:</div>
@@ -202,7 +203,7 @@ function DebateArenaGame() {
         <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
           <div style={{ position: "relative", zIndex: 1 }}>
-            <div style={{ fontSize: 48, marginBottom: 8 }}>⚔️</div>
+            <div style={{ fontSize: 48, marginBottom: 8 }}>Sword</div>
             <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
               <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
             </div>

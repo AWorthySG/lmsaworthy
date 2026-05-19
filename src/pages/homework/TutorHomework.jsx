@@ -266,7 +266,7 @@ function TutorHomework({ state, dispatch }) {
                         {sub.fileUrls.map((f, i) => (
                           <a key={i} href={f.url} target="_blank" rel="noopener noreferrer"
                             style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", background: T.bgMuted, borderRadius: T.r1, fontSize: 10, color: T.accent, fontWeight: 600, textDecoration: "none", border: `1px solid ${T.border}` }}>
-                            📎 {f.name}
+                            {f.name}
                           </a>
                         ))}
                       </div>

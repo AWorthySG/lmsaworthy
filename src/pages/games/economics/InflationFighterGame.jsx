@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
+import { Buildings, Lightning } from '../../../icons/icons.jsx';
 
 function InflationFighterGame() {
   const maxQ = 8;
@@ -64,7 +65,7 @@ function InflationFighterGame() {
       <div className="scale-pop" style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 28px", textAlign: "center", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>🏛️</div>
+          <div style={{ marginBottom: 8 }}><Buildings size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
             <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
           </div>
@@ -132,7 +133,7 @@ function InflationFighterGame() {
       </div>
 
       {/* Shock message */}
-      {shockMsg && <div className="fade-up" style={{ background: T.accentLight, borderRadius: T.r2, padding: "10px 16px", fontSize: 13, fontWeight: 700, color: T.accent, textAlign: "center", border: `1px solid ${T.accent}22` }}>⚡ {shockMsg}</div>}
+      {shockMsg && <div className="fade-up" style={{ background: T.accentLight, borderRadius: T.r2, padding: "10px 16px", fontSize: 13, fontWeight: 700, color: T.accent, textAlign: "center", border: `1px solid ${T.accent}22`, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Lightning size={14} color={T.accent} /> {shockMsg}</div>}
 
       {/* Policy tools */}
       <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, textTransform: "uppercase", letterSpacing: 0.5 }}>Choose a policy action:</div>

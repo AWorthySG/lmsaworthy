@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
-import { ArrowLeft, CaretRight } from '../../icons/icons.jsx';
+import { ArrowLeft, CaretRight, PencilSimpleLine, Lightbulb } from '../../icons/icons.jsx';
 import { MODEL_ESSAYS } from '../../data/essayData.js';
 import { SUBJECTS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
@@ -32,7 +32,7 @@ function ModelEssayBank({ state, dispatch }) {
         </div>
         {/* Examiner feedback */}
         <div style={{ background: T.goldLight, borderRadius: T.r2, padding: "16px 18px", border: `1px solid ${T.gold}22` }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: T.goldDark, marginBottom: 6 }}>📝 Why This Essay Scored Well</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.goldDark, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><PencilSimpleLine size={12} color={T.goldDark} /> Why This Essay Scored Well</div>
           <div style={{ fontSize: 13, color: T.text, lineHeight: 1.7 }}>{activeEssay.feedback}</div>
         </div>
       </div>
@@ -70,8 +70,8 @@ function ModelEssayBank({ state, dispatch }) {
           );
         })}
       </div>
-      <div style={{ padding: "12px 16px", background: T.accentLight, borderRadius: T.r2, fontSize: 12, color: T.accentText, lineHeight: 1.6 }}>
-        💡 <strong>Study tip:</strong> Don't just read model essays — actively annotate them. Identify the thesis, mark each PEEL paragraph, highlight the counter-argument, and note the vocabulary. Then try writing your own version of the same question.
+      <div style={{ padding: "12px 16px", background: T.accentLight, borderRadius: T.r2, fontSize: 12, color: T.accentText, lineHeight: 1.6, display: "flex", alignItems: "flex-start", gap: 6 }}>
+        <Lightbulb size={14} color={T.accentText} style={{ flexShrink: 0, marginTop: 2 }} /> <span><strong>Study tip:</strong> Don't just read model essays — actively annotate them. Identify the thesis, mark each PEEL paragraph, highlight the counter-argument, and note the vocabulary. Then try writing your own version of the same question.</span>
       </div>
     </div>
   );

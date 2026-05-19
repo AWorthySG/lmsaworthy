@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
+import { CheckCircle, XCircle, Lightbulb } from '../../icons/icons.jsx';
 import { EmptyStateIllustration } from '../../components/ui';
 
 function GoalSetting({ state, dispatch }) {
@@ -45,7 +46,7 @@ function GoalSetting({ state, dispatch }) {
                 <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{g.text}</div>
                 <div style={{ fontSize: 10, color: T.textTer }}>{g.type} · set {g.createdAt}</div>
               </div>
-              <button onClick={() => dispatch({ type: "DELETE_GOAL", payload: g.id })} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: T.textTer, padding: 4 }}>✕</button>
+              <button onClick={() => dispatch({ type: "DELETE_GOAL", payload: g.id })} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, display: "flex", alignItems: "center" }}><XCircle size={14} color={T.textTer} /></button>
             </div>
           ))}
         </div>
@@ -54,11 +55,11 @@ function GoalSetting({ state, dispatch }) {
       {/* Completed goals */}
       {completed.length > 0 && (
         <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.success, marginBottom: 8 }}>✅ Completed ({completed.length})</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.success, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><CheckCircle size={14} color={T.success} /> Completed ({completed.length})</div>
           {completed.slice(0, 5).map(g => (
             <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: T.successBg, borderRadius: T.r2, border: `1px solid ${T.success}22`, marginBottom: 4, opacity: 0.7 }}>
               <div style={{ width: 22, height: 22, borderRadius: 6, background: T.success, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <span style={{ color: "#fff", fontSize: 12, fontWeight: 800 }}>✓</span>
+                <CheckCircle size={12} color="#fff" />
               </div>
               <span style={{ fontSize: 13, color: T.success, textDecoration: "line-through" }}>{g.text}</span>
             </div>
@@ -76,7 +77,7 @@ function GoalSetting({ state, dispatch }) {
 
       {/* Suggested goals */}
       <div style={{ background: T.accentLight, borderRadius: T.r2, padding: "14px 16px", border: `1px solid ${T.accent}22` }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: T.accentText, marginBottom: 6 }}>💡 Suggested Goals</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: T.accentText, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><Lightbulb size={12} color={T.accentText} /> Suggested Goals</div>
         {["Complete all daily challenges this week", "Submit 1 essay for peer review", "Achieve 80%+ on a practice drill", "Review all notes before the next class"].map((s, i) => (
           <button key={i} onClick={() => { setNewGoal(s); }} style={{ display: "block", fontSize: 12, color: T.accent, background: "none", border: "none", cursor: "pointer", padding: "3px 0", textAlign: "left" }}>+ {s}</button>
         ))}

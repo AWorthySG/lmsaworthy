@@ -78,7 +78,7 @@ function StudentHomework({ state, dispatch }) {
     const sub = getMySubmission(selectedHw.id);
     if (!sub) return;
     dispatch({ type: "SUBMIT_HOMEWORK", payload: { submissionId: sub.id, studentNotes: notes, fileUrls: files.filter(f => f.url).map(f => ({ name: f.name, url: f.url })) } });
-    dispatch({ type: "ADD_TOAST", payload: { message: "Homework submitted! 🎉", variant: "success" } });
+    dispatch({ type: "ADD_TOAST", payload: { message: "Homework submitted!", variant: "success" } });
     setSelectedHw(null);
   }
 
@@ -167,7 +167,7 @@ function StudentHomework({ state, dispatch }) {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name}</div>
                         {f.uploading && <div style={{ fontSize: 10, color: T.accent }}>Uploading...</div>}
-                        {f.url && !f.uploading && <div style={{ fontSize: 10, color: T.success }}>✓ Uploaded</div>}
+                        {f.url && !f.uploading && <div style={{ fontSize: 10, color: T.success, display: "flex", alignItems: "center", gap: 3 }}><CheckCircle size={10} color={T.success} /> Uploaded</div>}
                       </div>
                       {f.url && <a href={f.url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: 10, color: T.accent, fontWeight: 600 }}>View</a>}
                       <button onClick={() => removeFile(i)} style={{ width: 24, height: 24, borderRadius: T.r1, background: T.dangerBg, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -266,7 +266,7 @@ function StudentHomework({ state, dispatch }) {
           <div style={{ textAlign: "center", padding: "48px 20px", color: T.textTer }}>
             <CheckCircle size={40} color={T.success} style={{ marginBottom: 12, opacity: 0.5 }} />
             <div style={{ fontSize: 16, fontWeight: 700, color: T.textSec, marginBottom: 4 }}>All clear!</div>
-            <div style={{ fontSize: 13 }}>No homework assigned yet. Enjoy your free time! 🎉</div>
+            <div style={{ fontSize: 13 }}>No homework assigned yet. Enjoy your free time!</div>
           </div>
         )}
         {hw.map(h => {

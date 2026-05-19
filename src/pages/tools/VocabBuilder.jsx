@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../theme/theme.js';
-import { Eye, Brain, Target, ArrowFatUp } from '../../icons/icons.jsx';
+import { Eye, Brain, Target, ArrowFatUp, CheckCircle } from '../../icons/icons.jsx';
 import { VOCAB_DRILLS } from '../../data/vocabDrills.js';
 import { initSRCard, calculateNextReview, getReviewQueue, loadSRData, saveSRData } from '../../utils/spacedRepetition.js';
 
@@ -199,7 +199,7 @@ function VocabBuilder() {
                   }
                   return (
                     <button key={i} onClick={() => answer(i)} style={{ padding: "10px 14px", borderRadius: T.r1, border: `2px solid ${border}`, background: bg, color, fontWeight: 600, fontSize: 13, cursor: answered !== null ? "default" : "pointer", textAlign: "left" }}>
-                      {opt} {answered !== null && isCorrect && " ✓"}
+                      {opt} {answered !== null && isCorrect && <> <CheckCircle size={13} color={T.success} style={{ marginLeft: 4 }} /></>}
                     </button>
                   );
                 })}

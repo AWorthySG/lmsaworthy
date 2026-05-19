@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { T } from '../../theme/theme.js';
+import { Target, Timer, Play, PauseCircle } from '../../icons/icons.jsx';
 
 function PomodoroTimer({ dispatch }) {
   const [minutes, setMinutes] = useState(25);
@@ -21,7 +22,7 @@ function PomodoroTimer({ dispatch }) {
               if (mode === "focus") {
                 setSessions(s => s + 1);
                 dispatch?.({ type: "LOG_STUDY_TIME", payload: { minutes: 25, activity: "pomodoro" } });
-                dispatch?.({ type: "ADD_TOAST", payload: { message: "Focus session complete! Take a break. 🎉", variant: "success" } });
+                dispatch?.({ type: "ADD_TOAST", payload: { message: "Focus session complete! Take a break.", variant: "success" } });
                 setMode("break"); setMinutes(5); setSeconds(0);
               } else {
                 dispatch?.({ type: "ADD_TOAST", payload: { message: "Break over! Ready for another session?", variant: "info" } });
@@ -49,14 +50,14 @@ function PomodoroTimer({ dispatch }) {
       <div style={{ position: "absolute", inset: 0, background: `conic-gradient(${mode === "focus" ? "#4F5BD5" : "#16A34A"} ${pct}%, transparent ${pct}%)`, opacity: 0.08 }} />
       <div style={{ position: "relative", zIndex: 1 }}>
         <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
-          {mode === "focus" ? "🎯 Focus Time" : "☕ Break Time"} · Session {sessions + 1}
+          {mode === "focus" ? <><Target size={12} style={{ marginRight: 4 }} /> Focus Time</> : <><Timer size={12} style={{ marginRight: 4 }} /> Break Time</>} · Session {sessions + 1}
         </div>
         <div style={{ fontSize: 48, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace", letterSpacing: 2 }}>
           {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
         </div>
         <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 16 }}>
           <button onClick={toggle} style={{ padding: "10px 24px", borderRadius: T.r5, background: isRunning ? "rgba(255,255,255,0.15)" : mode === "focus" ? T.gradPrimary : "linear-gradient(135deg, #16A34A, #22C55E)", color: "#fff", fontWeight: 700, fontSize: 14, border: "none", cursor: "pointer" }}>
-            {isRunning ? "⏸ Pause" : "▶ Start"}
+            {isRunning ? <><PauseCircle size={16} style={{ marginRight: 4 }} /> Pause</> : <><Play size={16} style={{ marginRight: 4 }} /> Start</>}
           </button>
           <button onClick={reset} style={{ padding: "10px 16px", borderRadius: T.r5, background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)", fontWeight: 600, fontSize: 12, border: "none", cursor: "pointer" }}>Reset</button>
         </div>

@@ -4,6 +4,7 @@ import { SUBJECTS } from '../../data/subjects.js';
 import { PAST_PAPERS } from '../../data/pastPapersData.js';
 import { ESSAY_RUBRICS } from '../../data/essayData.js';
 import { getSubject, getExamCountdowns } from '../../utils/helpers.js';
+import { FilePdf } from '../../icons/icons.jsx';
 import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
 
 /* ━━━ PDF VIEWER MODAL ━━━ */
@@ -121,7 +122,7 @@ function PastPapers({ state, dispatch, defaultSubject }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {uploadedPdfs.map(pdf => (
               <div key={pdf.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}` }}>
-                <span style={{ fontSize: 20 }}>📄</span>
+                <FilePdf size={20} color={T.accent} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{pdf.name}</div>
                   <div style={{ fontSize: 10, color: T.textTer }}>Uploaded {pdf.uploadedAt}</div>

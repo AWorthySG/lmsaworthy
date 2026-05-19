@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
+import { PencilSimpleLine, Eye, CheckCircle, Lightbulb } from '../../icons/icons.jsx';
 import { SUBJECTS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
 import { triggerCelebration } from '../../components/gamification';
@@ -47,13 +48,13 @@ function PeerReview({ state, dispatch }) {
           {/* Stats */}
           <div style={{ display: "flex", gap: 10 }}>
             {[
-              { label: "Essays Submitted", value: essays.length, color: T.accent, icon: "📝" },
-              { label: "Awaiting Review", value: pendingReview.length, color: T.warning, icon: "👀" },
-              { label: "Reviews Given", value: reviews.length, color: T.success, icon: "✅" },
+              { label: "Essays Submitted", value: essays.length, color: T.accent, icon: <PencilSimpleLine size={12} /> },
+              { label: "Awaiting Review", value: pendingReview.length, color: T.warning, icon: <Eye size={12} /> },
+              { label: "Reviews Given", value: reviews.length, color: T.success, icon: <CheckCircle size={12} /> },
             ].map(s => (
               <div key={s.label} style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "14px", border: `1px solid ${T.border}`, textAlign: "center" }}>
                 <div style={{ fontSize: 22, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
-                <div style={{ fontSize: 11, color: T.textSec, fontWeight: 600 }}>{s.icon} {s.label}</div>
+                <div style={{ fontSize: 11, color: T.textSec, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{s.icon} {s.label}</div>
               </div>
             ))}
           </div>
@@ -61,10 +62,10 @@ function PeerReview({ state, dispatch }) {
           {/* Action buttons */}
           <div style={{ display: "flex", gap: 10 }}>
             <button onClick={() => setView("submit")} style={{ flex: 1, padding: "16px", borderRadius: T.r2, background: T.gradPrimary, color: "#fff", fontWeight: 700, fontSize: 14, border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-              <span style={{ fontSize: 24 }}>📝</span>Submit My Essay
+              <PencilSimpleLine size={24} />Submit My Essay
             </button>
             <button onClick={() => setView("review")} disabled={pendingReview.length === 0} style={{ flex: 1, padding: "16px", borderRadius: T.r2, background: pendingReview.length > 0 ? T.goldLight : T.bgMuted, color: pendingReview.length > 0 ? T.goldDark : T.textTer, fontWeight: 700, fontSize: 14, border: `1px solid ${pendingReview.length > 0 ? T.gold + "44" : T.border}`, cursor: pendingReview.length > 0 ? "pointer" : "not-allowed", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-              <span style={{ fontSize: 24 }}>👀</span>Review a Peer's Essay {pendingReview.length > 0 && `(${pendingReview.length})`}
+              <Eye size={24} />Review a Peer's Essay {pendingReview.length > 0 && `(${pendingReview.length})`}
             </button>
           </div>
 
@@ -102,8 +103,8 @@ function PeerReview({ state, dispatch }) {
             </div>
           )}
 
-          <div style={{ padding: "12px 16px", background: T.accentLight, borderRadius: T.r2, fontSize: 12, color: T.accentText, lineHeight: 1.6 }}>
-            💡 <strong>How it works:</strong> Submit your essay → 2 peers review it using structured rubrics → You get detailed feedback on Content, Language, and Structure. Reviewing others' work earns you 15 coins per review.
+          <div style={{ padding: "12px 16px", background: T.accentLight, borderRadius: T.r2, fontSize: 12, color: T.accentText, lineHeight: 1.6, display: "flex", alignItems: "flex-start", gap: 6 }}>
+            <Lightbulb size={14} color={T.accentText} style={{ flexShrink: 0, marginTop: 2 }} /> <span><strong>How it works:</strong> Submit your essay → 2 peers review it using structured rubrics → You get detailed feedback on Content, Language, and Structure. Reviewing others' work earns you 15 coins per review.</span>
           </div>
         </>
       )}

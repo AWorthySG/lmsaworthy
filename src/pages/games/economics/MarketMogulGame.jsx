@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../../theme/theme.js';
 import { ConfettiEffect } from '../../../components/gamification';
+import { Buildings, Flame, MagnifyingGlass, GameController, PencilLine } from '../../../icons/icons.jsx';
 
 function MarketMogulGame() {
   // Clue-by-clue reveal: each question has 3 progressive clues
@@ -67,14 +68,14 @@ function MarketMogulGame() {
       {/* HUD */}
       <div className="grain" style={{ background: "linear-gradient(135deg, #0F172A, #1E2A4A)", borderRadius: T.r3, padding: "14px 20px", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ fontSize: 28 }}>🏛️</div>
+          <Buildings size={28} color="#fff" />
           <div>
             <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1 }}>Market Mogul</div>
             <div style={{ fontSize: 14, fontWeight: 700 }}>{done ? "Complete" : `${current + 1} / ${deck.length}`}</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254" }}>🔥 {streak}x</div>}
+          {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254", display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> {streak}x</div>}
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#D4A254", fontFamily: "'JetBrains Mono', monospace" }}>{score}</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>PTS</div>
@@ -92,7 +93,7 @@ function MarketMogulGame() {
           {/* Clue card — progressive reveal */}
           <div className="card-enter" style={{ background: T.bgCard, borderRadius: T.r3, padding: "24px 22px", border: `1px solid ${T.border}`, boxShadow: T.shadow2 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 1 }}>🔍 Clue {cluesRevealed} of 3</div>
+              <div style={{ fontSize: 9, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 1, display: "flex", alignItems: "center", gap: 3 }}><MagnifyingGlass size={10} color={T.textTer} /> Clue {cluesRevealed} of 3</div>
               <div style={{ fontSize: 11, fontWeight: 800, color: cluePoints[cluesRevealed] === 3 ? "#D4A254" : cluePoints[cluesRevealed] === 2 ? T.success : T.textTer }}>
                 Worth {cluePoints[cluesRevealed]} pt{cluePoints[cluesRevealed] > 1 ? "s" : ""}
               </div>
@@ -136,7 +137,7 @@ function MarketMogulGame() {
               </div>
               {/* "Run the Market" micro-simulation */}
               <div className="fade-up" style={{ background: "#F8F4FF", borderRadius: T.r2, padding: "14px 18px", border: "1px solid #7268C022" }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#7268C0", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>🎮 What happens when you act?</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#7268C0", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><GameController size={12} color="#7268C0" /> What happens when you act?</div>
                 <div style={{ fontSize: 12, color: T.text, lineHeight: 1.7 }}>{question.simResult}</div>
               </div>
             </>
@@ -163,7 +164,7 @@ function MarketMogulGame() {
               {grade === "S" ? "Market structures mastered — you can identify AND predict firm behaviour!" : grade === "A" ? "Strong understanding — quick identification with minimal clues." : grade === "B" ? "Good foundation — try answering with fewer clues for more points." : "Keep studying — focus on the distinguishing characteristics of each structure."}
             </div>
             <div style={{ marginTop: 12, padding: "10px 14px", background: T.accentLight, borderRadius: T.r2, fontSize: 11, color: T.accentText, textAlign: "left", lineHeight: 1.6 }}>
-              📝 <strong>H2 Exam Tip:</strong> When identifying market structures, look for: number of firms, product differentiation, barriers to entry, and interdependence. The "Run the Market" scenarios show how firms behave differently under each structure.
+              <PencilLine size={14} color={T.accentText} style={{ display: "inline" }} /> <strong>H2 Exam Tip:</strong> When identifying market structures, look for: number of firms, product differentiation, barriers to entry, and interdependence. The "Run the Market" scenarios show how firms behave differently under each structure.
             </div>
           </div>
         </div>
