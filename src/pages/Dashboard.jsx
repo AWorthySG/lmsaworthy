@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import * as THREE from 'three';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { T } from '../theme/theme.js';
 import { House, Books, VideoCamera, Lightning, Target, Lightbulb, RocketLaunch, Flame, Trophy, Crown, Medal, Star, Sparkle, Gift, Confetti, CheckCircle, ChartLineUp, CalendarBlank, Clock, ArrowRight, Brain, GraduationCap, BookOpen, ClipboardText, Scroll, PencilSimpleLine, Notebook, Bell, CalendarCheck, ChartBar, Handshake, FolderSimpleStar, PlayCircle, Users, Upload, Play, Exam, Plus, CaretRight, Timer, Megaphone, ChatText, Eye, FlowArrow } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, StatCard, SubjectIllustration } from '../components/ui';
@@ -13,7 +11,7 @@ import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import { LEVELS, BADGE_DEFS, AVATAR_OPTIONS } from '../data/gamification.js';
 import { ACTIVITY_FEED } from '../data/seedData.js';
 
-function HeroScene3D() {
+function HeroBanner() {
   return (
     <div style={{ marginBottom: 24, borderRadius: T.r4, overflow: "hidden", border: `1px solid ${T.border}`, position: "relative", background: "linear-gradient(135deg, #0F172A 0%, #1E2A4A 40%, #2D3A8C 100%)" }}>
       <style>{`
@@ -140,7 +138,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
                   { value: state.wallet.coins, label: "Coins", icon: <span style={{ fontWeight: 700, fontSize: 10 }}>$</span>, color: "#D4A254" },
                   { value: state.wallet.streak, label: "Streak", icon: <Flame size={10} color="#818CF8" />, color: "#818CF8" },
                   { value: gradedHw.length, label: "Graded", icon: <CheckCircle size={10} color="#22C55E" />, color: "#22C55E" },
-                  { value: state.wallet.level || 1, label: "Level", icon: <Star size={10} color="#F59E0B" />, color: "#F59E0B" },
+                  { value: Math.floor((state.wallet.coins || 0) / 100) + 1, label: "Level", icon: <Star size={10} color="#F59E0B" />, color: "#F59E0B" },
                 ].map(stat => (
                   <div key={stat.label} style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 12, padding: "12px 10px", border: "1px solid rgba(255,255,255,0.08)", textAlign: "center" }}>
                     <div style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1 }}>{stat.value}</div>
@@ -344,7 +342,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
   // If student role, show student dashboard
   if (state.role === "student") return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
 
-  const subjectProgress = SUBJECTS.map((s) => ({ ...s, progress: Math.floor(Math.random() * 40 + 30) }));
+  const subjectProgress = useMemo(() => SUBJECTS.map((s) => ({ ...s, progress: Math.floor(Math.random() * 40 + 30) })), []);
   const actIcons = { award: Trophy, upload: Upload, check: CheckCircle, play: Play, exam: Exam, plus: Plus };
 
   const pendingSubmissions = state.submissions.filter(s => s.status === "submitted").length;
@@ -354,7 +352,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
   return (
     <div>
       {/* 3D Hero Scene */}
-      <HeroScene3D />
+      <HeroBanner />
 
       {/* Tutor Hero Card */}
       <div style={{ borderRadius: T.r3, background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #2D3A8C 100%)", padding: "28px 32px", marginBottom: 24, position: "relative", overflow: "hidden" }}>
@@ -458,7 +456,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
 
       {/* Today's Classes */}
       {(() => {
-        const todayClasses = state.sessions.filter(s => s.date === "2026-03-18");
+        const todayClasses = state.sessions.filter(s => s.date === new Date().toISOString().split("T")[0]);
         if (todayClasses.length === 0) return null;
         return (
           <div style={{ marginBottom: 28 }}>

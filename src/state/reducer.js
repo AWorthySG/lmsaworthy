@@ -6,7 +6,7 @@ export function appReducer(state, action) {
     case "SET_PAGE": return { ...state, page: action.payload, subPage: null };
     case "SET_ROLE": return { ...state, role: action.payload };
     case "SET_SUBPAGE": return { ...state, subPage: action.payload };
-    case "ADD_RESOURCE": return { ...state, resources: [...state.resources, { ...action.payload, id: state.resources.length + 1, date: new Date().toISOString().split("T")[0] }] };
+    case "ADD_RESOURCE": return { ...state, resources: [...state.resources, { ...action.payload, id: Math.max(...state.resources.map(r => r.id), 0) + 1, date: new Date().toISOString().split("T")[0] }] };
     case "TOGGLE_CHAPTER_COMPLETE": {
       const lessons = state.videoLessons.map((l) => l.id === action.payload.lessonId ? { ...l, chapters: l.chapters.map((ch) => ch.id === action.payload.chapterId ? { ...ch, completed: !ch.completed } : ch) } : l);
       return { ...state, videoLessons: lessons };
@@ -196,7 +196,16 @@ export function appReducer(state, action) {
       };
     }
     case "MERGE_FIREBASE_STATE": {
-      return { ...state, ...action.payload };
+      const merged = { ...state };
+      for (const [key, value] of Object.entries(action.payload)) {
+        if (value && typeof value === 'object' && !Array.isArray(value) &&
+            state[key] && typeof state[key] === 'object' && !Array.isArray(state[key])) {
+          merged[key] = { ...state[key], ...value };
+        } else {
+          merged[key] = value;
+        }
+      }
+      return merged;
     }
     default: return state;
   }

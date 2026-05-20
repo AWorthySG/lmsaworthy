@@ -31,7 +31,7 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   // Don't cache JS/CSS asset bundles — they have content hashes in filenames
   if (url.pathname.startsWith('/assets/')) {
-    e.respondWith(fetch(e.request));
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;
   }
   // For navigation requests, serve index.html (SPA)
@@ -44,8 +44,10 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     fetch(e.request)
       .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        if (res && res.status === 200 && res.type !== 'opaque') {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        }
         return res;
       })
       .catch(() => caches.match(e.request))

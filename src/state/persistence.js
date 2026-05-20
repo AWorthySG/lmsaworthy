@@ -43,9 +43,10 @@ export const DEFAULT_STATE = {
 
 // Persist key parts of state to localStorage
 export const PERSIST_KEYS = [
-  "wallet", "bookmarks", "attendance", "submissions", "homework", "role",
+  "wallet", "bookmarks", "attendance", "submissions", "homework",
   "peerEssays", "peerReviews", "studyLogs", "notes", "ratings",
   "announcement", "goals", "mistakes", "revisionChecklist",
+  "posts", "reports",
 ];
 
 export function loadPersistedState() {

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { firebaseDb, ref, set, onValue, get } from "../config/firebase.js";
 import { PERSIST_KEYS } from "../state/persistence.js";
 
@@ -9,12 +9,26 @@ import { PERSIST_KEYS } from "../state/persistence.js";
  * - Debounces writes: after state changes, waits 2 seconds then writes
  *   PERSIST_KEYS fields to Firebase.
  * - Handles offline gracefully with try/catch around Firebase calls.
+ * - Uses a writingRef flag to prevent write-read loops (own writes echoed
+ *   back via the onValue listener).
  *
  * Requires a "MERGE_FIREBASE_STATE" reducer action that merges payload into state.
  */
 export default function useFirebaseSync(authUser, state, dispatch) {
   const debounceRef = useRef(null);
   const initialLoadDoneRef = useRef(false);
+  const writingRef = useRef(false);
+
+  // Compute a serialized string of only the persisted keys so the write
+  // effect fires only when persisted data actually changes, not on every
+  // state dispatch.
+  const persistedSnapshot = useMemo(() => {
+    const subset = {};
+    PERSIST_KEYS.forEach((key) => {
+      subset[key] = state[key];
+    });
+    return JSON.stringify(subset);
+  }, [state]);
 
   // On mount: load state from Firebase and merge with local state
   useEffect(() => {
@@ -60,6 +74,8 @@ export default function useFirebaseSync(authUser, state, dispatch) {
         (snapshot) => {
           // Skip the first callback since we already handled it via get()
           if (!initialLoadDoneRef.current) return;
+          // Skip if this change was triggered by our own write
+          if (writingRef.current) return;
           const firebaseState = snapshot.val();
           if (firebaseState && typeof firebaseState === "object") {
             const merged = {};
@@ -86,7 +102,9 @@ export default function useFirebaseSync(authUser, state, dispatch) {
     };
   }, [authUser?.uid, dispatch]);
 
-  // Debounced write: after state changes, wait 2 seconds then write to Firebase
+  // Debounced write: after persisted state changes, wait 2 seconds then
+  // write to Firebase. Depends on persistedSnapshot (serialized PERSIST_KEYS
+  // values) so it only fires when persisted data actually changes.
   useEffect(() => {
     if (!authUser?.uid) return;
     if (!initialLoadDoneRef.current) return;
@@ -96,17 +114,20 @@ export default function useFirebaseSync(authUser, state, dispatch) {
       clearTimeout(debounceRef.current);
     }
 
-    debounceRef.current = setTimeout(() => {
+    debounceRef.current = setTimeout(async () => {
       const userStatePath = `users/${authUser.uid}/state`;
-      const toSync = {};
-      PERSIST_KEYS.forEach((key) => {
-        toSync[key] = state[key];
-      });
+      const toSync = JSON.parse(persistedSnapshot);
 
       try {
-        set(ref(firebaseDb, userStatePath), toSync);
+        writingRef.current = true;
+        await set(ref(firebaseDb, userStatePath), toSync);
+        // Keep the flag raised briefly to absorb the echoed onValue callback
+        setTimeout(() => {
+          writingRef.current = false;
+        }, 500);
       } catch (err) {
-        console.warn("[useFirebaseSync] Could not write to Firebase:", err);
+        writingRef.current = false;
+        console.error("[useFirebaseSync] Firebase sync failed:", err);
       }
     }, 2000);
 
@@ -115,5 +136,5 @@ export default function useFirebaseSync(authUser, state, dispatch) {
         clearTimeout(debounceRef.current);
       }
     };
-  }, [authUser?.uid, state]);
+  }, [authUser?.uid, persistedSnapshot]);
 }
