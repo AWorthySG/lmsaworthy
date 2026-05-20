@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
 import { Crown, Trophy, Medal, Star, Flame, ArrowFatUp, Lightning, CheckCircle, Books } from '../icons/icons.jsx';
 import { Card, Btn, Badge, Select, PageHeader } from '../components/ui';

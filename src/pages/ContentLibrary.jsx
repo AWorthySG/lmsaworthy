@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { T } from '../theme/theme.js';
 import { Books, BookOpen, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, DownloadSimple, Tag, BookmarkSimple, MagnifyingGlass, Plus, X, ArrowLeft, CaretRight, CheckCircle, Hash } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, BackBtn, EmptyState, FileIcon, Input, Select, Textarea, DocumentViewer } from '../components/ui';
@@ -10,7 +9,7 @@ function ContentLibrary({ state, dispatch }) {
   const [search, setSearch] = useState("");
   const [showUpload, setShowUpload] = useState(false);
   const [viewingResource, setViewingResource] = useState(null);
-  const [nT, snT] = useState(""); const [nS, snS] = useState(""); const [nTo, snTo] = useState(""); const [nTy, snTy] = useState("pdf");
+  const [newTitle, setNewTitle] = useState(""); const [newSubject, setNewSubject] = useState(""); const [newTopic, setNewTopic] = useState(""); const [newType, setNewType] = useState("pdf");
   // Navigation: null = all subjects view, "eng" = subject view, { subject: "eng", topic: "Comprehension" } = topic view
   const [nav, setNav] = useState(null);
   // Track which subject folders are expanded in the sidebar
@@ -31,10 +30,10 @@ function ContentLibrary({ state, dispatch }) {
   });
 
   function handleUpload() {
-    if (!nT || !nS || !nTo) return;
-    dispatch({ type: "ADD_RESOURCE", payload: { title: nT, subject: nS, topic: nTo, type: nTy } });
-    dispatch({ type: "ADD_TOAST", payload: { message: `"${nT}" uploaded`, variant: "success" } });
-    snT(""); snS(""); snTo(""); snTy("pdf"); setShowUpload(false);
+    if (!newTitle || !newSubject || !newTopic) return;
+    dispatch({ type: "ADD_RESOURCE", payload: { title: newTitle, subject: newSubject, topic: newTopic, type: newType } });
+    dispatch({ type: "ADD_TOAST", payload: { message: `"${newTitle}" uploaded`, variant: "success" } });
+    setNewTitle(""); setNewSubject(""); setNewTopic(""); setNewType("pdf"); setShowUpload(false);
   }
   const isBookmarked = (id) => state.bookmarks.includes(id);
 
@@ -96,10 +95,10 @@ function ContentLibrary({ state, dispatch }) {
         <Card elevated style={{ marginBottom: 20, borderLeft: `3px solid ${T.accent}` }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Upload New Resource</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
-            <Input value={nT} onChange={snT} placeholder="Resource title" />
-            <Select value={nTy} onChange={snTy} options={[{ value: "pdf", label: "PDF" }, { value: "docx", label: "DOCX" }, { value: "video", label: "Video" }]} />
-            <Select value={nS} onChange={snS} options={SUBJECTS.map((s) => ({ value: s.id, label: s.name }))} placeholder="Select subject" />
-            <Select value={nTo} onChange={snTo} options={(TOPICS[nS] || []).map((t) => ({ value: t, label: t }))} placeholder="Select topic" />
+            <Input value={newTitle} onChange={setNewTitle} placeholder="Resource title" />
+            <Select value={newType} onChange={setNewType} options={[{ value: "pdf", label: "PDF" }, { value: "docx", label: "DOCX" }, { value: "video", label: "Video" }]} />
+            <Select value={newSubject} onChange={setNewSubject} options={SUBJECTS.map((s) => ({ value: s.id, label: s.name }))} placeholder="Select subject" />
+            <Select value={newTopic} onChange={setNewTopic} options={(TOPICS[newSubject] || []).map((t) => ({ value: t, label: t }))} placeholder="Select topic" />
           </div>
           <div style={{ display: "flex", gap: 8 }}><Btn onClick={handleUpload}><Upload size={14} weight="bold" /> Upload</Btn><Btn onClick={() => setShowUpload(false)} variant="secondary"><X size={14} weight="bold" /> Cancel</Btn></div>
         </Card>

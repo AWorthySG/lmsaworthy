@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
 import { Exam, Clock, CheckCircle, ArrowLeft, ArrowRight, Trophy, Timer, Play, GraduationCap, Star } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, BackBtn, Textarea } from '../components/ui';

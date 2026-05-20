@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
 import { CalendarCheck, CalendarBlank, Plus, X, CheckCircle, Warning, Clock, Users, XCircle, CaretRight, Notebook } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, Select, Input, Textarea, StatCard, Progress, EmptyState } from '../components/ui';
@@ -16,7 +15,7 @@ function Attendance({ state, dispatch }) {
   const [editingNotes, setEditingNotes] = useState(null);
   const [showQR, setShowQR] = useState(null); // session ID to show QR for
 
-  const TODAY = "2026-03-18";
+  const TODAY = new Date().toISOString().split("T")[0];
   const getStudentsForSubject = (subjectId) => state.students.filter(st => st.subjects.includes(subjectId));
 
   const sessions = state.sessions

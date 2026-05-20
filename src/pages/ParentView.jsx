@@ -1,6 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import html2canvas from 'html2canvas-pro';
 import { T } from '../theme/theme.js';
 import { Users, ChartLineUp, CalendarCheck, Trophy, Star, CheckCircle, ArrowSquareOut, Flame, ClipboardText, CalendarBlank, PencilSimpleLine, Timer } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';

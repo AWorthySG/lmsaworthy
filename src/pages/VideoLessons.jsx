@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { T } from '../theme/theme.js';
 import { VideoCamera, PlayCircle, Play, CheckCircle, CaretRight, ArrowLeft } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, BackBtn, EmptyState } from '../components/ui';

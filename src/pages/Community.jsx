@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { T } from '../theme/theme.js';
 import { ChatCircle, ChatText, Handshake, Megaphone, ThumbsUp, PushPin, Plus, X, Star, ClipboardText } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, Input, Textarea, Select } from '../components/ui';
@@ -43,13 +42,13 @@ function Community({ state, dispatch }) {
   const handleAddComment = (postId) => {
     const text = (newComment[postId] || "").trim();
     if (!text) return;
-    dispatch({ type: "ADD_COMMENT", payload: { postId, comment: { author: "Jeremy", content: text } } });
+    dispatch({ type: "ADD_COMMENT", payload: { postId, comment: { author: "You", content: text } } });
     setNewComment(prev => ({ ...prev, [postId]: "" }));
   };
 
   const handleAddPost = () => {
     if (!newPost.title.trim() || !newPost.content.trim()) return;
-    dispatch({ type: "ADD_POST", payload: { ...newPost, author: "Jeremy", authorType: "tutor" } });
+    dispatch({ type: "ADD_POST", payload: { ...newPost, author: "You", authorType: state.role || "student" } });
     setNewPost({ title: "", content: "", subject: "", isAnnouncement: false });
     setShowNewPost(false);
     dispatch({ type: "ADD_TOAST", payload: { message: "Post published to the community!", variant: "success" } });
@@ -207,17 +206,5 @@ function Community({ state, dispatch }) {
     </div>
   );
 }
-
-/* ━━━ LIVE INFOGRAPHICS ━━━ */
-
-const GP2_OVERVIEW = [
-  { code: "SAQ", label: "Short-Answer Questions", marks: "9–11", time: "25 min", color: "#216ef4", pct: 22 },
-  { code: "NIT", label: "New Item Type / Connections", marks: "4–6", time: "10 min", color: "#6660B9", pct: 10 },
-  { code: "SUM", label: "Summary Question", marks: "8", time: "25 min", color: "#17a2b8", pct: 16 },
-  { code: "AQ",  label: "Application Question", marks: "12", time: "25 min", color: "#E07800", pct: 24 },
-  { code: "READ",label: "Reading Passages",  marks: "—",   time: "10 min", color: "#8A96B0", pct: 14 },
-  { code: "CHK", label: "Checking",          marks: "—",   time: "5 min",  color: "#8A96B0", pct: 14 },
-];
-
 
 export default Community;
