@@ -22,7 +22,7 @@ function ParentView({ state }) {
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(212,162,84,0.1), transparent 60%)" }} />
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-            <img src="/logo-aworthy.jpeg" alt="" style={{ height: 36, borderRadius: 8 }} />
+            <img src="/logo-aworthy.jpeg" alt="A Worthy Learning" style={{ height: 36, borderRadius: 8 }} />
             <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: 2, textTransform: "uppercase" }}>A Worthy · Parent Dashboard</span>
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Progress Report</h1>

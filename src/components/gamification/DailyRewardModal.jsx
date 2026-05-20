@@ -12,7 +12,7 @@ export default function DailyRewardModal({ wallet, onClaim, onClose }) {
   const reward = getStreakReward(nextStreak);
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(23,37,82,0.6)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }} onClick={onClose}>
+    <div role="dialog" aria-label="Daily login reward" style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(23,37,82,0.6)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className="scale-pop" style={{ background: "#fff", borderRadius: T.r3, width: 380, overflow: "hidden", boxShadow: T.shadow3 }}>
         {/* Header */}
         <div style={{ background: "linear-gradient(135deg, #FFF3ED, #FFE8D6)", padding: "24px 28px 20px", textAlign: "center" }}>
