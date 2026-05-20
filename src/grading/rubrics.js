@@ -106,20 +106,38 @@ export const SUBJECT_RUBRICS = {
         label: "Essay Question",
         scale: { type: "level", min: "L1", max: "L3", marks: 25 },
         criteria: [
-          { key: "knowledge", label: "Knowledge & Understanding (L1)", weight: 4, descriptor: "Correct definitions, accurate concept use. Defines key economic terms upfront." },
-          { key: "application", label: "Application to context (L2)", weight: 5, descriptor: "Uses real-world Singapore/global examples, recent data, named industries. Applies framework to the specific scenario in the question." },
-          { key: "analysis", label: "Analysis & Diagrams (L3)", weight: 5, descriptor: "Step-by-step economic reasoning; uses diagrams labelled correctly (axes, curves, equilibrium); explains shifts and effects." },
-          { key: "evaluation", label: "Evaluation (E marks)", weight: 5, descriptor: "Weighs trade-offs; considers SR vs LR, depends-on factors (PED, government type, time horizon); reaches a justified conclusion." },
+          { key: "knowledge", label: "Knowledge & Understanding (L1)", weight: 4, descriptor: "Defines key economic terms upfront (demand, PED, externality, AD/AS, etc.). Correct concept use without contradicting standard A-level definitions." },
+          { key: "application", label: "Application to context (L2)", weight: 5, descriptor: "Uses real-world Singapore + global examples with recent data and named industries/policies (CDC vouchers, GST, MAS exchange rate policy, NTU strike, etc.). Each example explicitly linked to the question scenario." },
+          { key: "analysis", label: "Analysis — reasoning chain (L3)", weight: 4, descriptor: "Step-by-step economic mechanism: cause → intermediate effect → final effect, with each step justified. Avoids leaps. Distinguishes correlation from causation." },
+          { key: "diagrams", label: "Diagrams — accuracy & integration (L3)", weight: 4, descriptor: "For every diagram the student draws, check ALL of:\n    (a) Both axes labelled with correct variables (e.g. 'Price' on Y, 'Quantity' on X — not P/Q without units).\n    (b) Curves labelled (D, S, MC, MR, AC, AD, AS, LRAS, etc.).\n    (c) Initial equilibrium clearly marked with a point and dropped guide lines (P0, Q0).\n    (d) Direction of shift correct given the scenario (e.g. tax → S shifts left/up; subsidy → S shifts right/down).\n    (e) New equilibrium clearly marked (P1, Q1).\n    (f) Where relevant, shaded areas labelled (DWL, CS, PS, tax revenue, subsidy cost).\n    (g) Diagram referenced in the prose — student writes 'as shown in Figure 1' or similar.\n    Award full marks only when all relevant points apply; deduct proportionally for each missing item. If the photograph is unclear, say so rather than guess." },
+          { key: "evaluation", label: "Evaluation (E marks)", weight: 4, descriptor: "Weighs trade-offs; considers SR vs LR, depends-on factors (PED/PES values, government type, time horizon, magnitudes). Reaches a justified, qualified conclusion — not a one-line summary." },
+        ],
+        misconceptions: [
+          "Confusing 'demand' (the curve) with 'quantity demanded' (a point) — flag if student writes 'demand decreases' when they mean a movement along the curve due to price change.",
+          "Same confusion for 'supply' vs 'quantity supplied'.",
+          "Treating MC = MR as a synonym for 'profit maximisation' without explaining it locates the profit-max output.",
+          "Asserting 'monopoly is bad' without comparing allocative efficiency loss against potential dynamic efficiency / EOS gains.",
+          "Claiming 'currency depreciation improves the current account' without invoking Marshall-Lerner or J-curve.",
+          "Assuming government intervention is always welfare-improving — ignoring government failure / unintended consequences.",
+          "Confusing nominal vs real (GDP, interest rates, wages).",
+          "Treating PED as elasticity in general — flag if used loosely without specifying which elasticity.",
         ],
       },
       caseStudy: {
         label: "Case Study Question",
         scale: { type: "marks", min: 0, max: 30 },
         criteria: [
-          { key: "data_use", label: "Use of extract data", weight: 4, descriptor: "Quotes figures, dates, examples from the provided extracts. References specific extract numbers." },
-          { key: "knowledge", label: "Concept application", weight: 4, descriptor: "Applies the correct framework to the question (PED, externalities, AD/AS, etc.)." },
-          { key: "analysis", label: "Analysis", weight: 4, descriptor: "Logical chain of reasoning with diagrams where appropriate." },
-          { key: "evaluation", label: "Evaluation", weight: 4, descriptor: "Higher-order judgement, limitations, alternative perspectives." },
+          { key: "data_use", label: "Use of extract data", weight: 5, descriptor: "Direct quotes / figures / dates from the extracts. References extract numbers (Extract 1, Table 2, Fig 3) explicitly. Doesn't paraphrase vaguely when specifics are available." },
+          { key: "knowledge", label: "Concept application", weight: 4, descriptor: "Picks the correct framework for each sub-question (PED for revenue questions, AD/AS for macro shocks, externalities for welfare questions)." },
+          { key: "analysis", label: "Analysis — reasoning chain", weight: 4, descriptor: "Logical chain: data → economic mechanism → effect. No skipped steps." },
+          { key: "diagrams", label: "Diagrams (where relevant)", weight: 3, descriptor: "Many CSQ sub-questions don't need a diagram — only mark this criterion if the sub-question implies one (e.g. 'with the aid of a diagram'). When present, check axes labelled, curves labelled, initial + new equilibrium marked, direction of shift matches the extract's scenario, and the diagram is referenced in prose. Deduct for unlabelled or missing equilibrium points." },
+          { key: "evaluation", label: "Evaluation", weight: 4, descriptor: "Higher-order judgement: magnitudes (using data), limitations of policy, time horizon, alternative perspectives. Reaches reasoned stand." },
+        ],
+        misconceptions: [
+          "Quoting extracts without applying economic theory — flag as 'description, not analysis'.",
+          "Inventing data not in the extracts.",
+          "Generic 'on the one hand / on the other hand' evaluation that doesn't pick a side.",
+          "Confusing 'demand' vs 'quantity demanded' (and 'supply' vs 'quantity supplied').",
         ],
       },
     },
@@ -133,21 +151,44 @@ export const SUBJECT_RUBRICS = {
         label: "Essay (Section A or B)",
         scale: { type: "level", min: "L1", max: "L3", marks: 25 },
         criteria: [
-          { key: "knowledge", label: "Knowledge & Definitions (L1)", weight: 3, descriptor: "Accurate economic concepts, sharp definitions of all key terms (MC=MR for monopoly, J-curve, etc.)." },
-          { key: "application", label: "Application & Context (L2)", weight: 4, descriptor: "Real, named, recent examples — Singapore + global. Industries, firms, policies named specifically." },
-          { key: "analysis", label: "Analysis & Diagrams (L3)", weight: 5, descriptor: "Detailed economic reasoning. Correct, labelled diagrams (axes, curves, equilibrium, dead-weight loss). Mechanism fully explained step-by-step." },
-          { key: "evaluation", label: "Evaluation (E marks)", weight: 5, descriptor: "Stand taken with justification. Considers magnitudes, time horizon, assumptions, government effectiveness, alternative policies. Reaches reasoned conclusion." },
-          { key: "structure", label: "Structure & Synthesis", weight: 3, descriptor: "Introduction with definitions and stand. Body with TS-Evidence-Analysis-Evaluation. Conclusion synthesises." },
+          { key: "knowledge", label: "Knowledge & Definitions (L1)", weight: 3, descriptor: "Sharp definitions of ALL key terms in the question. H2 expects more depth than H1 — e.g. 'monopolistic competition' should mention many firms, differentiated products, low barriers, P > MC in SR with zero supernormal profit in LR." },
+          { key: "application", label: "Application & Context (L2)", weight: 4, descriptor: "Real, named, recent examples — Singapore + global. Industries, firms, policies named specifically (DBS, Grab vs Gojek, MAS forward guidance, US-China tariffs, etc.). Avoid generic 'a country' or 'a firm'." },
+          { key: "analysis", label: "Analysis — reasoning chain (L3)", weight: 4, descriptor: "Detailed economic mechanism: cause → SR effect → LR adjustment → final state. Each link justified, no leaps. For policy questions: target → instrument → transmission mechanism → outcome." },
+          { key: "diagrams", label: "Diagrams — accuracy & integration (L3)", weight: 4, descriptor: "H2 expects technically precise diagrams — typically 2–3 per essay. For every diagram, check ALL of:\n    (a) Both axes labelled with correct variables (Price, Quantity, Cost, Real National Income, General Price Level, Exchange Rate, etc.).\n    (b) All curves labelled (D, S, MC, MR, AC, ATC, AVC, AD, SRAS, LRAS, Yf, AE, etc.).\n    (c) Initial equilibrium marked with a point + dropped guide lines (P0, Q0 — or Y0, P0 for macro).\n    (d) Direction of shift correct (e.g. tax → S left/up; positive externality → MSB > MPB; depreciation → AD right via X-M).\n    (e) New equilibrium clearly marked (P1, Q1) and dropped guide lines.\n    (f) Shaded areas labelled where relevant (DWL, CS, PS, supernormal profit, subnormal loss, tax revenue, subsidy cost, output gap).\n    (g) For monopoly/oligopoly: MC = MR identified, then traced up to AC then to D for P. For perfect competition: P = MC = AC at LR equilibrium.\n    (h) Diagram referenced in prose ('as shown in Figure 1') — not just drawn and ignored.\n    Award full marks only when all relevant points are present; deduct proportionally for each missing or wrong item. If the photograph is unclear, say so rather than guess." },
+          { key: "evaluation", label: "Evaluation (E marks)", weight: 5, descriptor: "H2 demands sustained evaluation — stand taken in intro, reinforced in body via 'depends-on' factors, and synthesised in conclusion. Consider: magnitudes (PED/YED/PES values), time horizon (SR vs LR adjustment), assumptions (ceteris paribus violations), government effectiveness, alternative policies, distributional impact, dynamic vs static efficiency." },
+          { key: "structure", label: "Structure & Synthesis", weight: 2, descriptor: "Introduction defines terms, takes stand, signposts. Body paragraphs use TS–Evidence–Analysis–Evaluation. Conclusion synthesises (does not summarise) — picks a side and qualifies it." },
+        ],
+        misconceptions: [
+          "Confusing 'demand' (the curve) with 'quantity demanded' (a point) — common in micro questions.",
+          "Same confusion for 'supply' vs 'quantity supplied'.",
+          "Stating 'MC = MR' as the definition of profit maximisation without explaining it locates the output level.",
+          "For monopoly: drawing AC above ATC, or putting P at the MC=MR intersection instead of tracing up to the demand curve.",
+          "Asserting 'monopoly is always inefficient' without distinguishing allocative vs productive vs dynamic efficiency.",
+          "Claiming 'depreciation improves BOT/current account' without invoking Marshall-Lerner or acknowledging the J-curve.",
+          "Treating Phillips curve relationship as eternal — missing the LR vertical Phillips curve.",
+          "Assuming fiscal multiplier is always > 1, or ignoring crowding-out.",
+          "Confusing nominal vs real (GDP, wages, interest rates, exchange rates).",
+          "Treating 'PED' as elasticity in general — flag when used loosely (could be PES, YED, XED).",
+          "Government intervention treated as automatically welfare-improving — missing government failure.",
+          "AD/AS diagram with no Yf line, or Yf in the wrong place relative to equilibrium.",
         ],
       },
       caseStudy: {
         label: "Case Study Question",
         scale: { type: "marks", min: 0, max: 30 },
         criteria: [
-          { key: "data_use", label: "Use of extract data", weight: 4, descriptor: "Direct references to extracts with figures/quotes; correct extract numbers." },
-          { key: "knowledge", label: "Concept application", weight: 4, descriptor: "Correct framework selection for each sub-question." },
-          { key: "analysis", label: "Analysis with diagrams", weight: 4, descriptor: "Chains of reasoning with labelled diagrams where relevant." },
-          { key: "evaluation", label: "Evaluation", weight: 4, descriptor: "Higher-order judgement on policy effectiveness, magnitudes, limitations." },
+          { key: "data_use", label: "Use of extract data", weight: 5, descriptor: "Direct quotes / figures / dates from the extracts. References extract numbers (Extract 1, Table 2, Fig 3). Doesn't paraphrase vaguely when specifics are available. Computes percentage changes from raw data when relevant." },
+          { key: "knowledge", label: "Concept application", weight: 4, descriptor: "Correct framework per sub-question. H2 CSQ often spans micro + macro + international — pick the right tool each time." },
+          { key: "analysis", label: "Analysis — reasoning chain", weight: 4, descriptor: "Logical chain: data → mechanism → effect. Show working. Quote the extract that triggers each step." },
+          { key: "diagrams", label: "Diagrams (where required)", weight: 3, descriptor: "Only mark this criterion if the sub-question explicitly requires a diagram or strongly implies one. When present, apply the full H2 essay diagram checklist (axes, curves, equilibria, shift direction, shaded areas, prose reference). Deduct for unlabelled or missing equilibrium points." },
+          { key: "evaluation", label: "Evaluation", weight: 4, descriptor: "Higher-order judgement: magnitudes from data, policy limitations, time horizon, alternative perspectives, government effectiveness in the specific context of the extracts. Reaches reasoned stand grounded in the data." },
+        ],
+        misconceptions: [
+          "Quoting extracts without applying economic theory — description, not analysis.",
+          "Inventing data not in the extracts.",
+          "Generic evaluation that ignores the extract's specific context.",
+          "Confusing 'demand' vs 'quantity demanded'.",
+          "Drawing diagrams that contradict the extract's scenario (wrong shift direction).",
         ],
       },
     },
@@ -221,6 +262,11 @@ export function rubricToText(subject, taskKey) {
     task.gradeBands.forEach((b) => {
       lines.push(`Band ${b.band} (${b.range[0]}–${b.range[1]}%): ${b.descriptor}`);
     });
+  }
+  if (task.misconceptions && task.misconceptions.length) {
+    lines.push("");
+    lines.push("COMMON MISCONCEPTIONS TO FLAG (deduct marks and call out explicitly):");
+    task.misconceptions.forEach((m) => lines.push(`• ${m}`));
   }
   return lines.join("\n");
 }
