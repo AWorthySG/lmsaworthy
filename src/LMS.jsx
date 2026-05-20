@@ -110,8 +110,11 @@ function LMS({ authUser, userProfile }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [state, dispatch] = useReducer(appReducer, initialState);
-  // Persist state changes to localStorage
-  useEffect(() => { savePersistedState(state); }, [state]);
+  // Persist state changes to localStorage (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => savePersistedState(state), 300);
+    return () => clearTimeout(timer);
+  }, [state]);
   // Sync state to/from Firebase per user
   useFirebaseSync(authUser, state, dispatch);
   // Set role from user profile on login
@@ -178,6 +181,15 @@ function LMS({ authUser, userProfile }) {
   // Dark mode persistence
   useEffect(() => { localStorage.setItem("aworthy-dark", darkMode); document.documentElement.classList.toggle("dark", darkMode); }, [darkMode]);
 
+  // Offline/online indicator
+  useEffect(() => {
+    const handleOffline = () => dispatch({ type: "ADD_TOAST", payload: { message: "You're offline. Changes will sync when reconnected.", variant: "info" } });
+    const handleOnline = () => dispatch({ type: "ADD_TOAST", payload: { message: "Back online!", variant: "success" } });
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+    return () => { window.removeEventListener("offline", handleOffline); window.removeEventListener("online", handleOnline); };
+  }, [dispatch]);
+
   // Request push notification permission on first load
   useEffect(() => { requestPushPermission(); }, []);
 
@@ -206,7 +218,13 @@ function LMS({ authUser, userProfile }) {
 
   // Notification badge counts
   const hwBadge = state.role === "tutor" ? state.submissions.filter(s => s.status === "submitted").length : state.homework.filter(h => h.status === "active").length;
-  const attendanceBadge = state.role === "tutor" ? state.sessions.filter(s => { const rec = state.attendance[s.id] || {}; return Object.keys(rec).length < state.students.length; }).length : 0;
+  const attendanceBadge = state.role === "tutor" ? state.sessions.filter(s => {
+    const rec = state.attendance[s.id] || {};
+    const sessionStudents = (s.subject && state.students.some(st => st.subjects))
+      ? state.students.filter(st => st.subjects?.includes(s.subject))
+      : state.students;
+    return Object.keys(rec).length < sessionStudents.length;
+  }).length : 0;
 
   // Daily reward modal disabled — can be re-enabled later
   // useEffect(() => {
@@ -220,24 +238,24 @@ function LMS({ authUser, userProfile }) {
   const renderPage = () => {
     switch (page) {
       case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
-      case "library": return <ContentLibrary state={state} dispatch={dispatch} />;
-      case "videos": return <VideoLessons state={state} dispatch={dispatch} />;
-      case "quizzes": return <QuizGenerator state={state} dispatch={dispatch} />;
-      case "exams": return <MockExams state={state} />;
+      case "library": case "library-eng": case "library-h1econ": case "library-h2econ": return <ContentLibrary state={state} dispatch={dispatch} />;
+      case "videos": case "videos-eng": case "videos-h1econ": case "videos-h2econ": return <VideoLessons state={state} dispatch={dispatch} />;
+      case "quizzes": case "quizzes-eng": case "quizzes-h1econ": case "quizzes-h2econ": return <QuizGenerator state={state} dispatch={dispatch} />;
+      case "exams": case "exams-h1econ": case "exams-h2econ": return <MockExams state={state} />;
       case "attendance": return <Attendance state={state} dispatch={dispatch} />;
       case "progress": return <ProgressTracker state={state} dispatch={dispatch} />;
       case "leaderboard": return <Leaderboard state={state} dispatch={dispatch} />;
       case "community": return <Community state={state} dispatch={dispatch} />;
       case "classroom": return <Classroom state={state} dispatch={dispatch} userProfile={userProfile} />;
       case "infographics": return <LiveInfographics state={state} dispatch={dispatch} />;
-      case "practice": return <PracticeQuestions />;
+      case "practice-gp": return <PracticeQuestions />;
       case "practice-eng": return <SubjectDrills subject="eng" />;
       // case "practice-ipeng": return <SubjectDrills subject="ipeng" />;
       case "practice-h1econ": return <SubjectDrills subject="h1econ" />;
       case "practice-h2econ": return <SubjectDrills subject="h2econ" />;
       case "timedwrite": return <TimedEssayWriter />;
       case "vocab": return <VocabBuilder />;
-      case "connector": return <ExampleConnector />;
+      case "example-finder": return <ExampleConnector />;
       case "essaygrader": return <EssayGrader />;
       case "aimarker": return <AIMarker />;
       case "homework": return <Homework state={state} dispatch={dispatch} />;
