@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { T } from '../../theme/theme.js';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
-import { SUBJECT_RUBRICS, pickDefaultTask, rubricToText, getDefaultRubricForHomework } from '../../grading/rubrics.js';
-import { extractFromFile, mergeExtractions } from '../../grading/extractText.js';
-import { gradeSubmission } from '../../grading/gradeClient.js';
+import { SUBJECT_RUBRICS, pickDefaultTask, rubricToText, getDefaultRubricForHomework } from './rubrics.js';
+import { extractFromFile, mergeExtractions } from './extractText.js';
+import { gradeSubmission } from './gradeClient.js';
 
 // Standalone AI marker — drop in any file (.docx, .pdf, photo) and get a graded response.
 // Independent of the homework system; useful for marking off-platform submissions.

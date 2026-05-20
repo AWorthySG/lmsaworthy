@@ -13,7 +13,7 @@ export const T = {
   // Text — deep charcoal with blue undertone (not pure black)
   text: "#1E1E2E",
   textSec: "#4B5563",
-  textTer: "#64748B",
+  textTer: "#556478",
   textInverse: "#F8F7F4",
   // Accent — deep indigo (trust + aspiration)
   accent: "#2D3A8C",
@@ -22,12 +22,12 @@ export const T = {
   accentDark: "#1E2A6E",
   accentText: "#1E2A6E",
   // Gold — achievement, excellence, aspiration
-  gold: "#D4A254",
+  gold: "#996E2A",
   goldLight: "#FBF4E4",
   goldDark: "#A07830",
   // Atmospheric helpers
   gradPrimary: "linear-gradient(135deg, #2D3A8C, #4F5BD5)",
-  gradGold: "linear-gradient(135deg, #D4A254, #E8C078)",
+  gradGold: "linear-gradient(135deg, #996E2A, #C49A50)",
   gradNavy: "#0F172A",
   gradTeal: "#E4F4F0",
   navy: "#0F172A",
@@ -38,12 +38,12 @@ export const T = {
   eng:    { bg: "#EEF0FF", text: "#2D3A8C", accent: "#4F5BD5" },
   ipeng:  { bg: "#FBF4E4", text: "#8B6914", accent: "#D4A254" },
   h1econ: { bg: "#F0E8F8", text: "#5B21B6", accent: "#7C3AED" },
-  h2econ: { bg: "#FEF2E8", text: "#C2410C", accent: "#EA580C" },
+  h2econ: { bg: "#FEF2E8", text: "#A5360A", accent: "#EA580C" },
   gp:     { bg: "#E4F4F0", text: "#0F766E", accent: "#0D9488" },
   // Status — clear, decisive
   success: "#16A34A",
   successBg: "#E8F8EE",
-  warning: "#D97706",
+  warning: "#9A5C04",
   warningBg: "#FEF8E8",
   danger: "#DC2626",
   dangerBg: "#FEF0F0",
@@ -57,7 +57,7 @@ export const T = {
   shadow3: "0 8px 24px rgba(15,23,42,0.10)",
   shadowAccent: "0 3px 12px rgba(45,58,140,0.25)",
   // Grade colors — centralized for consistency
-  gradeS: "#D4A254", gradeA: "#16A34A", gradeB: "#2D3A8C", gradeC: "#D97706", gradeD: "#DC2626",
+  gradeS: "#996E2A", gradeA: "#16A34A", gradeB: "#2D3A8C", gradeC: "#9A5C04", gradeD: "#DC2626",
   // Radii — editorial with a touch of softness
   r1: 6, r2: 10, r3: 14, r4: 18, r5: 24,
 };

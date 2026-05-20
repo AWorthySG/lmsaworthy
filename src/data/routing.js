@@ -16,9 +16,9 @@ export const NAV = [
     { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
   ]},
   { group: "O-Level English", subject: "eng", items: [
-    { id: "library", label: "Resources", icon: Books },
-    { id: "videos", label: "Video Lessons", icon: VideoCamera },
-    { id: "quizzes", label: "Quizzes", icon: Lightning },
+    { id: "library-eng", label: "Resources", icon: Books },
+    { id: "videos-eng", label: "Video Lessons", icon: VideoCamera },
+    { id: "quizzes-eng", label: "Quizzes", icon: Lightning },
     { id: "practice-eng", label: "Practice Drills", icon: Target },
     { id: "vocab", label: "Vocabulary", icon: Scroll },
     { id: "games-eng", label: "Games", icon: RocketLaunch },
@@ -27,31 +27,31 @@ export const NAV = [
   ]},
   { group: "H1 General Paper", subject: "gp", items: [
     { id: "infographics", label: "Infographics", icon: Sparkle },
-    { id: "practice", label: "Practice Drills", icon: Target },
+    { id: "practice-gp", label: "Practice Drills", icon: Target },
     { id: "essaygrader", label: "Essay Grader", icon: GraduationCap },
     { id: "timedwrite", label: "Timed Writer", icon: Timer },
-    { id: "connector", label: "Example Finder", icon: Lightbulb },
+    { id: "example-finder", label: "Example Finder", icon: Lightbulb },
     { id: "games-gp", label: "Games", icon: RocketLaunch },
     { id: "modelessays", label: "Model Essays", icon: GraduationCap },
     { id: "pastpapers-gp", label: "Past Papers", icon: Notebook },
     { id: "micro-gp", label: "Quick Lessons", icon: BookmarkSimple },
   ]},
   { group: "H1 Economics", subject: "h1econ", items: [
-    { id: "library", label: "Resources", icon: Books },
-    { id: "videos", label: "Video Lessons", icon: VideoCamera },
-    { id: "quizzes", label: "Quizzes", icon: Lightning },
+    { id: "library-h1econ", label: "Resources", icon: Books },
+    { id: "videos-h1econ", label: "Video Lessons", icon: VideoCamera },
+    { id: "quizzes-h1econ", label: "Quizzes", icon: Lightning },
     { id: "practice-h1econ", label: "Practice Drills", icon: Target },
-    { id: "exams", label: "Mock Exams", icon: Scales },
+    { id: "exams-h1econ", label: "Mock Exams", icon: Scales },
     { id: "games-h1econ", label: "Games", icon: RocketLaunch },
     { id: "pastpapers-h1econ", label: "Past Papers", icon: Notebook },
     { id: "micro-h1econ", label: "Quick Lessons", icon: BookmarkSimple },
   ]},
   { group: "H2 Economics", subject: "h2econ", items: [
-    { id: "library", label: "Resources", icon: Books },
-    { id: "videos", label: "Video Lessons", icon: VideoCamera },
-    { id: "quizzes", label: "Quizzes", icon: Lightning },
+    { id: "library-h2econ", label: "Resources", icon: Books },
+    { id: "videos-h2econ", label: "Video Lessons", icon: VideoCamera },
+    { id: "quizzes-h2econ", label: "Quizzes", icon: Lightning },
     { id: "practice-h2econ", label: "Practice Drills", icon: Target },
-    { id: "exams", label: "Mock Exams", icon: Scales },
+    { id: "exams-h2econ", label: "Mock Exams", icon: Scales },
     { id: "games-h2econ", label: "Games", icon: RocketLaunch },
     { id: "formulas", label: "Formula Cards", icon: Hash },
     { id: "pastpapers-h2econ", label: "Past Papers", icon: Notebook },
@@ -81,10 +81,11 @@ export const PAGE_TO_PATH = {
   dashboard: "/", library: "/library", videos: "/videos", quizzes: "/quizzes",
   exams: "/exams", attendance: "/attendance", progress: "/progress",
   leaderboard: "/leaderboard", community: "/community", classroom: "/classroom",
-  infographics: "/infographics", practice: "/practice", "practice-eng": "/practice/eng",
+  infographics: "/infographics",
+  "practice-gp": "/practice/gp", "practice-eng": "/practice/eng",
   "practice-h1econ": "/practice/h1econ", "practice-h2econ": "/practice/h2econ",
-  timedwrite: "/timedwrite",
-  vocab: "/vocab", connector: "/connector", essaygrader: "/essaygrader",
+  timedwrite: "/timed-writer",
+  vocab: "/vocab", "example-finder": "/example-finder", essaygrader: "/essay-grader",
   aimarker: "/ai-marker",
   homework: "/homework", pastpapers: "/past-papers", microlearning: "/microlearning",
   "pastpapers-eng": "/past-papers/eng", "pastpapers-gp": "/past-papers/gp",
@@ -99,6 +100,18 @@ export const PAGE_TO_PATH = {
   "games-eng": "/games/eng", "games-gp": "/games/gp",
   "games-h1econ": "/games/h1econ", "games-h2econ": "/games/h2econ", events: "/events",
   settings: "/settings",
+  // Subject-suffixed IDs mapping to shared pages
+  "library-eng": "/library", "library-h1econ": "/library", "library-h2econ": "/library",
+  "videos-eng": "/videos", "videos-h1econ": "/videos", "videos-h2econ": "/videos",
+  "quizzes-eng": "/quizzes", "quizzes-h1econ": "/quizzes", "quizzes-h2econ": "/quizzes",
+  "exams-h1econ": "/exams", "exams-h2econ": "/exams",
 };
 
-export const PATH_TO_PAGE = Object.fromEntries(Object.entries(PAGE_TO_PATH).map(([k, v]) => [v, k]));
+// Auto-generate reverse mapping; for shared paths the base ID (without subject suffix) wins
+const _autoPath = Object.fromEntries(Object.entries(PAGE_TO_PATH).map(([k, v]) => [v, k]));
+// Override shared paths so they resolve to the unsuffixed base page ID
+_autoPath["/library"] = "library";
+_autoPath["/videos"] = "videos";
+_autoPath["/quizzes"] = "quizzes";
+_autoPath["/exams"] = "exams";
+export const PATH_TO_PAGE = _autoPath;

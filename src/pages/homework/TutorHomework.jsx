@@ -3,9 +3,9 @@ import { T, SUBJ_THEME } from '../../theme/theme.js';
 import { ArrowLeft, Plus, ClipboardText, Clock, Warning } from '../../icons/icons.jsx';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
-import { getDefaultRubricForHomework } from '../../grading/rubrics.js';
-import { extractFromUrl, mergeExtractions } from '../../grading/extractText.js';
-import { gradeSubmission as gradeSubmissionAPI } from '../../grading/gradeClient.js';
+import { getDefaultRubricForHomework } from '../tools/rubrics.js';
+import { extractFromUrl, mergeExtractions } from '../tools/extractText.js';
+import { gradeSubmission as gradeSubmissionAPI } from '../tools/gradeClient.js';
 
 const HW_STATUS = {
   not_started: { label: "Not Started", color: "#8E99AE", bg: "#EFF1F7" },

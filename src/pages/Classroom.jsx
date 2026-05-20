@@ -22,7 +22,7 @@ class WhiteboardErrorBoundary extends React.Component {
   }
 }
 
-function Whiteboard({ sessionId, studentNames }) {
+function Whiteboard({ sessionId, studentNames, userName }) {
   const canvasRef = useRef(null);
   const overlayRef = useRef(null); // for remote cursors
   const [tool, setTool] = useState("pen");
@@ -272,7 +272,7 @@ function Whiteboard({ sessionId, studentNames }) {
     if (e.pointerType === "pen") penEverDetected.current = true;
     const pos = getPos(e);
     // Broadcast cursor position to other tabs
-    channelRef.current?.postMessage({ type: "cursor", name: "Jeremy", x: pos.x, y: pos.y, color: T.accent });
+    channelRef.current?.postMessage({ type: "cursor", name: userName || "Me", x: pos.x, y: pos.y, color: T.accent });
     if (!drawing.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -1075,7 +1075,7 @@ function Classroom({ state, dispatch, userProfile }) {
       <div style={{ flex: "1 1 0%", display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: 0, overflow: "hidden" }}>
         {/* Main whiteboard canvas — flex-basis:0 forces Safari to shrink properly */}
         <div style={{ flex: "1 1 0%", minWidth: 0, minHeight: 0, position: "relative", overflow: "hidden" }}>
-          <WhiteboardErrorBoundary><Whiteboard sessionId={sessionId} studentNames={students.map(s => s.name)} /></WhiteboardErrorBoundary>
+          <WhiteboardErrorBoundary><Whiteboard sessionId={sessionId} studentNames={students.map(s => s.name)} userName={userProfile?.name} /></WhiteboardErrorBoundary>
         </div>
 
         {/* Video Sidebar — right on desktop/tablet, bottom strip on mobile */}
