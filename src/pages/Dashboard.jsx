@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useMemo } from 'react';
 import { T } from '../theme/theme.js';
 import { House, Books, VideoCamera, Lightning, Target, Lightbulb, RocketLaunch, Flame, Trophy, Crown, Medal, Star, Sparkle, Gift, Confetti, CheckCircle, ChartLineUp, CalendarBlank, Clock, ArrowRight, Brain, GraduationCap, BookOpen, ClipboardText, Scroll, PencilSimpleLine, Notebook, Bell, CalendarCheck, ChartBar, Handshake, FolderSimpleStar, PlayCircle, Users, Upload, Play, Exam, Plus, CaretRight, Timer, Megaphone, ChatText, Eye, FlowArrow } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, StatCard, SubjectIllustration } from '../components/ui';
 import { XPBar, BadgeChip, StudentAvatar, PodiumCard, StreakCalendar, ShareableProgressCard, triggerCelebration } from '../components/gamification';
 import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
-import { getSubject, getSubjectTheme, formatDate, getExamCountdowns, getDailyChallenge, getWeeklyProgress, getWordOfTheDay, generateStudyPlan } from '../utils/helpers.js';
+import { getSubject, getSubjectTheme, getExamCountdowns, getDailyChallenge, getWeeklyProgress, getWordOfTheDay, generateStudyPlan } from '../utils/helpers.js';
 import PomodoroTimer from './tools/PomodoroTimer.jsx';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import { LEVELS, BADGE_DEFS, AVATAR_OPTIONS } from '../data/gamification.js';
@@ -85,6 +84,138 @@ function HeroBanner() {
 }
 
 
+/* ━━━ STUDENT DASHBOARD SUB-COMPONENTS ━━━ */
+
+function WelcomeHero({ state, authUser, userProfile, myHomework, mySubs, gradedHw }) {
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const firstName = (userProfile?.name || authUser?.displayName || authUser?.email || "Scholar").split(" ")[0].split("@")[0];
+  const pendingCount = myHomework.filter(h => !mySubs.find(s => s.homeworkId === h.id && (s.status === "graded" || s.status === "submitted"))).length;
+  return (
+    <div style={{ marginBottom: 24, background: "linear-gradient(135deg, #0F172A 0%, #1E2A4A 45%, #2D3A8C 100%)", borderRadius: T.r4, padding: "28px 24px 22px", position: "relative", overflow: "hidden" }}>
+      {/* Background accents */}
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(212,162,84,0.14), transparent 50%), radial-gradient(circle at 10% 80%, rgba(79,91,213,0.1), transparent 50%)" }} />
+      <div style={{ position: "absolute", top: -40, right: -40, width: 160, height: 160, borderRadius: "50%", border: "1px solid rgba(212,162,84,0.08)" }} />
+      <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", border: "1px solid rgba(212,162,84,0.06)" }} />
+      <div style={{ position: "absolute", bottom: -30, left: -20, width: 100, height: 100, borderRadius: "50%", background: "radial-gradient(circle, rgba(79,91,213,0.2), transparent 70%)" }} />
+
+      {/* Content */}
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: "#D4A254", textTransform: "uppercase", letterSpacing: 1.5, display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#22C55E", boxShadow: "0 0 6px #22C55E" }} />
+            Student Dashboard
+          </div>
+          {pendingCount > 0 && (
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#fff", background: "rgba(220,38,38,0.7)", padding: "3px 10px", borderRadius: 20, border: "1px solid rgba(220,38,38,0.4)" }}>
+              {pendingCount} pending
+            </div>
+          )}
+        </div>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#fff", fontFamily: "'Bricolage Grotesque', sans-serif", margin: "0 0 4px", letterSpacing: "-0.03em" }}>
+          {greeting}, {firstName}!
+        </h1>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: "0 0 18px", fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 300 }}>
+          {new Date().toLocaleDateString("en-SG", { weekday: "long", day: "numeric", month: "long" })} · Keep up the great work!
+        </p>
+
+        {/* Stat pills — 4 stats */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+          {[
+            { value: state.wallet.coins, label: "Coins", icon: <span style={{ fontWeight: 700, fontSize: 10 }}>$</span>, color: "#D4A254" },
+            { value: state.wallet.streak, label: "Streak", icon: <Flame size={10} color="#818CF8" />, color: "#818CF8" },
+            { value: gradedHw.length, label: "Graded", icon: <CheckCircle size={10} color="#22C55E" />, color: "#22C55E" },
+            { value: Math.floor((state.wallet.coins || 0) / 100) + 1, label: "Level", icon: <Star size={10} color="#F59E0B" />, color: "#F59E0B" },
+          ].map(stat => (
+            <div key={stat.label} style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 12, padding: "12px 10px", border: "1px solid rgba(255,255,255,0.08)", textAlign: "center" }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1 }}>{stat.value}</div>
+              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: 4, letterSpacing: "0.05em", display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{stat.icon} {stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExamCountdownSection() {
+  const exams = getExamCountdowns().slice(0, 3);
+  if (exams.length === 0) return null;
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Timer size={14} color={T.text} /> Exam Countdown</div>
+      <div style={{ display: "flex", gap: 8 }}>
+        {exams.map((e, i) => {
+          const theme = T[e.subject] || T.eng;
+          const urgent = e.daysLeft <= 30;
+          return (
+            <div key={i} className="card-enter" style={{ "--i": i, flex: 1, background: urgent ? T.dangerBg : T.bgCard, borderRadius: T.r2, padding: "12px", border: `1px solid ${urgent ? T.danger + "33" : T.border}`, textAlign: "center" }}>
+              <div style={{ fontSize: 24, fontWeight: 900, color: urgent ? T.danger : theme.accent, fontFamily: "'JetBrains Mono', monospace" }}>{e.daysLeft}</div>
+              <div style={{ fontSize: 9, fontWeight: 600, color: T.textTer, textTransform: "uppercase" }}>days</div>
+              <div style={{ fontSize: 10, fontWeight: 600, color: T.text, marginTop: 4 }}>{e.name}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function DailyChallengeSection() {
+  const challenge = getDailyChallenge();
+  return (
+    <div style={{ marginBottom: 20, background: "linear-gradient(135deg, #0F172A, #1E2A4A)", borderRadius: T.r3, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", top: -10, right: -10, opacity: 0.06 }}><Target size={60} /></div>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+        <Target size={12} color="#D4A254" />
+        <span style={{ fontSize: 10, fontWeight: 700, color: "#D4A254", textTransform: "uppercase", letterSpacing: 1 }}>Daily Challenge</span>
+        <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", marginLeft: "auto", background: "rgba(255,255,255,0.06)", padding: "2px 8px", borderRadius: 10 }}>{challenge.type}</span>
+      </div>
+      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", lineHeight: 1.6 }}>{challenge.question}</div>
+      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginTop: 8 }}>Complete for +10 coins · Refreshes daily</div>
+    </div>
+  );
+}
+
+function WordOfTheDaySection() {
+  const wotd = getWordOfTheDay();
+  const theme = T[wotd.subject] || T.eng;
+  return (
+    <div style={{ marginBottom: 16, background: T.bgCard, borderRadius: T.r2, padding: "14px 16px", border: `1px solid ${T.border}`, borderLeft: `3px solid ${theme.accent}` }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: T.gold, textTransform: "uppercase", letterSpacing: 0.5, display: "inline-flex", alignItems: "center", gap: 4 }}><BookOpen size={10} color={T.gold} /> Word of the Day</span>
+        <span style={{ fontSize: 9, color: T.textTer }}>{getSubject(wotd.subject)?.name}</span>
+      </div>
+      <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{wotd.word}</div>
+      <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>{wotd.def}</div>
+      <div style={{ fontSize: 11, color: T.textTer, marginTop: 6, fontStyle: "italic", lineHeight: 1.5 }}>"{wotd.usage}"</div>
+    </div>
+  );
+}
+
+function WeeklyProgressSection({ state }) {
+  const wp = getWeeklyProgress(state);
+  return (
+    <div style={{ marginTop: 20, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><ChartLineUp size={15} color={T.text} /> This Week's Progress</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+        {[
+          { label: "Homework", value: wp.hwCompleted, icon: <ClipboardText size={10} color={T.accent} />, color: T.accent },
+          { label: "Notes", value: wp.notesCreated, icon: <PencilSimpleLine size={10} color={T.teal} />, color: T.teal },
+          { label: "Reviews", value: wp.reviewsGiven, icon: <Eye size={10} color={T.success} />, color: T.success },
+          { label: "Streak", value: `${wp.streakDays}d`, icon: <Flame size={10} color={T.gold} />, color: T.gold },
+          { label: "Coins", value: `+${wp.coinsEarned}`, icon: <span style={{ fontWeight: 700, fontSize: 10, color: T.goldDark }}>$</span>, color: T.goldDark },
+        ].map(s => (
+          <div key={s.label} style={{ textAlign: "center", padding: "8px", borderRadius: T.r1, background: T.bgMuted }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
+            <div style={{ fontSize: 10, color: T.textTer, display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{s.icon} {s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ━━━ STUDENT DASHBOARD ━━━ */
 function StudentDashboard({ state, dispatch, authUser, userProfile }) {
   const today = new Date().toISOString().split("T")[0];
@@ -99,115 +230,16 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
   return (
     <div>
       {/* Welcome — enhanced glassmorphism hero card */}
-      {(() => {
-        const hour = new Date().getHours();
-        const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-        const firstName = (userProfile?.name || authUser?.displayName || authUser?.email || "Scholar").split(" ")[0].split("@")[0];
-        const pendingCount = myHomework.filter(h => !mySubs.find(s => s.homeworkId === h.id && (s.status === "graded" || s.status === "submitted"))).length;
-        return (
-          <div style={{ marginBottom: 24, background: "linear-gradient(135deg, #0F172A 0%, #1E2A4A 45%, #2D3A8C 100%)", borderRadius: T.r4, padding: "28px 24px 22px", position: "relative", overflow: "hidden" }}>
-            {/* Background accents */}
-            <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(212,162,84,0.14), transparent 50%), radial-gradient(circle at 10% 80%, rgba(79,91,213,0.1), transparent 50%)" }} />
-            <div style={{ position: "absolute", top: -40, right: -40, width: 160, height: 160, borderRadius: "50%", border: "1px solid rgba(212,162,84,0.08)" }} />
-            <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", border: "1px solid rgba(212,162,84,0.06)" }} />
-            <div style={{ position: "absolute", bottom: -30, left: -20, width: 100, height: 100, borderRadius: "50%", background: "radial-gradient(circle, rgba(79,91,213,0.2), transparent 70%)" }} />
-
-            {/* Content */}
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#D4A254", textTransform: "uppercase", letterSpacing: 1.5, display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#22C55E", boxShadow: "0 0 6px #22C55E" }} />
-                  Student Dashboard
-                </div>
-                {pendingCount > 0 && (
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#fff", background: "rgba(220,38,38,0.7)", padding: "3px 10px", borderRadius: 20, border: "1px solid rgba(220,38,38,0.4)" }}>
-                    {pendingCount} pending
-                  </div>
-                )}
-              </div>
-              <h1 style={{ fontSize: 26, fontWeight: 800, color: "#fff", fontFamily: "'Bricolage Grotesque', sans-serif", margin: "0 0 4px", letterSpacing: "-0.03em" }}>
-                {greeting}, {firstName}!
-              </h1>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: "0 0 18px", fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 300 }}>
-                {new Date().toLocaleDateString("en-SG", { weekday: "long", day: "numeric", month: "long" })} · Keep up the great work!
-              </p>
-
-              {/* Stat pills — 4 stats */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
-                {[
-                  { value: state.wallet.coins, label: "Coins", icon: <span style={{ fontWeight: 700, fontSize: 10 }}>$</span>, color: "#D4A254" },
-                  { value: state.wallet.streak, label: "Streak", icon: <Flame size={10} color="#818CF8" />, color: "#818CF8" },
-                  { value: gradedHw.length, label: "Graded", icon: <CheckCircle size={10} color="#22C55E" />, color: "#22C55E" },
-                  { value: Math.floor((state.wallet.coins || 0) / 100) + 1, label: "Level", icon: <Star size={10} color="#F59E0B" />, color: "#F59E0B" },
-                ].map(stat => (
-                  <div key={stat.label} style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 12, padding: "12px 10px", border: "1px solid rgba(255,255,255,0.08)", textAlign: "center" }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1 }}>{stat.value}</div>
-                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: 4, letterSpacing: "0.05em", display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{stat.icon} {stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+      <WelcomeHero state={state} authUser={authUser} userProfile={userProfile} myHomework={myHomework} mySubs={mySubs} gradedHw={gradedHw} />
 
       {/* Exam Countdown */}
-      {(() => {
-        const exams = getExamCountdowns().slice(0, 3);
-        return exams.length > 0 && (
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Timer size={14} color={T.text} /> Exam Countdown</div>
-            <div style={{ display: "flex", gap: 8 }}>
-              {exams.map((e, i) => {
-                const theme = T[e.subject] || T.eng;
-                const urgent = e.daysLeft <= 30;
-                return (
-                  <div key={i} className="card-enter" style={{ "--i": i, flex: 1, background: urgent ? T.dangerBg : T.bgCard, borderRadius: T.r2, padding: "12px", border: `1px solid ${urgent ? T.danger + "33" : T.border}`, textAlign: "center" }}>
-                    <div style={{ fontSize: 24, fontWeight: 900, color: urgent ? T.danger : theme.accent, fontFamily: "'JetBrains Mono', monospace" }}>{e.daysLeft}</div>
-                    <div style={{ fontSize: 9, fontWeight: 600, color: T.textTer, textTransform: "uppercase" }}>days</div>
-                    <div style={{ fontSize: 10, fontWeight: 600, color: T.text, marginTop: 4 }}>{e.name}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })()}
+      <ExamCountdownSection />
 
       {/* Daily Challenge */}
-      {(() => {
-        const challenge = getDailyChallenge();
-        const theme = T[challenge.subject] || T.eng;
-        return (
-          <div style={{ marginBottom: 20, background: "linear-gradient(135deg, #0F172A, #1E2A4A)", borderRadius: T.r3, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: -10, right: -10, opacity: 0.06 }}><Target size={60} /></div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-              <Target size={12} color="#D4A254" />
-              <span style={{ fontSize: 10, fontWeight: 700, color: "#D4A254", textTransform: "uppercase", letterSpacing: 1 }}>Daily Challenge</span>
-              <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", marginLeft: "auto", background: "rgba(255,255,255,0.06)", padding: "2px 8px", borderRadius: 10 }}>{challenge.type}</span>
-            </div>
-            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", lineHeight: 1.6 }}>{challenge.question}</div>
-            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginTop: 8 }}>Complete for +10 coins · Refreshes daily</div>
-          </div>
-        );
-      })()}
+      <DailyChallengeSection />
 
       {/* Word of the Day */}
-      {(() => {
-        const wotd = getWordOfTheDay();
-        const theme = T[wotd.subject] || T.eng;
-        return (
-          <div style={{ marginBottom: 16, background: T.bgCard, borderRadius: T.r2, padding: "14px 16px", border: `1px solid ${T.border}`, borderLeft: `3px solid ${theme.accent}` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: T.gold, textTransform: "uppercase", letterSpacing: 0.5, display: "inline-flex", alignItems: "center", gap: 4 }}><BookOpen size={10} color={T.gold} /> Word of the Day</span>
-              <span style={{ fontSize: 9, color: T.textTer }}>{getSubject(wotd.subject)?.name}</span>
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{wotd.word}</div>
-            <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>{wotd.def}</div>
-            <div style={{ fontSize: 11, color: T.textTer, marginTop: 6, fontStyle: "italic", lineHeight: 1.5 }}>"{wotd.usage}"</div>
-          </div>
-        );
-      })()}
+      <WordOfTheDaySection />
 
       {/* Pomodoro Timer */}
       <div style={{ marginBottom: 20 }}>
@@ -307,28 +339,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
       </div>
 
       {/* Weekly Progress Summary */}
-      {(() => {
-        const wp = getWeeklyProgress(state);
-        return (
-          <div style={{ marginTop: 20, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><ChartLineUp size={15} color={T.text} /> This Week's Progress</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-              {[
-                { label: "Homework", value: wp.hwCompleted, icon: <ClipboardText size={10} color={T.accent} />, color: T.accent },
-                { label: "Notes", value: wp.notesCreated, icon: <PencilSimpleLine size={10} color={T.teal} />, color: T.teal },
-                { label: "Reviews", value: wp.reviewsGiven, icon: <Eye size={10} color={T.success} />, color: T.success },
-                { label: "Streak", value: `${wp.streakDays}d`, icon: <Flame size={10} color={T.gold} />, color: T.gold },
-                { label: "Coins", value: `+${wp.coinsEarned}`, icon: <span style={{ fontWeight: 700, fontSize: 10, color: T.goldDark }}>$</span>, color: T.goldDark },
-              ].map(s => (
-                <div key={s.label} style={{ textAlign: "center", padding: "8px", borderRadius: T.r1, background: T.bgMuted }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
-                  <div style={{ fontSize: 10, color: T.textTer, display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{s.icon} {s.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
+      <WeeklyProgressSection state={state} />
 
       {/* Shareable Progress Card */}
       <div style={{ marginTop: 20 }}>
@@ -339,19 +350,22 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
 }
 
 function Dashboard({ state, dispatch, authUser, userProfile }) {
+  const subjectProgress = useMemo(() => SUBJECTS.map((s, i) => {
+    const hash = ((i + 1) * 16807) % 2147483647;
+    return { ...s, progress: (hash % 40) + 30 };
+  }), []);
+
   // If student role, show student dashboard
   if (state.role === "student") return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
 
-  const subjectProgress = useMemo(() => SUBJECTS.map((s) => ({ ...s, progress: Math.floor(Math.random() * 40 + 30) })), []);
   const actIcons = { award: Trophy, upload: Upload, check: CheckCircle, play: Play, exam: Exam, plus: Plus };
 
   const pendingSubmissions = state.submissions.filter(s => s.status === "submitted").length;
   const activeHomework = state.homework.filter(h => h.status === "active").length;
-  const todaySessions = state.sessions.filter(s => s.date === new Date().toISOString().split("T")[0]).length;
 
   return (
     <div>
-      {/* 3D Hero Scene */}
+      {/* Hero Banner */}
       <HeroBanner />
 
       {/* Tutor Hero Card */}
