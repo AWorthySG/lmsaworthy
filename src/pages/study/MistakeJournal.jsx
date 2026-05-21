@@ -1,7 +1,7 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
 import { PushPin, CheckCircle, XCircle, Lightbulb } from '../../icons/icons.jsx';
-import { EmptyStateIllustration } from '../../components/ui';
+import { EmptyStateIllustration, PageHeader } from '../../components/ui';
 
 function MistakeJournal({ state, dispatch }) {
   const mistakes = state.mistakes || [];
@@ -10,10 +10,7 @@ function MistakeJournal({ state, dispatch }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Mistake Journal</h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>Track errors from quizzes and games to prevent repeating them</p>
-      </div>
+      <PageHeader title="Mistake Journal" subtitle="Track errors from quizzes and games to prevent repeating them" />
 
       <div style={{ display: "flex", gap: 10 }}>
         <div style={{ flex: 1, background: T.dangerBg, borderRadius: T.r2, padding: "14px", textAlign: "center", border: `1px solid ${T.danger}22` }}>

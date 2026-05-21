@@ -1,7 +1,6 @@
-import React, { useState, useReducer, useRef, useEffect } from "react";
+import React, { useState, useReducer, useRef, useEffect, Suspense, lazy } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Icon } from "@iconify/react";
 import { T } from "./theme/theme.js";
 import { List, CaretDown, House, Books, ClipboardText, Handshake, Crown, Bell, MagnifyingGlass, Flame, Megaphone, PencilSimpleLine, Gift, Trophy, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
@@ -9,7 +8,7 @@ import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
 import { NAV, PAGE_TO_PATH, PATH_TO_PAGE } from "./data/routing.js";
 import useWindowWidth from "./hooks/useWindowWidth.js";
-import { requestPushPermission, sendLocalNotification, sendHomeworkReminders } from "./utils/notifications.js";
+import { requestPushPermission, sendHomeworkReminders } from "./utils/notifications.js";
 import useFirebaseSync from "./hooks/useFirebaseSync.js";
 import { PageErrorBoundary } from "./components/ui";
 import { EmptyStateIllustration } from "./components/ui/EmptyState.jsx";
@@ -20,41 +19,43 @@ import { CelebrationOverlay } from "./components/gamification/CelebrationOverlay
 import DailyRewardModal from "./components/gamification/DailyRewardModal.jsx";
 import LoginScreen from "./pages/LoginScreen.jsx";
 
-// Page imports
-import Dashboard, { StudentDashboard } from "./pages/Dashboard.jsx";
-import ContentLibrary from "./pages/ContentLibrary.jsx";
-import VideoLessons from "./pages/VideoLessons.jsx";
-import QuizGenerator from "./pages/QuizGenerator.jsx";
-import MockExams from "./pages/MockExams.jsx";
-import Attendance from "./pages/Attendance.jsx";
-import ProgressTracker from "./pages/ProgressTracker.jsx";
-import Leaderboard from "./pages/Leaderboard.jsx";
-import Community from "./pages/Community.jsx";
-import Classroom from "./pages/Classroom.jsx";
-import LiveInfographics from "./pages/infographics/LiveInfographics.jsx";
-import PracticeQuestions from "./pages/tools/PracticeQuestions.jsx";
-import SubjectDrills from "./pages/tools/SubjectDrills.jsx";
-import TimedEssayWriter from "./pages/tools/TimedEssayWriter.jsx";
-import VocabBuilder from "./pages/tools/VocabBuilder.jsx";
-import ExampleConnector from "./pages/tools/ExampleConnector.jsx";
-import EssayGrader from "./pages/tools/EssayGrader.jsx";
-import AIMarker from "./pages/tools/AIMarker.jsx";
-import Homework from "./pages/homework/Homework.jsx";
-import GameHub from "./pages/games/GameHub.jsx";
-import Events from "./pages/Events.jsx";
-import PastPapers from "./pages/study/PastPapers.jsx";
-import MicrolearningPage from "./pages/study/MicrolearningPage.jsx";
-import PeerReview from "./pages/study/PeerReview.jsx";
-import AnalyticsDashboard from "./pages/AnalyticsDashboard.jsx";
-import ParentView from "./pages/ParentView.jsx";
-import NotesPage from "./pages/study/NotesPage.jsx";
-import ModelEssayBank from "./pages/study/ModelEssayBank.jsx";
-import GoalSetting from "./pages/study/GoalSetting.jsx";
-import MistakeJournal from "./pages/study/MistakeJournal.jsx";
-import RevisionChecklist from "./pages/study/RevisionChecklist.jsx";
-import FormulaCards from "./pages/tools/FormulaCards.jsx";
-import Certificates from "./pages/Certificates.jsx";
-import SettingsPage from "./pages/SettingsPage.jsx";
+// Lazy-loaded page imports (code-split per route)
+const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
+const ContentLibrary = lazy(() => import("./pages/ContentLibrary.jsx"));
+const VideoLessons = lazy(() => import("./pages/VideoLessons.jsx"));
+const QuizGenerator = lazy(() => import("./pages/QuizGenerator.jsx"));
+const MockExams = lazy(() => import("./pages/MockExams.jsx"));
+const Attendance = lazy(() => import("./pages/Attendance.jsx"));
+const ProgressTracker = lazy(() => import("./pages/ProgressTracker.jsx"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard.jsx"));
+const Community = lazy(() => import("./pages/Community.jsx"));
+const Classroom = lazy(() => import("./pages/Classroom.jsx"));
+const LiveInfographics = lazy(() => import("./pages/infographics/LiveInfographics.jsx"));
+const PracticeQuestions = lazy(() => import("./pages/tools/PracticeQuestions.jsx"));
+const SubjectDrills = lazy(() => import("./pages/tools/SubjectDrills.jsx"));
+const TimedEssayWriter = lazy(() => import("./pages/tools/TimedEssayWriter.jsx"));
+const VocabBuilder = lazy(() => import("./pages/tools/VocabBuilder.jsx"));
+const ExampleConnector = lazy(() => import("./pages/tools/ExampleConnector.jsx"));
+const EssayGrader = lazy(() => import("./pages/tools/EssayGrader.jsx"));
+const AIMarker = lazy(() => import("./pages/tools/AIMarker.jsx"));
+const Homework = lazy(() => import("./pages/homework/Homework.jsx"));
+const GameHub = lazy(() => import("./pages/games/GameHub.jsx"));
+const Events = lazy(() => import("./pages/Events.jsx"));
+const PastPapers = lazy(() => import("./pages/study/PastPapers.jsx"));
+const MicrolearningPage = lazy(() => import("./pages/study/MicrolearningPage.jsx"));
+const PeerReview = lazy(() => import("./pages/study/PeerReview.jsx"));
+const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard.jsx"));
+const ParentView = lazy(() => import("./pages/ParentView.jsx"));
+const NotesPage = lazy(() => import("./pages/study/NotesPage.jsx"));
+const ModelEssayBank = lazy(() => import("./pages/study/ModelEssayBank.jsx"));
+const GoalSetting = lazy(() => import("./pages/study/GoalSetting.jsx"));
+const MistakeJournal = lazy(() => import("./pages/study/MistakeJournal.jsx"));
+const RevisionChecklist = lazy(() => import("./pages/study/RevisionChecklist.jsx"));
+const FormulaCards = lazy(() => import("./pages/tools/FormulaCards.jsx"));
+const Certificates = lazy(() => import("./pages/Certificates.jsx"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
+
+const TUTOR_ONLY_PAGES = new Set(["aimarker", "attendance", "analytics", "parentview", "certificates"]);
 
 export default function LMSAuthWrapper() {
   const [authUser, setAuthUser] = useState(undefined); // undefined=loading, null=logged out, object=logged in
@@ -235,7 +236,12 @@ function LMS({ authUser, userProfile }) {
   //   }
   // }, []);
 
+  const pageFallback = <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "40px 0" }}>{[1,2,3].map(i => <div key={i} className="shimmer" style={{ height: 14, borderRadius: 6, width: i === 3 ? "60%" : "100%" }} />)}</div>;
+
   const renderPage = () => {
+    if (TUTOR_ONLY_PAGES.has(page) && state.role !== "tutor") {
+      return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
+    }
     switch (page) {
       case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
       case "library": case "library-eng": case "library-h1econ": case "library-h2econ": return <ContentLibrary state={state} dispatch={dispatch} />;
@@ -470,10 +476,6 @@ function LMS({ authUser, userProfile }) {
           <button onClick={() => setShowSearch(true)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 40, fontSize: 12, color: T.textTer }}>
             <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: "'JetBrains Mono', monospace" }}>⌘K</kbd>}
           </button>
-          {/* Dark mode toggle */}
-          <button onClick={() => setDarkMode(d => !d)} title={darkMode ? "Light mode" : "Dark mode"} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", minWidth: 40, minHeight: 40, alignItems: "center", justifyContent: "center", fontSize: 16 }}>
-            <Icon icon={darkMode ? "ph:sun-bold" : "ph:moon-bold"} width={18} height={18} />
-          </button>
           {/* Notification bell */}
           <div style={{ position: "relative" }}>
             <button onClick={() => setShowNotifs(n => !n)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", position: "relative", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
@@ -514,7 +516,9 @@ function LMS({ authUser, userProfile }) {
             style={{ maxWidth: 1080, margin: "0 auto", paddingTop: isMobileLayout ? 8 : 24 }}
           >
             <PageErrorBoundary onNavigate={() => dispatch({ type: "SET_PAGE", payload: "dashboard" })}>
-              {renderPage()}
+              <Suspense fallback={pageFallback}>
+                {renderPage()}
+              </Suspense>
             </PageErrorBoundary>
           </motion.div>
         </AnimatePresence>

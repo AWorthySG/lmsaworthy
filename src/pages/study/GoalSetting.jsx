@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
 import { CheckCircle, XCircle, Lightbulb } from '../../icons/icons.jsx';
-import { EmptyStateIllustration } from '../../components/ui';
+import { EmptyStateIllustration, PageHeader } from '../../components/ui';
 
 function GoalSetting({ state, dispatch }) {
   const [newGoal, setNewGoal] = useState("");
@@ -18,10 +18,7 @@ function GoalSetting({ state, dispatch }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>My Goals</h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>Set learning goals and track your progress</p>
-      </div>
+      <PageHeader title="My Goals" subtitle="Set learning goals and track your progress" />
 
       {/* Add goal */}
       <div style={{ display: "flex", gap: 8 }}>
@@ -46,7 +43,7 @@ function GoalSetting({ state, dispatch }) {
                 <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{g.text}</div>
                 <div style={{ fontSize: 10, color: T.textTer }}>{g.type} · set {g.createdAt}</div>
               </div>
-              <button onClick={() => dispatch({ type: "DELETE_GOAL", payload: g.id })} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, display: "flex", alignItems: "center" }}><XCircle size={14} color={T.textTer} /></button>
+              <button onClick={() => { if (window.confirm("Delete this goal?")) dispatch({ type: "DELETE_GOAL", payload: g.id }); }} aria-label="Delete goal" style={{ background: "none", border: "none", cursor: "pointer", padding: 4, display: "flex", alignItems: "center" }}><XCircle size={14} color={T.textTer} /></button>
             </div>
           ))}
         </div>

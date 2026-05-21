@@ -3,8 +3,9 @@ import { T } from '../../theme/theme.js';
 import { SUBJECTS } from '../../data/subjects.js';
 import { PAST_PAPERS } from '../../data/pastPapersData.js';
 import { ESSAY_RUBRICS } from '../../data/essayData.js';
-import { getExamCountdowns } from '../../utils/helpers.js';
+import { getSubject, getExamCountdowns } from '../../utils/helpers.js';
 import { FilePdf } from '../../icons/icons.jsx';
+import { PageHeader } from '../../components/ui';
 import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
 
 /* ━━━ PDF VIEWER MODAL ━━━ */
@@ -42,7 +43,7 @@ function PdfViewer({ url, title, onClose }) {
 }
 
 /* ━━━ UPLOAD BUTTON ━━━ */
-function PdfUpload({ onUploaded, onError, label }) {
+function PdfUpload({ onUploaded, label }) {
   const [uploading, setUploading] = useState(false);
 
   async function handleUpload(e) {
@@ -56,8 +57,7 @@ function PdfUpload({ onUploaded, onError, label }) {
       const url = await getDownloadURL(sRef);
       onUploaded({ name: file.name, url });
     } catch (err) {
-      console.error("PDF upload failed:", err);
-      onError?.(err);
+      console.warn("PDF upload failed:", err);
     }
     setUploading(false);
     e.target.value = "";
@@ -84,19 +84,7 @@ function PastPapers({ state, dispatch, defaultSubject }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Past-Year Papers</h1>
-          <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>Practice with real Cambridge exam papers and model answers</p>
-        </div>
-        {state.role === "tutor" && (
-          <PdfUpload
-            onUploaded={handlePdfUploaded}
-            onError={() => dispatch({ type: "ADD_TOAST", payload: { message: "PDF upload failed — please try again.", variant: "error" } })}
-            label="Upload Past Paper PDF"
-          />
-        )}
-      </div>
+      <PageHeader title="Past-Year Papers" subtitle="Practice with real Cambridge exam papers and model answers" action={state.role === "tutor" ? <PdfUpload onUploaded={handlePdfUploaded} label="Upload Past Paper PDF" /> : null} />
 
       {/* Exam countdown banner */}
       {(() => {

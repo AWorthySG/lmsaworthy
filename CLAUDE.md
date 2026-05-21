@@ -35,7 +35,12 @@ There is no test suite.
 ### Entry / shell
 - `src/main.jsx` — React root, wraps `<App />` with `<BrowserRouter>`.
 - `src/App.jsx` — renders `<LMS />` (default export of `src/LMS.jsx`, named `LMSAuthWrapper`).
-- `src/LMS.jsx` (~620 lines) — auth gate (Firebase `onAuthStateChanged`), then the main `LMS` component: sidebar, header, mobile bottom nav, global Cmd-K search, notification bell, dark-mode toggle, toast container, celebration overlay, offline indicator, and the `renderPage()` switch (wrapped in `<PageErrorBoundary>`) that maps `state.page` → a page component.
+- `src/LMS.jsx` (~620 lines) — auth gate (Firebase `onAuthStateChanged`), then the main `LMS` component: sidebar, header, mobile bottom nav, global Cmd-K search, notification bell, toast container, celebration overlay, offline indicator, and the `renderPage()` switch (wrapped in `<PageErrorBoundary>` + `<Suspense>`) that maps `state.page` → a lazy-loaded page component.
+
+### Code splitting
+- All page components are loaded via `React.lazy()` — each page becomes its own chunk at build time.
+- `renderPage()` is wrapped in `<Suspense fallback={...}>` for loading states.
+- Tutor-only pages (`aimarker`, `attendance`, `analytics`, `parentview`, `certificates`) are gated in `renderPage()` — students accessing these URLs are redirected to the dashboard.
 
 ### State management
 - One `useReducer` in `LMS.jsx`: `appReducer` (in `src/state/reducer.js`) with ~35 action types. State shape and initial values are in `src/state/persistence.js` (`DEFAULT_STATE`).
@@ -49,7 +54,7 @@ There is no test suite.
 ### Routing (URL ↔ state.page two-way sync)
 - `src/data/routing.js` is the source of truth for both sidebar nav (`NAV`) and the URL map (`PAGE_TO_PATH` / `PATH_TO_PAGE`).
 - `LMS.jsx` has two effects: one reads `location.pathname` and dispatches `SET_PAGE`; the other watches `state.page` and calls `navigate(path)`. An `initializedRef` prevents the first render from racing.
-- `renderPage()` in `LMS.jsx` is a `switch` on `state.page` returning the page component. Adding a page = (1) component file, (2) entry in `NAV`, (3) entry in `PAGE_TO_PATH`, (4) `case` in `renderPage()`, (5) import at top of `LMS.jsx`.
+- `renderPage()` in `LMS.jsx` is a `switch` on `state.page` returning the page component. Adding a page = (1) component file, (2) entry in `NAV`, (3) entry in `PAGE_TO_PATH`, (4) `case` in `renderPage()`, (5) lazy import at top of `LMS.jsx`.
 - Subject-scoped page IDs use consistent suffixes: `practice-gp`, `practice-eng`, `games-h2econ`, `pastpapers-gp`, `micro-h1econ`, `library-eng`, `videos-h1econ`, `quizzes-h2econ`, `exams-h1econ`, etc. Shared pages (library, videos, quizzes, exams) have subject-suffixed NAV IDs that map to the same route path.
 - URL slugs use hyphens: `/timed-writer`, `/essay-grader`, `/example-finder`, `/ai-marker`, `/past-papers`, `/peer-review`.
 
@@ -58,7 +63,7 @@ There is no test suite.
 - `src/pages/{games,homework,infographics,study,tools}/` — grouped feature folders.
   - `pages/games/{economics,english,gp}/` hold individual game components; the per-subject `GameHub` (`pages/games/GameHub.jsx`) reads `subject` prop and renders the right set.
   - `pages/tools/` contains both student tools (PomodoroTimer, VocabBuilder, PracticeQuestions) and tutor tools (AIMarker, EssayGrader), plus the AI grading utilities (`extractText.js`, `gradeClient.js`, `rubrics.js`).
-- `src/components/ui/` — design-system primitives (`Btn`, `Card`, `Badge`, `Progress`, `Input`, `Select`, `Textarea`, `StatCard`, `EmptyState`, `DocumentViewer`, `PageErrorBoundary`, …). Prefer these over ad-hoc markup.
+- `src/components/ui/` — design-system primitives (`Btn`, `Card`, `Badge`, `Progress`, `Input`, `Select`, `Textarea`, `StatCard`, `EmptyState`, `DocumentViewer`, `PageHeader`, `PageErrorBoundary`, …). Prefer these over ad-hoc markup. `Card` supports keyboard accessibility when `onClick` is provided.
 - `src/components/gamification/` — `CelebrationOverlay`, `ConfettiCanvas`, `BurstAnimation`, `DailyRewardModal`, `ShareableProgressCard`, `StreakCalendar`, `StudentAvatar`, `XPBar`, etc.
 - `src/components/toast/` — `ToastContainer` listens to `state.toasts`; dispatch `{ type: "ADD_TOAST", payload: { message, variant } }` (`variant`: `success` | `error` | `info`).
 
@@ -98,7 +103,10 @@ There is no test suite.
 - **React 19 hooks only.** No class components.
 - **No emojis in UI** — use Phosphor icon components from `src/icons/icons.jsx` for all indicators, buttons, and decorative elements. Game content data arrays may still contain emoji for item labels, grid visuals, etc.
 - **Inline styles via `T`.** Don't introduce CSS modules, Tailwind, or styled-components — the codebase deliberately uses inline `style={{ ... }}` driven by tokens in `src/theme/theme.js`. Global typography/animations are in the `<style>` block in `index.html` and the small `src/index.css`.
-- **Accessibility** — icon-only buttons must have `aria-label` attributes. Modals should have `role="dialog"` and `aria-label`. Logo images need descriptive alt text.
+- **Dark mode** is controlled via the Settings page toggle. It sets `html.dark` class; basic CSS overrides exist in `index.html` for body, scrollbar, glass-header, etc. The inline `T` tokens do not change for dark mode.
+- **Accessibility** — icon-only buttons must have `aria-label` attributes. Modals should have `role="dialog"` and `aria-label`. Logo images need descriptive alt text. `Card` component has built-in keyboard support when clickable.
+- **Destructive actions** (delete note, delete goal, archive homework, clear AI grade) must use `window.confirm()` before dispatching.
+- **PageHeader** — use the `PageHeader` component from `src/components/ui` for consistent page titles. It accepts `title`, `subtitle`, and `action` props.
 - **Mobile-first responsive.** `src/hooks/useWindowWidth.js` is used to switch layouts; the breakpoint is `< 768px`. On mobile, sidebar becomes a slide-over and the bottom nav bar appears.
 - **Celebrations** are triggered by dispatching a DOM event: `window.dispatchEvent(new CustomEvent("aworthy-celebrate", { detail: { type: "coins" | "streak" | "levelup" } }))`. The shell listens and renders `<CelebrationOverlay>`.
 - **Toasts**: `dispatch({ type: "ADD_TOAST", payload: { message, variant } })`.
