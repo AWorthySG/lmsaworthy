@@ -7,7 +7,7 @@
 import mammoth from "mammoth";
 import * as pdfjsLib from "pdfjs-dist";
 // Vite-friendly worker setup
-import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
+import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const MAX_PDF_PAGES_AS_IMAGES = 8;
