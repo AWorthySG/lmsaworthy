@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Worthy LMS — a single-page React 19 + Vite app for a Singapore tuition centre, deployed to Vercel at `lms.a-worthy.com` and wrapped via Capacitor for iOS/Android. Subjects: O-Level English (`eng`), H1 General Paper (`gp`), H1 Economics (`h1econ`), H2 Economics (`h2econ`).
 
-`LMS.jsx` is now ~620 lines (auth + shell + routing switch only); pages/components/state/data live in their own folders.
+`LMS.jsx` is ~619 lines (auth + shell + routing switch only); 63 page/game components across `src/pages/`, all lazy-loaded. Pages, components, state, and data live in their own folders.
 
 ## Commands
 
@@ -35,15 +35,15 @@ There is no test suite.
 ### Entry / shell
 - `src/main.jsx` — React root, wraps `<App />` with `<BrowserRouter>`.
 - `src/App.jsx` — renders `<LMS />` (default export of `src/LMS.jsx`, named `LMSAuthWrapper`).
-- `src/LMS.jsx` (~620 lines) — auth gate (Firebase `onAuthStateChanged`), then the main `LMS` component: sidebar, header, mobile bottom nav, global Cmd-K search, notification bell, toast container, celebration overlay, offline indicator, and the `renderPage()` switch (wrapped in `<PageErrorBoundary>` + `<Suspense>`) that maps `state.page` → a lazy-loaded page component.
+- `src/LMS.jsx` (~619 lines) — auth gate (Firebase `onAuthStateChanged`), then the main `LMS` component: sidebar, header, mobile bottom nav, global Cmd-K search, notification bell, toast container, celebration overlay, offline indicator, and the `renderPage()` switch (wrapped in `<PageErrorBoundary>` + `<Suspense>`) that maps `state.page` → a lazy-loaded page component. Notifications, search results, and badge counts are memoized with `useMemo`.
 
 ### Code splitting
-- All page components are loaded via `React.lazy()` — each page becomes its own chunk at build time.
+- All 34 page components are loaded via `lazy()` from React — each page becomes its own chunk at build time.
 - `renderPage()` is wrapped in `<Suspense fallback={...}>` for loading states.
 - Tutor-only pages (`aimarker`, `attendance`, `analytics`, `parentview`, `certificates`) are gated in `renderPage()` — students accessing these URLs are redirected to the dashboard.
 
 ### State management
-- One `useReducer` in `LMS.jsx`: `appReducer` (in `src/state/reducer.js`) with ~35 action types. State shape and initial values are in `src/state/persistence.js` (`DEFAULT_STATE`).
+- One `useReducer` in `LMS.jsx`: `appReducer` (in `src/state/reducer.js`) with ~43 action types. State shape and initial values are in `src/state/persistence.js` (`DEFAULT_STATE`).
 - `initialState` is rehydrated from `localStorage` key `aworthy-lms-state` on load. Only keys listed in `PERSIST_KEYS` are persisted: `wallet`, `bookmarks`, `attendance`, `submissions`, `homework`, `peerEssays`, `peerReviews`, `studyLogs`, `notes`, `ratings`, `announcement`, `goals`, `mistakes`, `revisionChecklist`, `posts`, `reports`. Everything else re-seeds from `src/data/seedData.js` on every load.
 - **`role` is NOT persisted** — it always comes from Firebase RTDB on login to prevent localStorage privilege escalation.
 - Adding a new persistent field requires adding it to both `DEFAULT_STATE` and `PERSIST_KEYS`.
@@ -63,15 +63,17 @@ There is no test suite.
 - `src/pages/{games,homework,infographics,study,tools}/` — grouped feature folders.
   - `pages/games/{economics,english,gp}/` hold individual game components; the per-subject `GameHub` (`pages/games/GameHub.jsx`) reads `subject` prop and renders the right set.
   - `pages/tools/` contains both student tools (PomodoroTimer, VocabBuilder, PracticeQuestions) and tutor tools (AIMarker, EssayGrader), plus the AI grading utilities (`extractText.js`, `gradeClient.js`, `rubrics.js`).
-- `src/components/ui/` — design-system primitives (`Btn`, `Card`, `Badge`, `Progress`, `Input`, `Select`, `Textarea`, `StatCard`, `EmptyState`, `DocumentViewer`, `PageHeader`, `PageErrorBoundary`, …). Prefer these over ad-hoc markup. `Card` supports keyboard accessibility when `onClick` is provided.
-- `src/components/gamification/` — `CelebrationOverlay`, `ConfettiCanvas`, `BurstAnimation`, `DailyRewardModal`, `ShareableProgressCard`, `StreakCalendar`, `StudentAvatar`, `XPBar`, etc.
+- `src/components/ui/` — 19 design-system primitives (`Btn`, `Card`, `Badge`, `Progress`, `Input`, `Select`, `Textarea`, `StatCard`, `EmptyState`, `DocumentViewer`, `PageHeader`, `PageErrorBoundary`, `BackBtn`, `BackToTop`, `FileIcon`, `InstallPrompt`, `LoadingSkeleton`, `SimpleQRDisplay`, `SubjectIllustration`). Prefer these over ad-hoc markup. `Card` supports keyboard accessibility when `onClick` is provided. `DocumentViewer` and `DailyRewardModal` have focus traps for accessibility.
+- `src/components/gamification/` — 11 components: `CelebrationOverlay`, `ConfettiCanvas`, `ConfettiEffect`, `BurstAnimation`, `DailyRewardModal`, `ShareableProgressCard`, `StreakCalendar`, `StudentAvatar`, `XPBar`, `PodiumCard`, `BadgeChip`.
 - `src/components/toast/` — `ToastContainer` listens to `state.toasts`; dispatch `{ type: "ADD_TOAST", payload: { message, variant } }` (`variant`: `success` | `error` | `info`).
 
 ### Data / config
 - `src/data/seedData.js` — all initial collections (resources, video lessons, quizzes, exams, students, sessions, attendance, reports, posts, homework, submissions). Resource `fileUrl`s point to Firebase Storage download URLs.
 - `src/data/{routing,subjects,gameData,gpQuestionTypes,infoPackThemes,microModules,pastPapersData,practiceQuestions,essayData,vocabDrills,gamification,seedEvents}.js` — static content used by individual pages.
-- `src/theme/theme.js` — exports `T` (one global design-token object: colors, radii, shadows, gradients, per-subject palette) and `SUBJ_THEME`. Styling is inline `style={{...}}` driven by `T`; there are no CSS-in-JS libraries or Tailwind. Subject themes are looked up via `T[subjectId]` or `getSubjectTheme(id)` from `src/utils/helpers.js`. Colors are WCAG AA compliant against the `T.bg` background.
+- `src/theme/theme.js` — exports `T` (one global design-token object: colors, radii, shadows, gradients, font families, per-subject palette) and `SUBJ_THEME`. Font tokens: `T.fontDisplay` (Bricolage Grotesque), `T.fontBody` (Plus Jakarta Sans), `T.fontMono` (JetBrains Mono), `T.fontSerif` (Fraunces). Styling is inline `style={{...}}` driven by `T`; there are no CSS-in-JS libraries or Tailwind. Subject themes are looked up via `T[subjectId]` or `getSubjectTheme(id)` from `src/utils/helpers.js`. Colors are WCAG AA compliant against the `T.bg` background.
 - `src/icons/icons.jsx` — Phosphor icon wrappers used throughout. All UI indicators use these icons, not raw emojis. Add new icons here rather than importing `@phosphor-icons/react` directly in pages. Iconify (`@iconify/react`) is used only for full-colour emoji in game content data.
+- `src/hooks/` — `useFirebaseSync.js` (bidirectional RTDB sync), `useWindowWidth.js` (responsive breakpoint), `useTimer.js` (countdown/stopwatch for games and timed features).
+- `src/utils/` — `helpers.js` (subject themes, exam countdowns, daily challenges, word of the day, study plan generation), `gamificationUtils.js` (XP calculation, level/badge logic), `notifications.js` (homework reminders), `spacedRepetition.js` (spaced repetition scheduling for revision).
 
 ### Firebase
 - `src/config/firebase.js` initialises the `aworthy-lms` project (Auth, Realtime DB region `asia-southeast1`, Storage). **Config keys are hardcoded in source** — these are client SDK keys, not secrets, but treat them accordingly.
@@ -81,18 +83,24 @@ There is no test suite.
 
 ### Canva integration
 - `api/canva.js` is a single Vercel serverless function (used by Certificates feature) that proxies Canva Connect OAuth + autofill + export, switched by `?action=` query (`auth-url`, `token`, `refresh`, `templates`, `template-fields`, `autofill`, `autofill-status`, `export`, `export-status`).
+- OAuth flow uses HMAC-signed state tokens (signed with `CANVA_CLIENT_SECRET`) for CSRF protection. The state is verified server-side on token exchange.
 - Requires env vars `CANVA_CLIENT_ID`, `CANVA_CLIENT_SECRET`, `CANVA_REDIRECT_URI` in Vercel.
-- `src/config/canva.js` is the browser client — tokens are stored in `localStorage` under `canva_tokens` and auto-refreshed within 5 minutes of expiry.
+- `src/config/canva.js` is the browser client — tokens are stored in `localStorage` under `canva_tokens` and auto-refreshed within 5 minutes of expiry. OAuth state is stored in `sessionStorage` during the redirect flow.
 
 ### AI Grading
-- `api/grade.js` and `api/grade-essay.js` — Vercel serverless functions that proxy Anthropic API calls for AI-powered essay/homework grading. Require `ANTHROPIC_API_KEY` env var.
+- `api/grade.js` and `api/grade-essay.js` — Vercel serverless functions that proxy Anthropic API calls for AI-powered essay/homework grading. Require `ANTHROPIC_API_KEY` env var. CORS is restricted to an allowlist of trusted origins.
 - `src/pages/tools/rubrics.js` — rubric definitions for different assignment types.
 - `src/pages/tools/extractText.js` — extracts text from PDF/DOCX uploads for grading.
 - `src/pages/tools/gradeClient.js` — browser client that calls the grading API functions.
 - Used by `AIMarker.jsx` (standalone tool) and `TutorHomework.jsx` (inline grading in homework view).
 
+### API security
+- `api/_lib/auth.js` — shared CORS utility (`applyCors`) used by all serverless functions. Origin allowlist restricts access to known domains.
+- All API functions validate required parameters and return structured error responses without leaking stack traces.
+- Firebase RTDB rules (`database.rules.json`) restrict reads/writes to authenticated users accessing their own data path.
+
 ### PWA / Capacitor
-- `public/sw.js` (cache name `aworthy-lms-v5`) — network-first strategy. Skips caching for `/assets/*` (hashed by Vite) and opaque cross-origin responses. Has offline fallback for hashed assets. Bump the cache name when you change shell assets.
+- `public/sw.js` (cache name `aworthy-lms-v6`) — network-first strategy with a 3-second fetch timeout. Skips caching for `/assets/*` (hashed by Vite) and opaque cross-origin responses. Has offline fallback for hashed assets. Cache is limited to 100 entries (oldest evicted first). Bump the cache name when you change shell assets.
 - `public/manifest.json` + apple-touch icons in `index.html`. Background color matches `T.bg` (`#F8F7F4`).
 - `capacitor.config.ts` points the native shell at the **live URL** (`https://lms.a-worthy.com`) rather than the bundled `dist/`. To ship a fully offline mobile app, remove the `server.url` and rebuild.
 - The app shows toast notifications when going offline/online.
@@ -102,9 +110,9 @@ There is no test suite.
 - **JavaScript + JSX only** (no TypeScript outside `capacitor.config.ts`). ESLint enforces `no-unused-vars` with an exception for identifiers starting with uppercase or underscore.
 - **React 19 hooks only.** No class components.
 - **No emojis in UI** — use Phosphor icon components from `src/icons/icons.jsx` for all indicators, buttons, and decorative elements. Game content data arrays may still contain emoji for item labels, grid visuals, etc.
-- **Inline styles via `T`.** Don't introduce CSS modules, Tailwind, or styled-components — the codebase deliberately uses inline `style={{ ... }}` driven by tokens in `src/theme/theme.js`. Global typography/animations are in the `<style>` block in `index.html` and the small `src/index.css`.
+- **Inline styles via `T`.** Don't introduce CSS modules, Tailwind, or styled-components — the codebase deliberately uses inline `style={{ ... }}` driven by tokens in `src/theme/theme.js`. Use `T.fontDisplay`, `T.fontBody`, `T.fontMono`, `T.fontSerif` for font families — never hardcode font-family strings. Global typography/animations are in the `<style>` block in `index.html` and the small `src/index.css`.
 - **Dark mode** is controlled via the Settings page toggle. It sets `html.dark` class; basic CSS overrides exist in `index.html` for body, scrollbar, glass-header, etc. The inline `T` tokens do not change for dark mode.
-- **Accessibility** — icon-only buttons must have `aria-label` attributes. Modals should have `role="dialog"` and `aria-label`. Logo images need descriptive alt text. `Card` component has built-in keyboard support when clickable.
+- **Accessibility** — icon-only buttons must have `aria-label` attributes. Modals must have `role="dialog"`, `aria-modal="true"`, and `aria-label`. Modals should implement focus traps (Tab/Shift+Tab cycling, Escape to close). Logo images need descriptive alt text. `Card` component has built-in keyboard support when clickable. Toggle switches should have `aria-describedby` linking to their description text. Minimum touch target is 44×44px for interactive elements.
 - **Destructive actions** (delete note, delete goal, archive homework, clear AI grade) must use `window.confirm()` before dispatching.
 - **PageHeader** — use the `PageHeader` component from `src/components/ui` for consistent page titles. It accepts `title`, `subtitle`, and `action` props.
 - **Mobile-first responsive.** `src/hooks/useWindowWidth.js` is used to switch layouts; the breakpoint is `< 768px`. On mobile, sidebar becomes a slide-over and the bottom nav bar appears.
@@ -112,5 +120,6 @@ There is no test suite.
 - **Toasts**: `dispatch({ type: "ADD_TOAST", payload: { message, variant } })`.
 - **Reducers** return new objects — never mutate state. All actions auto-assign incrementing IDs via `Math.max(...arr.map(x => x.id), 0) + 1`; follow the same pattern.
 - **Subjects** are identified by the codes `eng`, `gp`, `h1econ`, `h2econ` everywhere (in `NAV` groups, route slugs, theme keys, seed data, etc.). When adding subject-scoped features, mirror the existing four-way fan-out (route id with subject suffix + sidebar entry + render case).
+- **Performance** — wrap expensive computations (filtered lists, search results, badge counts) in `useMemo` with appropriate dependency arrays. All `useEffect` hooks must have correct dependency arrays — never omit dependencies or use empty `[]` unless the effect truly runs once.
 - **Don't import heavy libraries** (three.js, recharts, etc.) unless actively used — they defeat tree-shaking when imported as `* as`.
 - Do not commit secrets. Treat `node_modules`, `dist`, `android/app/build`, `ios/App/Pods`, `ios/App/build` as ignored.
