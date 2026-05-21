@@ -1,5 +1,6 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
+import { PageHeader } from '../../components/ui';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 
 function RevisionChecklist({ state, dispatch }) {
@@ -10,10 +11,7 @@ function RevisionChecklist({ state, dispatch }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Revision Checklist</h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>Track which topics you've revised — tick them off as you go</p>
-      </div>
+      <PageHeader title="Revision Checklist" subtitle="Track which topics you've revised — tick them off as you go" />
       {/* Progress */}
       <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "14px 18px", border: `1px solid ${T.border}` }}>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>

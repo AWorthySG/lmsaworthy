@@ -4,6 +4,7 @@ import { ArrowLeft, PencilSimpleLine } from '../../icons/icons.jsx';
 import { SUBJECTS } from '../../data/subjects.js';
 import { MICRO_MODULES } from '../../data/microModules.js';
 import { getSubject } from '../../utils/helpers.js';
+import { PageHeader } from '../../components/ui';
 
 function MicrolearningPage({ state, dispatch, defaultSubject }) {
   const [filterSubj, setFilterSubj] = useState(defaultSubject || "all");
@@ -37,10 +38,7 @@ function MicrolearningPage({ state, dispatch, defaultSubject }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Microlearning</h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>5-minute bite-sized lessons — perfect for revision on the go</p>
-      </div>
+      <PageHeader title="Microlearning" subtitle="5-minute bite-sized lessons — perfect for revision on the go" />
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         <button onClick={() => setFilterSubj("all")} style={{ padding: "5px 12px", borderRadius: 20, border: `2px solid ${filterSubj === "all" ? T.accent : T.border}`, background: filterSubj === "all" ? T.accentLight : T.bgCard, color: filterSubj === "all" ? T.accent : T.textSec, fontWeight: 600, fontSize: 11, cursor: "pointer" }}>All</button>
         {SUBJECTS.map(s => (

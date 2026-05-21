@@ -4,6 +4,7 @@ import { PencilSimpleLine, Eye, CheckCircle, Lightbulb } from '../../icons/icons
 import { SUBJECTS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
 import { triggerCelebration } from '../../components/gamification';
+import { PageHeader } from '../../components/ui';
 
 function PeerReview({ state, dispatch }) {
   const [view, setView] = useState("hub"); // hub | submit | review | myEssays
@@ -38,10 +39,7 @@ function PeerReview({ state, dispatch }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Peer Essay Review</h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>Submit essays for feedback and review your peers' work</p>
-      </div>
+      <PageHeader title="Peer Essay Review" subtitle="Submit essays for feedback and review your peers' work" />
 
       {view === "hub" && (
         <>

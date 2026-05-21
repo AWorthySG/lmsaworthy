@@ -309,7 +309,7 @@ function TutorHomework({ state, dispatch }) {
                   <span style={{ fontSize: 10, fontWeight: 700, color: subTheme.accent, background: "#fff", padding: "2px 8px", borderRadius: 20 }}>{getSubject(selectedHw.subject)?.name} · {selectedHw.topic}</span>
                   <div style={{ fontSize: 12, color: T.textSec, marginTop: 8 }}>Due: <strong>{selectedHw.dueDate}</strong> · Created: {selectedHw.createdAt}</div>
                 </div>
-                <button onClick={() => { dispatch({ type: "ARCHIVE_HOMEWORK", payload: selectedHw.id }); setView("list"); }} style={{ padding: "4px 10px", borderRadius: T.r1, background: T.dangerBg, border: `1px solid ${T.danger}33`, color: T.danger, fontWeight: 600, fontSize: 11, cursor: "pointer" }}>Archive</button>
+                <button onClick={() => { if (!window.confirm("Archive this homework? Students will no longer see it.")) return; dispatch({ type: "ARCHIVE_HOMEWORK", payload: selectedHw.id }); setView("list"); }} style={{ padding: "4px 10px", borderRadius: T.r1, background: T.dangerBg, border: `1px solid ${T.danger}33`, color: T.danger, fontWeight: 600, fontSize: 11, cursor: "pointer" }}>Archive</button>
               </div>
               {selectedHw.instructions && (
                 <div style={{ marginTop: 10, fontSize: 13, color: T.text, lineHeight: 1.7, whiteSpace: "pre-line" }}>{selectedHw.instructions}</div>
@@ -443,7 +443,7 @@ function TutorHomework({ state, dispatch }) {
                               <span style={{ fontSize: 16, fontWeight: 800, color: "#7C3AED" }}>{sub.aiGrade.grade}</span>
                               {typeof sub.aiGrade.overallPercent === "number" && <span style={{ fontSize: 11, color: T.textTer }}>{sub.aiGrade.overallPercent}%</span>}
                             </div>
-                            <button onClick={() => dispatch({ type: "CLEAR_AI_GRADE", payload: sub.id })} style={{ background: "none", border: "none", color: T.textTer, fontSize: 11, cursor: "pointer" }}>Clear</button>
+                            <button onClick={() => { if (window.confirm("Clear this AI grade?")) dispatch({ type: "CLEAR_AI_GRADE", payload: sub.id }); }} style={{ background: "none", border: "none", color: T.textTer, fontSize: 11, cursor: "pointer" }}>Clear</button>
                           </div>
                           {sub.aiGrade.summary && <div style={{ fontSize: 12, color: T.text, marginBottom: 8, lineHeight: 1.5 }}>{sub.aiGrade.summary}</div>}
                           {sub.aiGrade.criteria?.length > 0 && (

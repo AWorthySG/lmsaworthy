@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
 import { Plus, MagnifyingGlass } from '../../icons/icons.jsx';
-import { EmptyStateIllustration } from '../../components/ui';
+import { EmptyStateIllustration, PageHeader, Btn } from '../../components/ui';
 import { SUBJECTS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
 
@@ -39,17 +39,7 @@ function NotesPage({ state, dispatch }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>My Notes</h1>
-          <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>Personal study notes organised by subject</p>
-        </div>
-        {!editingNote && !noteTitle && (
-          <button onClick={() => setNoteTitle(" ")} style={{ padding: "8px 18px", borderRadius: T.r2, background: T.gradPrimary, color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, boxShadow: T.shadowAccent }}>
-            <Plus size={15} /> New Note
-          </button>
-        )}
-      </div>
+      <PageHeader title="My Notes" subtitle="Personal study notes organised by subject" action={!editingNote && !noteTitle ? <Btn onClick={() => setNoteTitle(" ")}><Plus size={15} /> New Note</Btn> : null} />
 
       {/* Search + filter */}
       <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
@@ -103,7 +93,7 @@ function NotesPage({ state, dispatch }) {
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
                   <button onClick={() => startEdit(n)} style={{ padding: "4px 10px", borderRadius: T.r1, background: T.bgMuted, border: "none", cursor: "pointer", fontSize: 10, fontWeight: 600, color: T.textSec }}>Edit</button>
-                  <button onClick={() => { dispatch({ type: "DELETE_NOTE", payload: n.id }); dispatch({ type: "ADD_TOAST", payload: { message: "Note deleted", variant: "success" } }); }} style={{ padding: "4px 10px", borderRadius: T.r1, background: T.dangerBg, border: "none", cursor: "pointer", fontSize: 10, fontWeight: 600, color: T.danger }}>Delete</button>
+                  <button onClick={() => { if (!window.confirm("Delete this note? This cannot be undone.")) return; dispatch({ type: "DELETE_NOTE", payload: n.id }); dispatch({ type: "ADD_TOAST", payload: { message: "Note deleted", variant: "success" } }); }} style={{ padding: "4px 10px", borderRadius: T.r1, background: T.dangerBg, border: "none", cursor: "pointer", fontSize: 10, fontWeight: 600, color: T.danger }}>Delete</button>
                 </div>
               </div>
               <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.7, whiteSpace: "pre-wrap", maxHeight: 120, overflow: "hidden", maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)" }}>{n.content}</div>
