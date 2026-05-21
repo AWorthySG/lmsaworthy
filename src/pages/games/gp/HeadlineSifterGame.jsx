@@ -64,7 +64,6 @@ function HeadlineSifterGame() {
   function next() { setCurrent(c => c + 1); setAnswered(null); }
   const h = deck[current];
   const done = current >= deck.length;
-  const maxPossible = deck.length * 8; // theoretical max with perfect streaks + speed
   const pct = deck.length > 0 ? Math.min(100, Math.round((score / (deck.length * 3)) * 100)) : 0;
   const grade = pct >= 90 ? "S" : pct >= 80 ? "A" : pct >= 60 ? "B" : pct >= 40 ? "C" : "D";
   const gradeColors = { S: "#D4A254", A: "#3BAA7E", B: "#3D7DD6", C: "#E5A832", D: "#E05262" };

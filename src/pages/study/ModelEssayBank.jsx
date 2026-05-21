@@ -5,7 +5,7 @@ import { MODEL_ESSAYS } from '../../data/essayData.js';
 import { SUBJECTS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
 
-function ModelEssayBank({ state, dispatch }) {
+function ModelEssayBank() {
   const [filterSubj, setFilterSubj] = useState("all");
   const [activeEssay, setActiveEssay] = useState(null);
   const filtered = filterSubj === "all" ? MODEL_ESSAYS : MODEL_ESSAYS.filter(e => e.subject === filterSubj);

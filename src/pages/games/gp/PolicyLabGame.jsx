@@ -31,10 +31,8 @@ function PolicyLabGame() {
   const maxRounds = 6;
   const [meters, setMeters] = useState({ afford: 50, sustain: 50, approval: 55, budget: 65 });
   const [round, setRound] = useState(1);
-  const [history, setHistory] = useState([]);
   const [crisisMsg, setCrisisMsg] = useState("");
   const [stakeholderMsg, setStakeholderMsg] = useState("");
-  const [justification, setJustification] = useState(null); // after choosing policy
   const [pendingPolicy, setPendingPolicy] = useState(null);
   const [roundPolicies, setRoundPolicies] = useState([]);
 
@@ -56,7 +54,6 @@ function PolicyLabGame() {
   function selectPolicy(p) {
     setPendingPolicy(p);
     setStakeholderMsg(p.stakeholder);
-    setJustification(null);
   }
 
   function confirmPolicy() {
@@ -76,7 +73,6 @@ function PolicyLabGame() {
     }
 
     setMeters(newMeters);
-    setHistory(h => [...h, { policy: p.label, meters: { ...newMeters }, crisis: crisis?.label || null }]);
     setPendingPolicy(null);
     setStakeholderMsg("");
     setRound(r => r + 1);

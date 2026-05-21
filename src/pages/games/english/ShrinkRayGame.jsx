@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
 import { Flame, Heart, HeartBreak, Confetti, Scissors } from '../../../icons/icons.jsx';
 

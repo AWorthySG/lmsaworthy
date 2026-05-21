@@ -28,8 +28,6 @@ function StoryArchitectGame() {
   const [shuffled] = useState(() => [...story.blocks, story.redHerring].sort(() => Math.random() - 0.5));
   const [placed, setPlaced] = useState([]);
   const [discarded, setDiscarded] = useState(null); // red herring detection
-  const [justifyIdx, setJustifyIdx] = useState(null); // which slot to justify
-  const [justifyAnswer, setJustifyAnswer] = useState(null);
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const timerRef = useRef(null);
   const [timerStarted, setTimerStarted] = useState(false);
@@ -165,7 +163,7 @@ function StoryArchitectGame() {
             {/* Why each scene belongs */}
             <div style={{ marginTop: 12, textAlign: "left" }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, marginBottom: 6 }}>Why each scene belongs:</div>
-              {story.blocks.map((b, i) => (
+              {story.blocks.map((b) => (
                 <div key={b.id} style={{ fontSize: 11, color: T.text, lineHeight: 1.6, marginBottom: 4, paddingLeft: 12, borderLeft: `2px solid ${stageColors[b.stage]}44` }}>
                   <strong style={{ color: stageColors[b.stage] }}>{b.stage}:</strong> {b.why}
                 </div>

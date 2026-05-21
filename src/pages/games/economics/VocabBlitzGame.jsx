@@ -144,8 +144,6 @@ function VocabBlitzGame() {
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {options.map((opt, i) => {
           const isCorrect = answered && opt === w.def;
-          const isWrong = answered === "wrong" && opt !== w.def && options.indexOf(opt) === options.indexOf(opt);
-          const isSelected = answered === "wrong" && opt !== w.def;
           return (
             <button key={i} onClick={() => answer(opt)}
               className={!answered ? "card-hover" : ""}

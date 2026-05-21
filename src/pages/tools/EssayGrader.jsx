@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
 
 /* ━━━ LOCAL FALLBACK GRADER ━━━ */
-function localGrade(essay, question) {
+function localGrade(essay) {
   const words = essay.trim().split(/\s+/);
   const wordCount = words.length;
   const sentences = essay.split(/[.!?]+/).filter(s => s.trim().length > 5);
@@ -100,7 +100,7 @@ function EssayGrader() {
     }
 
     // Fallback: local regex-based grading
-    const result = localGrade(essay, question);
+    const result = localGrade(essay);
     setAnalysis(result);
     setAnalysing(false);
   }
