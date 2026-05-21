@@ -54,6 +54,8 @@ export default async function handler(req, res) {
     if (!essay || typeof essay !== "string" || essay.trim().length === 0) {
       return res.status(400).json({ error: "Missing or empty 'essay' field." });
     }
+    if (essay.length > 50_000) return res.status(400).json({ error: "Essay exceeds maximum length (50,000 characters)." });
+    if (question && question.length > 2_000) return res.status(400).json({ error: "Question exceeds maximum length (2,000 characters)." });
 
     const questionContext = question ? `\nEssay Question: ${question}` : "";
     const subjectContext = subject ? `\nSubject: ${subject}` : "\nSubject: General Paper";

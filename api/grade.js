@@ -60,6 +60,20 @@ export default async function handler(req, res) {
     images = [],
   } = req.body || {};
 
+  // Input length validation to prevent excessive API token usage
+  if (typeof text === "string" && text.length > 50_000) {
+    return res.status(400).json({ error: "Submission text is too long (max 50 000 characters)." });
+  }
+  if (typeof rubric === "string" && rubric.length > 5_000) {
+    return res.status(400).json({ error: "Rubric is too long (max 5 000 characters)." });
+  }
+  if (typeof question === "string" && question.length > 2_000) {
+    return res.status(400).json({ error: "Question is too long (max 2 000 characters)." });
+  }
+  if (typeof instructions === "string" && instructions.length > 5_000) {
+    return res.status(400).json({ error: "Instructions are too long (max 5 000 characters)." });
+  }
+
   if (!text.trim() && (!images || images.length === 0)) {
     return res.status(400).json({ error: "Submission is empty — provide either extracted text or at least one image." });
   }

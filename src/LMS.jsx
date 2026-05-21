@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useRef, useEffect, Suspense, lazy } from "react";
+import React, { useState, useReducer, useRef, useEffect, useMemo, Suspense, lazy } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -150,13 +150,16 @@ function LMS({ authUser, userProfile }) {
   }, [state.page]);
 
   // Compute notifications
-  const notifications = [];
-  const today = new Date().toISOString().split("T")[0];
-  state.homework.filter(h => h.status === "active" && h.dueDate >= today).forEach(h => {
-    notifications.push({ type: "homework", msg: `"${h.title}" due ${h.dueDate}`, page: "homework" });
-  });
-  const pendingGrades = state.submissions.filter(s => s.status === "submitted").length;
-  if (pendingGrades > 0 && state.role === "tutor") notifications.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
+  const notifications = useMemo(() => {
+    const notifs = [];
+    const today = new Date().toISOString().split("T")[0];
+    state.homework.filter(h => h.status === "active" && h.dueDate >= today).forEach(h => {
+      notifs.push({ type: "homework", msg: `"${h.title}" due ${h.dueDate}`, page: "homework" });
+    });
+    const pendingGrades = state.submissions.filter(s => s.status === "submitted").length;
+    if (pendingGrades > 0 && state.role === "tutor") notifs.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
+    return notifs;
+  }, [state.homework, state.submissions, state.role]);
   const [showNotifs, setShowNotifs] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showRewardModal, setShowRewardModal] = useState(false);
@@ -194,7 +197,7 @@ function LMS({ authUser, userProfile }) {
   useEffect(() => { requestPushPermission(); }, []);
 
   // Push notifications for homework due dates
-  useEffect(() => { sendHomeworkReminders(state.homework); }, []);
+  useEffect(() => { sendHomeworkReminders(state.homework); }, [state.homework]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -208,13 +211,17 @@ function LMS({ authUser, userProfile }) {
   useEffect(() => { if (showSearch && searchRef.current) searchRef.current.focus(); }, [showSearch]);
 
   // Global search results
-  const searchResults = searchQuery.trim().length > 1 ? [
-    ...state.resources.filter(r => r.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 3).map(r => ({ type: "file", label: r.title, page: "library" })),
-    ...state.homework.filter(h => h.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
-    ...state.videoLessons.filter(v => v.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(v => ({ type: "video", label: v.title, page: "videos" })),
-    ...(state.posts || []).filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2).map(p => ({ type: "chat", label: p.title, page: "community" })),
-    ...NAV.flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(searchQuery.toLowerCase())).map(i => ({ type: "link", label: i.label, page: i.id })),
-  ].slice(0, 8) : [];
+  const searchResults = useMemo(() => {
+    if (searchQuery.trim().length <= 1) return [];
+    const q = searchQuery.toLowerCase();
+    return [
+      ...state.resources.filter(r => r.title.toLowerCase().includes(q)).slice(0, 3).map(r => ({ type: "file", label: r.title, page: "library" })),
+      ...state.homework.filter(h => h.title.toLowerCase().includes(q)).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
+      ...state.videoLessons.filter(v => v.title.toLowerCase().includes(q)).slice(0, 2).map(v => ({ type: "video", label: v.title, page: "videos" })),
+      ...(state.posts || []).filter(p => p.title.toLowerCase().includes(q)).slice(0, 2).map(p => ({ type: "chat", label: p.title, page: "community" })),
+      ...NAV.flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(q)).map(i => ({ type: "link", label: i.label, page: i.id })),
+    ].slice(0, 8);
+  }, [searchQuery, state.resources, state.homework, state.videoLessons, state.posts]);
 
   // Notification badge counts
   const hwBadge = state.role === "tutor" ? state.submissions.filter(s => s.status === "submitted").length : state.homework.filter(h => h.status === "active").length;

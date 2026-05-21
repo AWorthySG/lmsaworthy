@@ -213,9 +213,9 @@ function LoginScreen() {
             </div>
 
             {/* Mode tabs */}
-            <div style={{ display: "flex", marginBottom: 22, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.05)", padding: 3, gap: 3 }}>
+            <div role="tablist" style={{ display: "flex", marginBottom: 22, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.05)", padding: 3, gap: 3 }}>
               {[{ id: "login", label: "Sign In" }, { id: "register", label: "Register" }].map(tab => (
-                <button key={tab.id} onClick={() => { setMode(tab.id); setError(""); }}
+                <button key={tab.id} role="tab" aria-selected={mode === tab.id} onClick={() => { setMode(tab.id); setError(""); }}
                   style={{ flex: 1, padding: "9px", fontSize: 12, fontWeight: 700, border: "none", cursor: "pointer", borderRadius: 8, background: mode === tab.id ? T.accent : "transparent", color: mode === tab.id ? "#fff" : "rgba(254,254,254,0.45)", transition: "all 0.2s", boxShadow: mode === tab.id ? "0 2px 8px rgba(45,58,140,0.4)" : "none" }}>
                   {tab.label}
                 </button>

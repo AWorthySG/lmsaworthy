@@ -60,6 +60,11 @@ export const T = {
   gradeS: "#996E2A", gradeA: "#16A34A", gradeB: "#2D3A8C", gradeC: "#9A5C04", gradeD: "#DC2626",
   // Radii — editorial with a touch of softness
   r1: 6, r2: 10, r3: 14, r4: 18, r5: 24,
+  // Font families — shortcuts to avoid repeating full stacks
+  fontDisplay: "'Bricolage Grotesque', sans-serif",
+  fontBody: "'Plus Jakarta Sans', sans-serif",
+  fontMono: "'JetBrains Mono', monospace",
+  fontSerif: "'Fraunces', serif",
 };
 
 export const SUBJ_THEME = { eng: T.eng, h1econ: T.h1econ, h2econ: T.h2econ, gp: T.gp };

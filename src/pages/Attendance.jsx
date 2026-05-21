@@ -255,7 +255,7 @@ function Attendance({ state, dispatch }) {
                                 onClick={() => dispatch({ type: "MARK_ATTENDANCE", payload: { sessionId: session.id, studentId: student.id, status: status === btn.key ? null : btn.key } })}
                                 onMouseEnter={(e) => { if (status !== btn.key) e.currentTarget.style.background = btn.activeBg; }}
                                 onMouseLeave={(e) => { if (status !== btn.key) e.currentTarget.style.background = "transparent"; }}
-                                style={{ width: 34, height: 34, borderRadius: T.r1, border: `1.5px solid ${status === btn.key ? btn.activeColor : T.border}`, background: status === btn.key ? btn.activeBg : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.15s" }}>
+                                style={{ width: 44, height: 44, borderRadius: T.r1, border: `1.5px solid ${status === btn.key ? btn.activeColor : T.border}`, background: status === btn.key ? btn.activeBg : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.15s" }}>
                                 <btn.icon size={16} weight={status === btn.key ? "fill" : "regular"} color={status === btn.key ? btn.activeColor : T.textTer} />
                               </button>
                             ))}

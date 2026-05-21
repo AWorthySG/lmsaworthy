@@ -33,9 +33,9 @@ function Leaderboard({ state }) {
           ))}
         </div>
         {/* Subject filter tabs */}
-        <div style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
+        <div role="tablist" style={{ display: "flex", gap: 6, marginTop: 14, flexWrap: "wrap" }}>
           {[{ id: "all", label: "All Subjects" }, ...SUBJECTS.map(s => ({ id: s.id, label: s.name }))].map(tab => (
-            <button key={tab.id} onClick={() => setLbFilter(tab.id)} style={{ padding: "6px 14px", borderRadius: 20, border: `1px solid ${lbFilter === tab.id ? T.accent : T.border}`, background: lbFilter === tab.id ? T.accentLight : T.bgCard, color: lbFilter === tab.id ? T.accentText : T.textSec, fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}>
+            <button key={tab.id} role="tab" aria-selected={lbFilter === tab.id} onClick={() => setLbFilter(tab.id)} style={{ padding: "6px 14px", borderRadius: 20, border: `1px solid ${lbFilter === tab.id ? T.accent : T.border}`, background: lbFilter === tab.id ? T.accentLight : T.bgCard, color: lbFilter === tab.id ? T.accentText : T.textSec, fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }}>
               {tab.label}
             </button>
           ))}
