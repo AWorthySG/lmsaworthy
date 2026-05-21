@@ -293,6 +293,10 @@ export const initialResources = [
   { id: 260, title: "Paper 2 Practice — Paper 49 (Answer Scheme)", subject: "eng", topic: "Paper 2 Practice", type: "pdf", date: "2026-05-11", fileUrl: "/resources/eng/finalised-2026/practice/Paper-49-A.pdf" },
   { id: 261, title: "Paper 2 Practice — Paper 50 (Question)", subject: "eng", topic: "Paper 2 Practice", type: "pdf", date: "2026-05-11", fileUrl: "/resources/eng/finalised-2026/practice/Paper-50-Q.pdf" },
   { id: 262, title: "Paper 2 Practice — Paper 50 (Answer Scheme)", subject: "eng", topic: "Paper 2 Practice", type: "pdf", date: "2026-05-11", fileUrl: "/resources/eng/finalised-2026/practice/Paper-50-A.pdf" },
+  { id: 263, title: "H2 Macro Case Study Practice 1", subject: "h2econ", topic: "Macroeconomic Policy", type: "pdf", date: "2026-05-21", fileUrl: "/resources/h2econ/casestudy-practice/H2-Macro-CaseStudy-Practice-1.pdf" },
+  { id: 264, title: "H2 Macro Case Study Practice 2", subject: "h2econ", topic: "Macroeconomic Policy", type: "pdf", date: "2026-05-21", fileUrl: "/resources/h2econ/casestudy-practice/H2-Macro-CaseStudy-Practice-2.pdf" },
+  { id: 265, title: "H2 Macro Case Study Practice 3", subject: "h2econ", topic: "Macroeconomic Policy", type: "pdf", date: "2026-05-21", fileUrl: "/resources/h2econ/casestudy-practice/H2-Macro-CaseStudy-Practice-3.pdf" },
+  { id: 266, title: "H2 Macro Case Study Practice 4", subject: "h2econ", topic: "Macroeconomic Policy", type: "pdf", date: "2026-05-21", fileUrl: "/resources/h2econ/casestudy-practice/H2-Macro-CaseStudy-Practice-4.pdf" },
 ];
 
 export const initialVideoLessons = [
