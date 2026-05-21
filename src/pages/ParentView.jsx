@@ -54,7 +54,7 @@ function ParentView({ state }) {
                 <div style={{ fontSize: 20, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif", minWidth: 36 }}>{sub.grade}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{hw?.title || "Homework"}</div>
-                  {sub.gradeComment && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{sub.gradeComment.slice(0, 80)}...</div>}
+                  {sub.gradeComment && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{sub.gradeComment.slice(0, 80)}…</div>}
                 </div>
                 <div style={{ fontSize: 10, color: T.textTer }}>{sub.gradedAt}</div>
               </div>

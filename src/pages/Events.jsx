@@ -88,10 +88,10 @@ function Events({ state, dispatch }) {
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                         <span style={{ fontSize: 9, fontWeight: 700, color: "#fff", background: T.success, padding: "2px 8px", borderRadius: 20, animation: "pulse 2s infinite" }}>LIVE</span>
-                        <span style={{ fontSize: 10, fontWeight: 600, color: T.accent }}>{daysLeft(ev.endDate)} days left</span>
+                        <span style={{ fontSize: 10, fontWeight: 600, color: T.accent }}>{daysLeft(ev.endDate)} {daysLeft(ev.endDate) === 1 ? "day" : "days"} left</span>
                       </div>
                       <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 4, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{ev.title}</div>
-                      <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5, marginBottom: 8 }}>{ev.description.substring(0, 120)}...</div>
+                      <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5, marginBottom: 8 }}>{ev.description.substring(0, 120)}…</div>
                       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                         {ev.prizes.slice(0, 2).map((p, i) => (
                           <span key={i} style={{ fontSize: 10, fontWeight: 600, color: ev.color, background: ev.color + "12", padding: "2px 8px", borderRadius: 20, border: `1px solid ${ev.color}25` }}>{p.emoji} {p.place}: {p.reward.split("+")[0].trim()}</span>
@@ -119,10 +119,10 @@ function Events({ state, dispatch }) {
                     <div style={{ fontSize: 28, flexShrink: 0 }}>{ev.emoji}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
-                        <span style={{ fontSize: 9, fontWeight: 700, color: "#024F94", background: "#E8F4FD", padding: "2px 8px", borderRadius: 20 }}>STARTS IN {daysUntil(ev.startDate)} DAYS</span>
+                        <span style={{ fontSize: 9, fontWeight: 700, color: "#024F94", background: "#E8F4FD", padding: "2px 8px", borderRadius: 20 }}>STARTS IN {daysUntil(ev.startDate)} {daysUntil(ev.startDate) === 1 ? "DAY" : "DAYS"}</span>
                       </div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{ev.title}</div>
-                      <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>{ev.description.substring(0, 80)}...</div>
+                      <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>{ev.description.substring(0, 80)}…</div>
                       <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
                         {ev.prizes.slice(0, 2).map((p, i) => (
                           <span key={i} style={{ fontSize: 9, color: T.textTer }}>{p.emoji} {p.place}</span>
@@ -151,7 +151,7 @@ function Events({ state, dispatch }) {
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                 <span style={{ fontSize: 32 }}>{ev.emoji}</span>
                 <div>
-                  {isActive && <span style={{ fontSize: 9, fontWeight: 700, color: "#fff", background: T.success, padding: "2px 8px", borderRadius: 20, animation: "pulse 2s infinite" }}>LIVE — {daysLeft(ev.endDate)} days left</span>}
+                  {isActive && <span style={{ fontSize: 9, fontWeight: 700, color: "#fff", background: T.success, padding: "2px 8px", borderRadius: 20, animation: "pulse 2s infinite" }}>LIVE — {daysLeft(ev.endDate)} {daysLeft(ev.endDate) === 1 ? "day" : "days"} left</span>}
                   {isUpcoming && <span style={{ fontSize: 9, fontWeight: 700, color: "#024F94", background: "#E8F4FD", padding: "2px 8px", borderRadius: 20 }}>STARTS {ev.startDate}</span>}
                 </div>
               </div>

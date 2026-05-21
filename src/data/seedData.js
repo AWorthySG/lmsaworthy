@@ -8,7 +8,7 @@ export const initialResources = [
   { id: 6, title: "Passage for English B Students", subject: "eng", topic: "Comprehension", type: "pdf", date: "2025-11-01", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Fmisc-docs%2Fpassage%20for%20the%20eng%20b%20kids.pdf?alt=media&token=bfdb65eb-d657-4d22-b784-062821b39169" },
   { id: 7, title: "Narrative Writing Masterclass", subject: "eng", topic: "Narrative Writing", type: "video", date: "2025-11-15", videoUrl: "https://www.youtube.com/embed/ych2v0uftIw", duration: "45:00" },
   { id: 8, title: "H1 Econs Post-Prelim Package 2020", subject: "h1econ", topic: "Macroeconomic Aims", type: "pdf", date: "2025-06-10", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Fecon-alevel-docs%2F2020%20post%20prelim%20package%20h1%20.pdf?alt=media&token=ba835dd1-b93e-4a44-82e9-87f29ebba9ca" },
-  { id: 9, title: "H1 Econs CSQ Question Types 2020", subject: "h1econ", topic: "Market Mechanism", type: "pdf", date: "2025-06-15", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Fecon-alevel-docs%2FH1%20ECONS%20CSQ%20QUESTION%20TYPES%202020.pdf?alt=media&token=90242d7c-211c-4854-9d74-5064717d99ea" },
+  { id: 9, title: "H1 Econs case-study question (CSQ) Question Types 2020", subject: "h1econ", topic: "Market Mechanism", type: "pdf", date: "2025-06-15", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Fecon-alevel-docs%2FH1%20ECONS%20CSQ%20QUESTION%20TYPES%202020.pdf?alt=media&token=90242d7c-211c-4854-9d74-5064717d99ea" },
   { id: 10, title: "Classification of H1 & H2 Prelim Questions", subject: "h1econ", topic: "Market Failure", type: "pdf", date: "2025-07-01", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Fecon-alevel-docs%2F2020%20Classification%20of%20H1%20%26%20H2%20Prelim%20Questions.pdf?alt=media&token=f4a31cc8-2e7b-4b7d-b110-b0d2f6e18899" },
   { id: 11, title: "Micro Market Failure CSQ Questions", subject: "h1econ", topic: "Market Failure", type: "pdf", date: "2025-08-20", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Fecon-alevel-docs%2FMicro%20Market%20Failure%20CSQ%20Questions%202019%20Set%20Sunday%2014%20March.pdf?alt=media&token=0539c249-d5c3-4b70-adcd-eba330da7835" },
   { id: 12, title: "Fiscal Policy Lecture", subject: "h1econ", topic: "Fiscal & Monetary Policy", type: "video", date: "2025-09-28", videoUrl: "https://www.youtube.com/embed/otmgFQHbaDo", duration: "50:00" },
@@ -64,7 +64,7 @@ export const initialResources = [
   { id: 58, title: "TLF: Circular Flow of Income", subject: "h2econ", topic: "Economic Growth", type: "docx", date: "2025-06-20", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Ftlf-desktop%2FH2%20Economics%20Notes%2FCircular%20flow%20of%20income%20notes.docx?alt=media&token=4267cb08-162c-4280-bd9b-fc6067fcfe57" },
   { id: 59, title: "TLF: Economic Growth & Inflation", subject: "h2econ", topic: "Economic Growth", type: "docx", date: "2025-06-22", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Ftlf-desktop%2FH2%20Economics%20Notes%2FEconomic%20Growth%20and%20Inflation.docx?alt=media&token=cbbb3fac-301d-4a59-bdcd-3a26c54a7cb0" },
   { id: 60, title: "TLF: International Economics Notes", subject: "h2econ", topic: "International Trade", type: "docx", date: "2025-06-25", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Ftlf-desktop%2FH2%20Economics%20Notes%2FInternational%20econs%20notes.docx?alt=media&token=e28cf002-3d31-4143-a317-656dd9acd2f0" },
-  { id: 61, title: "TLF: Unemployment & BOP Notes", subject: "h2econ", topic: "Balance of Payments", type: "docx", date: "2025-06-28", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Ftlf-desktop%2FH2%20Economics%20Notes%2FUnemployment%20and%20BOP%20A%20Level%20notes.docx?alt=media&token=88e94f7e-9b6d-41df-aafc-3bf9693a576a" },
+  { id: 61, title: "TLF: Unemployment & balance of payments (BOP) Notes", subject: "h2econ", topic: "Balance of Payments", type: "docx", date: "2025-06-28", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Ftlf-desktop%2FH2%20Economics%20Notes%2FUnemployment%20and%20BOP%20A%20Level%20notes.docx?alt=media&token=88e94f7e-9b6d-41df-aafc-3bf9693a576a" },
   { id: 62, title: "TLF: Macro Policies — Fiscal & Monetary", subject: "h2econ", topic: "Economic Growth", type: "docx", date: "2025-07-01", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Ftlf-desktop%2FH2%20Economics%20Notes%2FMacro%20Policies%20FP%20and%20MP%20.docx?alt=media&token=6f1027f3-527c-47ae-98d2-e8862ba78f0b" },
   { id: 63, title: "TLF: Macro Policies Cheatsheet", subject: "h2econ", topic: "Economic Growth", type: "docx", date: "2025-07-03", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Ftlf-desktop%2FH2%20Economics%20Notes%2FMacro%20Policies%20cheatsheet.docx?alt=media&token=c6587ee5-a9c0-44dd-9078-64cd008e6396" },
   { id: 64, title: "TLF: Market Structure — Features & Decisions", subject: "h2econ", topic: "Market Structures", type: "docx", date: "2025-07-05", fileUrl: "https://firebasestorage.googleapis.com/v0/b/aworthy-lms.firebasestorage.app/o/resources%2Ftlf-desktop%2FH2%20Economics%20Notes%2FMarket%20Structure%20Features%20and%20Decisions%20of%20Firms.docx?alt=media&token=e34e6ecb-8752-4c97-8deb-2565da3c133c" },
@@ -453,13 +453,13 @@ export const initialPosts = [
     createdAt: "2026-03-01", reactions: { "👍": [1, 2, 3], "🔥": [2], "⭐": [3] },
     comments: [
       { id: 1, author: "Sarah Chen", studentId: 1, content: "This is so exciting! Can't wait to use this space.", createdAt: "2026-03-01" },
-      { id: 2, author: "Aisha Rahman", studentId: 3, content: "Love this! Thanks Jeremy", createdAt: "2026-03-02" },
+      { id: 2, author: "Aisha Rahman", studentId: 3, content: "Love this! Thanks, Jeremy.", createdAt: "2026-03-02" },
     ]
   },
   {
     id: 2, author: "Jeremy", authorType: "tutor", isAnnouncement: true, pinned: false, subject: "h2econ",
-    title: "H2 Econs — March Focus Topics",
-    content: "This month we're focusing on Market Structures and Elasticity for H2 Economics. All notes are in the Content Library. Come prepared with questions — our next session will include a mini-test on PED and YED calculations. Start reviewing the diagrams now!",
+    title: "H2 Economics — March Focus Topics",
+    content: "This month we're focusing on Market Structures and Elasticity for H2 Economics. All notes are in the Resources section. Come prepared with questions — our next session will include a mini-test on PED and YED calculations. Start reviewing the diagrams now!",
     createdAt: "2026-03-05", reactions: { "👍": [1, 3], "📝": [2, 3] },
     comments: [
       { id: 1, author: "James Tan", studentId: 2, content: "Will the mini-test be open-book or closed-book?", createdAt: "2026-03-06" },
@@ -468,11 +468,11 @@ export const initialPosts = [
   {
     id: 3, author: "Sarah Chen", authorType: "student", studentId: 1, isAnnouncement: false, pinned: false, subject: "gp",
     title: "Useful GP essay examples — let's share!",
-    content: "Hi everyone! I found a YouTube channel with really good GP model essays covering technology, globalisation, and the environment. Has anyone else found useful resources they'd like to share? Let's build a community resource bank for ourselves",
+    content: "Hi everyone! I found a YouTube channel with really good GP model essays covering technology, globalisation, and the environment. Has anyone else found useful resources they'd like to share? Let's build a community resource bank for ourselves.",
     createdAt: "2026-03-08", reactions: { "👍": [1, 2, 3], "⭐": [1] },
     comments: [
       { id: 1, author: "Aisha Rahman", studentId: 3, content: "I've been reading The Straits Times opinion section daily — the perspectives are gold for current examples, highly recommend!", createdAt: "2026-03-08" },
-      { id: 2, author: "Jeremy", content: "Great initiative Sarah! I'll compile a recommended reading list for everyone", createdAt: "2026-03-09" },
+      { id: 2, author: "Jeremy", content: "Great initiative, Sarah! I'll compile a recommended reading list for everyone.", createdAt: "2026-03-09" },
     ]
   },
   {
@@ -482,7 +482,7 @@ export const initialPosts = [
     createdAt: "2026-03-10", reactions: { "👍": [1] },
     comments: [
       { id: 1, author: "Aisha Rahman", studentId: 3, content: "Think of it this way: every dollar of govt spending gets passed around — but some 'leaks' out through savings, taxes, and imports. More leakages = smaller multiplier. k = 1/(MPS+MPT+MPM)", createdAt: "2026-03-10" },
-      { id: 2, author: "Jeremy", content: "Perfect explanation Aisha! James, I'll draw a circular flow diagram in our next session — it makes the leakages very visual. The formula Aisha gave is exactly right.", createdAt: "2026-03-11" },
+      { id: 2, author: "Jeremy", content: "Perfect explanation, Aisha! James, I'll draw a circular flow diagram in our next session — it makes the leakages very visual. The formula Aisha gave is exactly right.", createdAt: "2026-03-11" },
     ]
   },
   {
@@ -491,9 +491,9 @@ export const initialPosts = [
     content: "Sharing a technique that really clicked for me: read the entire passage ONCE all the way through BEFORE looking at the question. Get the full picture first, then identify the relevant paragraphs. My summary score went from 7/15 to 12/15 after doing this consistently. Give it a try!",
     createdAt: "2026-03-12", reactions: { "👍": [1, 2], "🔥": [2], "💡": [1, 2] },
     comments: [
-      { id: 1, author: "Sarah Chen", studentId: 1, content: "I've been doing it the wrong way around this whole time! Trying this at my next practice session. Thanks so much Aisha!", createdAt: "2026-03-12" },
+      { id: 1, author: "Sarah Chen", studentId: 1, content: "I've been doing it the wrong way around this whole time! Trying this at my next practice session. Thanks so much, Aisha!", createdAt: "2026-03-12" },
       { id: 2, author: "James Tan", studentId: 2, content: "Game changer tip — genuinely thank you!", createdAt: "2026-03-13" },
-      { id: 3, author: "Jeremy", content: "This is exactly the 'bird's eye view first' technique I teach. Brilliantly explained Aisha — I'm pinning this one!", createdAt: "2026-03-13" },
+      { id: 3, author: "Jeremy", content: "This is exactly the 'bird's eye view first' technique I teach. Brilliantly explained, Aisha — I'm pinning this one!", createdAt: "2026-03-13" },
     ]
   },
 ];

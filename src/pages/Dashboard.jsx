@@ -279,7 +279,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
                 <div style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif", minWidth: 32 }}>{sub.grade}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: T.text }}>{hw?.title || "Homework"}</div>
-                  {sub.gradeComment && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{sub.gradeComment.slice(0, 60)}...</div>}
+                  {sub.gradeComment && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{sub.gradeComment.slice(0, 60)}…</div>}
                 </div>
               </div>
             );
@@ -377,7 +377,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 5 }}><Star size={11} color={T.gold} /> The A-Worthy World</div>
-              <h1 style={{ color: "#fff", fontSize: 30, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1.15 }}>Welcome back, Creator J</h1>
+              <h1 style={{ color: "#fff", fontSize: 30, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1.15 }}>Welcome back, Jeremy</h1>
               <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, margin: 0, fontWeight: 300, fontFamily: "'Fraunces', serif", fontStyle: "italic" }}>Your students are waiting — let's make today count.</p>
             </div>
             {/* Alert pills */}

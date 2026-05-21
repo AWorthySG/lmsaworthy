@@ -61,7 +61,7 @@ export default function InstallPrompt() {
       <img src="/icon-96x96.png" alt="A Worthy Learning" style={{ width: 40, height: 40, borderRadius: 10, flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>Install A Worthy</div>
-        <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.4 }}>Add to your home screen for a full app experience</div>
+        <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.4 }}>Add to your home screen for a full app experience.</div>
       </div>
       <button onClick={handleInstall}
         style={{ padding: "8px 16px", borderRadius: T.r2, background: T.accent, color: "#fff", fontWeight: 700, fontSize: 12, border: "none", cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>

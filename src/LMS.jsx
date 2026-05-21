@@ -183,7 +183,7 @@ function LMS({ authUser, userProfile }) {
 
   // Offline/online indicator
   useEffect(() => {
-    const handleOffline = () => dispatch({ type: "ADD_TOAST", payload: { message: "You're offline. Changes will sync when reconnected.", variant: "info" } });
+    const handleOffline = () => dispatch({ type: "ADD_TOAST", payload: { message: "You're offline. Changes will sync when you're back online.", variant: "info" } });
     const handleOnline = () => dispatch({ type: "ADD_TOAST", payload: { message: "Back online!", variant: "success" } });
     window.addEventListener("offline", handleOffline);
     window.addEventListener("online", handleOnline);
@@ -536,7 +536,7 @@ function LMS({ authUser, userProfile }) {
             <motion.div onClick={e => e.stopPropagation()} initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }} transition={{ duration: 0.2, ease: "easeOut" }} style={{ width: "100%", maxWidth: 520, background: darkMode ? "#0B0F1A" : T.bgCard, borderRadius: T.r3, boxShadow: "0 25px 80px rgba(0,0,0,0.4)", border: `1px solid ${T.border}`, overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 20px", borderBottom: `1px solid ${T.border}`, background: T.bgMuted }}>
                 <MagnifyingGlass size={18} color={T.accent} />
-                <input ref={searchRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search resources, homework, pages, students..."
+                <input ref={searchRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search resources, homework, pages, students…"
                   autoFocus
                   style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 15, color: T.text, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 500 }} />
                 <kbd style={{ fontSize: 9, padding: "3px 8px", borderRadius: 4, background: T.bgCard, border: `1px solid ${T.border}`, color: T.textTer, fontWeight: 600 }}>ESC</kbd>

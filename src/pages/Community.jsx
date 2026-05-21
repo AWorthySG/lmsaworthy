@@ -193,7 +193,7 @@ function Community({ state, dispatch }) {
                     {/* Add comment */}
                     <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 4 }}>
                       <div style={{ width: 30, height: 30, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #3F51EC)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 11, flexShrink: 0 }}>J</div>
-                      <Input value={newComment[post.id] || ""} onChange={v => setNewComment(prev => ({ ...prev, [post.id]: v }))} placeholder="Reply as Jeremy..." style={{ flex: 1 }} />
+                      <Input value={newComment[post.id] || ""} onChange={v => setNewComment(prev => ({ ...prev, [post.id]: v }))} placeholder="Write a reply…" style={{ flex: 1 }} />
                       <Btn size="sm" onClick={() => handleAddComment(post.id)} disabled={!(newComment[post.id] || "").trim()}>Post</Btn>
                     </div>
                   </div>

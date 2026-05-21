@@ -419,7 +419,7 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile }) {
 
         <div style={rowStyle}>
           <div style={labelStyle}>Made with</div>
-          <div style={{ fontSize: 13, color: T.textSec }}>Built with ❤ in Singapore</div>
+          <div style={{ fontSize: 13, color: T.textSec }}>Built with care in Singapore</div>
         </div>
 
         <div style={{ ...rowStyle, borderBottom: "none" }}>

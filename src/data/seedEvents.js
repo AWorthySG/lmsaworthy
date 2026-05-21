@@ -4,7 +4,7 @@ export const initialEvents = [
     id: 1, title: "GP Essay Sprint Challenge", status: "active",
     emoji: "✍️", color: "#EF8354",
     startDate: "2026-03-20", endDate: "2026-03-27",
-    description: "Write the best GP Paper 1 essay using the Timed Writer tool. Your essay will be graded by Mr Jeremy. Top 3 essays win prizes! Use any question type — marks awarded for thesis clarity, example quality, and structural coherence.",
+    description: "Write the best GP Paper 1 essay using the Timed Writer tool. Your essay will be graded by Jeremy. The top three essays win prizes! Use any question type — marks awarded for thesis clarity, example quality, and structural coherence.",
     howToParticipate: "Go to Timed Writer → complete a full 90-minute essay → submit. Your best attempt counts.",
     prizes: [
       { place: "1st", reward: "150 Coins + $20 GrabFood Voucher + 'Essay Champion' Badge", emoji: "🥇" },
@@ -42,7 +42,7 @@ export const initialEvents = [
       { place: "7-Day Streak", reward: "100 Coins + 'Word Smith' Badge", emoji: "🔥" },
       { place: "Perfect Scores (all 7 days)", reward: "50 Bonus Coins", emoji: "💯" },
     ],
-    criteria: ["Must complete at least 1 session per day", "Missing a day breaks the streak", "Score 80%+ on each session for the perfect score bonus"],
+    criteria: ["Must complete at least 1 session per day", "Missing a day breaks the streak", "Score 80%+ on each session to earn the perfect-score bonus"],
     participants: [],
     maxParticipants: null,
   },

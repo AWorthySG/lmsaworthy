@@ -157,11 +157,11 @@ function PeerReview({ state, dispatch }) {
               <div style={{ background: "#FFFEF8", borderRadius: T.r3, padding: "24px", border: "1px solid #E8E4D8", fontSize: 14, lineHeight: 1.9, color: T.text, maxHeight: 400, overflowY: "auto", whiteSpace: "pre-wrap" }}>{reviewTarget.text}</div>
               {/* Scoring rubric */}
               <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px", border: `1px solid ${T.border}` }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 12 }}>Score each criterion (1-5):</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 12 }}>Score each criterion (1–5):</div>
                 {[
                   { key: "content", label: "Content & Argument", desc: "Are the arguments well-developed with specific examples?" },
                   { key: "language", label: "Language & Expression", desc: "Is the vocabulary varied? Grammar accurate?" },
-                  { key: "structure", label: "Structure & Coherence", desc: "Is there a clear thesis? Logical paragraph flow?" },
+                  { key: "structure", label: "Structure & Coherence", desc: "Is there a clear thesis? Does the writing have logical paragraph flow?" },
                 ].map(c => (
                   <div key={c.key} style={{ marginBottom: 12 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>

@@ -61,7 +61,7 @@ function MistakeJournal({ state, dispatch }) {
               <div style={{ fontSize: 14, fontWeight: 700, color: T.success, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><CheckCircle size={14} color={T.success} /> Reviewed ({reviewed.length})</div>
               {reviewed.slice(0, 5).map(m => (
                 <div key={m.id} style={{ padding: "8px 14px", background: T.bgMuted, borderRadius: T.r1, marginBottom: 4, fontSize: 12, color: T.textTer, display: "flex", justifyContent: "space-between" }}>
-                  <span>{m.question?.slice(0, 60)}...</span>
+                  <span>{m.question?.slice(0, 60)}…</span>
                   <span>{m.date}</span>
                 </div>
               ))}
