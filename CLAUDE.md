@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A Worthy LMS — a single-page React 19 + Vite app for a Singapore tuition centre, deployed to Vercel at `lms.a-worthy.com` and wrapped via Capacitor for iOS/Android. Subjects: O-Level English (`eng`), H1 General Paper (`gp`), H1 Economics (`h1econ`), H2 Economics (`h2econ`).
+A Worthy LMS — a single-page React 19 + Vite app for a Singapore tuition centre, deployed to Firebase Hosting at `lms.a-worthy.com` with Cloud Functions (2nd gen) for API endpoints, and wrapped via Capacitor for iOS/Android. Subjects: O-Level English (`eng`), H1 General Paper (`gp`), H1 Economics (`h1econ`), H2 Economics (`h2econ`).
 
 `LMS.jsx` is ~619 lines (auth + shell + routing switch only); 63 page/game components across `src/pages/`, all lazy-loaded. Pages, components, state, and data live in their own folders.
 
@@ -26,7 +26,21 @@ npm run cap:ios       # build, sync, open Xcode
 node scripts/upload-resources.mjs
 ```
 
-Deployment is via Vercel Git integration — pushing to `main` triggers automatic production deploy. `vercel.json` rewrites everything except `/api/*` and `/assets/*` to `index.html` (SPA). Domain: `lms.a-worthy.com`.
+Deployment is via Firebase Hosting + Cloud Functions. `firebase.json` configures SPA rewrites and routes `/api/grade`, `/api/grade-essay`, `/api/canva` to Cloud Functions in `asia-southeast1`. Deploy with `firebase deploy`. The legacy `vercel.json` is kept as a fallback reference. Domain: `lms.a-worthy.com`.
+
+```bash
+# Firebase deployment
+firebase deploy                    # Deploy hosting + functions
+firebase deploy --only hosting     # Deploy only the static site
+firebase deploy --only functions   # Deploy only Cloud Functions
+
+# Set secrets for Cloud Functions
+firebase functions:secrets:set ANTHROPIC_API_KEY
+firebase functions:secrets:set CANVA_CLIENT_SECRET
+
+# Set non-secret env vars (via .env files in functions/ or Firebase console)
+# CANVA_CLIENT_ID, CANVA_REDIRECT_URI, ANTHROPIC_GRADING_MODEL (optional)
+```
 
 There is no test suite.
 
@@ -82,26 +96,30 @@ There is no test suite.
 - `src/hooks/useFirebaseSync.js` — debounced bidirectional sync of PERSIST_KEYS to `users/{uid}/state` in RTDB. Uses a `writingRef` guard to prevent write-read feedback loops.
 
 ### Canva integration
-- `api/canva.js` is a single Vercel serverless function (used by Certificates feature) that proxies Canva Connect OAuth + autofill + export, switched by `?action=` query (`auth-url`, `token`, `refresh`, `templates`, `template-fields`, `autofill`, `autofill-status`, `export`, `export-status`).
+- `functions/canva.js` is a Firebase Cloud Function (2nd gen, `asia-southeast1`) that proxies Canva Connect OAuth + autofill + export, switched by `?action=` query (`auth-url`, `token`, `refresh`, `templates`, `template-fields`, `autofill`, `autofill-status`, `export`, `export-status`). Legacy Vercel version kept at `api/canva.js`.
 - OAuth flow uses HMAC-signed state tokens (signed with `CANVA_CLIENT_SECRET`) for CSRF protection. The state is verified server-side on token exchange.
-- Requires env vars `CANVA_CLIENT_ID`, `CANVA_CLIENT_SECRET`, `CANVA_REDIRECT_URI` in Vercel.
+- Requires env vars: `CANVA_CLIENT_ID`, `CANVA_REDIRECT_URI` (regular config), `CANVA_CLIENT_SECRET` (secret via `firebase functions:secrets:set`).
 - `src/config/canva.js` is the browser client — tokens are stored in `localStorage` under `canva_tokens` and auto-refreshed within 5 minutes of expiry. OAuth state is stored in `sessionStorage` during the redirect flow.
 
 ### AI Grading
-- `api/grade.js` and `api/grade-essay.js` — Vercel serverless functions that proxy Anthropic API calls for AI-powered essay/homework grading. Require `ANTHROPIC_API_KEY` env var. CORS is restricted to an allowlist of trusted origins.
+- `functions/grade.js` and `functions/gradeEssay.js` — Firebase Cloud Functions (2nd gen) that proxy Anthropic API calls for AI-powered essay/homework grading. Require `ANTHROPIC_API_KEY` secret. CORS is restricted to an allowlist of trusted origins. Legacy Vercel versions kept at `api/grade.js` and `api/grade-essay.js`.
 - `src/pages/tools/rubrics.js` — rubric definitions for different assignment types.
 - `src/pages/tools/extractText.js` — extracts text from PDF/DOCX uploads for grading.
 - `src/pages/tools/gradeClient.js` — browser client that calls the grading API functions.
 - Used by `AIMarker.jsx` (standalone tool) and `TutorHomework.jsx` (inline grading in homework view).
 
 ### API security
-- `api/_lib/auth.js` — shared CORS utility (`applyCors`) used by all serverless functions. Origin allowlist restricts access to known domains.
+- `functions/lib/auth.js` — shared CORS utility (`applyCors`) used by all Cloud Functions. Origin allowlist includes `lms.a-worthy.com`, `aworthy-lms.web.app`, `aworthy-lms.firebaseapp.com`, and localhost dev origins. Legacy Vercel version kept at `api/_lib/auth.js`.
 - All API functions validate required parameters and return structured error responses without leaking stack traces.
 - Firebase RTDB rules (`database.rules.json`) restrict reads/writes to authenticated users accessing their own data path.
 
-### AI grading (Claude)
-- **Server:** `api/grade.js` is a Vercel serverless function that calls the Anthropic Messages API (`https://api.anthropic.com/v1/messages`) with vision support. Body shape: `{ subject, topic, question, rubric, instructions, text, images: [{ mediaType, base64, label }] }`. Returns a structured `{ grade, overallPercent, summary, strengths[], improvements[], criteria[], report, model }`. Claude is prompted to emit a `<grade-json>…</grade-json>` header followed by a markdown report; the function tolerantly parses either tag-wrapped or bare JSON. Body size limit is set to 20mb on the route; default model is `claude-sonnet-4-6`.
-- **Required env vars** in Vercel: `ANTHROPIC_API_KEY` (required). Optional: `ANTHROPIC_GRADING_MODEL` to override the default model. Without the key, the rest of the LMS still works; only the auto-grade buttons fail with a clear toast.
+### Cloud Functions (Firebase)
+- **Entry point:** `functions/index.js` registers 3 functions via `onRequest` from `firebase-functions/v2/https`, all in `asia-southeast1` with `maxInstances: 10`.
+- **`grade`** — calls the Anthropic Messages API with vision support. Body shape: `{ subject, topic, question, rubric, instructions, text, images: [{ mediaType, base64, label }] }`. Returns structured `{ grade, overallPercent, summary, strengths[], improvements[], criteria[], report, model }`. Claude is prompted to emit a `<grade-json>…</grade-json>` header followed by a markdown report; the function tolerantly parses either tag-wrapped or bare JSON. Default model is `claude-sonnet-4-6`.
+- **`gradeEssay`** — uses `@anthropic-ai/sdk` directly for essay grading with band descriptors.
+- **`canva`** — proxies Canva Connect OAuth + API.
+- **Required secrets** (set via `firebase functions:secrets:set`): `ANTHROPIC_API_KEY`, `CANVA_CLIENT_SECRET`. Optional: `ANTHROPIC_GRADING_MODEL` to override the default model. Without the key, the rest of the LMS still works; only the auto-grade buttons fail with a clear toast.
+- **Body limit:** Firebase Hosting rewrites have a 10MB limit (client-side compression keeps most payloads under this).
 - **Client engine** lives in `src/grading/`:
   - `rubrics.js` — pre-built rubrics keyed by `{subject}.{taskKey}` (e.g. `gp.essay`, `gp.saq`, `eng.comprehension`, `h2econ.essay`). `pickDefaultTask(subject, topic)` chooses the right task by inspecting the topic string; `rubricToText()` flattens a rubric to the human-readable text passed to Claude; `getDefaultRubricForHomework(subject, topic)` is the convenience wrapper used by the homework UI.
   - `extractText.js` — client-side submission extraction: `mammoth` for DOCX, `pdfjs-dist` for PDFs (renders first 8 pages to PNG via `canvas` if the PDF has no extractable text), and a canvas-based downscaler for photos (long edge 2048px, re-encoded as JPEG q0.85) so payloads stay under Vercel's request limit. `extractFromFile(File)` for local pickers; `extractFromUrl(url, name)` for Firebase Storage URLs already on a submission; `mergeExtractions([…])` combines several into one `{ text?, images?, warnings? }` payload.
@@ -113,7 +131,7 @@ There is no test suite.
 - **Sister repo:** `aworthysg/afk-mark-` is a standalone Vite + React app that ships the same `src/grading/` engine + `api/grade.js` function under a single-page UI. Use it as the reference when refactoring the engine — keep both copies in sync (no shared package yet).
 
 ### PWA / Capacitor
-- `public/sw.js` (cache name `aworthy-lms-v6`) — network-first strategy with a 3-second fetch timeout. Skips caching for `/assets/*` (hashed by Vite) and opaque cross-origin responses. Has offline fallback for hashed assets. Cache is limited to 100 entries (oldest evicted first). Bump the cache name when you change shell assets.
+- `public/sw.js` (cache name `aworthy-lms-v6`) — network-first strategy with an 8-second fetch timeout. Skips caching for `/api/*` (Cloud Function calls) and `/assets/*` (hashed by Vite). Skips opaque cross-origin responses. Has offline fallback for hashed assets. Cache is limited to 100 entries (oldest evicted first). Bump the cache name when you change shell assets.
 - `public/manifest.json` + apple-touch icons in `index.html`. Background color matches `T.bg` (`#F8F7F4`).
 - `capacitor.config.ts` points the native shell at the **live URL** (`https://lms.a-worthy.com`) rather than the bundled `dist/`. To ship a fully offline mobile app, remove the `server.url` and rebuild.
 - The app shows toast notifications when going offline/online.

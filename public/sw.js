@@ -31,6 +31,8 @@ self.addEventListener('activate', e => {
 // Network-first strategy with offline fallback
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
+  // Never cache API calls — let them hit Cloud Functions directly
+  if (url.pathname.startsWith('/api/')) return;
   // Don't cache JS/CSS asset bundles — they have content hashes in filenames
   if (url.pathname.startsWith('/assets/')) {
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));

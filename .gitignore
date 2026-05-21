@@ -25,6 +25,10 @@ dist-ssr
 .vercel
 .env*.local
 
+# Firebase
+.firebase/
+functions/node_modules
+
 # Capacitor native platform builds
 android/
 ios/
