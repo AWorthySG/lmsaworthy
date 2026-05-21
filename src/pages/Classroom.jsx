@@ -73,7 +73,7 @@ function Whiteboard({ sessionId, userName }) {
 
     // Also keep BroadcastChannel as local fallback (for same-device tabs)
     let ch;
-    try { ch = new BroadcastChannel(`wb-${sessionId}`); } catch(e) { ch = null; }
+    try { ch = new BroadcastChannel(`wb-${sessionId}`); } catch { ch = null; }
     channelRef.current = {
       postMessage: (data) => {
         // Send to Firebase (cross-device)
@@ -84,7 +84,7 @@ function Whiteboard({ sessionId, userName }) {
           set(ref(firebaseDb, `sessions/${sessionId}/cursors/${clientId.current}`), { ...data, _t: Date.now() });
         }
         // Also send to local BroadcastChannel (same-device tabs)
-        if (ch) try { ch.postMessage(data); } catch(e) {}
+        if (ch) try { ch.postMessage(data); } catch { /* intentionally empty */ }
       }
     };
 
