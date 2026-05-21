@@ -4,8 +4,8 @@ import { Waves, CheckCircle, XCircle } from '../../../icons/icons.jsx';
 
 function TradeWindsGame() {
   const challenges = [
-    { instruction: "Specialise: Set Country A to produce ≥80 goods. Set Country B to produce ≥80 services.", check: (aG, aS, bG, bS) => aG >= 80 && bS >= 80, hint: "Slide Country A's production toward goods, and Country B toward services." },
-    { instruction: "Enable trading. Set trade volume so both countries consume >100 total units each.", check: (aG, aS, bG, bS, trading, tradeVol) => {
+    { instruction: "Specialise: Set Country A to produce ≥80 goods. Set Country B to produce ≥80 services.", check: (aG, _aS, _bG, bS, _trading, _tradeVol, _aPPF) => aG >= 80 && bS >= 80, hint: "Slide Country A's production toward goods, and Country B toward services." },
+    { instruction: "Enable trading. Set trade volume so both countries consume >100 total units each.", check: (aG, aS, bG, bS, trading, tradeVol, _aPPF) => {
       if (!trading) return false;
       const aCG = aG - tradeVol + tradeVol * 0.5;
       const aCS = aS + tradeVol * 1.2;
@@ -13,7 +13,7 @@ function TradeWindsGame() {
       const bCS = bS - tradeVol * 0.8;
       return (aCG + aCS) > 100 && (bCG + bCS) > 100;
     }, hint: "Enable trade, then adjust trade volume until both countries' total consumption exceeds 100." },
-    { instruction: "A 30% tariff reduces trade gains. Both countries must still consume >90 total each.", check: (aG, aS, bG, bS, trading, tradeVol) => {
+    { instruction: "A 30% tariff reduces trade gains. Both countries must still consume >90 total each.", check: (aG, aS, bG, bS, trading, tradeVol, _aPPF) => {
       if (!trading) return false;
       const tariff = 0.7; // 30% reduction
       const aCG = aG - tradeVol + tradeVol * 0.5 * tariff;
@@ -22,7 +22,7 @@ function TradeWindsGame() {
       const bCS = bS - tradeVol * 0.8 * tariff;
       return (aCG + aCS) > 90 && (bCG + bCS) > 90;
     }, hint: "With tariffs reducing trade gains by 30%, you need higher production specialisation and trade volume." },
-    { instruction: "Country A's productivity doubles (PPF = 200). Re-optimise production and trade for >150 total each.", check: (aG, aS, bG, bS, trading, tradeVol) => {
+    { instruction: "Country A's productivity doubles (PPF = 200). Re-optimise production and trade for >150 total each.", check: (aG, aS, bG, bS, trading, tradeVol, _aPPF) => {
       if (!trading) return false;
       const aCG = aG - tradeVol + tradeVol * 0.5;
       const aCS = aS + tradeVol * 1.2;
@@ -30,7 +30,7 @@ function TradeWindsGame() {
       const bCS = bS - tradeVol * 0.8;
       return (aCG + aCS) > 150 && (bCG + bCS) > 150;
     }, hint: "Country A can now produce up to 200 total. Produce heavily in goods and trade surplus." },
-    { instruction: "Free trade restored. Maximize total consumption across BOTH countries combined (target: >350).", check: (aG, aS, bG, bS, trading, tradeVol) => {
+    { instruction: "Free trade restored. Maximize total consumption across BOTH countries combined (target: >350).", check: (aG, aS, bG, bS, trading, tradeVol, _aPPF) => {
       if (!trading) return false;
       const aCG = aG - tradeVol + tradeVol * 0.5;
       const aCS = aS + tradeVol * 1.2;

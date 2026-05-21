@@ -42,6 +42,7 @@ function DebateArenaGame() {
   const [sortScore, setSortScore] = useState(0);
   const [strengthScore, setStrengthScore] = useState(0);
   const [rebuttalScore, setRebuttalScore] = useState(0);
+  const [_sortWrong, setSortWrong] = useState(0);
   const [strengthIdx, setStrengthIdx] = useState(0);
   const [strengthAnswered, setStrengthAnswered] = useState(false);
   const [rebuttalIdx, setRebuttalIdx] = useState(0);
@@ -51,7 +52,7 @@ function DebateArenaGame() {
   // Phase 1: Sort arguments
   function place(item, side) {
     if (item.side === side) { setSortScore(s => s + 1); setStreak(s => s + 1); }
-    else { setStreak(0); }
+    else { setSortWrong(w => w + 1); setStreak(0); }
     setPool(p => p.filter(x => x !== item));
   }
 

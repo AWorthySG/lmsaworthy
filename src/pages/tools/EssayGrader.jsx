@@ -3,7 +3,7 @@ import { T } from '../../theme/theme.js';
 import { firebaseAuth } from '../../config/firebase.js';
 
 /* ━━━ LOCAL FALLBACK GRADER ━━━ */
-function localGrade(essay) {
+function localGrade(essay, _question) {
   const words = essay.trim().split(/\s+/);
   const wordCount = words.length;
   const sentences = essay.split(/[.!?]+/).filter(s => s.trim().length > 5);
@@ -98,13 +98,13 @@ function EssayGrader() {
       }
       // Non-OK response — fall through to local
       throw new Error(`API returned ${res.status}`);
-    } catch {
-      // Fall through to local grading; UI surfaces this via apiError below
+    } catch (err) {
+      console.warn("[EssayGrader] AI grading unavailable, using local analysis:", err.message);
       setApiError("AI grading unavailable — showing local analysis instead.");
     }
 
     // Fallback: local regex-based grading
-    const result = localGrade(essay);
+    const result = localGrade(essay, question);
     setAnalysis(result);
     setAnalysing(false);
   }

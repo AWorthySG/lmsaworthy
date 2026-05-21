@@ -416,21 +416,6 @@ function Whiteboard({ sessionId, userName }) {
     }
     const cw = canvas.width, ch = canvas.height;
 
-    // Helper: draw rounded rect (Safari-safe — no ctx.roundRect)
-    function roundedRect(x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
-    }
-
     if (file.type.startsWith("image/") || /\.(png|jpg|jpeg|gif|webp|bmp|svg)$/i.test(file.name)) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -587,7 +572,7 @@ function Whiteboard({ sessionId, userName }) {
             const line = lines[i].trim();
             if (!line) { y += 8; continue; }
             // Check if it looks like a heading (short, all caps, or starts with a number)
-            const isHeading = line.length < 60 && (line === line.toUpperCase() || /^\d+[\.\)]/.test(line) || /^[A-Z][A-Z\s]+$/.test(line));
+            const isHeading = line.length < 60 && (line === line.toUpperCase() || /^\d+[.)]/.test(line) || /^[A-Z][A-Z\s]+$/.test(line));
             if (isHeading) {
               ctx.font = "bold 14px sans-serif";
               ctx.fillStyle = "#1E2A4A";
@@ -622,7 +607,7 @@ function Whiteboard({ sessionId, userName }) {
             ctx.textAlign = "center";
             ctx.fillText(`— Page 1 of document · ${lines.length} lines total · Annotate above —`, cw / 2, ch - pad + 10);
           }
-        } catch (err) {
+        } catch {
           saveUndo();
           ctx.fillStyle = T.text;
           ctx.font = "bold 14px sans-serif";
@@ -739,7 +724,7 @@ function Whiteboard({ sessionId, userName }) {
           onTouchEnd={e => { e.preventDefault(); e.stopPropagation(); }}
           onContextMenu={e => e.preventDefault()}
           onDragStart={e => e.preventDefault()}
-          onGotPointerCapture={e => { /* keep capture */ }}
+          onGotPointerCapture={() => { /* keep capture */ }}
         />
         {/* Remote cursors overlay */}
         {Object.entries(remoteCursors.current).map(([name, cur]) => (
@@ -854,7 +839,7 @@ function VoiceCallPanel({ students, onEnd }) {
 }
 
 
-function Classroom({ state, dispatch, userProfile }) {
+function Classroom({ state, userProfile }) {
   const [callActive, setCallActive] = useState(false);
   const [sessionCode, setSessionCode] = useState(() => {
     // Check URL for a session code (e.g. ?session=ABC123)
@@ -862,7 +847,6 @@ function Classroom({ state, dispatch, userProfile }) {
     return params.get("session") || "";
   });
   const [sessionId, setSessionId] = useState("");
-  const [joinMode, setJoinMode] = useState(false); // true = student joining, false = tutor creating
   const [videoSidebar, setVideoSidebar] = useState(true);
   const [muted, setMuted] = useState(false);
   const [videoOn, setVideoOn] = useState(false); // Host camera OFF by default
@@ -880,7 +864,7 @@ function Classroom({ state, dispatch, userProfile }) {
           created: Date.now(),
           active: true,
         }).catch(() => {});
-      } catch (e) {}
+      } catch { /* intentionally empty */ }
     }, 100);
   }
 
@@ -925,7 +909,7 @@ function Classroom({ state, dispatch, userProfile }) {
             if (localVideoRef.current) localVideoRef.current.srcObject = stream;
           })
           .catch(() => {});
-      } catch (e) {
+      } catch {
         // getUserMedia not available
       }
     }, 500);

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { T } from '../theme/theme.js';
 import { Lightning, Plus, X, CheckCircle, XCircle, Clock, Trophy, Star, ArrowRight, ArrowLeft, Trash, Timer, Warning, Exam, Play } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Input, Select, Textarea, BackBtn, EmptyStateIllustration } from '../components/ui';
-import { getSubjectTheme } from '../utils/helpers.js';
 import { ConfettiEffect, triggerCelebration } from '../components/gamification';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import useTimer from '../hooks/useTimer.js';

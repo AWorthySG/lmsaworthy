@@ -21,6 +21,7 @@ function TutorHomework({ state, dispatch }) {
   const [gradingId, setGradingId] = useState(null);
   const [gradeVal, setGradeVal] = useState("");
   const [gradeComment, setGradeComment] = useState("");
+  // bulk grading flow removed
   // Create form state
   const [fTitle, setFTitle] = useState("");
   const [fSubj, setFSubj] = useState("eng");

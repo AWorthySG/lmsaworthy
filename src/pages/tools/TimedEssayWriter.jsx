@@ -10,8 +10,7 @@ function TimedEssayWriter() {
   const [chosenQ, setChosenQ] = useState(null);
   const [essay, setEssay] = useState("");
   const [timeLeft, setTimeLeft] = useState(5400); // 90 min
-  // eslint-disable-next-line no-unused-vars
-  const [phase, setPhase] = useState("select"); // select | plan | write | proofread
+  const [_phase, setPhase] = useState("select"); // select | plan | write | proofread
   const [planNotes, setPlanNotes] = useState("");
   const [started, setStarted] = useState(false);
   const timerRef = useRef(null);
