@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { T } from '../../theme/theme.js';
 
 import { DAILY_REWARDS, getStreakReward } from '../../data/gamification.js';
 
 export default function DailyRewardModal({ wallet, onClaim, onClose }) {
+  const dialogRef = useRef(null);
+  const primaryBtnRef = useRef(null);
+
+  useEffect(() => {
+    primaryBtnRef.current?.focus();
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") { onClose(); return; }
+      if (e.key !== "Tab") return;
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+      const focusable = dialog.querySelectorAll('button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
   const today = new Date().toISOString().split("T")[0];
   const alreadyClaimed = wallet.lastClaim === today;
   const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
@@ -12,12 +32,12 @@ export default function DailyRewardModal({ wallet, onClaim, onClose }) {
   const reward = getStreakReward(nextStreak);
 
   return (
-    <div role="dialog" aria-label="Daily login reward" style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(23,37,82,0.6)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }} onClick={onClose}>
+    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Daily login reward" style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(23,37,82,0.6)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className="scale-pop" style={{ background: "#fff", borderRadius: T.r3, width: 380, overflow: "hidden", boxShadow: T.shadow3 }}>
         {/* Header */}
         <div style={{ background: "linear-gradient(135deg, #FFF3ED, #FFE8D6)", padding: "24px 28px 20px", textAlign: "center" }}>
           <div className="scale-pop" style={{ fontSize: 40, marginBottom: 8, animationDelay: "0.15s" }}>{alreadyClaimed ? "✅" : "🎁"}</div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>
+          <div style={{ fontSize: 20, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay }}>
             {alreadyClaimed ? "Already Claimed!" : "Daily Login Reward"}
           </div>
           <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>
@@ -48,7 +68,7 @@ export default function DailyRewardModal({ wallet, onClaim, onClose }) {
           {!alreadyClaimed && (
             <div style={{ background: T.bgMuted, borderRadius: T.r2, padding: "16px", textAlign: "center", marginBottom: 16 }}>
               <div style={{ fontSize: 32, marginBottom: 4 }}>{reward.emoji}</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: T.accent, fontFamily: "'Bricolage Grotesque', sans-serif" }}>+{reward.coins} Coins</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: T.accent, fontFamily: T.fontDisplay }}>+{reward.coins} Coins</div>
               {reward.multiplier > 1 && (
                 <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, marginTop: 2 }}>{reward.multiplier}x multiplier (week {reward.multiplier})</div>
               )}
@@ -73,11 +93,11 @@ export default function DailyRewardModal({ wallet, onClaim, onClose }) {
           {/* Buttons */}
           <div style={{ display: "flex", gap: 10 }}>
             {!alreadyClaimed ? (
-              <button onClick={onClaim} className="glow-pulse" style={{ flex: 1, padding: "12px", borderRadius: T.r2, background: T.gradPrimary, color: "#fff", fontWeight: 800, fontSize: 14, border: "none", cursor: "pointer", boxShadow: T.shadowAccent, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <button ref={primaryBtnRef} onClick={onClaim} className="glow-pulse" style={{ flex: 1, padding: "12px", borderRadius: T.r2, background: T.gradPrimary, color: "#fff", fontWeight: 800, fontSize: 14, border: "none", cursor: "pointer", boxShadow: T.shadowAccent, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                 🪙 Claim {reward.coins} Coins
               </button>
             ) : (
-              <button onClick={onClose} style={{ flex: 1, padding: "12px", borderRadius: T.r2, background: T.bgMuted, color: T.textSec, fontWeight: 700, fontSize: 14, border: "none", cursor: "pointer" }}>
+              <button ref={primaryBtnRef} onClick={onClose} style={{ flex: 1, padding: "12px", borderRadius: T.r2, background: T.bgMuted, color: T.textSec, fontWeight: 700, fontSize: 14, border: "none", cursor: "pointer" }}>
                 Continue
               </button>
             )}

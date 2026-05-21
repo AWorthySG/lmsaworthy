@@ -56,7 +56,7 @@ function TonePainterGame() {
       </div>
       {/* Poem */}
       <div style={{ background: "#FFFEF8", borderRadius: T.r3, padding: "28px 26px", border: "1px solid #E8E4D8" }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 14, fontStyle: "italic", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{poem.title}</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 14, fontStyle: "italic", fontFamily: T.fontDisplay }}>{poem.title}</div>
         {poem.lines.map((l, i) => {
           const paintedColor = painted[i] ? colorMap[painted[i]] : null;
           const isCorrect = submitted && painted[i] === l.answer;
@@ -73,7 +73,7 @@ function TonePainterGame() {
         <button onClick={submit} disabled={Object.keys(painted).length < poem.lines.length} style={{ padding: "10px 24px", borderRadius: T.r5, background: Object.keys(painted).length >= poem.lines.length ? T.gradPrimary : T.bgMuted, color: Object.keys(painted).length >= poem.lines.length ? "#fff" : T.textTer, fontWeight: 700, fontSize: 13, border: "none", cursor: Object.keys(painted).length >= poem.lines.length ? "pointer" : "not-allowed", alignSelf: "flex-start" }}>Submit Analysis</button>
       ) : (
         <div className="scale-pop" style={{ background: T.bgMuted, borderRadius: T.r3, padding: "20px", color: T.text, border: `1px solid ${T.border}`, textAlign: "center" }}>
-          <div style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{score}/{poem.lines.length}</div>
+          <div style={{ fontSize: 28, fontWeight: 800, fontFamily: T.fontDisplay }}>{score}/{poem.lines.length}</div>
           <div style={{ fontSize: 12, color: T.textSec }}>{score === poem.lines.length ? "Perfect tone analysis!" : "Review the mood annotations above."}</div>
         </div>
       )}

@@ -43,7 +43,7 @@ class PageErrorBoundary extends React.Component {
             <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
 
             <h2 style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
+              fontFamily: T.fontDisplay,
               fontSize: 22, fontWeight: 700, color: T.text,
               margin: '0 0 12px',
             }}>
@@ -60,7 +60,7 @@ class PageErrorBoundary extends React.Component {
             {this.state.error && (
               <pre style={{
                 background: T.bgMuted, borderRadius: T.r2,
-                padding: 14, fontSize: 13, fontFamily: "'JetBrains Mono', monospace",
+                padding: 14, fontSize: 13, fontFamily: T.fontMono,
                 color: T.danger, textAlign: 'left',
                 overflowX: 'auto', whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word', margin: '0 0 24px',
@@ -77,7 +77,7 @@ class PageErrorBoundary extends React.Component {
                   background: T.accent, color: '#FFFFFF',
                   border: 'none', borderRadius: T.r2,
                   padding: '10px 22px', fontSize: 14, fontWeight: 600,
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontFamily: T.fontBody,
                   cursor: 'pointer', transition: 'background 0.2s ease',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.background = T.accentDark; }}
@@ -92,7 +92,7 @@ class PageErrorBoundary extends React.Component {
                   background: 'transparent', color: T.textSec,
                   border: `1px solid ${T.border}`, borderRadius: T.r2,
                   padding: '10px 22px', fontSize: 14, fontWeight: 600,
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontFamily: T.fontBody,
                   cursor: 'pointer', transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={e => {

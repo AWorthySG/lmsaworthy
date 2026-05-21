@@ -55,13 +55,13 @@ function TimedEssayWriter() {
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Timed Essay Writer</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>Timed Essay Writer</h1>
           <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>90-minute simulated exam — pick 1 of 8, plan, write, proofread</p>
         </div>
         {started && (
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: timeLeft < 300 ? T.danger : T.text, fontFamily: "'JetBrains Mono', monospace" }}>{fmtTime(timeLeft)}</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: timeLeft < 300 ? T.danger : T.text, fontFamily: T.fontMono }}>{fmtTime(timeLeft)}</div>
               <div style={{ fontSize: 10, fontWeight: 600, color: phaseColors[suggestedPhase] }}>{phaseLabels[suggestedPhase]}</div>
             </div>
             <div style={{ fontSize: 12, fontWeight: 700, color: wordCount >= 600 ? T.success : wordCount >= 400 ? T.warning : T.textTer }}>{wordCount} words</div>
@@ -86,7 +86,7 @@ function TimedEssayWriter() {
       {mode === "menu" && (
         <div style={{ maxWidth: 520 }}>
           <div style={{ background: "linear-gradient(120deg, #0F1B3D, #1A2A5E 60%, #FB424E)", borderRadius: T.r3, padding: "22px 26px", color: "#fff" }}>
-            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 8 }}>Simulated GP Paper 1</div>
+            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 8 }}>Simulated GP Paper 1</div>
             <div style={{ fontSize: 13, color: "#E8C8C8", lineHeight: 1.6, marginBottom: 16 }}>90 minutes. 8 questions. Choose 1. Plan your outline, write your essay, and proofread — all under timed conditions. Aim for 600–800 words.</div>
             <button onClick={startExam} style={{ padding: "10px 28px", borderRadius: T.r5, background: "#fff", color: "#FB424E", fontWeight: 800, fontSize: 14, border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
               <Timer size={16} weight="fill" /> Begin Exam
@@ -154,7 +154,7 @@ function TimedEssayWriter() {
       {mode === "done" && (
         <div style={{ maxWidth: 560 }}>
           <div style={{ background: "linear-gradient(120deg, #0F1B3D, #216ef4)", borderRadius: T.r3, padding: "22px 26px", color: "#fff", textAlign: "center", marginBottom: 16 }}>
-            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 4 }}>Essay Complete</div>
+            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 4 }}>Essay Complete</div>
             <div style={{ fontSize: 14, color: "#C8D8F5" }}>{wordCount} words · {fmtTime(5400 - timeLeft)} elapsed</div>
             <div style={{ fontSize: 12, color: "#8BAEED", marginTop: 6 }}>{wordCount >= 600 ? "Good length!" : "A bit short — aim for 600+ words next time."} {timeLeft > 0 ? `You had ${fmtTime(timeLeft)} remaining.` : "Time ran out."}</div>
           </div>

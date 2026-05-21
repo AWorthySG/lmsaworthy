@@ -27,7 +27,7 @@ function LiveInfographics() {
           </button>
         )}
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, letterSpacing: -0.4, fontFamily: "'Bricolage Grotesque', sans-serif" }}>
+          <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, letterSpacing: -0.4, fontFamily: T.fontDisplay }}>
             {ig ? ig.title : "Live Infographics"}
           </h1>
           <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>
@@ -48,7 +48,7 @@ function LiveInfographics() {
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <span style={{ fontSize: 10, fontWeight: 700, color: info.color, background: info.bg, padding: "2px 8px", borderRadius: 20, textTransform: "uppercase", letterSpacing: 0.8 }}>{info.tag}</span>
               </div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 6, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{info.title}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 6, fontFamily: T.fontDisplay }}>{info.title}</div>
               <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6, marginBottom: 16 }}>{info.subtitle}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, color: info.color, fontSize: 12, fontWeight: 700 }}>
                 <MagicWand size={14} weight="fill" /> Open Infographic <CaretRight size={12} />

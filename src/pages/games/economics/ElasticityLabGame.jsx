@@ -85,7 +85,7 @@ function ElasticityLabGame() {
             ].map(m => (
               <div key={m.label} style={{ background: T.bgCard, borderRadius: T.r2, padding: "12px", textAlign: "center", border: `1px solid ${T.border}` }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: T.textTer }}>{m.label}</div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: m.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{m.value}</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: m.color, fontFamily: T.fontDisplay }}>{m.value}</div>
               </div>
             ))}
           </div>
@@ -101,7 +101,7 @@ function ElasticityLabGame() {
               {/* HUD */}
               <div style={{ background: T.bgMuted, borderRadius: T.r2, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", border: `1px solid ${T.border}` }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>Question {current + 1} / {deck.length}</div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{cScore} correct</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay }}>{cScore} correct</div>
               </div>
               {/* Progress */}
               <div style={{ height: 6, background: T.bgMuted, borderRadius: 10, overflow: "hidden" }}>
@@ -145,9 +145,9 @@ function ElasticityLabGame() {
               <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[cGrade]}15, transparent 60%)` }} />
               <div style={{ position: "relative", zIndex: 1 }}>
                 <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[cGrade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[cGrade]}44` }}>
-                  <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[cGrade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{cGrade}</span>
+                  <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[cGrade], fontFamily: T.fontDisplay }}>{cGrade}</span>
                 </div>
-                <div style={{ fontSize: 42, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text, letterSpacing: "-0.04em" }}>{cPct}%</div>
+                <div style={{ fontSize: 42, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text, letterSpacing: "-0.04em" }}>{cPct}%</div>
                 <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>{cScore} / {deck.length} correct</div>
                 <div style={{ fontSize: 12, color: T.textTer, marginTop: 8 }}>
                   {cPct >= 90 ? "Elasticity master — you understand PED, revenue effects, and real-world applications!" : cPct >= 60 ? "Good grasp — review the revenue relationship with elastic vs inelastic goods." : "Keep practising — focus on the formula: PED = %ΔQd / %ΔP."}

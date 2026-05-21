@@ -81,7 +81,7 @@ function Leaderboard({ state }) {
                 <XPBar xp={student.xp} compact />
               </div>
               <div style={{ textAlign: "right", flexShrink: 0 }}>
-                <div style={{ fontWeight: 800, fontSize: 22, color: lv.color, fontFamily: "'JetBrains Mono', monospace" }}>{student.xp}</div>
+                <div style={{ fontWeight: 800, fontSize: 22, color: lv.color, fontFamily: T.fontMono }}>{student.xp}</div>
                 <div style={{ fontSize: 11, color: T.textTer }}>total XP</div>
               </div>
             </div>
@@ -90,7 +90,7 @@ function Leaderboard({ state }) {
       </Card>
 
       {/* Achievements gallery */}
-      <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Achievements Gallery</h2>
+      <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.03em", fontFamily: T.fontDisplay }}>Achievements Gallery</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
         {ranked.map(student => {
           return (

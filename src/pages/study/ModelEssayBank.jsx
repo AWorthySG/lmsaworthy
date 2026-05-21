@@ -25,10 +25,10 @@ function ModelEssayBank() {
             <span style={{ fontSize: 10, fontWeight: 700, color: T.success, background: T.successBg, padding: "2px 8px", borderRadius: 20 }}>Grade {activeEssay.grade}</span>
             {activeEssay.band && <span style={{ fontSize: 10, fontWeight: 700, color: T.gold, background: T.goldLight, padding: "2px 8px", borderRadius: 20 }}>Band {activeEssay.band}</span>}
           </div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1.4 }}>{activeEssay.title}</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay, lineHeight: 1.4 }}>{activeEssay.title}</div>
         </div>
         {/* Essay text */}
-        <div style={{ background: "#FFFEF8", borderRadius: T.r3, padding: "28px 26px", border: "1px solid #E8E4D8", fontSize: 14, lineHeight: 2, color: T.text, whiteSpace: "pre-wrap", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        <div style={{ background: "#FFFEF8", borderRadius: T.r3, padding: "28px 26px", border: "1px solid #E8E4D8", fontSize: 14, lineHeight: 2, color: T.text, whiteSpace: "pre-wrap", fontFamily: T.fontBody }}>
           {activeEssay.essay}
         </div>
         {/* Examiner feedback */}

@@ -69,9 +69,9 @@ function PolicyTugGame() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ marginBottom: 8 }}><Scales size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{balancedCount} / {maxRounds}</div>
+          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>{balancedCount} / {maxRounds}</div>
           <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>rounds stabilised</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 4, marginTop: 12 }}>
             {history.map((h, i) => (
@@ -116,16 +116,16 @@ function PolicyTugGame() {
       <div style={{ background: T.bgMuted, borderRadius: T.r3, padding: "14px 20px", border: `1px solid ${T.border}` }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
           <div>
-            <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Policy Tug-of-War</div>
+            <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: T.fontDisplay }}>Policy Tug-of-War</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>Round {round} of {maxRounds}</div>
           </div>
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{balancedCount}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay }}>{balancedCount}</div>
               <div style={{ fontSize: 8, color: T.textTer }}>BALANCED</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 16, fontWeight: 800, color: T.textSec, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{maxRounds - round + 1}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: T.textSec, fontFamily: T.fontDisplay }}>{maxRounds - round + 1}</div>
               <div style={{ fontSize: 8, color: T.textTer }}>LEFT</div>
             </div>
           </div>

@@ -73,14 +73,14 @@ function AnalyticsDashboard({ state }) {
         ].map(m => (
           <div key={m.label} style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px", border: `1px solid ${T.border}`, textAlign: "center" }}>
             <div style={{ fontSize: 10, color: T.textTer, fontWeight: 600, marginBottom: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{m.icon} {m.label}</div>
-            <div style={{ fontSize: 26, fontWeight: 800, color: m.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{m.value}</div>
+            <div style={{ fontSize: 26, fontWeight: 800, color: m.color, fontFamily: T.fontDisplay }}>{m.value}</div>
           </div>
         ))}
       </div>
 
       {/* Exam Readiness Gauge */}
       <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}` }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Target size={16} color={T.accent} /> Exam Readiness Score</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><Target size={16} color={T.accent} /> Exam Readiness Score</div>
         <div style={{ height: 12, background: T.bgMuted, borderRadius: 10, overflow: "hidden", position: "relative", marginBottom: 8 }}>
           <div style={{ height: "100%", borderRadius: 10, background: examReadiness >= 70 ? `linear-gradient(90deg, ${T.success}, #22C55E)` : examReadiness >= 40 ? `linear-gradient(90deg, ${T.warning}, #F59E0B)` : `linear-gradient(90deg, ${T.danger}, #EF4444)`, width: `${examReadiness}%`, transition: "width 0.5s ease" }} />
         </div>
@@ -94,7 +94,7 @@ function AnalyticsDashboard({ state }) {
 
       {/* Topic Mastery Heatmap */}
       <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}` }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 14, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><ChartBar size={16} color={T.accent} /> Topic Mastery</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 14, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><ChartBar size={16} color={T.accent} /> Topic Mastery</div>
         {SUBJECTS.map(subj => {
           const topics = topicMastery[subj.id] || [];
           if (topics.length === 0) return null;
@@ -124,14 +124,14 @@ function AnalyticsDashboard({ state }) {
 
       {/* Exam countdown */}
       <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}` }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Timer size={16} color={T.accent} /> Exam Countdown</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><Timer size={16} color={T.accent} /> Exam Countdown</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {getExamCountdowns().map((e) => {
             const theme = T[e.subject] || T.eng;
             const urgent = e.daysLeft <= 30;
             return (
               <div key={e.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", borderRadius: T.r2, background: urgent ? T.dangerBg : T.bgMuted, border: `1px solid ${urgent ? T.danger + "22" : T.border}` }}>
-                <div style={{ fontSize: 18, fontWeight: 900, color: urgent ? T.danger : theme.accent, fontFamily: "'JetBrains Mono', monospace", minWidth: 40, textAlign: "center" }}>{e.daysLeft}</div>
+                <div style={{ fontSize: 18, fontWeight: 900, color: urgent ? T.danger : theme.accent, fontFamily: T.fontMono, minWidth: 40, textAlign: "center" }}>{e.daysLeft}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: T.text }}>{e.name}</div>
                   <div style={{ fontSize: 10, color: T.textTer }}>{e.date}</div>

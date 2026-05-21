@@ -23,7 +23,7 @@ function ParentView({ state }) {
             <img src="/logo-aworthy.jpeg" alt="A Worthy Learning" style={{ height: 36, borderRadius: 8 }} />
             <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: 2, textTransform: "uppercase" }}>A Worthy · Parent Dashboard</span>
           </div>
-          <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Progress Report</h1>
+          <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px", fontFamily: T.fontDisplay }}>Progress Report</h1>
           <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>Real-time overview of your child's learning journey</p>
         </div>
       </div>
@@ -38,7 +38,7 @@ function ParentView({ state }) {
         ].map(s => (
           <div key={s.label} style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px", border: `1px solid ${T.border}`, textAlign: "center" }}>
             <div style={{ fontSize: 10, color: T.textTer, fontWeight: 600, marginBottom: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{s.icon} {s.label}</div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
+            <div style={{ fontSize: 24, fontWeight: 800, color: s.color, fontFamily: T.fontDisplay }}>{s.value}</div>
           </div>
         ))}
       </div>
@@ -46,12 +46,12 @@ function ParentView({ state }) {
       {/* Recent Grades */}
       {gradedSubs.length > 0 && (
         <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px 18px", border: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><PencilSimpleLine size={15} color={T.accent} /> Recent Grades</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><PencilSimpleLine size={15} color={T.accent} /> Recent Grades</div>
           {gradedSubs.slice(0, 5).map(sub => {
             const hw = state.homework.find(h => h.id === sub.homeworkId);
             return (
               <div key={sub.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: `1px solid ${T.border}` }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif", minWidth: 36 }}>{sub.grade}</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay, minWidth: 36 }}>{sub.grade}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{hw?.title || "Homework"}</div>
                   {sub.gradeComment && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{sub.gradeComment.slice(0, 80)}…</div>}
@@ -66,10 +66,10 @@ function ParentView({ state }) {
       {/* Exam Countdown */}
       {exams.length > 0 && (
         <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px 18px", border: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Timer size={15} color={T.accent} /> Upcoming Exams</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><Timer size={15} color={T.accent} /> Upcoming Exams</div>
           {exams.map((e, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: i < exams.length - 1 ? `1px solid ${T.border}` : "none" }}>
-              <div style={{ fontSize: 20, fontWeight: 900, color: e.daysLeft <= 30 ? T.danger : T.accent, fontFamily: "'JetBrains Mono', monospace", minWidth: 40, textAlign: "center" }}>{e.daysLeft}</div>
+              <div style={{ fontSize: 20, fontWeight: 900, color: e.daysLeft <= 30 ? T.danger : T.accent, fontFamily: T.fontMono, minWidth: 40, textAlign: "center" }}>{e.daysLeft}</div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{e.name}</div>
                 <div style={{ fontSize: 10, color: T.textTer }}>{e.date} · {e.daysLeft} days remaining</div>

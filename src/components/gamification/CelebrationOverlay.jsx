@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ConfettiCanvas from './ConfettiCanvas.jsx';
 import BurstAnimation from './BurstAnimation.jsx';
+import { T } from '../../theme/theme.js';
 
 export function CelebrationOverlay({ type, onComplete }) {
   const [visible, setVisible] = useState(true);
@@ -23,7 +24,7 @@ export function CelebrationOverlay({ type, onComplete }) {
             <BurstAnimation type={type} />
           </div>
           <div style={{ fontSize: 48, marginTop: -8 }}>{emoji}</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.5)", fontFamily: "'Bricolage Grotesque', sans-serif", marginTop: 4 }}>{label}</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.5)", fontFamily: T.fontDisplay, marginTop: 4 }}>{label}</div>
         </div>
       </div>
     </>

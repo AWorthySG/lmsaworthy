@@ -115,7 +115,7 @@ function EssayGrader() {
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 20 }}>
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-          <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Essay Grader</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>Essay Grader</h1>
           <span style={{ fontSize: 9, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "linear-gradient(135deg, #6366F1, #8B5CF6)", color: "#fff", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI-Powered</span>
         </div>
         <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>Paste your essay for AI-powered analysis against Singapore GP Band descriptors</p>
@@ -133,7 +133,7 @@ function EssayGrader() {
             </select>
           </div>
           <textarea value={essay} onChange={e => setEssay(e.target.value)} placeholder="Paste your essay here (minimum 50 words)..."
-            style={{ flex: 1, padding: "14px 16px", borderRadius: T.r2, border: `1px solid ${T.border}`, fontSize: 14, lineHeight: 1.8, resize: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: T.bgCard, color: T.text }} />
+            style={{ flex: 1, padding: "14px 16px", borderRadius: T.r2, border: `1px solid ${T.border}`, fontSize: 14, lineHeight: 1.8, resize: "none", fontFamily: T.fontBody, boxSizing: "border-box", background: T.bgCard, color: T.text }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ fontSize: 12, color: T.textTer }}>{essay.trim() ? essay.trim().split(/\s+/).length : 0} words</span>
             <button onClick={analyseEssay} disabled={analysing || essay.trim().split(/\s+/).length < 50}
@@ -158,8 +158,8 @@ function EssayGrader() {
                   <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 10px", borderRadius: 20, background: "linear-gradient(135deg, #6366F1, #8B5CF6)", color: "#fff", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI Graded</span>
                 </div>
               )}
-              <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 6 }}>Band</div>
-              <div style={{ fontSize: 42, fontWeight: 800, color: analysis.band <= 2 ? T.success : analysis.band === 3 ? T.warning : T.danger, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{analysis.band}</div>
+              <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: T.fontDisplay, marginBottom: 6 }}>Band</div>
+              <div style={{ fontSize: 42, fontWeight: 800, color: analysis.band <= 2 ? T.success : analysis.band === 3 ? T.warning : T.danger, fontFamily: T.fontDisplay }}>{analysis.band}</div>
               <div style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginBottom: 4 }}>{bandLabel(analysis.band)}</div>
               <div style={{ fontSize: 12, color: T.textSec }}>{analysis.totalScore}/{analysis.maxScore} points ({analysis.pct}%)</div>
               <div style={{ fontSize: 11, color: T.textTer, marginTop: 4 }}>

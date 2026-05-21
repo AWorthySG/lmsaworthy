@@ -131,7 +131,7 @@ function TutorHomework({ state, dispatch }) {
             </button>
           )}
           <div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #2D3A8C, #4F5BD5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>
+            <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #2D3A8C, #4F5BD5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>
               {view === "create" ? "Assign Homework" : view === "detail" ? selectedHw?.title : "Homework"}
             </h1>
             <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>
@@ -157,7 +157,7 @@ function TutorHomework({ state, dispatch }) {
               { label: "Overdue", value: overdueCount, color: T.danger },
             ].map(s => (
               <div key={s.label} style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "14px 16px", border: `1px solid ${T.border}`, textAlign: "center" }}>
-                <div style={{ fontSize: 22, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: s.color, fontFamily: T.fontDisplay }}>{s.value}</div>
                 <div style={{ fontSize: 11, color: T.textSec, fontWeight: 600 }}>{s.label}</div>
               </div>
             ))}
@@ -208,7 +208,7 @@ function TutorHomework({ state, dispatch }) {
                   </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: T.navy, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{graded}/{total}</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: T.navy, fontFamily: T.fontDisplay }}>{graded}/{total}</div>
                   <div style={{ fontSize: 10, color: T.textTer }}>graded</div>
                 </div>
               </button>
@@ -263,7 +263,7 @@ function TutorHomework({ state, dispatch }) {
                 onChange={e => { setFRubric(e.target.value); setFRubricEdited(true); }}
                 rows={9}
                 placeholder="The rubric the AI will use when marking. Defaults are filled in based on subject + topic — edit freely."
-                style={{ width: "100%", padding: "10px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 12, resize: "vertical", boxSizing: "border-box", lineHeight: 1.5, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }} />
+                style={{ width: "100%", padding: "10px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 12, resize: "vertical", boxSizing: "border-box", lineHeight: 1.5, fontFamily: T.fontMono }} />
               <div style={{ fontSize: 10, color: T.textTer, marginTop: 4 }}>
                 Add a model answer or "look for X, Y, Z" notes for sharper marking. Leave blank to skip AI marking on this homework.
               </div>
@@ -332,7 +332,7 @@ function TutorHomework({ state, dispatch }) {
                       value={rubricDraft}
                       onChange={(e) => setRubricDraft(e.target.value)}
                       rows={10}
-                      style={{ width: "100%", padding: "10px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 12, resize: "vertical", boxSizing: "border-box", lineHeight: 1.5, fontFamily: "'JetBrains Mono', ui-monospace, monospace" }} />
+                      style={{ width: "100%", padding: "10px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 12, resize: "vertical", boxSizing: "border-box", lineHeight: 1.5, fontFamily: T.fontMono }} />
                     <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
                       <button onClick={() => setRubricDraft(getDefaultRubricForHomework(selectedHw.subject, selectedHw.topic))}
                         style={{ background: "none", border: "none", color: T.accent, fontSize: 11, fontWeight: 600, cursor: "pointer" }}>
@@ -352,7 +352,7 @@ function TutorHomework({ state, dispatch }) {
                 ) : (
                   <div>
                     {selectedHw.rubric?.trim() ? (
-                      <div style={{ fontSize: 12, color: T.text, lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "'JetBrains Mono', ui-monospace, monospace", background: T.bgMuted, padding: "10px 12px", borderRadius: T.r1 }}>
+                      <div style={{ fontSize: 12, color: T.text, lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: T.fontMono, background: T.bgMuted, padding: "10px 12px", borderRadius: T.r1 }}>
                         {selectedHw.rubric}
                       </div>
                     ) : (
@@ -386,7 +386,7 @@ function TutorHomework({ state, dispatch }) {
                         {sub.submittedAt && <div style={{ fontSize: 10, color: T.textTer }}>Submitted {sub.submittedAt}</div>}
                       </div>
                       <span style={{ fontSize: 10, fontWeight: 700, color: statusInfo.color, background: statusInfo.bg, padding: "3px 10px", borderRadius: 20 }}>{statusInfo.label}</span>
-                      {sub.grade && <span style={{ fontSize: 14, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{sub.grade}</span>}
+                      {sub.grade && <span style={{ fontSize: 14, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay }}>{sub.grade}</span>}
                       {sub.aiGrade && !sub.grade && (
                         <span title="AI suggested grade — pending tutor review" style={{ fontSize: 11, fontWeight: 700, color: "#7C3AED", background: "#F3E8FF", padding: "3px 8px", borderRadius: 20 }}>
                           AI: {sub.aiGrade.grade}

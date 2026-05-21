@@ -72,7 +72,7 @@ function AIMarker() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16, paddingBottom: 32 }}>
       <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", background: "linear-gradient(135deg, #7C3AED, #4338CA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>AI Marker</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0, fontFamily: T.fontDisplay, background: "linear-gradient(135deg, #7C3AED, #4338CA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>AI Marker</h1>
         <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>
           Drop a .docx, .pdf, or photo of student work — get a rubric-based grade in seconds.
         </p>
@@ -110,7 +110,7 @@ function AIMarker() {
               value={rubric}
               onChange={(e) => { setRubric(e.target.value); setRubricEdited(true); }}
               rows={10}
-              style={{ ...inputStyle, fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 12, lineHeight: 1.5, resize: "vertical" }} />
+              style={{ ...inputStyle, fontFamily: T.fontMono, fontSize: 12, lineHeight: 1.5, resize: "vertical" }} />
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button onClick={() => { setRubric(rubricToText(subject, taskKey)); setRubricEdited(false); }} style={{ background: "none", border: "none", color: T.accent, fontSize: 11, fontWeight: 600, cursor: "pointer", padding: "4px 0" }}>
                 Reset to default
@@ -180,7 +180,7 @@ function AIMarker() {
             <>
               <div style={{ padding: "18px 20px", borderRadius: T.r2, background: "linear-gradient(135deg, #7C3AED, #4338CA)", color: "#fff" }}>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.8 }}>Grade</div>
-                <div style={{ fontSize: 36, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginTop: 2 }}>
+                <div style={{ fontSize: 36, fontWeight: 800, fontFamily: T.fontDisplay, marginTop: 2 }}>
                   {result.grade}
                   {typeof result.overallPercent === "number" && <span style={{ fontSize: 16, fontWeight: 500, marginLeft: 10, opacity: 0.8 }}>{result.overallPercent}%</span>}
                 </div>

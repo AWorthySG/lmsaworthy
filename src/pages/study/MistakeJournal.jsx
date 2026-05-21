@@ -14,11 +14,11 @@ function MistakeJournal({ state, dispatch }) {
 
       <div style={{ display: "flex", gap: 10 }}>
         <div style={{ flex: 1, background: T.dangerBg, borderRadius: T.r2, padding: "14px", textAlign: "center", border: `1px solid ${T.danger}22` }}>
-          <div style={{ fontSize: 22, fontWeight: 800, color: T.danger, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{unreviewed.length}</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: T.danger, fontFamily: T.fontDisplay }}>{unreviewed.length}</div>
           <div style={{ fontSize: 11, color: T.danger, fontWeight: 600 }}>To Review</div>
         </div>
         <div style={{ flex: 1, background: T.successBg, borderRadius: T.r2, padding: "14px", textAlign: "center", border: `1px solid ${T.success}22` }}>
-          <div style={{ fontSize: 22, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{reviewed.length}</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay }}>{reviewed.length}</div>
           <div style={{ fontSize: 11, color: T.success, fontWeight: 600 }}>Reviewed</div>
         </div>
       </div>

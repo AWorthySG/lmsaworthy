@@ -88,7 +88,7 @@ export default function LMSAuthWrapper() {
       <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0B0F1A" }}>
         <div style={{ textAlign: "center", width: 240 }}>
           <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, objectFit: "contain", marginBottom: 12, borderRadius: 8 }} />
-          <div style={{ fontSize: 12, color: "rgba(254,254,254,0.3)", fontWeight: 200, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 20 }}>Loading</div>
+          <div style={{ fontSize: 12, color: "rgba(254,254,254,0.3)", fontWeight: 200, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: T.fontDisplay, marginBottom: 20 }}>Loading</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "100%" }} />
             <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "80%" }} />
@@ -224,14 +224,14 @@ function LMS({ authUser, userProfile }) {
   }, [searchQuery, state.resources, state.homework, state.videoLessons, state.posts]);
 
   // Notification badge counts
-  const hwBadge = state.role === "tutor" ? state.submissions.filter(s => s.status === "submitted").length : state.homework.filter(h => h.status === "active").length;
-  const attendanceBadge = state.role === "tutor" ? state.sessions.filter(s => {
+  const hwBadge = useMemo(() => state.role === "tutor" ? state.submissions.filter(s => s.status === "submitted").length : state.homework.filter(h => h.status === "active").length, [state.role, state.submissions, state.homework]);
+  const attendanceBadge = useMemo(() => state.role === "tutor" ? state.sessions.filter(s => {
     const rec = state.attendance[s.id] || {};
     const sessionStudents = (s.subject && state.students.some(st => st.subjects))
       ? state.students.filter(st => st.subjects?.includes(s.subject))
       : state.students;
     return Object.keys(rec).length < sessionStudents.length;
-  }).length : 0;
+  }).length : 0, [state.role, state.sessions, state.attendance, state.students]);
 
   const pageFallback = <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "40px 0" }}>{[1,2,3].map(i => <div key={i} className="shimmer" style={{ height: 14, borderRadius: 6, width: i === 3 ? "60%" : "100%" }} />)}</div>;
 
@@ -331,7 +331,7 @@ function LMS({ authUser, userProfile }) {
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 36, objectFit: "contain", borderRadius: 8 }} />
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.02em" }}>A Worthy</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay, letterSpacing: "-0.02em" }}>A Worthy</span>
                 <span style={{ fontSize: 9, fontWeight: 500, color: T.textTer, letterSpacing: "0.05em" }}>Learning Platform</span>
               </div>
             </div>
@@ -417,12 +417,12 @@ function LMS({ authUser, userProfile }) {
               onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(212,162,84,0.15)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{ fontSize: 14, fontWeight: 800, color: "#D4A254" }}>$</span>
-                <span style={{ fontSize: 13, fontWeight: 800, color: "#D4A254", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{state.wallet.coins}</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: "#D4A254", fontFamily: T.fontDisplay }}>{state.wallet.coins}</span>
                 <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>coins</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <Flame size={14} color="#818CF8" />
-                <span style={{ fontSize: 13, fontWeight: 800, color: "#818CF8", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{state.wallet.streak}</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: "#818CF8", fontFamily: T.fontDisplay }}>{state.wallet.streak}</span>
                 <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>day streak</span>
               </div>
             </button>
@@ -471,7 +471,7 @@ function LMS({ authUser, userProfile }) {
           <div style={{ flex: 1 }} />
           {/* Search button */}
           <button onClick={() => setShowSearch(true)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 40, fontSize: 12, color: T.textTer }}>
-            <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: "'JetBrains Mono', monospace" }}>⌘K</kbd>}
+            <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: T.fontMono }}>⌘K</kbd>}
           </button>
           {/* Notification bell */}
           <div style={{ position: "relative" }}>
@@ -539,7 +539,7 @@ function LMS({ authUser, userProfile }) {
                 <MagnifyingGlass size={18} color={T.accent} />
                 <input ref={searchRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search resources, homework, pages, students…"
                   autoFocus
-                  style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 15, color: T.text, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 500 }} />
+                  style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 15, color: T.text, fontFamily: T.fontBody, fontWeight: 500 }} />
                 <kbd style={{ fontSize: 9, padding: "3px 8px", borderRadius: 4, background: T.bgCard, border: `1px solid ${T.border}`, color: T.textTer, fontWeight: 600 }}>ESC</kbd>
               </div>
               {searchResults.length > 0 ? (

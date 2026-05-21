@@ -288,7 +288,7 @@ function ProgressTracker({ state, dispatch }) {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, textAlign: "center", marginBottom: badges.length > 0 ? 12 : 0 }}>
                 <div style={{ padding: 10, background: T.accentLight, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 800, color: T.accent }}>{student.quizResults.length}</div><div style={{ fontSize: 11, color: T.textTer }}>Quizzes</div></div>
                 <div style={{ padding: 10, background: avg >= 70 ? T.successBg : avg >= 50 ? T.warningBg : T.dangerBg, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 800, color: avg >= 70 ? T.success : avg >= 50 ? T.warning : T.danger }}>{avg}%</div><div style={{ fontSize: 11, color: T.textTer }}>Avg Score</div></div>
-                <div style={{ padding: 10, background: lv.bg, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 800, color: lv.color, fontFamily: "'JetBrains Mono', monospace" }}>{xp}</div><div style={{ fontSize: 11, color: T.textTer }}>XP</div></div>
+                <div style={{ padding: 10, background: lv.bg, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 800, color: lv.color, fontFamily: T.fontMono }}>{xp}</div><div style={{ fontSize: 11, color: T.textTer }}>XP</div></div>
               </div>
               {badges.length > 0 && (
                 <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>

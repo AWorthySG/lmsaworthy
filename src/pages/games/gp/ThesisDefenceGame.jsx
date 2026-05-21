@@ -70,9 +70,9 @@ function ThesisDefenceGame() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ marginBottom: 8 }}>{hp > 0 ? <Shield size={48} color={gradeColors[grade]} /> : <HeartBreak size={48} color={T.danger} />}</div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{score} / {maxScore}</div>
+          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>{score} / {maxScore}</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 12 }}>
             {history.map((h, i) => (
               <div key={i} style={{ width: 28, height: 28, borderRadius: "50%", background: qualityColors[h.quality] + "20", border: `2px solid ${qualityColors[h.quality]}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12 }}>
@@ -98,7 +98,7 @@ function ThesisDefenceGame() {
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 16, fontWeight: 800, color: "#D4A254", fontFamily: "'JetBrains Mono', monospace" }}>{score}</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: "#D4A254", fontFamily: T.fontMono }}>{score}</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>SCORE</div>
           </div>
           <div style={{ display: "flex", gap: 3 }}>
@@ -108,7 +108,7 @@ function ThesisDefenceGame() {
       </div>
 
       {/* Essay question */}
-      <div style={{ background: T.bgMuted, borderRadius: T.r2, padding: "12px 16px", fontSize: 13, fontWeight: 600, color: T.text, fontFamily: "'Fraunces', serif", fontStyle: "italic", lineHeight: 1.6 }}>
+      <div style={{ background: T.bgMuted, borderRadius: T.r2, padding: "12px 16px", fontSize: 13, fontWeight: 600, color: T.text, fontFamily: T.fontSerif, fontStyle: "italic", lineHeight: 1.6 }}>
         {q.question}
       </div>
 

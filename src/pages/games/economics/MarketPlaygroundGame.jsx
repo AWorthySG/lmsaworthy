@@ -41,17 +41,17 @@ function MarketPlaygroundGame() {
         <div>
           <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1 }}>Market Playground</div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-            <span style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: isEq ? "#51cf66" : "#fff" }}>${price}</span>
+            <span style={{ fontSize: 28, fontWeight: 800, fontFamily: T.fontDisplay, color: isEq ? "#51cf66" : "#fff" }}>${price}</span>
             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>/ eq ${eqPrice}</span>
           </div>
         </div>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#D4A254", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{score}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#D4A254", fontFamily: T.fontDisplay }}>{score}</div>
             <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)" }}>SCORE</div>
           </div>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{round}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: T.fontDisplay }}>{round}</div>
             <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)" }}>ROUND</div>
           </div>
         </div>
@@ -101,12 +101,12 @@ function MarketPlaygroundGame() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
             <div style={{ background: "#EAF2FB", borderRadius: T.r2, padding: "12px", textAlign: "center" }}>
               <div style={{ fontSize: 9, fontWeight: 700, color: "#3D7DD6", textTransform: "uppercase" }}>Buyers</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "#3D7DD6", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{qd}</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#3D7DD6", fontFamily: T.fontDisplay }}>{qd}</div>
               <div style={{ display: "flex", justifyContent: "center", gap: 1, flexWrap: "wrap", marginTop: 4 }}>{Array.from({ length: Math.min(Math.round(qd / 8), 10) }, (_, i) => <span key={i} style={{ fontSize: 11, transition: "all 0.3s", transitionDelay: `${i * 30}ms` }}>🛒</span>)}</div>
             </div>
             <div style={{ background: "#EAF6F2", borderRadius: T.r2, padding: "12px", textAlign: "center" }}>
               <div style={{ fontSize: 9, fontWeight: 700, color: "#3BAA8B", textTransform: "uppercase" }}>Sellers</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "#3BAA8B", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{qs}</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#3BAA8B", fontFamily: T.fontDisplay }}>{qs}</div>
               <div style={{ display: "flex", justifyContent: "center", gap: 1, flexWrap: "wrap", marginTop: 4 }}>{Array.from({ length: Math.min(Math.round(qs / 8), 10) }, (_, i) => <span key={i} style={{ fontSize: 11, transition: "all 0.3s", transitionDelay: `${i * 30}ms` }}>🏭</span>)}</div>
             </div>
           </div>

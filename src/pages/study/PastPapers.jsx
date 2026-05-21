@@ -98,7 +98,7 @@ function PastPapers({ state, defaultSubject }) {
         const next = getExamCountdowns()[0];
         return next && (
           <div style={{ background: "linear-gradient(135deg, #1A1816, #2E2218)", borderRadius: T.r3, padding: "16px 20px", color: "#fff", display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ fontSize: 32, fontWeight: 900, color: "#D4A254", fontFamily: "'JetBrains Mono', monospace" }}>{next.daysLeft}</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: "#D4A254", fontFamily: T.fontMono }}>{next.daysLeft}</div>
             <div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1 }}>Days to next exam</div>
               <div style={{ fontSize: 14, fontWeight: 700 }}>{next.name}</div>
@@ -118,7 +118,7 @@ function PastPapers({ state, defaultSubject }) {
       {/* Uploaded PDFs section */}
       {uploadedPdfs.length > 0 && (
         <div>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: T.text, margin: "0 0 8px", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Uploaded Papers</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: T.text, margin: "0 0 8px", fontFamily: T.fontDisplay }}>Uploaded Papers</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {uploadedPdfs.map(pdf => (
               <div key={pdf.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}` }}>
@@ -179,7 +179,7 @@ function PastPapers({ state, defaultSubject }) {
 
       {/* Rubrics section */}
       <div style={{ marginTop: 8 }}>
-        <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 12px", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Cambridge Marking Rubrics</h2>
+        <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 12px", fontFamily: T.fontDisplay }}>Cambridge Marking Rubrics</h2>
         {Object.entries(ESSAY_RUBRICS).map(([subj, rubric]) => {
           const theme = T[subj] || T.eng;
           return (

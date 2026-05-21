@@ -109,14 +109,14 @@ function ArgumentMapperGame() {
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <MapTrifold size={28} color={T.textTer} />
           <div>
-            <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Argument Mapper</div>
+            <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: T.fontDisplay }}>Argument Mapper</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{done ? "Complete" : `Card ${current + 1} of ${deck.length}`}</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           {streak > 1 && <div style={{ background: T.accentLight, borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: T.accent, display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color={T.accent} /> {streak}x</div>}
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{score}</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay }}>{score}</div>
             <div style={{ fontSize: 8, color: T.textTer }}>CORRECT</div>
           </div>
         </div>
@@ -132,7 +132,7 @@ function ArgumentMapperGame() {
           {/* Claim banner */}
           <div style={{ background: T.bgMuted, borderRadius: T.r2, padding: "10px 16px", borderLeft: `3px solid ${T.accent}` }}>
             <div style={{ fontSize: 9, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Claim</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>"{scenario.claim}"</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>"{scenario.claim}"</div>
           </div>
 
           {/* Confidence Wager — Gimkit-style */}
@@ -153,7 +153,7 @@ function ArgumentMapperGame() {
 
           {/* Argument card */}
           <div className="card-enter" style={{ background: T.bgCard, borderRadius: T.r3, padding: "24px 22px", border: `1px solid ${T.border}`, boxShadow: T.shadow2 }}>
-            <div style={{ fontSize: 9, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.14em", fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 10 }}>Argument</div>
+            <div style={{ fontSize: 9, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.14em", fontFamily: T.fontDisplay, marginBottom: 10 }}>Argument</div>
             <div style={{ fontSize: 15, fontWeight: 600, color: T.text, lineHeight: 1.55 }}>"{card.text}"</div>
             {/* After answer: fallacy badge */}
             {answered && card.category === "fallacy" && card.fallacyType && !showFallacyStep && (
@@ -219,9 +219,9 @@ function ArgumentMapperGame() {
           <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-              <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+              <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
             </div>
-            <div style={{ fontSize: 42, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text, letterSpacing: "-0.04em" }}>{pct}%</div>
+            <div style={{ fontSize: 42, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text, letterSpacing: "-0.04em" }}>{pct}%</div>
             <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>{score} / {deck.length} arguments correctly identified</div>
             {bestStreak > 2 && <div style={{ fontSize: 12, color: T.accent, fontWeight: 700, marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Flame size={14} color={T.accent} /> Best streak: {bestStreak}x</div>}
             <div style={{ fontSize: 12, color: T.textTer, marginTop: 8 }}>

@@ -784,7 +784,7 @@ function VoiceCallPanel({ students, onEnd }) {
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22C55E", boxShadow: "0 0 0 3px rgba(34,197,94,0.3)", animation: "pulse 1.5s infinite" }} />
         <span style={{ color: "#fff", fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>Live</span>
-        <span style={{ color: "#8899BB", fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 600 }}>{fmt(elapsed)}</span>
+        <span style={{ color: "#8899BB", fontFamily: T.fontMono, fontSize: 13, fontWeight: 600 }}>{fmt(elapsed)}</span>
       </div>
 
       {/* Local video thumbnail */}
@@ -931,7 +931,7 @@ function Classroom({ state, userProfile }) {
         <div style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "36px 32px", textAlign: "center", border: `1px solid ${T.border}` }}>
             <Broadcast size={28} />
-            <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "'Bricolage Grotesque', sans-serif", marginTop: 12, marginBottom: 6, color: T.text }}>Live Classroom</div>
+            <div style={{ fontSize: 22, fontWeight: 700, fontFamily: T.fontDisplay, marginTop: 12, marginBottom: 6, color: T.text }}>Live Classroom</div>
             <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6, marginBottom: 20 }}>
               Real-time whiteboard collaboration. Create a session or join an existing one with a code.
             </div>
@@ -957,7 +957,7 @@ function Classroom({ state, userProfile }) {
                 <div style={{ display: "flex", gap: 8 }}>
                   <input value={sessionCode} onChange={e => setSessionCode(e.target.value.toUpperCase())}
                     placeholder="e.g. ABC123" maxLength={6}
-                    style={{ flex: 1, padding: "10px 14px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 16, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", textAlign: "center", letterSpacing: 3, textTransform: "uppercase", boxSizing: "border-box" }}
+                    style={{ flex: 1, padding: "10px 14px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 16, fontWeight: 700, fontFamily: T.fontMono, textAlign: "center", letterSpacing: 3, textTransform: "uppercase", boxSizing: "border-box" }}
                     onKeyDown={e => { if (e.key === "Enter") joinSession(); }} />
                   <button onClick={joinSession} disabled={sessionCode.trim().length < 4}
                     style={{ padding: "10px 20px", borderRadius: T.r1, background: sessionCode.trim().length >= 4 ? T.accent : T.bgMuted, color: sessionCode.trim().length >= 4 ? "#fff" : T.textTer, fontWeight: 700, fontSize: 13, border: "none", cursor: sessionCode.trim().length >= 4 ? "pointer" : "not-allowed" }}>
@@ -993,7 +993,7 @@ function Classroom({ state, userProfile }) {
         <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 8px", borderRight: `1px solid ${T.border}`, height: "100%", flexShrink: 0 }}>
           <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#22C55E", boxShadow: "0 0 0 2px rgba(34,197,94,0.2)", animation: "pulse 1.5s infinite" }} />
           <span style={{ fontSize: 10, fontWeight: 700, color: T.navy, textTransform: "uppercase", letterSpacing: 0.5 }}>Live</span>
-          <span style={{ fontSize: 11, fontWeight: 600, color: T.textTer, fontFamily: "'JetBrains Mono', monospace" }}>{fmt(elapsed)}</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: T.textTer, fontFamily: T.fontMono }}>{fmt(elapsed)}</span>
         </div>
         {!isMobile && (
           <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -1001,7 +1001,7 @@ function Classroom({ state, userProfile }) {
               <Chalkboard size={15} color={T.navy} />
               <span style={{ fontWeight: 700, color: T.navy }}>Whiteboard</span>
               <span style={{ color: T.textTer }}>·</span>
-              <span style={{ fontSize: 12, fontWeight: 700, color: T.accent, fontFamily: "'JetBrains Mono', monospace", letterSpacing: 2, background: T.accentLight, padding: "2px 8px", borderRadius: T.r1 }}>{sessionCode}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: T.accent, fontFamily: T.fontMono, letterSpacing: 2, background: T.accentLight, padding: "2px 8px", borderRadius: T.r1 }}>{sessionCode}</span>
               <button onClick={() => { navigator.clipboard?.writeText(sessionCode); }} title="Copy session code" style={{ background: "none", border: "none", cursor: "pointer", padding: 2, display: "flex", alignItems: "center" }}><ClipboardText size={14} color={T.textSec} /></button>
             </div>
           </div>

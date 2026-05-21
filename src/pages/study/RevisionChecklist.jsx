@@ -31,7 +31,7 @@ function RevisionChecklist({ state, dispatch }) {
         return (
           <div key={subj.id}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: theme.accent, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{subj.name}</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: theme.accent, fontFamily: T.fontDisplay }}>{subj.name}</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: subjCompleted === topics.length ? T.success : T.textTer }}>{subjCompleted}/{topics.length}</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>

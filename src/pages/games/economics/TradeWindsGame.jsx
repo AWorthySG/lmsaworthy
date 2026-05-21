@@ -96,9 +96,9 @@ function TradeWindsGame() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ marginBottom: 8 }}><Waves size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{totalPassed} / 5</div>
+          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>{totalPassed} / 5</div>
           <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>trade challenges completed</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 12 }}>
             {roundScores.map((passed, i) => (
@@ -121,7 +121,7 @@ function TradeWindsGame() {
       <div style={{ background: T.bgMuted, borderRadius: T.r3, padding: "14px 20px", border: `1px solid ${T.border}` }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
           <div>
-            <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Round {round + 1} of 5</div>
+            <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: T.fontDisplay }}>Round {round + 1} of 5</div>
           </div>
           <div style={{ display: "flex", gap: 4 }}>
             {roundScores.map((passed, i) => (
@@ -151,9 +151,9 @@ function TradeWindsGame() {
         ].map((c, i) => (
           <div key={i} style={{ background: T.bgCard, borderRadius: T.r2, padding: "14px", border: `1px solid ${T.border}` }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: c.color, marginBottom: 8 }}>{c.name}</div>
-            <div style={{ fontSize: 11, color: T.textSec, marginBottom: 4 }}>Goods: <strong style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}>{c.goods}</strong></div>
+            <div style={{ fontSize: 11, color: T.textSec, marginBottom: 4 }}>Goods: <strong style={{ fontFamily: T.fontDisplay }}>{c.goods}</strong></div>
             <input type="range" min={0} max={c.ppf} value={c.goods} onChange={e => { if (submitted) return; c.set({ goods: +e.target.value, services: c.ppf - +e.target.value }); }} style={{ width: "100%", accentColor: c.color }} disabled={submitted} />
-            <div style={{ fontSize: 11, color: T.textSec }}>Services: <strong style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}>{c.svc}</strong></div>
+            <div style={{ fontSize: 11, color: T.textSec }}>Services: <strong style={{ fontFamily: T.fontDisplay }}>{c.svc}</strong></div>
             {trading && (
               <div className="fade-up" style={{ marginTop: 8, background: c.color + "10", borderRadius: T.r1, padding: "6px 8px", fontSize: 11 }}>
                 <div style={{ color: c.color, fontWeight: 700 }}>After trade:</div>
@@ -182,15 +182,15 @@ function TradeWindsGame() {
       <div style={{ display: "flex", gap: 8 }}>
         <div style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "10px", textAlign: "center", border: `1px solid ${T.border}` }}>
           <div style={{ fontSize: 9, fontWeight: 700, color: T.textTer }}>A Total</div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: "#4A7CB8", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{aTotal}</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#4A7CB8", fontFamily: T.fontDisplay }}>{aTotal}</div>
         </div>
         <div style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "10px", textAlign: "center", border: `1px solid ${T.border}` }}>
           <div style={{ fontSize: 9, fontWeight: 700, color: T.textTer }}>B Total</div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: "#3D9470", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{bTotal}</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#3D9470", fontFamily: T.fontDisplay }}>{bTotal}</div>
         </div>
         <div style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "10px", textAlign: "center", border: `1px solid ${T.border}` }}>
           <div style={{ fontSize: 9, fontWeight: 700, color: T.textTer }}>Combined</div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: T.accent, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{aTotal + bTotal}</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: T.accent, fontFamily: T.fontDisplay }}>{aTotal + bTotal}</div>
         </div>
       </div>
 

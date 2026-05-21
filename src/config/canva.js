@@ -54,16 +54,19 @@ async function getValidToken() {
 // Step 1: Get OAuth URL and redirect
 export async function startCanvaAuth() {
   const res = await fetch(`${API_BASE}?action=auth-url`);
-  const { url } = await res.json();
+  const { url, state } = await res.json();
+  sessionStorage.setItem("canva_oauth_state", state);
   window.location.href = url;
 }
 
 // Step 2: Exchange code for token (call from OAuth callback)
 export async function exchangeCanvaCode(code) {
+  const state = sessionStorage.getItem("canva_oauth_state");
+  sessionStorage.removeItem("canva_oauth_state");
   const res = await fetch(`${API_BASE}?action=token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code }),
+    body: JSON.stringify({ code, state }),
   });
   if (!res.ok) throw new Error("Token exchange failed");
   const data = await res.json();

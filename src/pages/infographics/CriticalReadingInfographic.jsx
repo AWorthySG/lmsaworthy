@@ -17,7 +17,7 @@ function CriticalReadingInfographic() {
       {/* Hero */}
       <div style={{ background: "linear-gradient(120deg, #0F1B3D, #216ef4)", borderRadius: T.r3, padding: "22px 26px", color: "#fff" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#8BAEED", marginBottom: 6 }}>Foundation Skill · All Question Types</div>
-        <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 6 }}>Critical Reading Framework</div>
+        <div style={{ fontSize: 22, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 6 }}>Critical Reading Framework</div>
         <div style={{ fontSize: 13, color: "#C8D8F5", lineHeight: 1.6 }}>Critical reading means analysing underlying meaning, evaluating the author's intentions and assumptions, and forming a reasoned response — not simply retaining information. Apply these 6 steps to every passage.</div>
       </div>
 

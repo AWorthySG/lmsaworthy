@@ -63,7 +63,7 @@ function VideoLessons({ state, dispatch }) {
       {state.videoLessons.length === 0 && (
         <div style={{ textAlign: "center", padding: "48px 20px" }}>
           <EmptyStateIllustration type="default" size={100} />
-          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginTop: 12, fontFamily: "'Bricolage Grotesque', sans-serif" }}>No video lessons yet</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginTop: 12, fontFamily: T.fontDisplay }}>No video lessons yet</div>
           <div style={{ fontSize: 13, color: T.textTer, marginTop: 4 }}>Video lessons will appear here once they're added.</div>
         </div>
       )}

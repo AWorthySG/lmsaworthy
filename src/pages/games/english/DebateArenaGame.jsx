@@ -101,7 +101,7 @@ function DebateArenaGame() {
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           {streak > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254", display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> {streak}x</div>}
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 16, fontWeight: 800, color: "#D4A254", fontFamily: "'JetBrains Mono', monospace" }}>{totalScore}</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: "#D4A254", fontFamily: T.fontMono }}>{totalScore}</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>PTS</div>
           </div>
         </div>
@@ -204,9 +204,9 @@ function DebateArenaGame() {
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ marginBottom: 8 }}><Sword size={48} color={gradeColors[grade]} /></div>
             <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-              <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+              <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
             </div>
-            <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{totalScore} / {totalMax}</div>
+            <div style={{ fontSize: 32, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>{totalScore} / {totalMax}</div>
             <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 12, fontSize: 12 }}>
               <span style={{ color: T.textSec }}>Sort: <strong>{sortScore}/{topic.args.length}</strong></span>
               <span style={{ color: T.textSec }}>Strength: <strong>{strengthScore}/{forArgs.length}</strong></span>

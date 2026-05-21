@@ -97,7 +97,7 @@ function GP2Infographic() {
       {/* Paper 2 at a glance */}
       <div style={{ background: "linear-gradient(120deg, #0F1B3D 0%, #1A2A5E 60%, #216ef4 100%)", borderRadius: T.r3, padding: "20px 22px", color: "#fff" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#8BAEED", marginBottom: 4 }}>A-Level H1 General Paper · 8881</div>
-        <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 16 }}>Paper 2 · 90 Minutes · 50 Marks</div>
+        <div style={{ fontSize: 20, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 16 }}>Paper 2 · 90 Minutes · 50 Marks</div>
         {GP2_OVERVIEW.map(c => (
           <div key={c.code} style={{ marginBottom: 8 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 3 }}>
@@ -127,7 +127,7 @@ function GP2Infographic() {
                     <div style={{ fontSize: 22, flexShrink: 0 }}>{qt.emoji}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                        <span style={{ fontSize: 11, fontWeight: 800, color: qt.color, fontFamily: "'JetBrains Mono', monospace" }}>{qt.code}</span>
+                        <span style={{ fontSize: 11, fontWeight: 800, color: qt.color, fontFamily: T.fontMono }}>{qt.code}</span>
                         <span style={{ fontSize: 10, fontWeight: 700, color: qt.color, background: isOpen ? "#fff" : qt.bg, padding: "1px 6px", borderRadius: 20 }}>{qt.badge}</span>
                       </div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{qt.title}</div>

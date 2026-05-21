@@ -30,10 +30,10 @@ export default function StreakCalendar({ wallet }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 16 }}>🔥</span>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Study Streak</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>Study Streak</div>
         </div>
         <div style={{ background: T.accentLight, borderRadius: 20, padding: "4px 12px", display: "flex", alignItems: "center", gap: 4 }}>
-          <span style={{ fontSize: 14, fontWeight: 800, color: T.accent, fontFamily: "'JetBrains Mono', monospace" }}>{wallet.streak}</span>
+          <span style={{ fontSize: 14, fontWeight: 800, color: T.accent, fontFamily: T.fontMono }}>{wallet.streak}</span>
           <span style={{ fontSize: 10, color: T.accentText, fontWeight: 500 }}>day{wallet.streak !== 1 ? "s" : ""}</span>
         </div>
       </div>

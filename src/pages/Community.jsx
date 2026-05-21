@@ -153,7 +153,7 @@ function Community({ state, dispatch }) {
                   const count = (post.reactions?.[emoji] || []).length;
                   const reacted = (post.reactions?.[emoji] || []).includes(0);
                   return (
-                    <button key={emoji} onClick={() => dispatch({ type: "TOGGLE_REACTION", payload: { postId: post.id, emoji } })} style={{ padding: "4px 10px", borderRadius: 20, border: `1.5px solid ${reacted ? T.accent : T.border}`, background: reacted ? T.accentLight : T.bgCard, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 4, color: reacted ? T.accentText : T.textSec, fontWeight: reacted ? 700 : 400, transition: "all 0.15s" }}>
+                    <button key={emoji} onClick={() => dispatch({ type: "TOGGLE_REACTION", payload: { postId: post.id, emoji } })} style={{ padding: "8px 12px", borderRadius: 20, border: `1.5px solid ${reacted ? T.accent : T.border}`, background: reacted ? T.accentLight : T.bgCard, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 4, color: reacted ? T.accentText : T.textSec, fontWeight: reacted ? 700 : 400, transition: "all 0.15s" }}>
                       {emoji}{count > 0 && <span style={{ fontSize: 11 }}>{count}</span>}
                     </button>
                   );

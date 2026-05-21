@@ -45,7 +45,7 @@ const sectionTitle = {
   fontWeight: 800,
   color: T.text,
   margin: "0 0 16px 0",
-  fontFamily: "'Bricolage Grotesque', sans-serif",
+  fontFamily: T.fontDisplay,
 };
 
 const rowStyle = {
@@ -70,11 +70,13 @@ const descStyle = {
 
 /* ━━━ TOGGLE SWITCH ━━━ */
 
-function ToggleSwitch({ checked, onChange }) {
+function ToggleSwitch({ checked, onChange, "aria-describedby": ariaDescribedBy, "aria-label": ariaLabel }) {
   return (
     <button
       role="switch"
       aria-checked={checked}
+      aria-describedby={ariaDescribedBy}
+      aria-label={ariaLabel}
       onClick={() => onChange(!checked)}
       style={{
         width: 44,
@@ -178,9 +180,9 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile }) {
         <div style={rowStyle}>
           <div>
             <div style={labelStyle}>Dark Mode</div>
-            <div style={descStyle}>Switch between light and dark themes</div>
+            <div id="dark-mode-desc" style={descStyle}>Switch between light and dark themes</div>
           </div>
-          <ToggleSwitch checked={darkMode} onChange={setDarkMode} />
+          <ToggleSwitch checked={darkMode} onChange={setDarkMode} aria-label="Dark Mode" aria-describedby="dark-mode-desc" />
         </div>
 
         {/* Font size */}
@@ -221,33 +223,39 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile }) {
         <div style={rowStyle}>
           <div>
             <div style={labelStyle}>Homework Reminders</div>
-            <div style={descStyle}>Get notified about upcoming homework deadlines</div>
+            <div id="homework-reminders-desc" style={descStyle}>Get notified about upcoming homework deadlines</div>
           </div>
           <ToggleSwitch
             checked={notifPrefs.homeworkReminders}
             onChange={(v) => updateNotifPref("homeworkReminders", v)}
+            aria-label="Homework Reminders"
+            aria-describedby="homework-reminders-desc"
           />
         </div>
 
         <div style={rowStyle}>
           <div>
             <div style={labelStyle}>Streak Reminders</div>
-            <div style={descStyle}>Daily reminders to maintain your login streak</div>
+            <div id="streak-reminders-desc" style={descStyle}>Daily reminders to maintain your login streak</div>
           </div>
           <ToggleSwitch
             checked={notifPrefs.streakReminders}
             onChange={(v) => updateNotifPref("streakReminders", v)}
+            aria-label="Streak Reminders"
+            aria-describedby="streak-reminders-desc"
           />
         </div>
 
         <div style={{ ...rowStyle, borderBottom: "none" }}>
           <div>
             <div style={labelStyle}>Community Activity</div>
-            <div style={descStyle}>Notifications for comments and reactions on your posts</div>
+            <div id="community-activity-desc" style={descStyle}>Notifications for comments and reactions on your posts</div>
           </div>
           <ToggleSwitch
             checked={notifPrefs.communityActivity}
             onChange={(v) => updateNotifPref("communityActivity", v)}
+            aria-label="Community Activity"
+            aria-describedby="community-activity-desc"
           />
         </div>
       </div>
@@ -394,7 +402,7 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile }) {
 
         <div style={rowStyle}>
           <div style={labelStyle}>Version</div>
-          <div style={{ fontSize: 13, color: T.textSec, fontFamily: "'JetBrains Mono', monospace" }}>
+          <div style={{ fontSize: 13, color: T.textSec, fontFamily: T.fontMono }}>
             1.0.0
           </div>
         </div>
