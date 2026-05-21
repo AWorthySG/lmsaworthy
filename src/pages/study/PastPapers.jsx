@@ -3,7 +3,7 @@ import { T } from '../../theme/theme.js';
 import { SUBJECTS } from '../../data/subjects.js';
 import { PAST_PAPERS } from '../../data/pastPapersData.js';
 import { ESSAY_RUBRICS } from '../../data/essayData.js';
-import { getSubject, getExamCountdowns } from '../../utils/helpers.js';
+import { getExamCountdowns } from '../../utils/helpers.js';
 import { FilePdf } from '../../icons/icons.jsx';
 import { PageHeader } from '../../components/ui';
 import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
@@ -79,7 +79,7 @@ function PdfUpload({ onUploaded, label }) {
 }
 
 /* ━━━ PAST PAPERS PAGE ━━━ */
-function PastPapers({ state, dispatch, defaultSubject }) {
+function PastPapers({ state, defaultSubject }) {
   const [filterSubj, setFilterSubj] = useState(defaultSubject || "all");
   const [viewingPdf, setViewingPdf] = useState(null); // { url, title }
   const [uploadedPdfs, setUploadedPdfs] = useState([]); // user-uploaded PDFs

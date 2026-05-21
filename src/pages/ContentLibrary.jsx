@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { T } from '../theme/theme.js';
 import { Books, BookOpen, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, DownloadSimple, Tag, BookmarkSimple, MagnifyingGlass, Plus, X, ArrowLeft, CaretRight, CheckCircle, Hash } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, BackBtn, EmptyState, FileIcon, Input, Select, Textarea, DocumentViewer } from '../components/ui';

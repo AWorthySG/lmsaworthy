@@ -36,7 +36,6 @@ function ThesisDefenceGame() {
     },
   ];
   const [qIdx] = useState(0);
-  const [phase, setPhase] = useState("defend"); // defend | done
   const [round, setRound] = useState(0);
   const [score, setScore] = useState(0);
   const [hp, setHp] = useState(3);

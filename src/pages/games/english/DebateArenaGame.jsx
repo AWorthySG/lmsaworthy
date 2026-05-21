@@ -42,7 +42,7 @@ function DebateArenaGame() {
   const [sortScore, setSortScore] = useState(0);
   const [strengthScore, setStrengthScore] = useState(0);
   const [rebuttalScore, setRebuttalScore] = useState(0);
-  const [sortWrong, setSortWrong] = useState(0);
+  const [_sortWrong, setSortWrong] = useState(0);
   const [strengthIdx, setStrengthIdx] = useState(0);
   const [strengthAnswered, setStrengthAnswered] = useState(false);
   const [rebuttalIdx, setRebuttalIdx] = useState(0);
@@ -144,7 +144,6 @@ function DebateArenaGame() {
             <div style={{ display: "flex", gap: 6 }}>
               {[{ id: "strong", label: "Strong", icon: <Target size={14} color="#3BAA7E" />, color: "#3BAA7E" }, { id: "moderate", label: "Moderate", icon: null, color: "#E5A832" }, { id: "weak", label: "Weak", icon: null, color: "#E05262" }].map(s => {
                 const isCorrect = strengthAnswered && s.id === forArgs[strengthIdx].strength;
-                const isWrong = strengthAnswered && strengthAnswered !== true && s.id !== forArgs[strengthIdx].strength;
                 return (
                   <button key={s.id} onClick={() => answerStrength(s.id)}
                     style={{ flex: 1, padding: "10px 8px", borderRadius: T.r2, border: `2px solid ${isCorrect ? s.color : strengthAnswered ? T.border : s.color + "33"}`, background: isCorrect ? s.color + "15" : T.bgCard, cursor: strengthAnswered ? "default" : "pointer", fontSize: 12, fontWeight: 700, color: isCorrect ? s.color : T.text, opacity: strengthAnswered && !isCorrect ? 0.4 : 1, transition: "all 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>

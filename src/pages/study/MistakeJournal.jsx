@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { T } from '../../theme/theme.js';
 import { PushPin, CheckCircle, XCircle, Lightbulb } from '../../icons/icons.jsx';
 import { EmptyStateIllustration, PageHeader } from '../../components/ui';

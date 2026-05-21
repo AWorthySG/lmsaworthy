@@ -6,7 +6,7 @@ import { MICRO_MODULES } from '../../data/microModules.js';
 import { getSubject } from '../../utils/helpers.js';
 import { PageHeader } from '../../components/ui';
 
-function MicrolearningPage({ state, dispatch, defaultSubject }) {
+function MicrolearningPage({ defaultSubject }) {
   const [filterSubj, setFilterSubj] = useState(defaultSubject || "all");
   const [activeModule, setActiveModule] = useState(null);
   const filtered = filterSubj === "all" ? MICRO_MODULES : MICRO_MODULES.filter(m => m.subject === filterSubj);

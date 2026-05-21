@@ -21,7 +21,7 @@ function TutorHomework({ state, dispatch }) {
   const [gradingId, setGradingId] = useState(null);
   const [gradeVal, setGradeVal] = useState("");
   const [gradeComment, setGradeComment] = useState("");
-  const [bulkIdx, setBulkIdx] = useState(0); // for bulk grading flow
+  // bulk grading flow removed
   // Create form state
   const [fTitle, setFTitle] = useState("");
   const [fSubj, setFSubj] = useState("eng");
@@ -119,8 +119,6 @@ function TutorHomework({ state, dispatch }) {
       setAiBusyId(null);
     }
   }
-
-  const subjStudents = state.students.filter(s => s.subjects?.includes(fSubj));
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 20 }}>

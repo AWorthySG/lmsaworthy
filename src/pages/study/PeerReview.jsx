@@ -18,7 +18,6 @@ function PeerReview({ state, dispatch }) {
   const essays = state.peerEssays || [];
   const reviews = state.peerReviews || [];
   const pendingReview = essays.filter(e => e.status === "pending" && reviews.filter(r => r.essayId === e.id).length < 2);
-  const myEssays = essays; // In a real app, filter by current user
 
   function submitEssay() {
     if (!essayTitle.trim() || !essayText.trim()) return;

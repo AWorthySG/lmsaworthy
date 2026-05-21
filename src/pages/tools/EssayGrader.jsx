@@ -3,7 +3,7 @@ import { T } from '../../theme/theme.js';
 import { firebaseAuth } from '../../config/firebase.js';
 
 /* ━━━ LOCAL FALLBACK GRADER ━━━ */
-function localGrade(essay, question) {
+function localGrade(essay, _question) {
   const words = essay.trim().split(/\s+/);
   const wordCount = words.length;
   const sentences = essay.split(/[.!?]+/).filter(s => s.trim().length > 5);

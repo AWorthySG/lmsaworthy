@@ -3,7 +3,6 @@ import { T } from '../theme/theme.js';
 import { Confetti, Trophy, Crown, Medal, Star, Gift, CalendarBlank, Users, ArrowLeft, CheckCircle, Flame, CaretRight, RocketLaunch } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, BackBtn, Progress, StatCard } from '../components/ui';
 import { StudentAvatar, XPBar } from '../components/gamification';
-import { calcStudentXP } from '../utils/gamificationUtils.js';
 import { initialEvents } from '../data/seedEvents.js';
 
 function Events({ state, dispatch }) {
@@ -12,10 +11,8 @@ function Events({ state, dispatch }) {
 
   function getStudent(id) { return state.students.find(s => s.id === id); }
 
-  const now = new Date().toISOString().split("T")[0];
   const activeEvents = initialEvents.filter(e => e.status === "active");
   const upcomingEvents = initialEvents.filter(e => e.status === "upcoming");
-  const endedEvents = initialEvents.filter(e => e.status === "ended");
 
   function daysLeft(endDate) {
     const diff = Math.ceil((new Date(endDate) - new Date()) / 86400000);

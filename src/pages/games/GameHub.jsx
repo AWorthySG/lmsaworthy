@@ -40,10 +40,6 @@ import {
 const ic = (name) => React.memo(({ size = 20, color, style: s, className }) => (
   <Icon icon={name} width={size} height={size} style={{ color, flexShrink: 0, ...s }} className={className} />
 ));
-const icc = (name) => React.memo(({ size = 20, style: s, className }) => (
-  <Icon icon={name} width={size} height={size} style={{ flexShrink: 0, ...s }} className={className} />
-));
-
 const ArrowLeft = ic("ph:arrow-left-bold");
 const CaretRight = ic("ph:caret-right-bold");
 const Play = ic("ph:play-bold");

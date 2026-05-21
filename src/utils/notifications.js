@@ -54,7 +54,6 @@ export async function registerServiceWorker() {
  */
 export function sendHomeworkReminders(homework) {
   if (Notification.permission !== "granted") return;
-  const today = new Date().toISOString().split("T")[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
 
   homework

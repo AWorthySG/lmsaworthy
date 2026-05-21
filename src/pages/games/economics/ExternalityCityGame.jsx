@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { T } from '../../../theme/theme.js';
 import { Buildings, CheckCircle, XCircle, MagnifyingGlass, Lightning, Confetti, PencilLine } from '../../../icons/icons.jsx';
 

@@ -57,8 +57,6 @@ function MarketMogulGame() {
 
   const question = deck[current];
   const done = current >= deck.length;
-  const maxScore = deck.length * 3; // 3 pts per question if answered on clue 1
-  const pct = maxScore > 0 ? Math.min(100, Math.round((score / maxScore) * 100)) : 0;
   const grade = score >= 25 ? "S" : score >= 20 ? "A" : score >= 14 ? "B" : score >= 8 ? "C" : "D";
   const gradeColors = { S: "#D4A24C", A: "#3D9470", B: "#4A7CB8", C: "#C49030", D: "#C04848" };
   useEffect(() => { if (done && (grade === 'S' || grade === 'A')) setShowConfetti(true); }, [done]);

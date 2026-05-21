@@ -101,7 +101,7 @@ export function getAdaptiveDifficulty(studentHistory) {
   return "Foundation";
 }
 
-export function generateStudyPlan(state) {
+export function generateStudyPlan(_state) {
   const today = new Date();
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const subjects = ["eng", "gp", "h1econ", "h2econ"];
