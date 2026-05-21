@@ -1,10 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { T } from '../theme/theme.js';
 import { Users, ChartLineUp, CalendarCheck, Trophy, Star, CheckCircle, ArrowSquareOut, Flame, ClipboardText, CalendarBlank, PencilSimpleLine, Timer } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
 import { ShareableProgressCard, StudentAvatar, XPBar, BadgeChip, StreakCalendar } from '../components/gamification';
-import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
-import { getSubject, getSubjectTheme, formatDate, getExamCountdowns } from '../utils/helpers.js';
+import { getExamCountdowns } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 import { LEVELS } from '../data/gamification.js';
 
@@ -12,7 +11,6 @@ function ParentView({ state }) {
   const wallet = state.wallet;
   const exams = getExamCountdowns().slice(0, 3);
   const gradedSubs = (state.submissions || []).filter(s => s.status === "graded");
-  const totalSessions = Object.keys(state.attendance).length;
   let attended = 0;
   Object.values(state.attendance).forEach(rec => { attended += Object.values(rec).filter(v => v === "present" || v === "late").length; });
 

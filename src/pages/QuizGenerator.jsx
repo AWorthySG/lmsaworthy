@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { T } from '../theme/theme.js';
 import { Lightning, Plus, X, CheckCircle, XCircle, Clock, Trophy, Star, ArrowRight, ArrowLeft, Trash, Timer, Warning, Exam } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Input, Select, Textarea, BackBtn } from '../components/ui';
@@ -161,7 +161,6 @@ function QuizGenerator({ state, dispatch }) {
           const tm = quiz.questions.reduce((s, q) => s + q.marks, 0);
           const mc = quiz.questions.filter((q) => q.type === "mcq").length;
           const wr = quiz.questions.length - mc;
-          const theme = getSubjectTheme(quiz.subject);
           return (
             <Card key={quiz.id} onClick={() => startQuiz(quiz)} elevated>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>

@@ -16,7 +16,7 @@ const CERT_TYPES = [
   { id: "participation", label: "Participation", icon: "ph:star-bold", desc: "Active engagement in community & events" },
 ];
 
-export default function Certificates({ state, dispatch }) {
+export default function Certificates({ state }) {
   const [connected, setConnected] = useState(isCanvaConnected());
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { T } from '../theme/theme.js';
 import { Crown, Trophy, Medal, Star, Flame, ArrowFatUp, Lightning, CheckCircle, Books } from '../icons/icons.jsx';
 import { Card, Btn, Badge, Select, PageHeader } from '../components/ui';
 import { PodiumCard, BadgeChip, XPBar, StudentAvatar } from '../components/gamification';
-import { calcStudentXP, getLevel, getLevelProgress, getStudentBadges } from '../utils/gamificationUtils.js';
+import { calcStudentXP, getLevel, getStudentBadges } from '../utils/gamificationUtils.js';
 import { LEVELS, BADGE_DEFS } from '../data/gamification.js';
 import { SUBJECTS } from '../data/subjects.js';
 
-function Leaderboard({ state, dispatch }) {
+function Leaderboard({ state }) {
   const ranked = [...state.students]
     .map(s => ({ ...s, xp: calcStudentXP(s, state), badges: getStudentBadges(s, state) }))
     .sort((a, b) => b.xp - a.xp);
@@ -102,7 +102,6 @@ function Leaderboard({ state, dispatch }) {
       <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Achievements Gallery</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
         {ranked.map(student => {
-          const lv = getLevel(student.xp);
           return (
             <Card key={student.id} elevated style={{ padding: 20 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>

@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "@iconify/react";
 
 /* ━━━ ICONIFY WRAPPER — Phosphor icons (monochrome, respects color prop) ━━━ */
-export const ic = (name) => React.memo(({ size = 20, color, weight, style: s, className }) => (
+export const ic = (name) => React.memo(({ size = 20, color, style: s, className }) => (
   <Icon icon={name} width={size} height={size} style={{ color, flexShrink: 0, ...s }} className={className} />
 ));
 export const icc = ic;
