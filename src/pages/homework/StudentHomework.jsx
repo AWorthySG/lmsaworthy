@@ -11,7 +11,7 @@ const HW_STATUS = {
   graded: { label: "Graded", color: "#2BAA6E", bg: "#E6F7F0" },
 };
 
-function StudentHomework({ state, dispatch }) {
+function StudentHomework({ state, dispatch, userProfile }) {
   const [selectedHw, setSelectedHw] = useState(null);
   const [notes, setNotes] = useState("");
   const [files, setFiles] = useState([]); // { name, url, uploading }
@@ -21,8 +21,9 @@ function StudentHomework({ state, dispatch }) {
   const today = new Date().toISOString().split("T")[0];
 
   const hw = state.homework.filter(h => h.status === "active");
-  // For students we show all homework (in a real app, filter by student ID)
-  const mySubs = state.submissions;
+  // Filter submissions to only the logged-in student. Profile must include studentId.
+  const myStudentId = userProfile?.studentId;
+  const mySubs = myStudentId != null ? state.submissions.filter(s => s.studentId === myStudentId) : [];
 
   function getMySubmission(hwId) { return mySubs.find(s => s.homeworkId === hwId); }
 

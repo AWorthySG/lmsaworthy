@@ -13,7 +13,6 @@ function Attendance({ state, dispatch }) {
   const [expanded, setExpanded] = useState(null);
   const [nDate, setNDate] = useState(""); const [nSubj, setNSubj] = useState(""); const [nTime, setNTime] = useState(""); const [nNotes, setNNotes] = useState("");
   const [editingNotes, setEditingNotes] = useState(null);
-  const [showQR, setShowQR] = useState(null); // session ID to show QR for
 
   const TODAY = new Date().toISOString().split("T")[0];
   const getStudentsForSubject = (subjectId) => state.students.filter(st => st.subjects.includes(subjectId));
@@ -183,7 +182,11 @@ function Attendance({ state, dispatch }) {
           return (
             <Card key={session.id} elevated style={{ borderLeft: `3px solid ${isToday ? T.accent : theme.accent}` }}>
               {/* Session header — clickable to expand */}
-              <div onClick={() => setExpanded(isExpanded ? null : session.id)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 14 }}>
+              <div onClick={() => setExpanded(isExpanded ? null : session.id)}
+                role="button" tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(isExpanded ? null : session.id); } }}
+                aria-expanded={isExpanded}
+                style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 14 }}>
                 <div style={{ width: 44, height: 44, borderRadius: T.r2, background: theme.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <CalendarCheck size={20} weight="duotone" color={theme.accent} />
                 </div>

@@ -25,6 +25,8 @@
 //     raw:          "full markdown feedback Claude wrote, for transparency"
 //   }
 
+import { applyCors, requireAuth, checkRateLimit } from "./_lib/auth.js";
+
 const API_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_MODEL = "claude-sonnet-4-6";
 
@@ -33,17 +35,19 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  applyCors(req, res);
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
+  const user = await requireAuth(req, res);
+  if (!user) return;
+  if (!checkRateLimit(user.uid, { windowMs: 60_000, maxRequests: 5 })) {
+    return res.status(429).json({ error: "Too many grading requests. Please wait a minute and try again." });
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({
-      error: "ANTHROPIC_API_KEY is not configured on the server. Add it in your Vercel project settings.",
-    });
+    return res.status(500).json({ error: "Grading service is not configured." });
   }
 
   const {
@@ -82,9 +86,9 @@ export default async function handler(req, res) {
 
     if (!apiRes.ok) {
       const errBody = await apiRes.text();
-      return res.status(apiRes.status).json({
-        error: `Claude API error (${apiRes.status})`,
-        detail: safeJson(errBody),
+      console.error(`[grade.js] Anthropic API ${apiRes.status}:`, errBody);
+      return res.status(apiRes.status === 429 ? 429 : 502).json({
+        error: apiRes.status === 429 ? "Grading service is busy. Please try again shortly." : "Grading service is temporarily unavailable.",
       });
     }
 
@@ -98,7 +102,8 @@ export default async function handler(req, res) {
       usage: data.usage || null,
     });
   } catch (err) {
-    return res.status(500).json({ error: "Unexpected error calling Claude", detail: String(err) });
+    console.error("[grade.js] Unexpected error:", err);
+    return res.status(500).json({ error: "Unexpected error grading the submission." });
   }
 }
 
@@ -195,8 +200,4 @@ function parseClaudeMarking(raw) {
     criteria: Array.isArray(parsed?.criteria) ? parsed.criteria : [],
     report,
   };
-}
-
-function safeJson(s) {
-  try { return JSON.parse(s); } catch { return s; }
 }

@@ -3,7 +3,6 @@ import { T } from '../../theme/theme.js';
 import html2canvas from 'html2canvas-pro';
 
 import { getExamCountdowns } from '../../utils/helpers.js';
-import { getStreakReward } from '../../data/gamification.js';
 
 export default function ShareableProgressCard({ state }) {
   const cardRef = useRef(null);
@@ -45,7 +44,7 @@ export default function ShareableProgressCard({ state }) {
         await navigator.share({ title: "My A Worthy Progress", text: `Study streak: ${wallet.streak} days | Exam readiness: ${readiness}%`, files: [file] }).catch(() => {});
         setGenerating(false);
       }, "image/png");
-    } catch (e) { downloadCard(); }
+    } catch { downloadCard(); }
   }
 
   return (

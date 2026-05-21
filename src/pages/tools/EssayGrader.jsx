@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
+import { firebaseAuth } from '../../config/firebase.js';
 
 /* ━━━ LOCAL FALLBACK GRADER ━━━ */
 function localGrade(essay, question) {
@@ -80,9 +81,12 @@ function EssayGrader() {
 
     // Try AI-powered grading first
     try {
+      const user = firebaseAuth.currentUser;
+      if (!user) throw new Error("Sign in to use AI grading.");
+      const token = await user.getIdToken();
       const res = await fetch("/api/grade-essay", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ essay, question: question || undefined, subject }),
       });
 

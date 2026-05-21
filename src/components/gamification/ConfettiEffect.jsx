@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export default function ConfettiEffect({ active }) {
-  if (!active) return null;
-  const pieces = Array.from({ length: 40 }, (_, i) => ({
+  const pieces = useMemo(() => Array.from({ length: 40 }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
     delay: Math.random() * 2,
     color: ["#2D3A8C", "#D4A254", "#0D9488", "#4F5BD5", "#818CF8", "#16A34A"][i % 6],
     size: 6 + Math.random() * 8,
     shape: i % 3,
-  }));
+  })), [active]);
+
+  if (!active) return null;
   return (
     <div className="confetti-container">
       {pieces.map(p => (

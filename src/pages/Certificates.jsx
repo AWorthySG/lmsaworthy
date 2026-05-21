@@ -16,7 +16,7 @@ const CERT_TYPES = [
   { id: "participation", label: "Participation", icon: "ph:star-bold", desc: "Active engagement in community & events" },
 ];
 
-export default function Certificates({ state, dispatch }) {
+export default function Certificates({ state }) {
   const [connected, setConnected] = useState(isCanvaConnected());
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -201,7 +201,7 @@ export default function Certificates({ state, dispatch }) {
       {error && (
         <div style={{ ...styles.alert, background: T.dangerBg, color: T.danger, borderColor: T.danger + "33" }}>
           <Icon icon="mdi:alert-circle" width={18} /> {error}
-          <button onClick={() => setError("")} style={{ marginLeft: "auto", background: "none", border: "none", color: T.danger, cursor: "pointer", fontWeight: 700 }}>×</button>
+          <button onClick={() => setError("")} aria-label="Dismiss error" style={{ marginLeft: "auto", background: "none", border: "none", color: T.danger, cursor: "pointer", fontWeight: 700 }}>×</button>
         </div>
       )}
 

@@ -31,6 +31,7 @@ export function CelebrationOverlay({ type, onComplete }) {
 }
 
 // Global celebration trigger — call from any component
+// eslint-disable-next-line react-refresh/only-export-components
 export function triggerCelebration(type = "coins") {
   window.dispatchEvent(new CustomEvent("aworthy-celebrate", { detail: { type } }));
 }

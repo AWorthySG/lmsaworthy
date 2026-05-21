@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
 import { ALL_SUBJECT_DRILLS } from '../../data/practiceQuestions.js';
+import { PageHeader } from '../../components/ui';
 import PracticeQuestions from './PracticeQuestions.jsx';
 
 function SubjectDrills({ subject }) {
   const drill = ALL_SUBJECT_DRILLS[subject];
-  if (!drill || drill.mode === "gp") return <PracticeQuestions />;
-
   const [mode, setMode] = useState("menu");
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answered, setAnswered] = useState(null);
   const [score, setScore] = useState(0);
   const [showExplain, setShowExplain] = useState(false);
+
+  if (!drill || drill.mode === "gp") return <PracticeQuestions />;
 
   function startDrill(count) {
     const shuffled = [...drill.questions].sort(() => Math.random() - 0.5).slice(0, count);
@@ -42,10 +43,7 @@ function SubjectDrills({ subject }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 20 }}>
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{drill.title}</h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>{drill.desc}</p>
-      </div>
+      <PageHeader title={drill.title} subtitle={drill.desc} />
 
       {mode === "menu" && (
         <div style={{ maxWidth: 520 }}>
