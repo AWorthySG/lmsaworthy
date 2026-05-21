@@ -154,7 +154,7 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile }) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (err) {
-      console.warn("Export failed:", err);
+      console.error("Export failed:", err);
     }
   }
 

@@ -94,8 +94,8 @@ function EssayGrader() {
       }
       // Non-OK response — fall through to local
       throw new Error(`API returned ${res.status}`);
-    } catch (err) {
-      console.warn("[EssayGrader] AI grading unavailable, using local analysis:", err.message);
+    } catch {
+      // Fall through to local grading; UI surfaces this via apiError below
       setApiError("AI grading unavailable — showing local analysis instead.");
     }
 

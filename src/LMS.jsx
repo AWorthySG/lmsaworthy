@@ -250,7 +250,6 @@ function LMS({ authUser, userProfile }) {
       case "infographics": return <LiveInfographics state={state} dispatch={dispatch} />;
       case "practice-gp": return <PracticeQuestions />;
       case "practice-eng": return <SubjectDrills subject="eng" />;
-      // case "practice-ipeng": return <SubjectDrills subject="ipeng" />;
       case "practice-h1econ": return <SubjectDrills subject="h1econ" />;
       case "practice-h2econ": return <SubjectDrills subject="h2econ" />;
       case "timedwrite": return <TimedEssayWriter />;
@@ -260,7 +259,6 @@ function LMS({ authUser, userProfile }) {
       case "aimarker": return <AIMarker />;
       case "homework": return <Homework state={state} dispatch={dispatch} />;
       case "games-eng": return <GameHub subject="eng" />;
-      // case "games-ipeng": return <GameHub subject="ipeng" />;
       case "games-gp": return <GameHub subject="gp" />;
       case "games-h1econ": return <GameHub subject="h1econ" />;
       case "games-h2econ": return <GameHub subject="h2econ" />;

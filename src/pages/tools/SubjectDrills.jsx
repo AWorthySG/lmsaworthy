@@ -4,15 +4,15 @@ import { ALL_SUBJECT_DRILLS } from '../../data/practiceQuestions.js';
 import PracticeQuestions from './PracticeQuestions.jsx';
 
 function SubjectDrills({ subject }) {
-  const drill = ALL_SUBJECT_DRILLS[subject];
-  if (!drill || drill.mode === "gp") return <PracticeQuestions />;
-
   const [mode, setMode] = useState("menu");
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answered, setAnswered] = useState(null);
   const [score, setScore] = useState(0);
   const [showExplain, setShowExplain] = useState(false);
+
+  const drill = ALL_SUBJECT_DRILLS[subject];
+  if (!drill || drill.mode === "gp") return <PracticeQuestions />;
 
   function startDrill(count) {
     const shuffled = [...drill.questions].sort(() => Math.random() - 0.5).slice(0, count);

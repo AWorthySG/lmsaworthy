@@ -36,7 +36,6 @@ export const T = {
   teal: "#0D9488",
   // Subject palette — distinctive per subject
   eng:    { bg: "#EEF0FF", text: "#2D3A8C", accent: "#4F5BD5" },
-  ipeng:  { bg: "#FBF4E4", text: "#8B6914", accent: "#D4A254" },
   h1econ: { bg: "#F0E8F8", text: "#5B21B6", accent: "#7C3AED" },
   h2econ: { bg: "#FEF2E8", text: "#A5360A", accent: "#EA580C" },
   gp:     { bg: "#E4F4F0", text: "#0F766E", accent: "#0D9488" },

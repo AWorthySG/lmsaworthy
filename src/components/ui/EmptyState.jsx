@@ -47,6 +47,7 @@ export function EmptyStateIllustration({ type = "default", size = 120 }) {
   );
 }
 
+// eslint-disable-next-line no-unused-vars
 export default function EmptyState({ icon: Icon, message }) {
   return (
     <div style={{ textAlign: "center", padding: 60, color: T.textSec }}>

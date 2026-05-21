@@ -42,7 +42,7 @@ function PdfViewer({ url, title, onClose }) {
 }
 
 /* ━━━ UPLOAD BUTTON ━━━ */
-function PdfUpload({ onUploaded, label }) {
+function PdfUpload({ onUploaded, onError, label }) {
   const [uploading, setUploading] = useState(false);
 
   async function handleUpload(e) {
@@ -56,7 +56,8 @@ function PdfUpload({ onUploaded, label }) {
       const url = await getDownloadURL(sRef);
       onUploaded({ name: file.name, url });
     } catch (err) {
-      console.warn("PDF upload failed:", err);
+      console.error("PDF upload failed:", err);
+      onError?.(err);
     }
     setUploading(false);
     e.target.value = "";
@@ -89,7 +90,11 @@ function PastPapers({ state, dispatch, defaultSubject }) {
           <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>Practice with real Cambridge exam papers and model answers</p>
         </div>
         {state.role === "tutor" && (
-          <PdfUpload onUploaded={handlePdfUploaded} label="Upload Past Paper PDF" />
+          <PdfUpload
+            onUploaded={handlePdfUploaded}
+            onError={() => dispatch({ type: "ADD_TOAST", payload: { message: "PDF upload failed — please try again.", variant: "error" } })}
+            label="Upload Past Paper PDF"
+          />
         )}
       </div>
 

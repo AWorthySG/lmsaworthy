@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Worthy LMS — a single-page React 19 + Vite app for a Singapore tuition centre, deployed to Vercel at `lms.a-worthy.com` and wrapped via Capacitor for iOS/Android. Subjects: O-Level English (`eng`), H1 General Paper (`gp`), H1 Economics (`h1econ`), H2 Economics (`h2econ`).
 
-> Note: `MANUS_HANDOFF.md` and `LMS_FEATURE_OVERVIEW.md` are **stale** — they predate the refactor. `LMS.jsx` is now ~620 lines (auth + shell + routing switch only); pages/components/state/data live in their own folders.
+`LMS.jsx` is now ~620 lines (auth + shell + routing switch only); pages/components/state/data live in their own folders.
 
 ## Commands
 

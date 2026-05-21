@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, push, onChildAdded, set, onValue, get } from "firebase/database";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyBzpx_k8G404dSuEUiNWatGCNutMlEyPMs",
