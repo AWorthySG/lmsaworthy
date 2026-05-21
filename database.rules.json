@@ -10,10 +10,14 @@
       "$sessionId": {
         ".read": "auth != null",
         "strokes": {
-          ".write": "auth != null"
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
         },
         "cursor": {
-          ".write": "auth != null"
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
         }
       }
     },

@@ -1,17 +1,14 @@
-// Canva Connect API proxy — Vercel serverless function
-// Handles OAuth token exchange and API calls to Canva
-// Environment variables required:
-//   CANVA_CLIENT_ID, CANVA_CLIENT_SECRET, CANVA_REDIRECT_URI
+import crypto from "crypto";
+import { applyCors } from "./_lib/auth.js";
 
 const CANVA_API_BASE = "https://api.canva.com/rest/v1";
 const CANVA_AUTH_URL = "https://www.canva.com/api/oauth/authorize";
 const CANVA_TOKEN_URL = "https://api.canva.com/rest/v1/oauth/token";
 
+const VALID_EXPORT_FORMATS = new Set(["png", "pdf", "jpg"]);
+
 export default async function handler(req, res) {
-  // CORS headers for the SPA
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  applyCors(req, res, { methods: "GET, POST, OPTIONS" });
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -21,7 +18,6 @@ export default async function handler(req, res) {
 
   try {
     switch (action) {
-      // Step 1: Return the OAuth authorization URL for the frontend to redirect to
       case "auth-url": {
         const state = crypto.randomUUID();
         const scopes = "design:content:read design:content:write asset:read asset:write brandtemplate:content:read brandtemplate:meta:read";
@@ -29,7 +25,6 @@ export default async function handler(req, res) {
         return res.json({ url, state });
       }
 
-      // Step 2: Exchange authorization code for access token
       case "token": {
         const { code } = req.body;
         if (!code) return res.status(400).json({ error: "Missing authorization code" });
@@ -143,6 +138,7 @@ export default async function handler(req, res) {
 
         const { design_id, format = "png" } = req.body;
         if (!design_id) return res.status(400).json({ error: "Missing design_id" });
+        if (!VALID_EXPORT_FORMATS.has(format)) return res.status(400).json({ error: "Invalid export format" });
 
         const exportRes = await fetch(`${CANVA_API_BASE}/exports`, {
           method: "POST",
@@ -180,6 +176,6 @@ export default async function handler(req, res) {
     }
   } catch (err) {
     console.error("Canva API error:", err);
-    return res.status(500).json({ error: "Internal server error", details: err.message });
+    return res.status(500).json({ error: "Internal server error" });
   }
 }

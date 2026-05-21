@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { T } from '../../theme/theme.js';
 import { FileDoc, DownloadSimple, ArrowSquareOut, Warning, X } from '../../icons/icons.jsx';
 import Btn from './Btn.jsx';
@@ -6,18 +6,41 @@ import FileIcon from './FileIcon.jsx';
 import { SubjectBadge } from './Badge.jsx';
 
 export default function DocumentViewer({ resource, onClose }) {
+  const dialogRef = useRef(null);
+  const closeBtnRef = useRef(null);
+
   useEffect(() => {
     if (!resource) return;
     const handleEsc = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handleEsc);
+    // Auto-focus close button when modal opens
+    closeBtnRef.current?.focus();
     return () => window.removeEventListener("keydown", handleEsc);
   }, [resource, onClose]);
+
+  const handleKeyDown = (e) => {
+    if (e.key !== "Tab") return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const focusable = dialog.querySelectorAll(
+      'a[href], button:not([disabled]), textarea, input, select, iframe, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  };
 
   if (!resource) return null;
   const isPdf = resource.type === "pdf" || (resource.fileUrl && resource.fileUrl.endsWith(".pdf"));
   const isVideo = resource.type === "video";
   return (
-    <div role="dialog" aria-modal="true" aria-label={`Document viewer: ${resource.title}`}
+    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={`Document viewer: ${resource.title}`}
+      onKeyDown={handleKeyDown}
       style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: T.bgOverlay, backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }} />
       <div style={{ position: "relative", width: "90%", maxWidth: 1000, height: "88vh", background: T.bgCard, borderRadius: T.r4, display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: T.shadow3 }}>
@@ -34,7 +57,7 @@ export default function DocumentViewer({ resource, onClose }) {
           <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
             {resource.fileUrl && <a href={resource.fileUrl} download style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><DownloadSimple size={14} weight="bold" /> Download</Btn></a>}
             {resource.fileUrl && isPdf && <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><ArrowSquareOut size={14} weight="bold" /> Open</Btn></a>}
-            <button onClick={onClose} aria-label="Close document viewer" style={{ background: T.bgMuted, border: `1px solid ${T.border}`, borderRadius: T.r2, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><X size={16} weight="bold" color={T.textSec} /></button>
+            <button ref={closeBtnRef} onClick={onClose} aria-label="Close document viewer" style={{ background: T.bgMuted, border: `1px solid ${T.border}`, borderRadius: T.r2, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><X size={16} weight="bold" color={T.textSec} /></button>
           </div>
         </div>
         <div style={{ flex: 1, overflow: "hidden" }}>

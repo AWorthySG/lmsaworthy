@@ -27,7 +27,7 @@ function VocabBuilder() {
       setSrCards(initial);
       saveSRData(initial);
     }
-  }, []);
+  }, [srCards.length]);
 
   // Update review queue whenever SR cards change
   useEffect(() => {

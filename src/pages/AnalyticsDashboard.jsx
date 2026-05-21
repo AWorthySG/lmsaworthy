@@ -126,11 +126,11 @@ function AnalyticsDashboard({ state }) {
       <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}` }}>
         <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Timer size={16} color={T.accent} /> Exam Countdown</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          {getExamCountdowns().map((e, i) => {
+          {getExamCountdowns().map((e) => {
             const theme = T[e.subject] || T.eng;
             const urgent = e.daysLeft <= 30;
             return (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", borderRadius: T.r2, background: urgent ? T.dangerBg : T.bgMuted, border: `1px solid ${urgent ? T.danger + "22" : T.border}` }}>
+              <div key={e.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", borderRadius: T.r2, background: urgent ? T.dangerBg : T.bgMuted, border: `1px solid ${urgent ? T.danger + "22" : T.border}` }}>
                 <div style={{ fontSize: 18, fontWeight: 900, color: urgent ? T.danger : theme.accent, fontFamily: "'JetBrains Mono', monospace", minWidth: 40, textAlign: "center" }}>{e.daysLeft}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: T.text }}>{e.name}</div>

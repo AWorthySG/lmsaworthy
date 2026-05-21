@@ -76,7 +76,7 @@ function DeviceSpotterGame() {
           });
           if (lastIdx < text.length) parts.push({ type: "text", content: text.slice(lastIdx) });
           return parts.map((p, i) => p.type === "text" ? <span key={i}>{p.content}</span> : (
-            <span key={i} onClick={() => clickPhrase(p.idx)} style={{ background: found.includes(p.idx) ? "#EAF6F2" : selected === p.idx ? "#FFF3ED" : "rgba(239,131,84,0.06)", borderRadius: 4, padding: "2px 4px", cursor: found.includes(p.idx) ? "default" : "pointer", border: found.includes(p.idx) ? `1px solid ${T.success}44` : selected === p.idx ? `1px solid ${T.accent}` : "1px solid transparent", fontWeight: found.includes(p.idx) ? 600 : 400, color: found.includes(p.idx) ? T.success : T.text, transition: "all 0.2s" }}>{p.content} {found.includes(p.idx) && "✓"}</span>
+            <span key={i} role="button" tabIndex={0} onClick={() => clickPhrase(p.idx)} onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); clickPhrase(p.idx); } }} style={{ background: found.includes(p.idx) ? "#EAF6F2" : selected === p.idx ? "#FFF3ED" : "rgba(239,131,84,0.06)", borderRadius: 4, padding: "2px 4px", cursor: found.includes(p.idx) ? "default" : "pointer", border: found.includes(p.idx) ? `1px solid ${T.success}44` : selected === p.idx ? `1px solid ${T.accent}` : "1px solid transparent", fontWeight: found.includes(p.idx) ? 600 : 400, color: found.includes(p.idx) ? T.success : T.text, transition: "all 0.2s" }}>{p.content} {found.includes(p.idx) && "✓"}</span>
           ));
         })()}
       </div>

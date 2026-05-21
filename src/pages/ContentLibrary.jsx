@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
 import { Books, BookOpen, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, DownloadSimple, Tag, BookmarkSimple, MagnifyingGlass, Plus, X, ArrowLeft, CaretRight, CheckCircle, Hash } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, BackBtn, EmptyState, FileIcon, Input, Select, Textarea, DocumentViewer } from '../components/ui';
@@ -17,17 +17,27 @@ function ContentLibrary({ state, dispatch }) {
 
   function toggleSubject(id) { setExpandedSubjects((prev) => ({ ...prev, [id]: !prev[id] })); }
 
-  // Compute resource counts
-  function countBySubject(subjectId) { return state.resources.filter((r) => r.subject === subjectId).length; }
-  function countByTopic(subjectId, topic) { return state.resources.filter((r) => r.subject === subjectId && r.topic === topic).length; }
+  // Compute resource counts (memoized)
+  const resourceCounts = useMemo(() => {
+    const bySubject = {};
+    const byTopic = {};
+    state.resources.forEach(r => {
+      bySubject[r.subject] = (bySubject[r.subject] || 0) + 1;
+      const key = `${r.subject}:${r.topic}`;
+      byTopic[key] = (byTopic[key] || 0) + 1;
+    });
+    return { bySubject, byTopic };
+  }, [state.resources]);
+  function countBySubject(subjectId) { return resourceCounts.bySubject[subjectId] || 0; }
+  function countByTopic(subjectId, topic) { return resourceCounts.byTopic[`${subjectId}:${topic}`] || 0; }
 
   // Filtered resources based on current navigation + search
-  const filtered = state.resources.filter((r) => {
+  const filtered = useMemo(() => state.resources.filter((r) => {
     if (search && !r.title.toLowerCase().includes(search.toLowerCase())) return false;
     if (nav && typeof nav === "string") { if (r.subject !== nav) return false; }
     if (nav && typeof nav === "object") { if (r.subject !== nav.subject || r.topic !== nav.topic) return false; }
     return true;
-  });
+  }), [state.resources, search, nav]);
 
   function handleUpload() {
     if (!newTitle || !newSubject || !newTopic) return;

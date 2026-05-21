@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
 import { ChatCircle, ChatText, Handshake, Megaphone, ThumbsUp, PushPin, Plus, X, Star, ClipboardText } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, Input, Textarea, Select } from '../components/ui';
@@ -11,7 +11,7 @@ import { COMMUNITY_REACTIONS } from '../data/gamification.js';
 function Community({ state, dispatch }) {
   const [filter, setFilter] = useState("all");
   const [showNewPost, setShowNewPost] = useState(false);
-  const [expandedComments, setExpandedComments] = useState(new Set());
+  const [expandedComments, setExpandedComments] = useState(() => new Set());
   const [newComment, setNewComment] = useState({});
   const [newPost, setNewPost] = useState({ title: "", content: "", subject: "", isAnnouncement: false });
 
@@ -21,7 +21,7 @@ function Community({ state, dispatch }) {
     ...SUBJECTS.map(s => ({ id: s.id, label: s.name })),
   ];
 
-  const filteredPosts = [...(state.posts || [])]
+  const filteredPosts = useMemo(() => [...(state.posts || [])]
     .sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
@@ -31,7 +31,7 @@ function Community({ state, dispatch }) {
       if (filter === "all") return true;
       if (filter === "announcements") return p.isAnnouncement;
       return p.subject === filter;
-    });
+    }), [state.posts, filter]);
 
   const toggleComments = (postId) => {
     const next = new Set(expandedComments);
@@ -95,9 +95,9 @@ function Community({ state, dispatch }) {
       </div>
 
       {/* Filter tabs */}
-      <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
+      <div role="tablist" style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
         {filterTabs.map(f => (
-          <button key={f.id} onClick={() => setFilter(f.id)} style={{ padding: "6px 14px", borderRadius: T.r2, border: `1.5px solid ${filter === f.id ? T.accent : T.border}`, background: filter === f.id ? T.accentLight : T.bgCard, color: filter === f.id ? T.accentText : T.textSec, fontSize: 12, fontWeight: filter === f.id ? 700 : 500, cursor: "pointer", transition: "all 0.15s", whiteSpace: "nowrap" }}>
+          <button key={f.id} role="tab" aria-selected={filter === f.id} onClick={() => setFilter(f.id)} style={{ padding: "6px 14px", borderRadius: T.r2, border: `1.5px solid ${filter === f.id ? T.accent : T.border}`, background: filter === f.id ? T.accentLight : T.bgCard, color: filter === f.id ? T.accentText : T.textSec, fontSize: 12, fontWeight: filter === f.id ? 700 : 500, cursor: "pointer", transition: "all 0.15s", whiteSpace: "nowrap" }}>
             {f.label}
           </button>
         ))}

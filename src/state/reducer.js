@@ -5,7 +5,6 @@ export function appReducer(state, action) {
   switch (action.type) {
     case "SET_PAGE": return { ...state, page: action.payload, subPage: null };
     case "SET_ROLE": return { ...state, role: action.payload };
-    case "SET_SUBPAGE": return { ...state, subPage: action.payload };
     case "ADD_RESOURCE": return { ...state, resources: [...state.resources, { ...action.payload, id: Math.max(...state.resources.map(r => r.id), 0) + 1, date: new Date().toISOString().split("T")[0] }] };
     case "TOGGLE_CHAPTER_COMPLETE": {
       const lessons = state.videoLessons.map((l) => l.id === action.payload.lessonId ? { ...l, chapters: l.chapters.map((ch) => ch.id === action.payload.chapterId ? { ...ch, completed: !ch.completed } : ch) } : l);
@@ -145,10 +144,6 @@ export function appReducer(state, action) {
     }
     case "DELETE_NOTE": {
       return { ...state, notes: (state.notes || []).filter(n => n.id !== action.payload) };
-    }
-    case "RATE_RESOURCE": {
-      const ratings = state.ratings || {};
-      return { ...state, ratings: { ...ratings, [action.payload.resourceId]: action.payload.rating } };
     }
     case "SET_ANNOUNCEMENT": {
       return { ...state, announcement: action.payload };

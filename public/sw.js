@@ -1,5 +1,7 @@
 // Service Worker — enables offline caching, PWA install, and push notifications
-const CACHE_NAME = 'aworthy-lms-v5';
+const CACHE_NAME = 'aworthy-lms-v6';
+const MAX_CACHE_ITEMS = 100;
+const FETCH_TIMEOUT_MS = 8000;
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -41,12 +43,23 @@ self.addEventListener('fetch', e => {
     );
     return;
   }
+  const fetchWithTimeout = new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), FETCH_TIMEOUT_MS);
+    fetch(e.request).then(res => { clearTimeout(timer); resolve(res); }).catch(err => { clearTimeout(timer); reject(err); });
+  });
   e.respondWith(
-    fetch(e.request)
+    fetchWithTimeout
       .then(res => {
         if (res && res.status === 200 && res.type !== 'opaque') {
           const clone = res.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(e.request, clone);
+            cache.keys().then(keys => {
+              if (keys.length > MAX_CACHE_ITEMS) {
+                keys.slice(0, keys.length - MAX_CACHE_ITEMS).forEach(k => cache.delete(k));
+              }
+            });
+          });
         }
         return res;
       })
