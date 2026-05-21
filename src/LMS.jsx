@@ -1,5 +1,6 @@
 import React, { useState, useReducer, useRef, useEffect, Suspense, lazy } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { T } from "./theme/theme.js";
 import { List, CaretDown, House, Books, ClipboardText, Handshake, Crown, Bell, MagnifyingGlass, Flame, Megaphone, PencilSimpleLine, Gift, Trophy, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users } from "./icons/icons.jsx";
@@ -156,8 +157,6 @@ function LMS({ authUser, userProfile }) {
   });
   const pendingGrades = state.submissions.filter(s => s.status === "submitted").length;
   if (pendingGrades > 0 && state.role === "tutor") notifications.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
-  // Daily reward notification disabled
-  // if (state.wallet.lastClaim !== today) notifications.push({ type: "reward", msg: "Daily login reward available!", page: "dashboard" });
   const [showNotifs, setShowNotifs] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showRewardModal, setShowRewardModal] = useState(false);
@@ -227,15 +226,6 @@ function LMS({ authUser, userProfile }) {
     return Object.keys(rec).length < sessionStudents.length;
   }).length : 0;
 
-  // Daily reward modal disabled — can be re-enabled later
-  // useEffect(() => {
-  //   const today = new Date().toISOString().split("T")[0];
-  //   if (state.wallet.lastClaim !== today) {
-  //     const timer = setTimeout(() => setShowRewardModal(true), 800);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, []);
-
   const pageFallback = <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "40px 0" }}>{[1,2,3].map(i => <div key={i} className="shimmer" style={{ height: 14, borderRadius: 6, width: i === 3 ? "60%" : "100%" }} />)}</div>;
 
   const renderPage = () => {
@@ -263,7 +253,7 @@ function LMS({ authUser, userProfile }) {
       case "example-finder": return <ExampleConnector />;
       case "essaygrader": return <EssayGrader />;
       case "aimarker": return <AIMarker />;
-      case "homework": return <Homework state={state} dispatch={dispatch} />;
+      case "homework": return <Homework state={state} dispatch={dispatch} userProfile={userProfile} />;
       case "games-eng": return <GameHub subject="eng" />;
       case "games-gp": return <GameHub subject="gp" />;
       case "games-h1econ": return <GameHub subject="h1econ" />;

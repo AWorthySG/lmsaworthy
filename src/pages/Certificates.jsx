@@ -201,7 +201,7 @@ export default function Certificates({ state }) {
       {error && (
         <div style={{ ...styles.alert, background: T.dangerBg, color: T.danger, borderColor: T.danger + "33" }}>
           <Icon icon="mdi:alert-circle" width={18} /> {error}
-          <button onClick={() => setError("")} style={{ marginLeft: "auto", background: "none", border: "none", color: T.danger, cursor: "pointer", fontWeight: 700 }}>×</button>
+          <button onClick={() => setError("")} aria-label="Dismiss error" style={{ marginLeft: "auto", background: "none", border: "none", color: T.danger, cursor: "pointer", fontWeight: 700 }}>×</button>
         </div>
       )}
 

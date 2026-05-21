@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { T } from "../theme/theme.js";
+import { PageHeader } from "../components/ui";
 
 /* ━━━ HELPERS ━━━ */
 
@@ -167,26 +168,7 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 680 }}>
-      {/* Page header */}
-      <div>
-        <h1
-          style={{
-            fontSize: 28,
-            fontWeight: 800,
-            background: T.gradPrimary,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-            margin: 0,
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-          }}
-        >
-          Settings
-        </h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>
-          Manage your preferences, notifications, and account
-        </p>
-      </div>
+      <PageHeader title="Settings" subtitle="Manage your preferences, notifications, and account" />
 
       {/* ━━━ 1. Appearance ━━━ */}
       <div style={sectionCard}>

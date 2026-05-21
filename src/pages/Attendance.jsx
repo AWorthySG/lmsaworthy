@@ -182,7 +182,11 @@ function Attendance({ state, dispatch }) {
           return (
             <Card key={session.id} elevated style={{ borderLeft: `3px solid ${isToday ? T.accent : theme.accent}` }}>
               {/* Session header — clickable to expand */}
-              <div onClick={() => setExpanded(isExpanded ? null : session.id)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 14 }}>
+              <div onClick={() => setExpanded(isExpanded ? null : session.id)}
+                role="button" tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(isExpanded ? null : session.id); } }}
+                aria-expanded={isExpanded}
+                style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 14 }}>
                 <div style={{ width: 44, height: 44, borderRadius: T.r2, background: theme.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <CalendarCheck size={20} weight="duotone" color={theme.accent} />
                 </div>

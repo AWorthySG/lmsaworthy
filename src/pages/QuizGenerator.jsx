@@ -42,7 +42,7 @@ function QuizGenerator({ state, dispatch }) {
                 <Select value={q.type} onChange={(v) => { const u = [...nQ]; u[idx] = { ...u[idx], type: v }; snQ(u); }} options={[{ value: "mcq", label: "MCQ" }, { value: "short", label: "Short Answer" }, { value: "structured", label: "Structured" }]} style={{ fontSize: 12 }} />
                 <Input value={q.marks} onChange={(v) => { const u = [...nQ]; u[idx] = { ...u[idx], marks: parseInt(v) || 0 }; snQ(u); }} type="number" style={{ width: 60 }} />
                 <span style={{ fontSize: 12, color: T.textTer }}>marks</span>
-                <button onClick={() => snQ(nQ.filter((_, i) => i !== idx))} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}><Trash size={14} weight="bold" color={T.danger} /></button>
+                <button onClick={() => snQ(nQ.filter((_, i) => i !== idx))} aria-label={`Delete question ${idx + 1}`} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}><Trash size={14} weight="bold" color={T.danger} /></button>
               </div>
             </div>
             <Textarea value={q.text} onChange={(v) => { const u = [...nQ]; u[idx] = { ...u[idx], text: v }; snQ(u); }} placeholder="Question text" />

@@ -17,17 +17,8 @@ function Leaderboard({ state }) {
 
   return (
     <div>
-      {/* Header */}
+      <PageHeader title="Class Leaderboard" subtitle="XP earned through quizzes, attendance & engagement" />
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
-          <div style={{ width: 40, height: 40, borderRadius: T.r2, background: "linear-gradient(135deg, #D4A254, #F0C060)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(212,162,84,0.3)" }}>
-            <Trophy size={20} weight="fill" color="#fff" />
-          </div>
-          <div>
-            <h1 style={{ fontSize: 26, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Class Leaderboard</h1>
-            <p style={{ color: T.textSec, margin: 0, fontSize: 13 }}>XP earned through quizzes, attendance &amp; engagement</p>
-          </div>
-        </div>
         {/* XP info strip */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 14 }}>
           {[

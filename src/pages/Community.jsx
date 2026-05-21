@@ -56,14 +56,7 @@ function Community({ state, dispatch }) {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24 }}>
-        <div>
-          <h1 style={{ fontSize: 26, fontWeight: 700, background: "linear-gradient(135deg, #0F172A, #2D3A8C)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, letterSpacing: -0.3, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Community</h1>
-          <p style={{ color: T.textSec, margin: "4px 0 0", fontSize: 14 }}>Announcements, discussions, and study tips from the class</p>
-        </div>
-        <Btn onClick={() => setShowNewPost(!showNewPost)}><Plus size={15} weight="bold" /> New Post</Btn>
-      </div>
+      <PageHeader title="Community" subtitle="Announcements, discussions, and study tips from the class" action={<Btn onClick={() => setShowNewPost(!showNewPost)}><Plus size={15} weight="bold" /> New Post</Btn>} />
 
       {/* New post form */}
       {showNewPost && (
@@ -147,7 +140,7 @@ function Community({ state, dispatch }) {
                     {post.subject && subjectTheme && (
                       <span style={{ fontSize: 10, fontWeight: 700, color: subjectTheme.text, background: subjectTheme.bg, padding: "3px 8px", borderRadius: 20 }}>{getSubject(post.subject)?.name}</span>
                     )}
-                    <button onClick={() => dispatch({ type: "PIN_POST", payload: post.id })} title={post.pinned ? "Unpin" : "Pin post"} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: post.pinned ? T.accent : T.textTer, fontSize: 15, lineHeight: 1 }}><PushPin size={15} color={post.pinned ? T.accent : T.textTer} /></button>
+                    <button onClick={() => dispatch({ type: "PIN_POST", payload: post.id })} title={post.pinned ? "Unpin" : "Pin post"} aria-label={post.pinned ? "Unpin post" : "Pin post"} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: post.pinned ? T.accent : T.textTer, fontSize: 15, lineHeight: 1 }}><PushPin size={15} color={post.pinned ? T.accent : T.textTer} /></button>
                   </div>
                 </div>
                 <h3 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 700, color: T.text, lineHeight: 1.4 }}>{post.title}</h3>

@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { applyCors, requireAuth, checkRateLimit } from "./_lib/auth.js";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -37,18 +38,14 @@ When grading, you MUST return ONLY a valid JSON object (no markdown, no code fen
 Grade strictly but fairly. Tailor your feedback to be constructive and actionable for a Singapore student preparing for national examinations.`;
 
 export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  applyCors(req, res);
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed. Use POST." });
 
-  // Handle preflight
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed. Use POST." });
+  const user = await requireAuth(req, res);
+  if (!user) return;
+  if (!checkRateLimit(user.uid, { windowMs: 60_000, maxRequests: 5 })) {
+    return res.status(429).json({ error: "Too many grading requests. Please wait a minute and try again." });
   }
 
   try {
@@ -58,12 +55,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing or empty 'essay' field." });
     }
 
-    const questionContext = question
-      ? `\nEssay Question: ${question}`
-      : "";
-    const subjectContext = subject
-      ? `\nSubject: ${subject}`
-      : "\nSubject: General Paper";
+    const questionContext = question ? `\nEssay Question: ${question}` : "";
+    const subjectContext = subject ? `\nSubject: ${subject}` : "\nSubject: General Paper";
 
     const userMessage = `Please grade the following essay.${subjectContext}${questionContext}
 
@@ -71,25 +64,18 @@ Essay:
 ${essay}`;
 
     const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: process.env.ANTHROPIC_GRADING_MODEL || "claude-sonnet-4-6",
       max_tokens: 1500,
       system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: userMessage,
-        },
-      ],
+      messages: [{ role: "user", content: userMessage }],
     });
 
     const raw = message.content[0].text.trim();
 
-    // Parse the JSON response from Claude
     let result;
     try {
       result = JSON.parse(raw);
     } catch {
-      // If Claude wrapped it in code fences, try to extract the JSON
       const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
       if (jsonMatch) {
         result = JSON.parse(jsonMatch[1].trim());
@@ -100,10 +86,7 @@ ${essay}`;
 
     return res.status(200).json(result);
   } catch (err) {
-    console.error("grade-essay error:", err);
-    return res.status(500).json({
-      error: "Failed to grade essay. Please try again later.",
-      details: err.message,
-    });
+    console.error("[grade-essay] error:", err);
+    return res.status(500).json({ error: "Failed to grade essay. Please try again later." });
   }
 }

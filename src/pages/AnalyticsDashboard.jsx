@@ -58,10 +58,7 @@ function AnalyticsDashboard({ state }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Analytics</h1>
-        <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0" }}>Track performance, study habits, and exam readiness</p>
-      </div>
+      <PageHeader title="Analytics" subtitle="Track performance, study habits, and exam readiness" />
 
       {/* Shareable Progress Card */}
       <ShareableProgressCard state={state} />

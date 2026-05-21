@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { T } from '../../theme/theme.js';
 import { FileDoc, DownloadSimple, ArrowSquareOut, Warning, X } from '../../icons/icons.jsx';
 import Btn from './Btn.jsx';
@@ -6,11 +6,19 @@ import FileIcon from './FileIcon.jsx';
 import { SubjectBadge } from './Badge.jsx';
 
 export default function DocumentViewer({ resource, onClose }) {
+  useEffect(() => {
+    if (!resource) return;
+    const handleEsc = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [resource, onClose]);
+
   if (!resource) return null;
   const isPdf = resource.type === "pdf" || (resource.fileUrl && resource.fileUrl.endsWith(".pdf"));
   const isVideo = resource.type === "video";
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div role="dialog" aria-modal="true" aria-label={`Document viewer: ${resource.title}`}
+      style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: T.bgOverlay, backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }} />
       <div style={{ position: "relative", width: "90%", maxWidth: 1000, height: "88vh", background: T.bgCard, borderRadius: T.r4, display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: T.shadow3 }}>
         <div style={{ padding: "14px 20px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>

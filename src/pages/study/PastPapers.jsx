@@ -10,8 +10,15 @@ import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../
 
 /* ━━━ PDF VIEWER MODAL ━━━ */
 function PdfViewer({ url, title, onClose }) {
+  React.useEffect(() => {
+    const handleEsc = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [onClose]);
+
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
+    <div role="dialog" aria-modal="true" aria-label={`PDF viewer: ${title}`}
+      style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
       onClick={onClose}>
       <div style={{ background: T.bgCard, borderRadius: T.r3, width: "100%", maxWidth: 900, height: "85vh", display: "flex", flexDirection: "column", overflow: "hidden", border: `1px solid ${T.border}` }}
         onClick={e => e.stopPropagation()}>

@@ -257,6 +257,8 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
           <div style={{ fontSize: 14, fontWeight: 600, color: T.text, marginBottom: 10 }}>Homework Due</div>
           {pendingHw.map(h => (
             <div key={h.id} onClick={() => dispatch({ type: "SET_PAGE", payload: "homework" })}
+              role="button" tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); dispatch({ type: "SET_PAGE", payload: "homework" }); } }}
               style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, marginBottom: 6, cursor: "pointer" }}>
               <ClipboardText size={18} color={T.textSec} />
               <div style={{ flex: 1 }}>
@@ -422,7 +424,12 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
           { icon: CalendarCheck, value: state.sessions.length, label: "Sessions", color: "#3B6EA6", bg: "#E8EFF6", page: "attendance" },
           { icon: Handshake, value: (state.posts || []).length, label: "Community", color: "#2E8058", bg: "#E4F0EA", page: "community" },
         ].map((s, i) => (
-          <div key={s.label} className="card-lift card-enter" style={{ "--i": i, cursor: "pointer", padding: "16px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, transition: "all 0.2s" }} onClick={() => dispatch({ type: "SET_PAGE", payload: s.page })}
+          <div key={s.label} className="card-lift card-enter"
+            role="button" tabIndex={0}
+            aria-label={`Go to ${s.label}`}
+            onClick={() => dispatch({ type: "SET_PAGE", payload: s.page })}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); dispatch({ type: "SET_PAGE", payload: s.page }); } }}
+            style={{ "--i": i, cursor: "pointer", padding: "16px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, transition: "all 0.2s" }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = s.color + "60"; e.currentTarget.style.boxShadow = `0 4px 20px ${s.color}18`; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = "none"; }}>
             <div style={{ width: 36, height: 36, borderRadius: T.r2, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
@@ -541,7 +548,10 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {(state.posts || []).slice(0, 3).map(post => (
-              <div key={post.id} onClick={() => dispatch({ type: "SET_PAGE", payload: "community" })} style={{ cursor: "pointer", padding: "10px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, transition: "all 0.15s" }}
+              <div key={post.id} onClick={() => dispatch({ type: "SET_PAGE", payload: "community" })}
+                role="button" tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); dispatch({ type: "SET_PAGE", payload: "community" }); } }}
+                style={{ cursor: "pointer", padding: "10px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, transition: "all 0.15s" }}
                 onMouseEnter={e => e.currentTarget.style.background = T.bgHover}
                 onMouseLeave={e => e.currentTarget.style.background = T.bgMuted}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>

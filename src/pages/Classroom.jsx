@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -23,9 +22,8 @@ class WhiteboardErrorBoundary extends React.Component {
   }
 }
 
-function Whiteboard({ sessionId, studentNames, userName }) {
+function Whiteboard({ sessionId, userName }) {
   const canvasRef = useRef(null);
-  const overlayRef = useRef(null); // for remote cursors
   const [tool, setTool] = useState("pen");
   const [color, setColor] = useState("#1B1B1B");
   const [size, setSize] = useState(4);
@@ -76,7 +74,7 @@ function Whiteboard({ sessionId, studentNames, userName }) {
 
     // Also keep BroadcastChannel as local fallback (for same-device tabs)
     let ch;
-    try { ch = new BroadcastChannel(`wb-${sessionId}`); } catch(e) { ch = null; }
+    try { ch = new BroadcastChannel(`wb-${sessionId}`); } catch { ch = null; }
     channelRef.current = {
       postMessage: (data) => {
         // Send to Firebase (cross-device)
@@ -87,7 +85,7 @@ function Whiteboard({ sessionId, studentNames, userName }) {
           set(ref(firebaseDb, `sessions/${sessionId}/cursors/${clientId.current}`), { ...data, _t: Date.now() });
         }
         // Also send to local BroadcastChannel (same-device tabs)
-        if (ch) try { ch.postMessage(data); } catch(e) {}
+        if (ch) try { ch.postMessage(data); } catch { /* intentionally empty */ }
       }
     };
 
@@ -544,43 +542,10 @@ function Whiteboard({ sessionId, studentNames, userName }) {
       reader.onload = async () => {
         try {
           const arrayBuffer = reader.result;
-          const result = await mammoth.convertToHtml({ arrayBuffer });
-          const html = result.value;
-          // Create a hidden container, render the HTML, then capture it to the canvas
-          const container = document.createElement("div");
-          container.style.cssText = `position:fixed;left:-9999px;top:0;width:${cw - 60}px;padding:30px;background:#fff;font-family:Inter,sans-serif;font-size:13px;line-height:1.7;color:#1A1D2B;`;
-          // Style the HTML content
-          container.innerHTML = `<style>
-            h1{font-size:20px;font-weight:700;margin:0 0 10px;color:#0F172A;font-family:Poppins,sans-serif}
-            h2{font-size:17px;font-weight:700;margin:16px 0 8px;color:#1E2A4A;font-family:Poppins,sans-serif}
-            h3{font-size:14px;font-weight:700;margin:12px 0 6px;color:#2D3A8C}
-            p{margin:0 0 8px}
-            ul,ol{margin:0 0 8px;padding-left:20px}
-            li{margin:0 0 4px}
-            table{border-collapse:collapse;width:100%;margin:8px 0}
-            td,th{border:1px solid #E8E6E1;padding:6px 8px;font-size:12px}
-            th{background:#F3F2EF;font-weight:600}
-            strong{font-weight:700}
-            em{font-style:italic}
-          </style>${html}`;
-          document.body.appendChild(container);
-
-          // Wait for rendering, then capture using a foreign object SVG approach
-          await new Promise(r => setTimeout(r, 100));
-          const containerH = container.scrollHeight;
-          const containerW = container.scrollWidth;
-
-          // Create SVG with foreignObject containing the HTML
-          const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${containerW}" height="${containerH}">
-            <foreignObject width="100%" height="100%">
-              <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:sans-serif;font-size:13px;line-height:1.7;color:#1A1D2B;padding:30px;background:#fff">
-                ${html.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
-              </div>
-            </foreignObject>
-          </svg>`;
-
-          // SVG foreignObject approach has CORS issues — use simpler line-by-line text rendering instead
-          document.body.removeChild(container);
+          // mammoth converts DOCX → HTML safely (strips scripts/handlers).
+          // We only need the plain text for line-by-line canvas rendering.
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          const textContent = result.value || "";
 
           saveUndo();
           // White page background
@@ -596,10 +561,6 @@ function Whiteboard({ sessionId, studentNames, userName }) {
           ctx.lineWidth = 1;
           ctx.strokeRect(pad, pad, cw - pad * 2, ch - pad * 2);
 
-          // Parse the HTML and render text line by line on canvas
-          const tempDiv = document.createElement("div");
-          tempDiv.innerHTML = html;
-          const textContent = tempDiv.innerText || tempDiv.textContent || "";
           const lines = textContent.split("\n").filter(l => l.trim());
 
           let y = pad + 20;
@@ -712,8 +673,8 @@ function Whiteboard({ sessionId, studentNames, userName }) {
         {/* Drawing tools — touch-friendly 40px targets on mobile */}
         <div style={{ display: "flex", gap: 2, background: T.bgMuted, padding: 2, borderRadius: T.r1 }}>
           {tools.map(t => (
-            <button key={t.id} title={t.label} onClick={() => setTool(t.id)}
-              style={{ width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: T.r1, background: tool === t.id ? T.navy : "transparent", border: "none", cursor: "pointer", transition: "all 0.15s" }}>
+            <button key={t.id} title={t.label} aria-label={t.label} aria-pressed={tool === t.id} onClick={() => setTool(t.id)}
+              style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: T.r1, background: tool === t.id ? T.navy : "transparent", border: "none", cursor: "pointer", transition: "all 0.15s" }}>
               <t.icon size={18} weight={tool === t.id ? "fill" : "regular"} color={tool === t.id ? "#fff" : T.textSec} />
             </button>
           ))}
@@ -724,8 +685,8 @@ function Whiteboard({ sessionId, studentNames, userName }) {
         {/* Colors — scrollable on small screens */}
         <div style={{ display: "flex", gap: 3, alignItems: "center", overflowX: "auto", flexShrink: 1, minWidth: 0, WebkitOverflowScrolling: "touch" }}>
           {DRAW_COLORS.map(c => (
-            <button key={c} onClick={() => setColor(c)} title={c}
-              style={{ width: 22, height: 22, borderRadius: "50%", background: c, border: color === c ? `3px solid ${T.accent}` : `2px solid ${c === "#FFFFFF" ? T.border : "transparent"}`, cursor: "pointer", flexShrink: 0, transition: "transform 0.1s", transform: color === c ? "scale(1.2)" : "scale(1)" }} />
+            <button key={c} onClick={() => setColor(c)} title={c} aria-label={`Choose color ${c}`}
+              style={{ width: 28, height: 28, borderRadius: "50%", background: c, border: color === c ? `3px solid ${T.accent}` : `2px solid ${c === "#FFFFFF" ? T.border : "transparent"}`, cursor: "pointer", flexShrink: 0, transition: "transform 0.1s", transform: color === c ? "scale(1.2)" : "scale(1)" }} />
           ))}
           <input type="color" value={color} onChange={e => setColor(e.target.value)}
             style={{ width: 24, height: 24, padding: 0, border: "none", borderRadius: "50%", cursor: "pointer", background: "none", flexShrink: 0 }} title="Custom color" />
@@ -751,16 +712,16 @@ function Whiteboard({ sessionId, studentNames, userName }) {
 
         {/* Right actions — undo/redo/clear/export */}
         <div style={{ marginLeft: "auto", display: "flex", gap: 3, flexShrink: 0 }}>
-          <button onClick={undo} title="Undo" style={{ width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", background: T.bgMuted, border: "none", borderRadius: T.r1, cursor: "pointer" }}>
+          <button onClick={undo} title="Undo" aria-label="Undo drawing" style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", background: T.bgMuted, border: "none", borderRadius: T.r1, cursor: "pointer" }}>
             <ArrowUUpLeft size={16} color={T.textSec} />
           </button>
-          <button onClick={redo} title="Redo" style={{ width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", background: T.bgMuted, border: "none", borderRadius: T.r1, cursor: "pointer" }}>
+          <button onClick={redo} title="Redo" aria-label="Redo drawing" style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", background: T.bgMuted, border: "none", borderRadius: T.r1, cursor: "pointer" }}>
             <ArrowUUpRight size={16} color={T.textSec} />
           </button>
-          <button onClick={clearBoard} title="Clear board" style={{ width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", background: T.bgMuted, border: "none", borderRadius: T.r1, cursor: "pointer" }}>
+          <button onClick={clearBoard} title="Clear board" aria-label="Clear whiteboard" style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", background: T.bgMuted, border: "none", borderRadius: T.r1, cursor: "pointer" }}>
             <Eraser size={16} color={T.danger} />
           </button>
-          <button onClick={exportPNG} title="Export as PNG" style={{ width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", background: T.bgMuted, border: "none", borderRadius: T.r1, cursor: "pointer" }}>
+          <button onClick={exportPNG} title="Export as PNG" aria-label="Export whiteboard as PNG" style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", background: T.bgMuted, border: "none", borderRadius: T.r1, cursor: "pointer" }}>
             <DownloadSimple size={16} color={T.textSec} />
           </button>
         </div>

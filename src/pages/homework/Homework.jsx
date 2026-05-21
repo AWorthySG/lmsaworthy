@@ -2,13 +2,10 @@ import React from 'react';
 import StudentHomework from './StudentHomework.jsx';
 import TutorHomework from './TutorHomework.jsx';
 
-function Homework({ state, dispatch }) {
+function Homework({ state, dispatch, userProfile }) {
   const isStudent = state.role === "student";
 
-  // ═══ STUDENT HOMEWORK VIEW ═══
-  if (isStudent) return <StudentHomework state={state} dispatch={dispatch} />;
-
-  // ═══ TUTOR HOMEWORK VIEW ═══
+  if (isStudent) return <StudentHomework state={state} dispatch={dispatch} userProfile={userProfile} />;
   return <TutorHomework state={state} dispatch={dispatch} />;
 }
 

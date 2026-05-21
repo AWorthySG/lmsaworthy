@@ -37,7 +37,10 @@ function VideoLessons({ state, dispatch }) {
               <div style={{ marginTop: 8 }}><Progress value={(cc / lesson.chapters.length) * 100} /></div>
             </div>
             {lesson.chapters.map((ch) => (
-              <div key={ch.id} onClick={() => setACh(ch.id)} style={{ padding: "12px 18px", display: "flex", alignItems: "center", gap: 10, cursor: "pointer", background: (aCh || lesson.chapters[0]?.id) === ch.id ? T.accentLight : "transparent", borderLeft: (aCh || lesson.chapters[0].id) === ch.id ? `3px solid ${T.accent}` : "3px solid transparent", transition: "all 0.15s" }}>
+              <div key={ch.id} onClick={() => setACh(ch.id)}
+                role="button" tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setACh(ch.id); } }}
+                style={{ padding: "12px 18px", display: "flex", alignItems: "center", gap: 10, cursor: "pointer", background: (aCh || lesson.chapters[0]?.id) === ch.id ? T.accentLight : "transparent", borderLeft: (aCh || lesson.chapters[0].id) === ch.id ? `3px solid ${T.accent}` : "3px solid transparent", transition: "all 0.15s" }}>
                 <button onClick={(e) => { e.stopPropagation(); dispatch({ type: "TOGGLE_CHAPTER_COMPLETE", payload: { lessonId: lesson.id, chapterId: ch.id } }); }}
                   style={{ width: 22, height: 22, borderRadius: "50%", border: ch.completed ? "none" : `2px solid ${T.border}`, background: ch.completed ? T.success : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
                   {ch.completed && <CheckCircle size={14} weight="fill" color="#fff" />}
