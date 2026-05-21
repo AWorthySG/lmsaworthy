@@ -66,7 +66,7 @@ export default function ShareableProgressCard({ state }) {
       </div>
 
       {showCard && (
-        <div ref={cardRef} style={{ width: 440, borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 40px rgba(15,23,42,0.25)", fontFamily: "'Plus Jakarta Sans', sans-serif", marginBottom: 16 }}>
+        <div ref={cardRef} style={{ width: 440, borderRadius: 20, overflow: "hidden", boxShadow: "0 8px 40px rgba(15,23,42,0.25)", fontFamily: T.fontBody, marginBottom: 16 }}>
           {/* Card header */}
           <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E2A4A 40%, #2D3A8C 100%)", padding: "28px 28px 22px", color: "#fff", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "radial-gradient(circle, rgba(212,162,84,0.15), transparent 70%)" }} />
@@ -78,7 +78,7 @@ export default function ShareableProgressCard({ state }) {
                 <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", letterSpacing: 1.5, textTransform: "uppercase" }}>Learning Platform</div>
               </div>
             </div>
-            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", position: "relative" }}>My Progress</div>
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: T.fontDisplay, position: "relative" }}>My Progress</div>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 2, position: "relative" }}>{new Date().toLocaleDateString("en-SG", { day: "numeric", month: "long", year: "numeric" })}</div>
           </div>
 
@@ -93,7 +93,7 @@ export default function ShareableProgressCard({ state }) {
               ].map(s => (
                 <div key={s.label} style={{ textAlign: "center", background: "#F8F7F4", borderRadius: 12, padding: "14px 8px" }}>
                   <div style={{ fontSize: 10, color: "#7A7A85", fontWeight: 600, marginBottom: 4 }}>{s.icon} {s.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: s.color, fontFamily: T.fontDisplay }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -115,7 +115,7 @@ export default function ShareableProgressCard({ state }) {
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#1E1E2E", marginBottom: 6 }}>⏳ Next Exams</div>
                 {exams.map((e, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 0" }}>
-                    <div style={{ fontSize: 16, fontWeight: 900, color: e.daysLeft <= 30 ? "#FB424E" : "#2D3A8C", fontFamily: "'JetBrains Mono', monospace", minWidth: 32, textAlign: "center" }}>{e.daysLeft}</div>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: e.daysLeft <= 30 ? "#FB424E" : "#2D3A8C", fontFamily: T.fontMono, minWidth: 32, textAlign: "center" }}>{e.daysLeft}</div>
                     <div style={{ fontSize: 11, color: "#4A4A55" }}>{e.name} · <span style={{ color: "#7A7A85" }}>{e.date}</span></div>
                   </div>
                 ))}

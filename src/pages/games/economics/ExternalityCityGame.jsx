@@ -152,9 +152,9 @@ function ExternalityCityGame() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ marginBottom: 8 }}><Buildings size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{totalPassed} / 5</div>
+          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>{totalPassed} / 5</div>
           <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>rounds completed · {discoveries.length} adjacency effects discovered</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 12 }}>
             {roundScores.map((passed, i) => (
@@ -221,7 +221,7 @@ function ExternalityCityGame() {
         ].map(m => (
           <div key={m.label} style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "8px", textAlign: "center", border: `1px solid ${T.border}` }}>
             <div style={{ fontSize: 8, fontWeight: 700, color: T.textTer }}>{m.emoji} {m.label}</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: m.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{m.value}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: m.color, fontFamily: T.fontDisplay }}>{m.value}</div>
             {m.target != null && <div style={{ fontSize: 8, color: typeof m.value === "number" && m.value >= m.target ? T.success : T.textTer }}>≥{m.target}</div>}
           </div>
         ))}

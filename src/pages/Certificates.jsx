@@ -215,7 +215,7 @@ export default function Certificates({ state }) {
       {!connected && (
         <div style={styles.connectCard}>
           <div style={{ marginBottom: 16 }}><Palette size={48} color={T.accent} /></div>
-          <h2 style={{ fontSize: 22, fontWeight: 800, color: T.text, margin: "0 0 8px", fontFamily: "'Bricolage Grotesque', sans-serif" }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: T.text, margin: "0 0 8px", fontFamily: T.fontDisplay }}>
             Connect to Canva
           </h2>
           <p style={{ fontSize: 14, color: T.textSec, margin: "0 0 24px", maxWidth: 420, lineHeight: 1.6 }}>
@@ -462,7 +462,7 @@ const styles = {
   },
   sectionTitle: {
     fontSize: 15, fontWeight: 800, color: T.text, margin: "0 0 16px",
-    fontFamily: "'Bricolage Grotesque', sans-serif",
+    fontFamily: T.fontDisplay,
   },
   label: {
     display: "block", fontSize: 12, fontWeight: 700, color: T.textSec,

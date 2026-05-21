@@ -34,7 +34,7 @@ function Events({ state, dispatch }) {
             </button>
           )}
           <div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #2D3A8C, #4F5BD5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>
+            <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #2D3A8C, #4F5BD5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>
               {view === "detail" ? selectedEvent?.title : "Events & Prizes"}
             </h1>
             <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>
@@ -51,7 +51,7 @@ function Events({ state, dispatch }) {
           <div style={{ background: T.bgMuted, borderRadius: T.r3, padding: "24px 28px", color: T.text, border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: -20, right: -20, opacity: 0.08 }}><Trophy size={100} /></div>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#D4A254", marginBottom: 6 }}>Earn Prizes · Compete · Level Up</div>
-            <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 8 }}>Upcoming Events & Challenges</div>
+            <div style={{ fontSize: 20, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 8 }}>Upcoming Events & Challenges</div>
             <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6 }}>
               Participate in challenges using the LMS tools you already know — Timed Writer, Practice Drills, and Vocabulary. Top performers win coins, badges, and real prizes.
             </div>
@@ -90,7 +90,7 @@ function Events({ state, dispatch }) {
                         <span style={{ fontSize: 9, fontWeight: 700, color: "#fff", background: T.success, padding: "2px 8px", borderRadius: 20, animation: "pulse 2s infinite" }}>LIVE</span>
                         <span style={{ fontSize: 10, fontWeight: 600, color: T.accent }}>{daysLeft(ev.endDate)} days left</span>
                       </div>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 4, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{ev.title}</div>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 4, fontFamily: T.fontDisplay }}>{ev.title}</div>
                       <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5, marginBottom: 8 }}>{ev.description.substring(0, 120)}...</div>
                       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                         {ev.prizes.slice(0, 2).map((p, i) => (
@@ -215,7 +215,7 @@ function Events({ state, dispatch }) {
                       <div style={{ fontSize: 10, color: T.textTer }}>Joined {p.joined} · {p.submission}</div>
                     </div>
                     {p.score !== null && (
-                      <div style={{ fontSize: 16, fontWeight: 800, color: ev.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{p.score}</div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: ev.color, fontFamily: T.fontDisplay }}>{p.score}</div>
                     )}
                   </div>
                 );

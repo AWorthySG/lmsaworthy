@@ -50,7 +50,7 @@ function PeerReview({ state, dispatch }) {
               { label: "Reviews Given", value: reviews.length, color: T.success, icon: <CheckCircle size={12} /> },
             ].map(s => (
               <div key={s.label} style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "14px", border: `1px solid ${T.border}`, textAlign: "center" }}>
-                <div style={{ fontSize: 22, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: s.color, fontFamily: T.fontDisplay }}>{s.value}</div>
                 <div style={{ fontSize: 11, color: T.textSec, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{s.icon} {s.label}</div>
               </div>
             ))}
@@ -69,7 +69,7 @@ function PeerReview({ state, dispatch }) {
           {/* My essays + reviews received */}
           {essays.length > 0 && (
             <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif" }}>My Submissions</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: T.fontDisplay }}>My Submissions</div>
               {essays.map(e => {
                 const theme = T[e.subject] || T.eng;
                 const essayReviews = reviews.filter(r => r.essayId === e.id);
@@ -124,7 +124,7 @@ function PeerReview({ state, dispatch }) {
           </div>
           <div>
             <label style={{ fontSize: 11, fontWeight: 700, color: T.text, display: "block", marginBottom: 4 }}>Your Essay</label>
-            <textarea value={essayText} onChange={e => setEssayText(e.target.value)} rows={12} placeholder="Paste or type your essay here..." style={{ width: "100%", padding: "12px 14px", borderRadius: T.r2, border: `1px solid ${T.border}`, fontSize: 14, resize: "vertical", boxSizing: "border-box", lineHeight: 1.8, fontFamily: "'Plus Jakarta Sans', sans-serif" }} />
+            <textarea value={essayText} onChange={e => setEssayText(e.target.value)} rows={12} placeholder="Paste or type your essay here..." style={{ width: "100%", padding: "12px 14px", borderRadius: T.r2, border: `1px solid ${T.border}`, fontSize: 14, resize: "vertical", boxSizing: "border-box", lineHeight: 1.8, fontFamily: T.fontBody }} />
             <div style={{ fontSize: 11, color: T.textTer, marginTop: 4 }}>{essayText.split(/\s+/).filter(Boolean).length} words</div>
           </div>
           <button onClick={submitEssay} disabled={!essayTitle.trim() || !essayText.trim()} style={{ padding: "12px 24px", borderRadius: T.r2, background: essayTitle.trim() && essayText.trim() ? T.gradPrimary : T.bgMuted, color: essayTitle.trim() && essayText.trim() ? "#fff" : T.textTer, fontWeight: 700, fontSize: 14, border: "none", cursor: essayTitle.trim() && essayText.trim() ? "pointer" : "not-allowed", alignSelf: "flex-start", boxShadow: essayTitle.trim() && essayText.trim() ? T.shadowAccent : "none" }}>Submit for Peer Review</button>

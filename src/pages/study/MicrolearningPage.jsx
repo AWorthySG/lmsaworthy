@@ -22,7 +22,7 @@ function MicrolearningPage({ defaultSubject }) {
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
             <span style={{ fontSize: 28 }}>{activeModule.icon}</span>
             <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{activeModule.title}</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay }}>{activeModule.title}</div>
               <div style={{ fontSize: 11, color: theme.accent, fontWeight: 600 }}>{activeModule.duration} · {getSubject(activeModule.subject)?.name}</div>
             </div>
           </div>

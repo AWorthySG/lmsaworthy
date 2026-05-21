@@ -48,7 +48,7 @@ function SubjectDrills({ subject }) {
       {mode === "menu" && (
         <div style={{ maxWidth: 520 }}>
           <div className="grain" style={{ background: T.bgMuted, borderRadius: T.r3, padding: "24px 28px", color: T.text, border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
-            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 8 }}>Quick-Fire MCQ Drill</div>
+            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 8 }}>Quick-Fire MCQ Drill</div>
             <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6, marginBottom: 16 }}>Test your knowledge with multiple-choice questions. Each question has an explanation after you answer.</div>
             <div style={{ display: "flex", gap: 8 }}>
               {[5, 8, 10].map(n => (
@@ -117,7 +117,7 @@ function SubjectDrills({ subject }) {
       {mode === "results" && (
         <div style={{ maxWidth: 520 }}>
           <div className="scale-pop" style={{ background: T.bgMuted, borderRadius: T.r3, padding: "28px", color: T.text, border: `1px solid ${T.border}`, textAlign: "center", marginBottom: 16 }}>
-            <div style={{ fontSize: 44, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{pct}%</div>
+            <div style={{ fontSize: 44, fontWeight: 800, fontFamily: T.fontDisplay }}>{pct}%</div>
             <div style={{ fontSize: 14, color: T.textSec }}>{score} / {questions.length} correct</div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 6 }}>{pct >= 80 ? "Excellent work!" : pct >= 50 ? "Good effort — review the explanations!" : "Keep practising — you'll improve!"}</div>
           </div>

@@ -67,9 +67,9 @@ function InflationFighterGame() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ marginBottom: 8 }}><Buildings size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{onTarget} / {maxQ}</div>
+          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>{onTarget} / {maxQ}</div>
           <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>quarters on target (2-3%)</div>
           <div style={{ display: "flex", justifyContent: "center", gap: 4, marginTop: 12 }}>
             {history.slice(1).map((h, i) => (
@@ -98,7 +98,7 @@ function InflationFighterGame() {
         </div>
         <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 20, fontWeight: 800, color: inTarget ? "#51cf66" : inflation > 3 ? "#ff6b6b" : "#4A9EF5", fontFamily: "'JetBrains Mono', monospace" }}>{inflation}%</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: inTarget ? "#51cf66" : inflation > 3 ? "#ff6b6b" : "#4A9EF5", fontFamily: T.fontMono }}>{inflation}%</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>CPI</div>
           </div>
           <div style={{ textAlign: "center" }}>

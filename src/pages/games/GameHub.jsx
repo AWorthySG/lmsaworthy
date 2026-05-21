@@ -98,7 +98,7 @@ function GameHub({ subject }) {
               <ArrowLeft size={16} />
             </button>
             <div>
-              <h1 style={{ fontSize: 22, fontWeight: 700, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 8 }}>
+              <h1 style={{ fontSize: 22, fontWeight: 700, color: T.text, margin: 0, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 8 }}>
                 <span>{activeGame.emoji}</span> {activeGame.title}
               </h1>
               <p style={{ color: T.textSec, fontSize: 12, margin: "2px 0 0" }}>{activeGame.topic} · {activeGame.difficulty}</p>
@@ -167,7 +167,7 @@ function GameHub({ subject }) {
             <ArrowLeft size={16} />
           </button>
           <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 8 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: T.text, margin: 0, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 8 }}>
               <span>{activeGame.emoji}</span> {activeGame.title}
             </h1>
             <p style={{ color: T.textSec, fontSize: 12, margin: "2px 0 0" }}>{activeGame.topic}</p>
@@ -181,7 +181,7 @@ function GameHub({ subject }) {
           {GameComp ? <GameComp /> : (
             <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "40px", textAlign: "center", border: `1px solid ${T.border}` }}>
               <div style={{ fontSize: 48, marginBottom: 12 }}>{activeGame.emoji}</div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: T.text, marginBottom: 6, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{activeGame.title}</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: T.text, marginBottom: 6, fontFamily: T.fontDisplay }}>{activeGame.title}</div>
               <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6, marginBottom: 16 }}>{activeGame.desc}</div>
               <div style={{ fontSize: 12, fontWeight: 600, color: T.textTer }}>This game could not be loaded. Please try again.</div>
             </div>
@@ -194,7 +194,7 @@ function GameHub({ subject }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 20 }}>
       <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Interactive Games</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>Interactive Games</h1>
         <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>{subjectName} — learn through play</p>
       </div>
 
@@ -203,7 +203,7 @@ function GameHub({ subject }) {
         <div style={{ position: "absolute", bottom: -10, left: -10, width: 80, height: 80, borderRadius: "50%", background: `${T.accent}08` }} />
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${T.accent}, #F8B55A, ${T.accent})`, opacity: 0.6 }} />
         <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 1.2, textTransform: "uppercase", color: T.accent, marginBottom: 6 }}>Learn by Playing</div>
-        <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Each game teaches a different {subjectName} concept</div>
+        <div style={{ fontSize: 16, fontWeight: 700, fontFamily: T.fontDisplay }}>Each game teaches a different {subjectName} concept</div>
         <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>{games.length} games available · Earn coins for high scores</div>
       </div>
 
@@ -214,7 +214,7 @@ function GameHub({ subject }) {
             <div style={{ width: 52, height: 52, borderRadius: T.r2, background: g.color + "12", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{g.emoji}</div>
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                <span style={{ fontSize: 15, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{g.title}</span>
+                <span style={{ fontSize: 15, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>{g.title}</span>
                 <span style={{ fontSize: 9, fontWeight: 700, color: g.color, background: g.color + "15", padding: "2px 8px", borderRadius: 20 }}>{g.difficulty}</span>
               </div>
               <div style={{ fontSize: 10, fontWeight: 600, color: g.color, marginBottom: 4 }}>{g.topic}</div>

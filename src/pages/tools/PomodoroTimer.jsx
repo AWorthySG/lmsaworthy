@@ -21,11 +21,11 @@ function PomodoroTimer({ dispatch }) {
               setIsRunning(false);
               if (mode === "focus") {
                 setSessions(s => s + 1);
-                dispatch?.({ type: "LOG_STUDY_TIME", payload: { minutes: 25, activity: "pomodoro" } });
-                dispatch?.({ type: "ADD_TOAST", payload: { message: "Focus session complete! Take a break.", variant: "success" } });
+                dispatch({ type: "LOG_STUDY_TIME", payload: { minutes: 25, activity: "pomodoro" } });
+                dispatch({ type: "ADD_TOAST", payload: { message: "Focus session complete! Take a break.", variant: "success" } });
                 setMode("break"); setMinutes(5); setSeconds(0);
               } else {
-                dispatch?.({ type: "ADD_TOAST", payload: { message: "Break over! Ready for another session?", variant: "info" } });
+                dispatch({ type: "ADD_TOAST", payload: { message: "Break over! Ready for another session?", variant: "info" } });
                 setMode("focus"); setMinutes(25); setSeconds(0);
               }
               return 0;
@@ -52,7 +52,7 @@ function PomodoroTimer({ dispatch }) {
         <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
           {mode === "focus" ? <><Target size={12} style={{ marginRight: 4 }} /> Focus Time</> : <><Timer size={12} style={{ marginRight: 4 }} /> Break Time</>} · Session {sessions + 1}
         </div>
-        <div style={{ fontSize: 48, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace", letterSpacing: 2 }}>
+        <div style={{ fontSize: 48, fontWeight: 900, fontFamily: T.fontMono, letterSpacing: 2 }}>
           {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
         </div>
         <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 16 }}>

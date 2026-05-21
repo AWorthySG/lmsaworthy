@@ -34,7 +34,7 @@ export default function XPBar({ xp, compact }) {
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontWeight: 800, fontSize: 26, color: lv.color, fontFamily: "'JetBrains Mono', monospace", lineHeight: 1 }}>{xp}</div>
+          <div style={{ fontWeight: 800, fontSize: 26, color: lv.color, fontFamily: T.fontMono, lineHeight: 1 }}>{xp}</div>
           <div style={{ fontSize: 11, color: T.textTer }}>XP earned</div>
         </div>
       </div>

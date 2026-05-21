@@ -7,6 +7,20 @@ const CANVA_TOKEN_URL = "https://api.canva.com/rest/v1/oauth/token";
 
 const VALID_EXPORT_FORMATS = new Set(["png", "pdf", "jpg"]);
 
+function signState(nonce) {
+  const secret = process.env.CANVA_CLIENT_SECRET;
+  const sig = crypto.createHmac("sha256", secret).update(nonce).digest("hex").slice(0, 16);
+  return `${nonce}.${sig}`;
+}
+
+function verifyState(state) {
+  if (!state || typeof state !== "string") return false;
+  const dot = state.indexOf(".");
+  if (dot < 1) return false;
+  const nonce = state.slice(0, dot);
+  return signState(nonce) === state;
+}
+
 export default async function handler(req, res) {
   applyCors(req, res, { methods: "GET, POST, OPTIONS" });
 
@@ -19,15 +33,17 @@ export default async function handler(req, res) {
   try {
     switch (action) {
       case "auth-url": {
-        const state = crypto.randomUUID();
+        const nonce = crypto.randomUUID();
+        const state = signState(nonce);
         const scopes = "design:content:read design:content:write asset:read asset:write brandtemplate:content:read brandtemplate:meta:read";
         const url = `${CANVA_AUTH_URL}?response_type=code&client_id=${process.env.CANVA_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.CANVA_REDIRECT_URI)}&scope=${encodeURIComponent(scopes)}&state=${state}`;
         return res.json({ url, state });
       }
 
       case "token": {
-        const { code } = req.body;
+        const { code, state } = req.body;
         if (!code) return res.status(400).json({ error: "Missing authorization code" });
+        if (!verifyState(state)) return res.status(403).json({ error: "Invalid OAuth state — possible CSRF attempt" });
 
         const tokenRes = await fetch(CANVA_TOKEN_URL, {
           method: "POST",

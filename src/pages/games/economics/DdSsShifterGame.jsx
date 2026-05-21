@@ -64,9 +64,9 @@ function DdSsShifterGame() {
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 30%, rgba(59,170,123,0.15), transparent 60%)" }} />
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(59,170,123,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: "2px solid rgba(59,170,123,0.3)" }}>
-            <span style={{ fontSize: 24, fontWeight: 900, color: "#51cf66", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+            <span style={{ fontSize: 24, fontWeight: 900, color: "#51cf66", fontFamily: T.fontDisplay }}>{grade}</span>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{totalPoints} / {deck.length * 4}</div>
+          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: T.fontDisplay }}>{totalPoints} / {deck.length * 4}</div>
           <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>{score} perfect rounds out of {deck.length}</div>
           <div style={{ fontSize: 11, color: T.textTer, marginTop: 8 }}>
             {pct >= 80 ? "Excellent — you understand D/S shifts and their effects!" : pct >= 50 ? "Good foundation — review the scenarios you missed." : "Keep practising — focus on identifying whether buyers or sellers are affected."}
@@ -101,7 +101,7 @@ function DdSsShifterGame() {
       {/* Event card */}
       <div className="card-enter" style={{ background: "#FFFEF8", borderRadius: T.r3, padding: "24px 22px", border: "1px solid #E8E4D8", boxShadow: T.shadow2 }}>
         <div style={{ fontSize: 9, fontWeight: 700, color: "#2B7A5B", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10, display: "flex", alignItems: "center", gap: 4 }}><Newspaper size={12} color="#2B7A5B" /> Breaking News</div>
-        <div style={{ fontSize: 16, fontWeight: 700, color: T.text, lineHeight: 1.55, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.event}</div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: T.text, lineHeight: 1.55, fontFamily: T.fontDisplay }}>{s.event}</div>
       </div>
 
       {/* Phase 1: Which curve? */}
@@ -158,7 +158,7 @@ function DdSsShifterGame() {
             ].map((opt, i) => (
               <button key={i} onClick={() => selectEffects(opt.p, opt.q)} className="card-hover"
                 style={{ padding: "12px 8px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgCard, cursor: "pointer", textAlign: "center" }}>
-                <div style={{ fontSize: 16, fontWeight: 800, color: T.text, fontFamily: "'JetBrains Mono', monospace" }}>{opt.label}</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: T.text, fontFamily: T.fontMono }}>{opt.label}</div>
                 <div style={{ fontSize: 9, color: T.textTer, marginTop: 2 }}>{opt.desc}</div>
               </button>
             ))}
@@ -180,7 +180,7 @@ function DdSsShifterGame() {
           <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {/* Score banner */}
             <div style={{ background: perfect ? T.successBg : T.bgCard, borderRadius: T.r2, padding: "14px 18px", textAlign: "center", border: `1px solid ${perfect ? "#51cf6633" : T.border}` }}>
-              <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: perfect ? T.success : T.text, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{perfect ? <><Target size={22} color={T.success} /> Perfect!</> : `${pts}/4 points`}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, fontFamily: T.fontDisplay, color: perfect ? T.success : T.text, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{perfect ? <><Target size={22} color={T.success} /> Perfect!</> : `${pts}/4 points`}</div>
             </div>
 
             {/* Animated DD-SS Diagram */}

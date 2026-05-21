@@ -73,7 +73,7 @@ function StoryArchitectGame() {
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           {timerStarted && (
-            <div style={{ fontSize: 18, fontWeight: 800, color: timeLeft <= 30 ? "#ff6b6b" : timeLeft <= 60 ? "#D4A254" : "rgba(255,255,255,0.8)", fontFamily: "'JetBrains Mono', monospace" }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: timeLeft <= 30 ? "#ff6b6b" : timeLeft <= 60 ? "#D4A254" : "rgba(255,255,255,0.8)", fontFamily: T.fontMono }}>
               {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
             </div>
           )}
@@ -142,9 +142,9 @@ function StoryArchitectGame() {
           <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ width: 56, height: 56, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", border: `3px solid ${gradeColors[grade]}44` }}>
-              <span style={{ fontSize: 24, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+              <span style={{ fontSize: 24, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{totalScore} / {maxScore}</div>
+            <div style={{ fontSize: 28, fontWeight: 800, fontFamily: T.fontDisplay }}>{totalScore} / {maxScore}</div>
             <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 8, fontSize: 11, color: T.textSec }}>
               <span>Arc: {correct}/6</span>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>Red herring: {redHerringCorrect ? <CheckCircle size={12} color={T.success} /> : <XCircle size={12} color={T.danger} />}</span>

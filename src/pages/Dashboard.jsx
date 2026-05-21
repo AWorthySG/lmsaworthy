@@ -60,11 +60,11 @@ function HeroBanner() {
       {/* Content */}
       <div style={{ position: "relative", zIndex: 2, padding: "36px 32px 28px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-          <img src="/logo-aworthy.jpeg" alt="" style={{ height: 60, objectFit: "contain", borderRadius: 10 }} />
-          <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.45)", letterSpacing: 2, textTransform: "uppercase", fontFamily: "'JetBrains Mono', monospace" }}>A Worthy · Learning Platform</span>
+          <img src="/logo-aworthy.jpeg" alt="A Worthy logo" style={{ height: 60, objectFit: "contain", borderRadius: 10 }} />
+          <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 2, textTransform: "uppercase", fontFamily: T.fontMono }}>A Worthy · Learning Platform</span>
         </div>
-        <div style={{ fontSize: 32, fontWeight: 800, color: "#FEFEFE", fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1.15, letterSpacing: "-0.03em", maxWidth: 480 }}>Master Every<br/><span style={{ background: "linear-gradient(135deg, #E8C078, #D4A254)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Question Type</span></div>
-        <div style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginTop: 10, maxWidth: 400, lineHeight: 1.6, fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 300 }}>Structured frameworks for O-Level English, GP, and Economics.</div>
+        <div style={{ fontSize: 32, fontWeight: 800, color: "#FEFEFE", fontFamily: T.fontDisplay, lineHeight: 1.15, letterSpacing: "-0.03em", maxWidth: 480 }}>Master Every<br/><span style={{ background: "linear-gradient(135deg, #E8C078, #D4A254)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Question Type</span></div>
+        <div style={{ fontSize: 14, color: "rgba(255,255,255,0.75)", marginTop: 10, maxWidth: 400, lineHeight: 1.6, fontFamily: T.fontSerif, fontStyle: "italic", fontWeight: 300 }}>Structured frameworks for O-Level English, GP, and Economics.</div>
       </div>
       {/* Frosted stat bar */}
       <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "flex-start", gap: 0, background: "rgba(255,255,255,0.05)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
@@ -75,7 +75,7 @@ function HeroBanner() {
         ].map((s, i) => (
           <div key={s.label} style={{ flex: 1, textAlign: "center", padding: "12px 20px", borderRight: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{s.icon} {s.value}</div>
-            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1, marginTop: 2 }}>{s.label}</div>
+            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.65)", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1, marginTop: 2 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -112,10 +112,10 @@ function WelcomeHero({ state, authUser, userProfile, myHomework, mySubs, gradedH
             </div>
           )}
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#fff", fontFamily: "'Bricolage Grotesque', sans-serif", margin: "0 0 4px", letterSpacing: "-0.03em" }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#fff", fontFamily: T.fontDisplay, margin: "0 0 4px", letterSpacing: "-0.03em" }}>
           {greeting}, {firstName}!
         </h1>
-        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: "0 0 18px", fontFamily: "'Fraunces', serif", fontStyle: "italic", fontWeight: 300 }}>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", margin: "0 0 18px", fontFamily: T.fontSerif, fontStyle: "italic", fontWeight: 300 }}>
           {new Date().toLocaleDateString("en-SG", { weekday: "long", day: "numeric", month: "long" })} · Keep up the great work!
         </p>
 
@@ -128,8 +128,8 @@ function WelcomeHero({ state, authUser, userProfile, myHomework, mySubs, gradedH
             { value: Math.floor((state.wallet.coins || 0) / 100) + 1, label: "Level", icon: <Star size={10} color="#F59E0B" />, color: "#F59E0B" },
           ].map(stat => (
             <div key={stat.label} style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 12, padding: "12px 10px", border: "1px solid rgba(255,255,255,0.08)", textAlign: "center" }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1 }}>{stat.value}</div>
-              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: 4, letterSpacing: "0.05em", display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{stat.icon} {stat.label}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: stat.color, fontFamily: T.fontDisplay, lineHeight: 1 }}>{stat.value}</div>
+              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.65)", fontWeight: 600, marginTop: 4, letterSpacing: "0.05em", display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{stat.icon} {stat.label}</div>
             </div>
           ))}
         </div>
@@ -143,14 +143,14 @@ function ExamCountdownSection() {
   if (exams.length === 0) return null;
   return (
     <div style={{ marginBottom: 20 }}>
-      <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><Timer size={14} color={T.text} /> Exam Countdown</div>
+      <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><Timer size={14} color={T.text} /> Exam Countdown</div>
       <div style={{ display: "flex", gap: 8 }}>
         {exams.map((e, i) => {
           const theme = T[e.subject] || T.eng;
           const urgent = e.daysLeft <= 30;
           return (
             <div key={i} className="card-enter" style={{ "--i": i, flex: 1, background: urgent ? T.dangerBg : T.bgCard, borderRadius: T.r2, padding: "12px", border: `1px solid ${urgent ? T.danger + "33" : T.border}`, textAlign: "center" }}>
-              <div style={{ fontSize: 24, fontWeight: 900, color: urgent ? T.danger : theme.accent, fontFamily: "'JetBrains Mono', monospace" }}>{e.daysLeft}</div>
+              <div style={{ fontSize: 24, fontWeight: 900, color: urgent ? T.danger : theme.accent, fontFamily: T.fontMono }}>{e.daysLeft}</div>
               <div style={{ fontSize: 9, fontWeight: 600, color: T.textTer, textTransform: "uppercase" }}>days</div>
               <div style={{ fontSize: 10, fontWeight: 600, color: T.text, marginTop: 4 }}>{e.name}</div>
             </div>
@@ -186,7 +186,7 @@ function WordOfTheDaySection() {
         <span style={{ fontSize: 10, fontWeight: 700, color: T.gold, textTransform: "uppercase", letterSpacing: 0.5, display: "inline-flex", alignItems: "center", gap: 4 }}><BookOpen size={10} color={T.gold} /> Word of the Day</span>
         <span style={{ fontSize: 9, color: T.textTer }}>{getSubject(wotd.subject)?.name}</span>
       </div>
-      <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{wotd.word}</div>
+      <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay }}>{wotd.word}</div>
       <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>{wotd.def}</div>
       <div style={{ fontSize: 11, color: T.textTer, marginTop: 6, fontStyle: "italic", lineHeight: 1.5 }}>"{wotd.usage}"</div>
     </div>
@@ -197,7 +197,7 @@ function WeeklyProgressSection({ state }) {
   const wp = getWeeklyProgress(state);
   return (
     <div style={{ marginTop: 20, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><ChartLineUp size={15} color={T.text} /> This Week's Progress</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><ChartLineUp size={15} color={T.text} /> This Week's Progress</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
         {[
           { label: "Homework", value: wp.hwCompleted, icon: <ClipboardText size={10} color={T.accent} />, color: T.accent },
@@ -207,7 +207,7 @@ function WeeklyProgressSection({ state }) {
           { label: "Coins", value: `+${wp.coinsEarned}`, icon: <span style={{ fontWeight: 700, fontSize: 10, color: T.goldDark }}>$</span>, color: T.goldDark },
         ].map(s => (
           <div key={s.label} style={{ textAlign: "center", padding: "8px", borderRadius: T.r1, background: T.bgMuted }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: s.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.value}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: s.color, fontFamily: T.fontDisplay }}>{s.value}</div>
             <div style={{ fontSize: 10, color: T.textTer, display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{s.icon} {s.label}</div>
           </div>
         ))}
@@ -278,7 +278,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
             const hw = state.homework.find(h => h.id === sub.homeworkId);
             return (
               <div key={sub.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, marginBottom: 4 }}>
-                <div style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif", minWidth: 32 }}>{sub.grade}</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay, minWidth: 32 }}>{sub.grade}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: T.text }}>{hw?.title || "Homework"}</div>
                   {sub.gradeComment && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{sub.gradeComment.slice(0, 60)}...</div>}
@@ -291,7 +291,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
 
       {/* Quick actions */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Quick Actions</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>Quick Actions</div>
         <div style={{ fontSize: 11, color: T.textTer, fontWeight: 500 }}>Jump right in</div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10, marginBottom: 4 }}>
@@ -316,7 +316,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
 
       {/* Study Plan */}
       <div style={{ marginTop: 20 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 6 }}><CalendarBlank size={15} color={T.text} /> Your Study Plan</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><CalendarBlank size={15} color={T.text} /> Your Study Plan</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {generateStudyPlan(state).slice(0, 5).map((day, i) => {
             const theme = T[day.subjectId] || T.eng;
@@ -378,9 +378,9 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8, fontFamily: "'Bricolage Grotesque', sans-serif", display: "flex", alignItems: "center", gap: 5 }}><Star size={11} color={T.gold} /> The A-Worthy World</div>
-              <h1 style={{ color: "#fff", fontSize: 30, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1.15 }}>Welcome back, Creator J</h1>
-              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, margin: 0, fontWeight: 300, fontFamily: "'Fraunces', serif", fontStyle: "italic" }}>Your students are waiting — let's make today count.</p>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 5 }}><Star size={11} color={T.gold} /> The A-Worthy World</div>
+              <h1 style={{ color: "#fff", fontSize: 30, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.03em", fontFamily: T.fontDisplay, lineHeight: 1.15 }}>Welcome back, Creator J</h1>
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, margin: 0, fontWeight: 300, fontFamily: T.fontSerif, fontStyle: "italic" }}>Your students are waiting — let's make today count.</p>
             </div>
             {/* Alert pills */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
@@ -435,8 +435,8 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
             <div style={{ width: 36, height: 36, borderRadius: T.r2, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
               <s.icon size={18} color={s.color} />
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif", lineHeight: 1 }}>{s.value}</div>
-            <div style={{ fontSize: 10, fontWeight: 500, color: T.textTer, marginTop: 4, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "'Bricolage Grotesque', sans-serif" }}>{s.label}</div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay, lineHeight: 1 }}>{s.value}</div>
+            <div style={{ fontSize: 10, fontWeight: 500, color: T.textTer, marginTop: 4, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: T.fontDisplay }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -447,7 +447,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
         <StreakCalendar wallet={state.wallet} />
       </div>
 
-      <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Your Subjects</h2>
+      <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.03em", fontFamily: T.fontDisplay }}>Your Subjects</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: 14, marginBottom: 28 }}>
         {subjectProgress.map((s, idx) => {
           const theme = getSubjectTheme(s.id);
@@ -481,7 +481,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
         if (todayClasses.length === 0) return null;
         return (
           <div style={{ marginBottom: 28 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.03em", fontFamily: "'Bricolage Grotesque', sans-serif" }}>Today's Classes</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.03em", fontFamily: T.fontDisplay }}>Today's Classes</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 14 }}>
               {todayClasses.map(session => {
                 const theme = getSubjectTheme(session.subject);
@@ -518,7 +518,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, marginBottom: 28 }}>
         <Card elevated style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: 6 }}><Trophy size={16} color={T.gold} /> Class Standings</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: T.text, margin: 0, fontFamily: T.fontDisplay, letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: 6 }}><Trophy size={16} color={T.gold} /> Class Standings</h3>
             <button onClick={() => dispatch({ type: "SET_PAGE", payload: "leaderboard" })} style={{ background: T.accentLight, border: "none", borderRadius: 20, padding: "5px 14px", fontSize: 11, fontWeight: 700, color: T.accentText, cursor: "pointer", transition: "all 0.15s" }}>Full Leaderboard →</button>
           </div>
           {[...state.students].map(s => ({ ...s, xp: calcStudentXP(s, state) })).sort((a, b) => b.xp - a.xp).map((student, idx) => {
@@ -532,7 +532,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                     <span style={{ fontSize: 12, fontWeight: 650, color: T.text }}>{student.name}</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: lv.color, fontFamily: "'JetBrains Mono', monospace" }}>{student.xp} XP</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: lv.color, fontFamily: T.fontMono }}>{student.xp} XP</span>
                   </div>
                   <Progress value={getLevelProgress(student.xp)} color={lv.color} bg={lv.bg} height={4} />
                 </div>
@@ -543,7 +543,7 @@ function Dashboard({ state, dispatch, authUser, userProfile }) {
 
         <Card elevated style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: 6 }}><ChatText size={16} color={T.text} /> Community</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: T.text, margin: 0, fontFamily: T.fontDisplay, letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: 6 }}><ChatText size={16} color={T.text} /> Community</h3>
             <button onClick={() => dispatch({ type: "SET_PAGE", payload: "community" })} style={{ background: T.accentLight, border: "none", borderRadius: 20, padding: "5px 14px", fontSize: 11, fontWeight: 700, color: T.accentText, cursor: "pointer", transition: "all 0.15s" }}>View All →</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>

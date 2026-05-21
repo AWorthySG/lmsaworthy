@@ -100,7 +100,7 @@ function VocabBuilder() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 20 }}>
       <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Vocabulary Builder</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>Vocabulary Builder</h1>
         <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>Master tone words, discourse markers, and evaluative language for Papers 1 & 2</p>
       </div>
 
@@ -152,15 +152,15 @@ function VocabBuilder() {
             <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "14px 18px", border: `1px solid ${T.border}`, display: "flex", gap: 20, flexWrap: "wrap" }}>
               <div>
                 <div style={{ fontSize: 10, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>Total Words</div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{srCards.length}</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay }}>{srCards.length}</div>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>Due Today</div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: dueCount > 0 ? "#6366F1" : T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{dueCount}</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: dueCount > 0 ? "#6366F1" : T.success, fontFamily: T.fontDisplay }}>{dueCount}</div>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>Mastered</div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{srCards.filter(c => c.interval >= 21).length}</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay }}>{srCards.filter(c => c.interval >= 21).length}</div>
               </div>
             </div>
           )}
@@ -185,7 +185,7 @@ function VocabBuilder() {
             <>
               <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "20px", border: `1px solid ${T.border}`, textAlign: "center" }}>
                 <span style={{ fontSize: 9, fontWeight: 700, color: T.accent, background: T.accentLight, padding: "2px 8px", borderRadius: 20, textTransform: "uppercase" }}>{cards[current].cat}</span>
-                <div style={{ fontSize: 28, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif", marginTop: 8 }}>{cards[current].word}</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay, marginTop: 8 }}>{cards[current].word}</div>
                 <div style={{ fontSize: 12, color: T.textSec, fontStyle: "italic", marginTop: 4 }}>"{cards[current].context}"</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -256,7 +256,7 @@ function VocabBuilder() {
       {mode === "results" && (
         <div style={{ maxWidth: 520 }}>
           <div style={{ background: "linear-gradient(120deg, #0F1B3D, #216ef4)", borderRadius: T.r3, padding: "22px 26px", color: "#fff", textAlign: "center", marginBottom: 16 }}>
-            <div style={{ fontSize: 40, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{pct}%</div>
+            <div style={{ fontSize: 40, fontWeight: 800, fontFamily: T.fontDisplay }}>{pct}%</div>
             <div style={{ fontSize: 14, color: "#C8D8F5" }}>{score} / {cards.length} correct</div>
           </div>
           <div style={{ display: "flex", gap: 10 }}>

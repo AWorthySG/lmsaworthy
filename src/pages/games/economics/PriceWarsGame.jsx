@@ -77,13 +77,13 @@ function PriceWarsGame() {
         <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ marginBottom: 8 }}>{myRank === 1 ? <Trophy size={48} color={gradeColors[grade]} /> : <ChartLineUp size={48} color={gradeColors[grade]} />}</div>
-          <div style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>Final Standings</div>
+          <div style={{ fontSize: 28, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>Final Standings</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 16, textAlign: "left", maxWidth: 300, margin: "16px auto 0" }}>
             {rank.map((r, i) => (
               <div key={r.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: T.r2, background: r.name === "You" ? T.accentLight : T.bgMuted, border: `1px solid ${r.name === "You" ? T.accent + "33" : T.border}` }}>
                 <span style={{ fontSize: 18, fontWeight: 800, color: [T.accent, T.textSec, T.textTer][i] }}>#{i + 1}</span>
                 <span style={{ flex: 1, fontSize: 14, fontWeight: r.name === "You" ? 700 : 500, color: T.text }}>{r.name}</span>
-                <span style={{ fontSize: 16, fontWeight: 800, color: T.text, fontFamily: "'JetBrains Mono', monospace" }}>${r.total}</span>
+                <span style={{ fontSize: 16, fontWeight: 800, color: T.text, fontFamily: T.fontMono }}>${r.total}</span>
               </div>
             ))}
           </div>
@@ -106,7 +106,7 @@ function PriceWarsGame() {
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           {[{ label: "You", total: myTotal, color: "#D4A254" }, { label: "Rival A", total: rivalATotal, color: "rgba(255,255,255,0.6)" }, { label: "Rival B", total: rivalBTotal, color: "rgba(255,255,255,0.6)" }].map(p => (
             <div key={p.label} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: p.color, fontFamily: "'JetBrains Mono', monospace" }}>${p.total}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: p.color, fontFamily: T.fontMono }}>${p.total}</div>
               <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>{p.label}</div>
             </div>
           ))}
@@ -150,7 +150,7 @@ function PriceWarsGame() {
           <button key={opt.price} onClick={() => play(opt.price)} className="card-lift"
             style={{ flex: 1, padding: "20px 12px", borderRadius: T.r2, background: T.bgCard, border: `2px solid ${T.border}`, cursor: "pointer", textAlign: "center", transition: "all 0.15s" }}>
             <div style={{ fontSize: 28, marginBottom: 4 }}>{opt.emoji}</div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>${opt.price}</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay }}>${opt.price}</div>
             <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer }}>{opt.label.split("(")[0]}</div>
           </button>
         ))}

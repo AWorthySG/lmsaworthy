@@ -31,7 +31,7 @@ function InfoPacksInfographic() {
       {/* Hero */}
       <div style={{ background: "linear-gradient(120deg, #0F1B3D 0%, #1A2A5E 60%, #C08A00 100%)", borderRadius: T.r3, padding: "20px 22px", color: "#fff" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#F5D68A", marginBottom: 4 }}>8881 Syllabus Themes · Paper 1 Example Bank</div>
-        <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 6 }}>Info Packs — Curated Examples</div>
+        <div style={{ fontSize: 20, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 6 }}>Info Packs — Curated Examples</div>
         <div style={{ fontSize: 12, color: "#E8D8B0", lineHeight: 1.6 }}>
           {totalExamples} ready-to-use examples across {INFO_PACK_THEMES.length} syllabus themes. Each example includes region, year, detailed context, how to use it in essays, and cross-theme versatility tags. Build 30, master 10.
         </div>
@@ -91,7 +91,7 @@ function InfoPacksInfographic() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{th.theme}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>{th.theme}</span>
                     <span style={{ fontSize: 10, fontWeight: 700, color: th.color, background: th.bg, padding: "1px 7px", borderRadius: 20 }}>{th.examples.length} examples</span>
                   </div>
                   <div style={{ fontSize: 11, color: T.textSec }}>{th.desc}</div>

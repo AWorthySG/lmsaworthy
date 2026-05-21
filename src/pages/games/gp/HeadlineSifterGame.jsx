@@ -108,12 +108,12 @@ function HeadlineSifterGame() {
             {/* Newspaper texture lines */}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #0F172A, #2D3A8C)" }} />
             {/* Timer display */}
-            {!answered && <div style={{ position: "absolute", top: 12, right: 16, fontSize: 18, fontWeight: 800, color: timeLeft <= 5 ? "#E05262" : timeLeft <= 8 ? "#E5A832" : "#C8BEA8", fontFamily: "'JetBrains Mono', monospace" }}>{timeLeft}s</div>}
+            {!answered && <div style={{ position: "absolute", top: 12, right: 16, fontSize: 18, fontWeight: 800, color: timeLeft <= 5 ? "#E05262" : timeLeft <= 8 ? "#E5A832" : "#C8BEA8", fontFamily: T.fontMono }}>{timeLeft}s</div>}
             <div style={{ fontSize: 9, fontWeight: 700, color: "#9A8E78", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12, display: "flex", justifyContent: "space-between" }}>
               <span>{h.source}</span>
               {answered && timeLeft >= 10 && answered !== "timeout" && <span style={{ color: "#D4A254", fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 4 }}><Lightning size={14} color="#D4A254" /> SPEED BONUS</span>}
             </div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: "#1A1D2B", lineHeight: 1.45, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{h.text}</div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: "#1A1D2B", lineHeight: 1.45, fontFamily: T.fontDisplay }}>{h.text}</div>
             {/* Red flag indicators after answer */}
             {answered && h.redFlags.length > 0 && (
               <div style={{ marginTop: 12, display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -163,9 +163,9 @@ function HeadlineSifterGame() {
           <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 30%, ${gradeColors[grade]}15, transparent 60%)` }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-              <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+              <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
             </div>
-            <div style={{ fontSize: 36, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{score} pts</div>
+            <div style={{ fontSize: 36, fontWeight: 800, fontFamily: T.fontDisplay }}>{score} pts</div>
             <div style={{ fontSize: 14, color: T.textSec, marginTop: 4 }}>{deck.length} headlines · Speed bonuses + streak multipliers</div>
             <div style={{ fontSize: 12, color: T.textTer, marginTop: 8 }}>
               {pct >= 90 ? "🏆 Master Media Analyst — you can spot misinformation instantly!" : pct >= 70 ? "👁️ Sharp eye — a few more tricky ones to master." : pct >= 50 ? "📰 Good start — review the red flag indicators above." : "📚 Keep practising — media literacy is a crucial skill."}

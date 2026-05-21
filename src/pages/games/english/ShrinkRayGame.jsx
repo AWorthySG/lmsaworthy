@@ -60,7 +60,7 @@ function ShrinkRayGame() {
       <div className="grain" style={{ background: "linear-gradient(135deg, #0F172A, #1E2A4A)", borderRadius: T.r3, padding: "16px 20px", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
         <div>
           <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: 1 }}>Shrink Ray</div>
-          <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>
+          <div style={{ fontSize: 22, fontWeight: 800, fontFamily: T.fontDisplay }}>
             <span style={{ color: remaining <= passage.target ? "#51cf66" : "#fff" }}>{remaining}</span>
             <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 14 }}> / {passage.target} target</span>
           </div>
@@ -110,7 +110,7 @@ function ShrinkRayGame() {
           <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 30% 50%, rgba(81,207,102,0.15), transparent 60%)" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ marginBottom: 8 }}><Confetti size={48} color={T.success} /></div>
-            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 6 }}>Summary Complete!</div>
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 6 }}>Summary Complete!</div>
             <div style={{ fontSize: 13, color: T.textSec }}>{words.length} words → {remaining} words · All essential points preserved</div>
             {combo > 3 && <div style={{ marginTop: 10, fontSize: 12, fontWeight: 700, color: "#D4A254", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> Best combo: {combo}x</div>}
           </div>
@@ -121,7 +121,7 @@ function ShrinkRayGame() {
           <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 70% 50%, rgba(224,82,98,0.15), transparent 60%)" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ marginBottom: 8 }}><HeartBreak size={48} color={T.danger} /></div>
-            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 6 }}>Out of Lives!</div>
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 6 }}>Out of Lives!</div>
             <div style={{ fontSize: 13, color: T.textSec }}>Essential information was removed 3 times. The green-highlighted words below are key points.</div>
           </div>
         </div>

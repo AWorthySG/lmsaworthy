@@ -92,9 +92,9 @@ function PolicyLabGame() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ marginBottom: 8 }}><Buildings size={48} color={gradeColors[grade]} /></div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
           </div>
-          <div style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{allAbove40 ? "Balanced Governance!" : "Policy Failed"}</div>
+          <div style={{ fontSize: 28, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>{allAbove40 ? "Balanced Governance!" : "Policy Failed"}</div>
           <div style={{ fontSize: 13, color: T.textSec, marginTop: 6 }}>Lowest meter: {lowest}% · {maxRounds} rounds survived</div>
           {/* Meter final state */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: 16, textAlign: "left" }}>
@@ -102,7 +102,7 @@ function PolicyLabGame() {
               <div key={m.key} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: meters[m.key] < 40 ? T.danger : T.text }}>
                 <span>{m.emoji}</span>
                 <span style={{ fontWeight: 600 }}>{m.label}:</span>
-                <span style={{ fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>{meters[m.key]}%</span>
+                <span style={{ fontWeight: 800, fontFamily: T.fontMono }}>{meters[m.key]}%</span>
               </div>
             ))}
           </div>
@@ -128,7 +128,7 @@ function PolicyLabGame() {
         <div style={{ display: "flex", gap: 8 }}>
           {meterData.map(m => (
             <div key={m.key} style={{ textAlign: "center", minWidth: 36 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: meters[m.key] < 40 ? "#ff6b6b" : meters[m.key] < 50 ? "#D4A254" : "#51cf66", fontFamily: "'JetBrains Mono', monospace" }}>{meters[m.key]}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: meters[m.key] < 40 ? "#ff6b6b" : meters[m.key] < 50 ? "#D4A254" : "#51cf66", fontFamily: T.fontMono }}>{meters[m.key]}</div>
               <div style={{ fontSize: 7, color: "rgba(255,255,255,0.3)" }}>{m.emoji}</div>
             </div>
           ))}
@@ -151,7 +151,7 @@ function PolicyLabGame() {
           <div key={m.key} style={{ background: T.bgCard, borderRadius: T.r2, padding: "10px 14px", border: `1px solid ${meters[m.key] < 40 ? T.danger + "44" : T.border}`, transition: "border-color 0.3s" }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 6 }}>
               <span style={{ fontWeight: 600, color: T.text }}>{m.emoji} {m.label}</span>
-              <span style={{ fontWeight: 800, color: meters[m.key] < 40 ? T.danger : m.color, fontFamily: "'JetBrains Mono', monospace" }}>{meters[m.key]}%</span>
+              <span style={{ fontWeight: 800, color: meters[m.key] < 40 ? T.danger : m.color, fontFamily: T.fontMono }}>{meters[m.key]}%</span>
             </div>
             <div style={{ height: 8, background: T.bgMuted, borderRadius: 8, position: "relative" }}>
               {/* Danger zone marker at 40% */}

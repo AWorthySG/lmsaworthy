@@ -58,7 +58,7 @@ function LoginScreen() {
   const labelStyle = {
     fontSize: 10, fontWeight: 600, color: "rgba(254,254,254,0.4)",
     display: "block", marginBottom: 6, letterSpacing: "0.08em",
-    textTransform: "uppercase", fontFamily: "'Bricolage Grotesque', sans-serif",
+    textTransform: "uppercase", fontFamily: T.fontDisplay,
   };
 
   return (
@@ -163,17 +163,17 @@ function LoginScreen() {
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
             <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 44, objectFit: "contain", borderRadius: 10, boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }} />
             <div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: "#FEFEFE", fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.02em" }}>A Worthy</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: "#FEFEFE", fontFamily: T.fontDisplay, letterSpacing: "-0.02em" }}>A Worthy</div>
               <div style={{ fontSize: 9, fontWeight: 500, color: "rgba(254,254,254,0.35)", letterSpacing: "0.15em", textTransform: "uppercase" }}>Learning Platform</div>
             </div>
           </div>
 
           {/* Hero headline */}
-          <h1 className="login-hero" style={{ fontSize: 36, fontWeight: 800, color: "#FEFEFE", fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.04em", lineHeight: 1.05, margin: "0 0 16px" }}>
+          <h1 className="login-hero" style={{ fontSize: 36, fontWeight: 800, color: "#FEFEFE", fontFamily: T.fontDisplay, letterSpacing: "-0.04em", lineHeight: 1.05, margin: "0 0 16px" }}>
             Learn with<br />
             <span style={{ background: "linear-gradient(135deg, #E8C078, #D4A254, #B8860B)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>purpose.</span>
           </h1>
-          <p style={{ fontSize: 15, fontWeight: 300, color: "rgba(254,254,254,0.5)", fontFamily: "'Fraunces', serif", fontStyle: "italic", lineHeight: 1.7, maxWidth: 380, margin: "0 0 28px" }}>
+          <p style={{ fontSize: 15, fontWeight: 300, color: "rgba(254,254,254,0.5)", fontFamily: T.fontSerif, fontStyle: "italic", lineHeight: 1.7, maxWidth: 380, margin: "0 0 28px" }}>
             Singapore's most engaging platform for O-Level English, General Paper, H1 &amp; H2 Economics.
           </p>
 
@@ -181,8 +181,8 @@ function LoginScreen() {
           <div className="login-stats">
             {[{ n: "150+", l: "Resources" }, { n: "20+", l: "Games" }, { n: "4", l: "Subjects" }, { n: "100%", l: "Cambridge" }].map(s => (
               <div key={s.l}>
-                <div style={{ fontSize: 24, fontWeight: 800, color: "#D4A254", fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.03em" }}>{s.n}</div>
-                <div style={{ fontSize: 9, fontWeight: 500, color: "rgba(254,254,254,0.3)", letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: "'Bricolage Grotesque', sans-serif", marginTop: 2 }}>{s.l}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: "#D4A254", fontFamily: T.fontDisplay, letterSpacing: "-0.03em" }}>{s.n}</div>
+                <div style={{ fontSize: 9, fontWeight: 500, color: "rgba(254,254,254,0.3)", letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: T.fontDisplay, marginTop: 2 }}>{s.l}</div>
               </div>
             ))}
           </div>
@@ -204,10 +204,10 @@ function LoginScreen() {
           <div className="login-card">
             {/* Form header */}
             <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 9, fontWeight: 600, color: "rgba(254,254,254,0.35)", letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 6 }}>
+              <div style={{ fontSize: 9, fontWeight: 600, color: "rgba(254,254,254,0.35)", letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: T.fontDisplay, marginBottom: 6 }}>
                 {mode === "login" ? "Welcome back" : "Create your account"}
               </div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: "#FEFEFE", fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.03em" }}>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#FEFEFE", fontFamily: T.fontDisplay, letterSpacing: "-0.03em" }}>
                 {mode === "login" ? "Sign in" : "Get started"}
               </div>
             </div>
@@ -282,7 +282,7 @@ function LoginScreen() {
       </div>
 
       {/* Footer */}
-      <div style={{ textAlign: "center", padding: "16px 20px", fontSize: 10, color: "rgba(254,254,254,0.15)", fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 300, letterSpacing: "0.06em", position: "relative", zIndex: 1 }}>
+      <div style={{ textAlign: "center", padding: "16px 20px", fontSize: 10, color: "rgba(254,254,254,0.15)", fontFamily: T.fontDisplay, fontWeight: 300, letterSpacing: "0.06em", position: "relative", zIndex: 1 }}>
         &copy; {new Date().getFullYear()} A Worthy Learning Platform &middot; Singapore
       </div>
     </div>

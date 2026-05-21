@@ -26,12 +26,12 @@ function GP1QTypeDetail({ qt, showStrong, setShowStrong }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
         <div style={{ background: qt.bg, borderRadius: T.r1, padding: "10px 14px", border: `1px solid ${qt.color}30` }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: qt.color, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Framework</div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: qt.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{qt.framework}</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: qt.color, fontFamily: T.fontDisplay }}>{qt.framework}</div>
           <div style={{ fontSize: 11, color: T.textSec }}>{qt.frameworkFull}</div>
         </div>
         <div style={{ background: qt.counter === "Rebuttal" ? "#FFEBEC" : "#E0F6F9", borderRadius: T.r1, padding: "10px 14px", border: `1px solid ${qt.counterColor}30` }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: qt.counterColor, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Counter Approach</div>
-          <div style={{ fontSize: 15, fontWeight: 800, color: qt.counterColor, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{qt.counter}</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: qt.counterColor, fontFamily: T.fontDisplay }}>{qt.counter}</div>
           <div style={{ fontSize: 11, color: T.textSec }}>Stand: {qt.stand}</div>
         </div>
       </div>
@@ -103,7 +103,7 @@ function GP1Infographic() {
       {/* ── Two Master Structures ── */}
       <div style={{ background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, overflow: "hidden", boxShadow: T.shadow1 }}>
         <div style={{ padding: "16px 20px 12px", borderBottom: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>The Two Master Structures</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>The Two Master Structures</div>
           <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>Every GP Paper 1 question maps onto one of these two architectures — choosing wrong is a structural error</div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
@@ -113,7 +113,7 @@ function GP1Infographic() {
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "#E4EFFE", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Target size={14} color="#216ef4" weight="fill" />
               </div>
-              <span style={{ fontSize: 13, fontWeight: 800, color: "#216ef4", fontFamily: "'Bricolage Grotesque', sans-serif" }}>REFUTATION</span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: "#216ef4", fontFamily: T.fontDisplay }}>REFUTATION</span>
             </div>
             <div style={{ fontSize: 12, color: T.text, lineHeight: 1.6, marginBottom: 10 }}>
               Part A argues <strong>FOR</strong> your position.<br/>Part B presents opposing views and <strong>DEFEATS</strong> them through direct rebuttal.
@@ -130,7 +130,7 @@ function GP1Infographic() {
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "#EEEAFF", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <ChartPie size={14} color="#6660B9" weight="fill" />
               </div>
-              <span style={{ fontSize: 13, fontWeight: 800, color: "#6660B9", fontFamily: "'Bricolage Grotesque', sans-serif" }}>LIMITATION</span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: "#6660B9", fontFamily: T.fontDisplay }}>LIMITATION</span>
             </div>
             <div style={{ fontSize: 12, color: T.text, lineHeight: 1.6, marginBottom: 10 }}>
               Part A shows where the claim <strong>IS true</strong>.<br/>Part B shows where and when the claim <strong>BREAKS DOWN</strong>, using concession with evaluation.
@@ -171,7 +171,7 @@ function GP1Infographic() {
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
                       <span style={{ fontSize: 10, fontWeight: 700, color: qt.color, background: qt.bg, padding: "1px 7px", borderRadius: 20, textTransform: "uppercase", letterSpacing: 0.8 }}>Type {qt.code}</span>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{qt.title}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>{qt.title}</span>
                     </div>
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                       <span style={{ fontSize: 11, color: qt.structureColor, fontWeight: 600 }}>{qt.structure}</span>
@@ -194,7 +194,7 @@ function GP1Infographic() {
       {/* ── Paragraph Frameworks ── */}
       <div style={{ background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, overflow: "hidden", boxShadow: T.shadow1 }}>
         <div style={{ padding: "16px 20px 12px", borderBottom: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Paragraph-Level Frameworks</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>Paragraph-Level Frameworks</div>
           <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>Use the right structure for each paragraph type — click to expand</div>
         </div>
         <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
@@ -204,7 +204,7 @@ function GP1Infographic() {
               <div key={fw.id} style={{ borderRadius: T.r1, border: `1px solid ${isOpen ? fw.color : T.border}`, overflow: "hidden", transition: "border-color 0.2s" }}>
                 <button onClick={() => setActiveFramework(a => a === fw.id ? null : fw.id)}
                   style={{ width: "100%", background: isOpen ? fw.bg : "transparent", border: "none", cursor: "pointer", padding: "10px 14px", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}>
-                  <span style={{ fontSize: 16, fontWeight: 800, color: fw.color, fontFamily: "'Bricolage Grotesque', sans-serif", minWidth: 60 }}>{fw.label}</span>
+                  <span style={{ fontSize: 16, fontWeight: 800, color: fw.color, fontFamily: T.fontDisplay, minWidth: 60 }}>{fw.label}</span>
                   <span style={{ fontSize: 12, color: T.textSec, flex: 1 }}>{fw.when}</span>
                   <CaretDown size={14} color={T.textTer} style={{ flexShrink: 0, transition: "transform 0.2s", transform: isOpen ? "rotate(180deg)" : "none" }} />
                 </button>
@@ -213,7 +213,7 @@ function GP1Infographic() {
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                       {fw.steps.map((s, i) => (
                         <div key={i} style={{ flex: "1 1 160px", background: "#F5F7FE", borderRadius: T.r1, padding: "10px 12px", borderTop: `3px solid ${fw.color}` }}>
-                          <div style={{ fontSize: 18, fontWeight: 800, color: fw.color, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 2 }}>{s.abbr}</div>
+                          <div style={{ fontSize: 18, fontWeight: 800, color: fw.color, fontFamily: T.fontDisplay, marginBottom: 2 }}>{s.abbr}</div>
                           <div style={{ fontSize: 12, fontWeight: 700, color: T.text, marginBottom: 4 }}>{s.name}</div>
                           <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.5 }}>{s.desc}</div>
                         </div>
@@ -237,7 +237,7 @@ function GP1Infographic() {
       {/* ── Planning & Evaluation Tools ── */}
       <div style={{ background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, overflow: "hidden", boxShadow: T.shadow1 }}>
         <div style={{ padding: "16px 20px 12px", borderBottom: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Planning & Evaluation Tools</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>Planning & Evaluation Tools</div>
           <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>Brainstorming tools for planning · evaluation tools for within paragraphs</div>
         </div>
         <div style={{ padding: "16px 20px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
@@ -247,7 +247,7 @@ function GP1Infographic() {
               <div key={tool.id} onClick={() => setActiveTool(a => a === tool.id ? null : tool.id)}
                 style={{ borderRadius: T.r1, border: `2px solid ${isOpen ? tool.color : T.border}`, padding: 14, cursor: "pointer", transition: "all 0.2s", background: isOpen ? tool.bg : T.bgCard }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                  <span style={{ fontSize: 20, fontWeight: 800, color: tool.color, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{tool.label}</span>
+                  <span style={{ fontSize: 20, fontWeight: 800, color: tool.color, fontFamily: T.fontDisplay }}>{tool.label}</span>
                   <span style={{ fontSize: 10, background: tool.bg, color: tool.color, padding: "1px 6px", borderRadius: 10, fontWeight: 700, border: `1px solid ${tool.color}30` }}>{tool.source}</span>
                 </div>
                 <div style={{ fontSize: 11, color: T.textSec, marginBottom: isOpen ? 10 : 0 }}>{tool.when}</div>
@@ -255,7 +255,7 @@ function GP1Infographic() {
                   <div style={{ animation: "fadeSlideIn 0.15s ease" }}>
                     {tool.letters.map((l, i) => (
                       <div key={i} style={{ display: "flex", gap: 8, alignItems: "baseline", marginBottom: 4 }}>
-                        <span style={{ fontSize: 16, fontWeight: 800, color: tool.color, fontFamily: "'Bricolage Grotesque', sans-serif", minWidth: 16 }}>{l.l}</span>
+                        <span style={{ fontSize: 16, fontWeight: 800, color: tool.color, fontFamily: T.fontDisplay, minWidth: 16 }}>{l.l}</span>
                         <span style={{ fontSize: 11, color: T.text }}>{l.full}</span>
                       </div>
                     ))}
@@ -273,7 +273,7 @@ function GP1Infographic() {
         <button onClick={() => setShowBands(b => !b)}
           style={{ width: "100%", background: "none", border: "none", cursor: "pointer", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left" }}>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Band Descriptors & Time Management</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: T.fontDisplay }}>Band Descriptors & Time Management</div>
             <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>What separates Band 3 → 4 → 5, and how to pace 90 minutes</div>
           </div>
           <CaretDown size={16} color={T.textTer} style={{ flexShrink: 0, transition: "transform 0.2s", transform: showBands ? "rotate(180deg)" : "none" }} />

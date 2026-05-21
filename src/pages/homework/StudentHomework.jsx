@@ -99,7 +99,7 @@ function StudentHomework({ state, dispatch, userProfile }) {
             <ArrowLeft size={16} color={T.textSec} />
           </button>
           <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{selectedHw.title}</h1>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: T.text, margin: 0, fontFamily: T.fontDisplay }}>{selectedHw.title}</h1>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
               <span style={{ fontSize: 10, fontWeight: 700, color: subTheme.accent, background: subTheme.bg, padding: "2px 8px", borderRadius: 20 }}>{getSubject(selectedHw.subject)?.name}</span>
               <span style={{ fontSize: 11, color: isOverdue ? T.danger : T.textTer, fontWeight: isOverdue ? 700 : 400 }}>Due {selectedHw.dueDate}{isOverdue ? " — OVERDUE" : ""}</span>
@@ -119,7 +119,7 @@ function StudentHomework({ state, dispatch, userProfile }) {
           {sub?.status === "graded" && (
             <div style={{ background: T.successBg, borderRadius: T.r2, padding: "16px 18px", border: `1px solid ${T.success}33` }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                <div style={{ fontSize: 28, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{sub.grade}</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay }}>{sub.grade}</div>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: T.success, textTransform: "uppercase", letterSpacing: 0.5 }}>Your Grade</div>
                   <div style={{ fontSize: 10, color: T.textTer }}>Graded on {sub.gradedAt}</div>
@@ -241,7 +241,7 @@ function StudentHomework({ state, dispatch, userProfile }) {
             <ClipboardText size={20} weight="duotone" color={T.accent} />
           </div>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: T.text, margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>My Homework</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: T.text, margin: 0, fontFamily: T.fontDisplay }}>My Homework</h1>
             <p style={{ color: T.textSec, fontSize: 13, margin: 0 }}>View assignments and submit your work</p>
           </div>
         </div>
@@ -305,7 +305,7 @@ function StudentHomework({ state, dispatch, userProfile }) {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", gap: 6, flexShrink: 0 }}>
                   <span style={{ fontSize: 10, fontWeight: 700, color: statusInfo.color, background: statusInfo.bg, padding: "3px 10px", borderRadius: 20 }}>{statusInfo.label}</span>
-                  {sub?.grade && <span style={{ fontSize: 18, fontWeight: 800, color: T.success, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{sub.grade}</span>}
+                  {sub?.grade && <span style={{ fontSize: 18, fontWeight: 800, color: T.success, fontFamily: T.fontDisplay }}>{sub.grade}</span>}
                   <ArrowRight size={14} color={T.textTer} />
                 </div>
               </div>

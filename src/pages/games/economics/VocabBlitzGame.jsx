@@ -92,9 +92,9 @@ function VocabBlitzGame() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ marginBottom: 8 }}>{lives > 0 ? <Lightning size={48} color={gradeColors[grade]} /> : <HeartBreak size={48} color={T.danger} />}</div>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: gradeColors[grade] + "22", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: `3px solid ${gradeColors[grade]}44` }}>
-            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: "'Bricolage Grotesque', sans-serif" }}>{grade}</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: gradeColors[grade], fontFamily: T.fontDisplay }}>{grade}</span>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", color: T.text }}>{score} pts</div>
+          <div style={{ fontSize: 32, fontWeight: 800, fontFamily: T.fontDisplay, color: T.text }}>{score} pts</div>
           <div style={{ fontSize: 14, color: T.textSec, marginTop: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{current} words · Best combo: <Flame size={14} color={T.textSec} />{bestCombo}x</div>
           <div style={{ fontSize: 12, color: T.textTer, marginTop: 12 }}>
             {grade === "S" ? "Vocabulary master! Band 5 material." : grade === "A" ? "Excellent range — keep building!" : "Practice makes perfect — try again to improve."}
@@ -118,7 +118,7 @@ function VocabBlitzGame() {
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
           {combo > 1 && <div className="scale-pop" style={{ background: "rgba(248,181,90,0.2)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 800, color: "#D4A254", display: "flex", alignItems: "center", gap: 4 }}><Flame size={14} color="#D4A254" /> {combo}x</div>}
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#D4A254", fontFamily: "'JetBrains Mono', monospace" }}>{score}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#D4A254", fontFamily: T.fontMono }}>{score}</div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}>SCORE</div>
           </div>
           <div style={{ display: "flex", gap: 3 }}>
@@ -134,9 +134,9 @@ function VocabBlitzGame() {
 
       {/* Word card */}
       <div className="card-enter" style={{ background: T.bgCard, borderRadius: T.r3, padding: "32px 28px", border: `1px solid ${T.border}`, textAlign: "center", boxShadow: T.shadow2, position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 12, right: 16, fontSize: 24, fontWeight: 800, color: timerColor, fontFamily: "'JetBrains Mono', monospace" }}>{timeLeft}s</div>
+        <div style={{ position: "absolute", top: 12, right: 16, fontSize: 24, fontWeight: 800, color: timerColor, fontFamily: T.fontMono }}>{timeLeft}s</div>
         {speedBonus && <div className="scale-pop" style={{ position: "absolute", top: 12, left: 16, fontSize: 11, fontWeight: 800, color: "#D4A254", background: "rgba(248,181,90,0.15)", padding: "2px 10px", borderRadius: 20, display: "flex", alignItems: "center", gap: 3 }}><Lightning size={12} color="#D4A254" /> SPEED BONUS x2</div>}
-        <div style={{ fontSize: 36, fontWeight: 800, color: T.text, fontFamily: "'Bricolage Grotesque', sans-serif", letterSpacing: "-0.03em" }}>{w.word}</div>
+        <div style={{ fontSize: 36, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay, letterSpacing: "-0.03em" }}>{w.word}</div>
         <div style={{ fontSize: 12, color: T.textTer, marginTop: 8 }}>Select the correct definition</div>
       </div>
 

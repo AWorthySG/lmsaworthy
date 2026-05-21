@@ -61,14 +61,14 @@ function PracticeQuestions() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 20 }}>
       <div>
-        <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: "'Bricolage Grotesque', sans-serif" }}>Practice Drills</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #1A1816, #3D3832)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>Practice Drills</h1>
         <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>Identify question types, structures & frameworks under timed conditions</p>
       </div>
 
       {mode === "menu" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 520 }}>
           <div style={{ background: "linear-gradient(120deg, #0F1B3D, #216ef4)", borderRadius: T.r3, padding: "22px 26px", color: "#fff" }}>
-            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif", marginBottom: 8 }}>Question Analysis Drill</div>
+            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 8 }}>Question Analysis Drill</div>
             <div style={{ fontSize: 13, color: "#C8D8F5", lineHeight: 1.6, marginBottom: 16 }}>You'll see real GP essay questions. For each, identify the question type, master structure, and recommended framework. Timed to simulate the 5–7 minute selection phase.</div>
             <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 16 }}>
               <span style={{ fontSize: 12, color: "#8BAEED", fontWeight: 600 }}>Questions:</span>
@@ -103,7 +103,7 @@ function PracticeQuestions() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec }}>Question {current + 1} of {questions.length}</span>
             <div style={{ display: "flex", alignItems: "center", gap: 6, color: timeLeft < 30 ? T.danger : T.textSec }}>
-              <Timer size={14} /> <span style={{ fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{fmtTime(timeLeft)}</span>
+              <Timer size={14} /> <span style={{ fontSize: 13, fontWeight: 700, fontFamily: T.fontMono }}>{fmtTime(timeLeft)}</span>
             </div>
           </div>
           <div style={{ height: 4, background: T.bgMuted, borderRadius: 8 }}>
@@ -112,7 +112,7 @@ function PracticeQuestions() {
 
           <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "20px 22px", border: `2px solid ${T.accent}33`, boxShadow: T.shadow2 }}>
             <div style={{ fontSize: 9, fontWeight: 700, color: T.accent, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Identify this question</div>
-            <div style={{ fontSize: 17, fontWeight: 700, color: T.text, lineHeight: 1.6, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{questions[current].q}</div>
+            <div style={{ fontSize: 17, fontWeight: 700, color: T.text, lineHeight: 1.6, fontFamily: T.fontDisplay }}>{questions[current].q}</div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -191,7 +191,7 @@ function PracticeQuestions() {
       {mode === "results" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 640 }}>
           <div style={{ background: "linear-gradient(120deg, #0F1B3D, #216ef4)", borderRadius: T.r3, padding: "22px 26px", color: "#fff", textAlign: "center" }}>
-            <div style={{ fontSize: 40, fontWeight: 800, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{pct}%</div>
+            <div style={{ fontSize: 40, fontWeight: 800, fontFamily: T.fontDisplay }}>{pct}%</div>
             <div style={{ fontSize: 14, color: "#C8D8F5" }}>{totalScore} / {totalPossible} fields correct across {answers.length} questions</div>
             <div style={{ fontSize: 12, color: "#8BAEED", marginTop: 8 }}>{pct >= 80 ? "Excellent — you know your question types well!" : pct >= 50 ? "Good effort — review the types you missed below." : "Keep practising — revisit the Paper 1 Essay Guide."}</div>
           </div>

@@ -20,7 +20,7 @@ export default function PodiumCard({ student, rank, xp }) {
       <div style={{ textAlign: "center", marginBottom: 8 }}>
         <div style={{ fontWeight: 700, fontSize: isFirst ? 14 : 13, color: T.text }}>{student.name}</div>
         <div style={{ fontSize: 11, color: lv.color, fontWeight: 700 }}>{lv.emoji} {lv.name}</div>
-        <div style={{ fontWeight: 800, fontSize: isFirst ? 19 : 17, color: c, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{xp} XP</div>
+        <div style={{ fontWeight: 800, fontSize: isFirst ? 19 : 17, color: c, fontFamily: T.fontMono, marginTop: 2 }}>{xp} XP</div>
       </div>
       <div style={{ width: "100%", height: podiumHeights[rank], background: isFirst ? `linear-gradient(to top, ${c}EE, ${c}88, ${c}55)` : `linear-gradient(to top, ${c}EE, ${c}88)`, borderRadius: `${T.r2}px ${T.r2}px 0 0`, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 10, fontSize: isFirst ? 30 : 26, borderTop: `${isFirst ? 3 : 2}px solid ${c}`, borderLeft: `${isFirst ? 3 : 2}px solid ${c}`, borderRight: `${isFirst ? 3 : 2}px solid ${c}`, borderBottom: "none", boxShadow: isFirst ? `inset 0 2px 8px rgba(255,255,255,0.3)` : "none" }}>
         {medals[rank]}

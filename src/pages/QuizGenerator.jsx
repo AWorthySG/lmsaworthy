@@ -109,7 +109,7 @@ function QuizGenerator({ state, dispatch }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div><BackBtn onClick={() => setView("list")} /><h1 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: 0 }}>{selQuiz.title}</h1></div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 20, fontWeight: 800, color: timer.seconds < 60 ? T.danger : T.text, background: timer.seconds < 60 ? T.dangerBg : T.bgMuted, padding: "8px 16px", borderRadius: T.r2, fontFamily: "'JetBrains Mono', monospace", border: `1.5px solid ${timer.seconds < 60 ? "#FECACA" : T.border}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 20, fontWeight: 800, color: timer.seconds < 60 ? T.danger : T.text, background: timer.seconds < 60 ? T.dangerBg : T.bgMuted, padding: "8px 16px", borderRadius: T.r2, fontFamily: T.fontMono, border: `1.5px solid ${timer.seconds < 60 ? "#FECACA" : T.border}` }}>
               <Timer size={18} weight="bold" /> {timer.display}
             </div>
             {!timer.running && !submitted && <Btn onClick={timer.start} variant="secondary"><Play size={14} weight="fill" /> Start</Btn>}
@@ -152,7 +152,7 @@ function QuizGenerator({ state, dispatch }) {
       {state.quizzes.filter(q => !filterSubj || q.subject === filterSubj).length === 0 && (
         <div style={{ textAlign: "center", padding: "48px 20px" }}>
           <EmptyStateIllustration type="default" size={100} />
-          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginTop: 12, fontFamily: "'Bricolage Grotesque', sans-serif" }}>{state.quizzes.length === 0 ? "No quizzes yet" : "No quizzes for this subject"}</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginTop: 12, fontFamily: T.fontDisplay }}>{state.quizzes.length === 0 ? "No quizzes yet" : "No quizzes for this subject"}</div>
           <div style={{ fontSize: 13, color: T.textTer, marginTop: 4 }}>Create your first quiz with the button above.</div>
         </div>
       )}

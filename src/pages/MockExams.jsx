@@ -74,7 +74,7 @@ function MockExams({ state }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div><div style={{ fontSize: 12, color: T.textTer, marginBottom: 2 }}>{selExam.title}</div><h1 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: 0 }}>{section.name}</h1></div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 20, fontWeight: 800, color: timer.seconds < 300 ? T.danger : T.text, fontFamily: "'JetBrains Mono', monospace", background: timer.seconds < 300 ? T.dangerBg : T.bgMuted, padding: "8px 16px", borderRadius: T.r2, border: `1.5px solid ${timer.seconds < 300 ? "#FECACA" : T.border}` }}><Timer size={18} weight="bold" /> {timer.display}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 20, fontWeight: 800, color: timer.seconds < 300 ? T.danger : T.text, fontFamily: T.fontMono, background: timer.seconds < 300 ? T.dangerBg : T.bgMuted, padding: "8px 16px", borderRadius: T.r2, border: `1.5px solid ${timer.seconds < 300 ? "#FECACA" : T.border}` }}><Timer size={18} weight="bold" /> {timer.display}</div>
             {!timer.running && !submitted && <Btn onClick={timer.start} variant="secondary"><Play size={14} weight="fill" /> Start</Btn>}
             <Btn onClick={() => { setSubmitted(true); timer.stop(); setView("review"); }}>Submit</Btn>
           </div>
