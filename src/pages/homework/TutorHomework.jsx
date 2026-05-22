@@ -131,7 +131,7 @@ function TutorHomework({ state, dispatch }) {
             </button>
           )}
           <div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #2D3A8C, #4F5BD5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>
+            <h1 style={{ fontSize: 28, fontWeight: 800, color: T.text, margin: 0, fontFamily: T.fontDisplay }}>
               {view === "create" ? "Assign Homework" : view === "detail" ? selectedHw?.title : "Homework"}
             </h1>
             <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>

@@ -142,7 +142,7 @@ function TimedEssayWriter() {
             </div>
             <textarea value={essay} onChange={e => setEssay(e.target.value)}
               placeholder="Begin writing your essay here…"
-              style={{ flex: 1, width: "100%", padding: "14px 16px", borderRadius: T.r2, border: `1px solid ${T.border}`, fontSize: 14, fontFamily: "'Georgia', serif", lineHeight: 1.8, resize: "none", boxSizing: "border-box", color: T.text }} />
+              style={{ flex: 1, width: "100%", padding: "14px 16px", borderRadius: T.r2, border: `1px solid ${T.border}`, fontSize: 14, fontFamily: T.fontSerif, lineHeight: 1.8, resize: "none", boxSizing: "border-box", color: T.text }} />
           </div>
 
           <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>

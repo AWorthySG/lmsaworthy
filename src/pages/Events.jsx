@@ -34,7 +34,7 @@ function Events({ state, dispatch }) {
             </button>
           )}
           <div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, background: "linear-gradient(135deg, #2D3A8C, #4F5BD5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>
+            <h1 style={{ fontSize: 28, fontWeight: 800, color: T.text, margin: 0, fontFamily: T.fontDisplay }}>
               {view === "detail" ? selectedEvent?.title : "Events & Prizes"}
             </h1>
             <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>
@@ -53,7 +53,7 @@ function Events({ state, dispatch }) {
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#D4A254", marginBottom: 6 }}>Earn Prizes · Compete · Level Up</div>
             <div style={{ fontSize: 20, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 8 }}>Upcoming Events & Challenges</div>
             <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6 }}>
-              Participate in challenges using the LMS tools you already know — Timed Writer, Practice Drills, and Vocabulary. Top performers win coins, badges, and real prizes.
+              Participate in challenges using the LMS tools you already know — Timed Writer, Practice Drills, and Vocabulary. Top performers are recognised and celebrated.
             </div>
             <div style={{ display: "flex", gap: 12, marginTop: 14 }}>
               <div style={{ background: "rgba(0,0,0,0.04)", borderRadius: T.r2, padding: "8px 16px", textAlign: "center" }}>

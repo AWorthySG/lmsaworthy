@@ -9,30 +9,25 @@ import { ACTIVITY_FEED } from '../data/seedData.js';
 
 function HeroBanner() {
   return (
-    <div style={{ marginBottom: 24, borderRadius: T.r4, overflow: "hidden", border: `1px solid ${T.border}`, position: "relative", background: "linear-gradient(135deg, #0F172A 0%, #1E2A4A 40%, #2D3A8C 100%)" }}>
-      <style>{`
-        @keyframes heroFloat1 { 0%,100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(8px,-12px) rotate(3deg); } }
-        @keyframes heroFloat2 { 0%,100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(-6px,10px) rotate(-2deg); } }
-        @keyframes heroGradShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-      `}</style>
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(270deg, rgba(45,58,140,0.2), rgba(212,162,84,0.08), rgba(13,148,136,0.08), rgba(45,58,140,0.2))", backgroundSize: "400% 400%", animation: "heroGradShift 15s ease infinite" }} />
+    <div style={{ marginBottom: 24, borderRadius: T.r4, overflow: "hidden", border: `1px solid ${T.border}`, position: "relative", background: "linear-gradient(135deg, #1C1B19 0%, #2A2927 60%, #3A2220 100%)" }}>
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 80% 20%, rgba(192,57,43,0.12), transparent 60%)" }} />
       <div style={{ position: "relative", zIndex: 2, padding: "36px 32px 28px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
           <img src="/logo-aworthy.jpeg" alt="A Worthy logo" style={{ height: 60, objectFit: "contain", borderRadius: 10 }} />
-          <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: 2, textTransform: "uppercase", fontFamily: T.fontMono }}>A Worthy · Learning Platform</span>
+          <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.5)", letterSpacing: 2, textTransform: "uppercase", fontFamily: T.fontMono }}>A Worthy · Learning Platform</span>
         </div>
         <div style={{ fontSize: 32, fontWeight: 700, color: "#FEFEFE", lineHeight: 1.15, letterSpacing: "-0.02em", maxWidth: 480 }}>Master Every<br/><span style={{ background: "linear-gradient(135deg, #E8C078, #D4A254)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Question Type</span></div>
-        <div style={{ fontSize: 14, color: "rgba(255,255,255,0.75)", marginTop: 10, maxWidth: 400, lineHeight: 1.6, fontWeight: 300 }}>Structured frameworks for O-Level English, GP, and Economics.</div>
+        <div style={{ fontSize: 14, color: "rgba(255,255,255,0.6)", marginTop: 10, maxWidth: 400, lineHeight: 1.6, fontWeight: 300 }}>Structured frameworks for O-Level English, GP, and Economics.</div>
       </div>
-      <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "flex-start", gap: 0, background: "rgba(255,255,255,0.05)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "flex-start", gap: 0, background: "rgba(255,255,255,0.04)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         {[
-          { label: "Subjects", value: "5", icon: <BookOpen size={13} color="rgba(255,255,255,0.9)" /> },
+          { label: "Subjects", value: "4", icon: <BookOpen size={13} color="rgba(255,255,255,0.9)" /> },
           { label: "Question Types", value: "Every", icon: <Target size={13} color="rgba(255,255,255,0.9)" /> },
           { label: "Approach", value: "Structured", icon: <FlowArrow size={13} color="rgba(255,255,255,0.9)" /> },
         ].map((s, i) => (
           <div key={s.label} style={{ flex: 1, textAlign: "center", padding: "12px 20px", borderRight: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>{s.icon} {s.value}</div>
-            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.65)", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1, marginTop: 2 }}>{s.label}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>{s.icon} {s.value}</div>
+            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.5)", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1, marginTop: 2 }}>{s.label}</div>
           </div>
         ))}
       </div>

@@ -121,9 +121,9 @@ function VocabBuilder() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {/* Spaced Repetition Review */}
             <button onClick={startReview} disabled={dueCount === 0}
-              style={{ padding: "20px", borderRadius: T.r2, border: `2px solid ${dueCount > 0 ? "#6366F1" : T.border}`, background: dueCount > 0 ? "linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05))" : T.bgCard, cursor: dueCount > 0 ? "pointer" : "default", textAlign: "left", opacity: dueCount === 0 ? 0.5 : 1, gridColumn: "1 / -1", position: "relative", overflow: "hidden" }}>
-              {dueCount > 0 && <div style={{ position: "absolute", top: 10, right: 12, background: "#6366F1", color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 20 }}>{dueCount} due</div>}
-              <div style={{ fontSize: 22, marginBottom: 6 }}><Brain size={22} color="#6366F1" /></div>
+              style={{ padding: "20px", borderRadius: T.r2, border: `2px solid ${dueCount > 0 ? T.accent : T.border}`, background: dueCount > 0 ? T.accentLight : T.bgCard, cursor: dueCount > 0 ? "pointer" : "default", textAlign: "left", opacity: dueCount === 0 ? 0.5 : 1, gridColumn: "1 / -1", position: "relative", overflow: "hidden" }}>
+              {dueCount > 0 && <div style={{ position: "absolute", top: 10, right: 12, background: T.accent, color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 20 }}>{dueCount} due</div>}
+              <div style={{ fontSize: 22, marginBottom: 6 }}><Brain size={22} color={T.accent} /></div>
               <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4 }}>Spaced Repetition Review</div>
               <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.5 }}>
                 {dueCount > 0
@@ -156,7 +156,7 @@ function VocabBuilder() {
               </div>
               <div>
                 <div style={{ fontSize: 10, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>Due Today</div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: dueCount > 0 ? "#6366F1" : T.success, fontFamily: T.fontDisplay }}>{dueCount}</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: dueCount > 0 ? T.accent : T.success, fontFamily: T.fontDisplay }}>{dueCount}</div>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>Mastered</div>
@@ -173,12 +173,12 @@ function VocabBuilder() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: T.textSec }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span>{current + 1} / {cards.length}</span>
-              {mode === "review" && <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 20, background: "linear-gradient(135deg, #6366F1, #8B5CF6)", color: "#fff" }}>SR Review</span>}
+              {mode === "review" && <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 20, background: T.accent, color: "#fff" }}>SR Review</span>}
             </div>
             <span style={{ fontWeight: 700, color: T.success }}>{score} correct</span>
           </div>
           <div style={{ height: 4, background: T.bgMuted, borderRadius: 8 }}>
-            <div style={{ height: "100%", background: mode === "review" ? "#6366F1" : T.accent, borderRadius: 8, width: `${((current + 1) / cards.length) * 100}%`, transition: "width 0.3s" }} />
+            <div style={{ height: "100%", background: T.accent, borderRadius: 8, width: `${((current + 1) / cards.length) * 100}%`, transition: "width 0.3s" }} />
           </div>
 
           {drillType === "synonym" ? (
@@ -229,7 +229,7 @@ function VocabBuilder() {
 
           {answered !== null && (
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <button onClick={nextCard} style={{ padding: "10px 24px", borderRadius: T.r5, background: mode === "review" ? "#6366F1" : T.accent, color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
+              <button onClick={nextCard} style={{ padding: "10px 24px", borderRadius: T.r5, background: T.accent, color: "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer" }}>
                 {current + 1 >= cards.length ? "View Results" : "Next"}
               </button>
               {/* SR quality override in review mode */}

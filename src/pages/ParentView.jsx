@@ -14,16 +14,13 @@ function ParentView({ state }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ background: "linear-gradient(135deg, #0F172A, #1E2A4A, #2D3A8C)", borderRadius: T.r4, padding: "28px 24px", color: "#fff", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 80% 20%, rgba(212,162,84,0.1), transparent 60%)" }} />
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-            <img src="/logo-aworthy.jpeg" alt="A Worthy Learning" style={{ height: 36, borderRadius: 8 }} />
-            <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: 2, textTransform: "uppercase" }}>A Worthy · Parent Dashboard</span>
-          </div>
-          <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px", fontFamily: T.fontDisplay }}>Progress Report</h1>
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>Real-time overview of your child's learning journey</p>
+      <div style={{ background: T.bgCard, borderRadius: T.r4, padding: "28px 24px", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <img src="/logo-aworthy.jpeg" alt="A Worthy Learning" style={{ height: 36, borderRadius: 8 }} />
+          <span style={{ fontSize: 10, fontWeight: 600, color: T.textTer, letterSpacing: 2, textTransform: "uppercase" }}>A Worthy · Parent Dashboard</span>
         </div>
+        <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px", fontFamily: T.fontDisplay, color: T.text }}>Progress Report</h1>
+        <p style={{ fontSize: 13, color: T.textSec, margin: 0 }}>Real-time overview of your child's learning journey</p>
       </div>
 
       {/* Key Stats */}

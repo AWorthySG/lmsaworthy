@@ -46,8 +46,8 @@ function PomodoroTimer({ dispatch }) {
   const pct = mode === "focus" ? ((25 * 60 - (minutes * 60 + seconds)) / (25 * 60)) * 100 : ((5 * 60 - (minutes * 60 + seconds)) / (5 * 60)) * 100;
 
   return (
-    <div style={{ background: mode === "focus" ? "linear-gradient(135deg, #0F172A, #1E2A4A)" : "linear-gradient(135deg, #0F2A1A, #1E4A2A)", borderRadius: T.r3, padding: "24px", textAlign: "center", color: "#fff", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, background: `conic-gradient(${mode === "focus" ? "#4F5BD5" : "#16A34A"} ${pct}%, transparent ${pct}%)`, opacity: 0.08 }} />
+    <div style={{ background: mode === "focus" ? "linear-gradient(135deg, #1C1B19, #2A2927)" : "linear-gradient(135deg, #0F2A1A, #1E4A2A)", borderRadius: T.r3, padding: "24px", textAlign: "center", color: "#fff", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, background: `conic-gradient(${mode === "focus" ? T.accent : "#16A34A"} ${pct}%, transparent ${pct}%)`, opacity: 0.1 }} />
       <div style={{ position: "relative", zIndex: 1 }}>
         <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
           {mode === "focus" ? <><Target size={12} style={{ marginRight: 4 }} /> Focus Time</> : <><Timer size={12} style={{ marginRight: 4 }} /> Break Time</>} · Session {sessions + 1}

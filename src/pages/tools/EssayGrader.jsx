@@ -116,7 +116,7 @@ function EssayGrader() {
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <h1 style={{ fontSize: 28, fontWeight: 800, background: T.gradPrimary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", margin: 0, fontFamily: T.fontDisplay }}>Essay Grader</h1>
-          <span style={{ fontSize: 9, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "linear-gradient(135deg, #6366F1, #8B5CF6)", color: "#fff", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI-Powered</span>
+          <span style={{ fontSize: 9, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "linear-gradient(135deg, #C0392B, #A93226)", color: "#fff", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI-Powered</span>
         </div>
         <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>Paste your essay for AI-powered analysis against Singapore GP Band descriptors</p>
       </div>
@@ -155,7 +155,7 @@ function EssayGrader() {
             <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "20px", border: `1px solid ${T.border}`, textAlign: "center" }}>
               {analysis.aiPowered && (
                 <div style={{ marginBottom: 8 }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 10px", borderRadius: 20, background: "linear-gradient(135deg, #6366F1, #8B5CF6)", color: "#fff", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI Graded</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 10px", borderRadius: 20, background: "linear-gradient(135deg, #C0392B, #A93226)", color: "#fff", letterSpacing: "0.05em", textTransform: "uppercase" }}>AI Graded</span>
                 </div>
               )}
               <div style={{ fontSize: 10, fontWeight: 200, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: T.fontDisplay, marginBottom: 6 }}>Band</div>

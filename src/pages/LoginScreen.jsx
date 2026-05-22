@@ -43,9 +43,9 @@ function LoginScreen() {
 
   const FEATURES = [
     { icon: <Target size={20} color="#D4A254" />, title: "Practice Drills", desc: "Structured question-type frameworks" },
-    { icon: <RocketLaunch size={20} color="#D4A254" />, title: "20+ Games", desc: "Gamified learning for every subject" },
+    { icon: <RocketLaunch size={20} color="#D4A254" />, title: "AI Essay Grader", desc: "Instant AI feedback on your essays" },
     { icon: <ChartLineUp size={20} color="#D4A254" />, title: "Live Analytics", desc: "Track progress across all subjects" },
-    { icon: <Trophy size={20} color="#D4A254" />, title: "Leaderboard", desc: "Compete and celebrate achievements" },
+    { icon: <Trophy size={20} color="#D4A254" />, title: "Live Classroom", desc: "Real-time whiteboard and collaboration" },
   ];
 
   const inputStyle = {
@@ -134,9 +134,9 @@ function LoginScreen() {
 
         .login-feature-card { transition: transform 0.2s ease, background 0.2s ease; }
         .login-feature-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.07) !important; }
-        .login-input:focus { border-color: rgba(79,91,213,0.7) !important; box-shadow: 0 0 0 3px rgba(45,58,140,0.2) !important; outline: none !important; }
+        .login-input:focus { border-color: rgba(192,57,43,0.7) !important; box-shadow: 0 0 0 3px rgba(192,57,43,0.15) !important; outline: none !important; }
         .login-btn-primary { transition: transform 0.15s ease, box-shadow 0.15s ease; }
-        .login-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(45,58,140,0.45) !important; }
+        .login-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(192,57,43,0.4) !important; }
         .login-btn-primary:active:not(:disabled) { transform: translateY(0); }
 
         /* Hide decorative orbs on small screens for performance */
@@ -146,11 +146,11 @@ function LoginScreen() {
 
       {/* ── Background layers (fixed so they don't scroll) ── */}
       <div className="login-bg">
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 20% 15%, rgba(45,58,140,0.18), transparent 55%), radial-gradient(ellipse at 80% 85%, rgba(212,162,84,0.08), transparent 50%), radial-gradient(ellipse at 60% 40%, rgba(13,148,136,0.05), transparent 45%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 20% 15%, rgba(192,57,43,0.12), transparent 55%), radial-gradient(ellipse at 80% 85%, rgba(212,162,84,0.08), transparent 50%), radial-gradient(ellipse at 60% 40%, rgba(13,148,136,0.05), transparent 45%)" }} />
         <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.025) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
-        <div className="login-orb" style={{ position: "absolute", top: "8%", left: "5%", width: 280, height: 280, borderRadius: "50%", background: "radial-gradient(circle, rgba(45,58,140,0.12), transparent 70%)", animation: "loginPulse 8s ease infinite" }} />
+        <div className="login-orb" style={{ position: "absolute", top: "8%", left: "5%", width: 280, height: 280, borderRadius: "50%", background: "radial-gradient(circle, rgba(192,57,43,0.1), transparent 70%)", animation: "loginPulse 8s ease infinite" }} />
         <div className="login-orb" style={{ position: "absolute", bottom: "10%", right: "8%", width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle, rgba(212,162,84,0.08), transparent 70%)", animation: "loginPulse 10s ease infinite 2s" }} />
-        <div className="login-orb" style={{ position: "absolute", top: "18%", left: "12%", width: 60, height: 60, borderRadius: 12, border: "1px solid rgba(79,91,213,0.15)", animation: "loginFloat 9s ease-in-out infinite", transform: "rotate(15deg)" }} />
+        <div className="login-orb" style={{ position: "absolute", top: "18%", left: "12%", width: 60, height: 60, borderRadius: 12, border: "1px solid rgba(192,57,43,0.15)", animation: "loginFloat 9s ease-in-out infinite", transform: "rotate(15deg)" }} />
         <div className="login-orb" style={{ position: "absolute", bottom: "22%", left: "18%", width: 40, height: 40, borderRadius: "50%", border: "1px solid rgba(212,162,84,0.12)", animation: "loginFloat 11s ease-in-out infinite 3s" }} />
         <div className="login-orb" style={{ position: "absolute", top: "65%", right: "15%", width: 50, height: 50, borderRadius: 8, border: "1px solid rgba(13,148,136,0.12)", animation: "loginFloat 7s ease-in-out infinite 1s", transform: "rotate(-10deg)" }} />
       </div>
@@ -179,7 +179,7 @@ function LoginScreen() {
 
           {/* Stats */}
           <div className="login-stats">
-            {[{ n: "150+", l: "Resources" }, { n: "20+", l: "Games" }, { n: "4", l: "Subjects" }, { n: "100%", l: "Cambridge" }].map(s => (
+            {[{ n: "150+", l: "Resources" }, { n: "AI", l: "Essay Grader" }, { n: "4", l: "Subjects" }, { n: "100%", l: "Cambridge" }].map(s => (
               <div key={s.l}>
                 <div style={{ fontSize: 24, fontWeight: 800, color: "#D4A254", fontFamily: T.fontDisplay, letterSpacing: "-0.03em" }}>{s.n}</div>
                 <div style={{ fontSize: 9, fontWeight: 500, color: "rgba(254,254,254,0.3)", letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: T.fontDisplay, marginTop: 2 }}>{s.l}</div>
@@ -216,7 +216,7 @@ function LoginScreen() {
             <div role="tablist" style={{ display: "flex", marginBottom: 22, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.05)", padding: 3, gap: 3 }}>
               {[{ id: "login", label: "Sign In" }, { id: "register", label: "Register" }].map(tab => (
                 <button key={tab.id} role="tab" aria-selected={mode === tab.id} onClick={() => { setMode(tab.id); setError(""); }}
-                  style={{ flex: 1, padding: "9px", fontSize: 12, fontWeight: 700, border: "none", cursor: "pointer", borderRadius: 8, background: mode === tab.id ? T.accent : "transparent", color: mode === tab.id ? "#fff" : "rgba(254,254,254,0.45)", transition: "all 0.2s", boxShadow: mode === tab.id ? "0 2px 8px rgba(45,58,140,0.4)" : "none" }}>
+                  style={{ flex: 1, padding: "9px", fontSize: 12, fontWeight: 700, border: "none", cursor: "pointer", borderRadius: 8, background: mode === tab.id ? T.accent : "transparent", color: mode === tab.id ? "#fff" : "rgba(254,254,254,0.45)", transition: "all 0.2s", boxShadow: mode === tab.id ? "0 2px 8px rgba(192,57,43,0.35)" : "none" }}>
                   {tab.label}
                 </button>
               ))}
@@ -252,7 +252,7 @@ function LoginScreen() {
               )}
 
               <button type="submit" disabled={loading} className="login-btn-primary"
-                style={{ width: "100%", padding: "14px", borderRadius: 10, background: "linear-gradient(135deg, #2D3A8C, #4F5BD5)", color: "#fff", fontWeight: 700, fontSize: 14, border: "none", cursor: loading ? "wait" : "pointer", letterSpacing: "-0.01em", boxShadow: "0 4px 16px rgba(45,58,140,0.3)", opacity: loading ? 0.7 : 1 }}>
+                style={{ width: "100%", padding: "14px", borderRadius: 10, background: "linear-gradient(135deg, #C0392B, #A93226)", color: "#fff", fontWeight: 700, fontSize: 14, border: "none", cursor: loading ? "wait" : "pointer", letterSpacing: "-0.01em", boxShadow: "0 4px 16px rgba(192,57,43,0.3)", opacity: loading ? 0.7 : 1 }}>
                 {loading ? (
                   <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                     <span style={{ display: "inline-block", width: 14, height: 14, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
@@ -265,9 +265,9 @@ function LoginScreen() {
             {/* Switch mode */}
             <div style={{ textAlign: "center", marginTop: 18, fontSize: 12, color: "rgba(254,254,254,0.3)" }}>
               {mode === "login" ? (
-                <>Don't have an account? <button onClick={() => { setMode("register"); setError(""); }} style={{ background: "none", border: "none", color: "#818CF8", fontWeight: 700, cursor: "pointer", fontSize: 12 }}>Register free</button></>
+                <>Don't have an account? <button onClick={() => { setMode("register"); setError(""); }} style={{ background: "none", border: "none", color: "#D4A254", fontWeight: 700, cursor: "pointer", fontSize: 12 }}>Register free</button></>
               ) : (
-                <>Already have an account? <button onClick={() => { setMode("login"); setError(""); }} style={{ background: "none", border: "none", color: "#818CF8", fontWeight: 700, cursor: "pointer", fontSize: 12 }}>Sign in</button></>
+                <>Already have an account? <button onClick={() => { setMode("login"); setError(""); }} style={{ background: "none", border: "none", color: "#D4A254", fontWeight: 700, cursor: "pointer", fontSize: 12 }}>Sign in</button></>
               )}
             </div>
 

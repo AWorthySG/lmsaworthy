@@ -32,20 +32,6 @@ function AnalyticsDashboard({ state }) {
     });
   });
 
-  // Exam readiness score (0-100)
-  const readinessFactors = [];
-  const totalHw = state.homework.filter(h => h.status === "active").length;
-  const completedHw = submissions.filter(s => s.status === "graded" || s.status === "submitted").length;
-  readinessFactors.push(totalHw > 0 ? Math.round((completedHw / Math.max(totalHw, 1)) * 100) : 50);
-  readinessFactors.push(Math.min(100, state.wallet.streak * 10));
-  readinessFactors.push(Math.min(100, state.wallet.coins / 5));
-  const examReadiness = Math.round(readinessFactors.reduce((a, b) => a + b, 0) / readinessFactors.length);
-
-  // Study time this week (from studyLogs)
-  const weekAgo = Date.now() - 7 * 86400000;
-  const weekLogs = studyLogs.filter(l => l.timestamp > weekAgo);
-  const totalMinsWeek = weekLogs.reduce((a, l) => a + (l.minutes || 0), 0);
-
   // Attendance rate
   let totalExpected = 0, totalPresent = 0;
   state.sessions.forEach(s => {
@@ -56,6 +42,17 @@ function AnalyticsDashboard({ state }) {
   });
   const attendanceRate = totalExpected > 0 ? Math.round((totalPresent / totalExpected) * 100) : 0;
 
+  // Study time this week (from studyLogs)
+  const weekAgo = Date.now() - 7 * 86400000;
+  const weekLogs = studyLogs.filter(l => l.timestamp > weekAgo);
+  const totalMinsWeek = weekLogs.reduce((a, l) => a + (l.minutes || 0), 0);
+
+  // Exam readiness score (0-100) — based on homework completion + attendance
+  const totalHw = state.homework.filter(h => h.status === "active").length;
+  const completedHw = submissions.filter(s => s.status === "graded" || s.status === "submitted").length;
+  const hwRate = totalHw > 0 ? Math.round((completedHw / Math.max(totalHw, 1)) * 100) : 50;
+  const examReadiness = Math.round((hwRate + attendanceRate) / 2);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <PageHeader title="Analytics" subtitle="Track performance, study habits, and exam readiness" />
@@ -64,7 +61,7 @@ function AnalyticsDashboard({ state }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
         {[
           { label: "Exam Readiness", value: `${examReadiness}%`, color: examReadiness >= 70 ? T.success : examReadiness >= 40 ? T.warning : T.danger, icon: <Target size={12} /> },
-          { label: "Study Streak", value: `${state.wallet.streak}d`, color: T.accent, icon: <Flame size={12} /> },
+          { label: "Homework Done", value: `${completedHw}/${totalHw}`, color: T.accent, icon: <Flame size={12} /> },
           { label: "Attendance", value: `${attendanceRate}%`, color: attendanceRate >= 80 ? T.success : T.warning, icon: <CalendarBlank size={12} /> },
           { label: "This Week", value: `${totalMinsWeek}m`, color: T.teal, icon: <Timer size={12} /> },
         ].map(m => (
@@ -85,7 +82,7 @@ function AnalyticsDashboard({ state }) {
           <span>Not Ready</span><span>Getting There</span><span>Exam Ready</span>
         </div>
         <div style={{ marginTop: 12, fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>
-          {examReadiness >= 70 ? "You're on track! Keep up the consistent practice." : examReadiness >= 40 ? "Room for improvement. Focus on completing homework and maintaining your study streak." : "You need to increase your study activity. Start with the daily challenges and practice drills."}
+          {examReadiness >= 70 ? "You're on track! Keep up the consistent practice." : examReadiness >= 40 ? "Room for improvement. Focus on completing homework and attending sessions regularly." : "You need to increase your study activity. Start by completing outstanding homework and attending upcoming sessions."}
         </div>
       </div>
 
