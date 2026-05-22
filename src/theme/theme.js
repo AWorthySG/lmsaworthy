@@ -77,11 +77,11 @@ export const T = {
   // ── Radii ─────────────────────────────────────────────────────────────────
   r1: 6, r2: 8, r3: 12, r4: 16, r5: 20,
 
-  // ── Fonts — Geist only ────────────────────────────────────────────────────
-  fontDisplay: "'Geist', sans-serif",
-  fontBody:    "'Geist', sans-serif",
+  // ── Fonts — Nunito (warm, rounded) ───────────────────────────────────────
+  fontDisplay: "'Nunito', sans-serif",
+  fontBody:    "'Nunito', sans-serif",
   fontMono:    "'JetBrains Mono', monospace",
-  fontSerif:   "'Geist', sans-serif",
+  fontSerif:   "'Nunito', sans-serif",
 
   // ── Grade colours ─────────────────────────────────────────────────────────
   gradeS: "#B07D2A", gradeA: "#16A34A", gradeB: "#2D3A8C", gradeC: "#9A5C04", gradeD: "#C0392B",
