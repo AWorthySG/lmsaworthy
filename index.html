@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>A Worthy · Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #f1ebde; }
+  body { font-family: 'Manrope', system-ui, sans-serif; }
+  button { cursor: pointer; font-family: inherit; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(29,25,22,0.18); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+
+// ─── Palette ────────────────────────────────────────────────────────────────
+const C = {
+  // Main canvas — Studio cream paper
+  paper:      '#f1ebde',
+  paperDeep:  '#e7dfcf',
+  paperMid:   '#ece5d5',
+
+  // Sidebar — Salon forest deep
+  forest:     '#1b2a23',
+  forestMid:  '#243830',
+  forestSoft: '#2e4a3e',
+
+  // Typography
+  ink:        '#1d1916',
+  inkSoft:    '#5a5247',
+  inkFaint:   '#9c9384',
+
+  // Accents
+  oxblood:    '#7a2418',   // Studio — overdue, alert
+  oxbloodLight: '#c4604a',
+  brass:      '#a07a2e',   // Salon — feature, active
+  brassLight: '#c79a45',
+  brassGlow:  'rgba(199,154,69,0.14)',
+
+  // Subject colours (muted)
+  subEng:  '#3b5bb5',
+  subGP:   '#2f7a3e',
+  subEc1:  '#7a4a17',
+  subEc2:  '#7a2418',
+
+  // Rules
+  rule:       'rgba(29,25,22,0.13)',
+  ruleSoft:   'rgba(29,25,22,0.07)',
+  ruleForest: 'rgba(233,226,206,0.12)',
+};
+
+// ─── Nav items ──────────────────────────────────────────────────────────────
+function NavItem({ active, children, badge, dot }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '7px 12px', borderRadius: 7, marginBottom: 1,
+      background: active ? C.brassGlow : 'transparent',
+      borderLeft: `2px solid ${active ? C.brassLight : 'transparent'}`,
+      color: active ? '#f6e9c8' : 'rgba(233,226,206,0.72)',
+      fontWeight: active ? 600 : 500, fontSize: 13.5,
+      transition: 'background 0.12s',
+    }}>
+      <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+        {dot && <span style={{ width: 6, height: 6, borderRadius: 6, background: dot, flexShrink: 0, display: 'inline-block' }}/>}
+        {children}
+      </span>
+      {badge != null && (
+        <span style={{ fontSize: 11, color: active ? C.brassLight : 'rgba(233,226,206,0.42)' }}>{badge}</span>
+      )}
+    </div>
+  );
+}
+
+// ─── Countdown card ─────────────────────────────────────────────────────────
+function CountdownCard({ days, exam, paper, tone }) {
+  return (
+    <div style={{
+      background: C.paperMid, border: `1px solid ${C.rule}`, borderRadius: 14,
+      padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16,
+    }}>
+      <div style={{ width: 4, alignSelf: 'stretch', background: tone, borderRadius: 4, flexShrink: 0 }}/>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontFamily: '"Libre Caslon Text", serif', fontSize: 15.5, lineHeight: 1.15 }}>{exam}</div>
+        <div style={{ fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.inkFaint, marginTop: 3 }}>{paper}</div>
+      </div>
+      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+        <div style={{ fontFamily: 'Spectral, serif', fontWeight: 500, fontSize: 44, lineHeight: 0.95, color: tone, letterSpacing: '-0.04em' }}>{days}</div>
+        <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.inkFaint, marginTop: 4 }}>days</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Homework row ────────────────────────────────────────────────────────────
+function AgendaRow({ date, subject, title, status, statusColor, bold, last }) {
+  return (
+    <div style={{
+      display: 'grid', gridTemplateColumns: '62px 1fr 120px',
+      alignItems: 'center', gap: 14, padding: '13px 18px',
+      borderBottom: last ? 'none' : `1px solid ${C.rule}`,
+    }}>
+      <div style={{ fontFamily: 'Spectral, serif', fontSize: 17, color: C.inkSoft, fontWeight: bold ? 600 : 400, letterSpacing: '-0.01em' }}>{date}</div>
+      <div>
+        <div style={{ fontWeight: bold ? 700 : 600, fontSize: 13.5 }}>{title}</div>
+        <div style={{ fontSize: 11, letterSpacing: '0.13em', textTransform: 'uppercase', color: C.inkFaint, marginTop: 2 }}>{subject}</div>
+      </div>
+      <div style={{ fontSize: 11, letterSpacing: '0.13em', textTransform: 'uppercase', textAlign: 'right', color: statusColor, fontWeight: 700 }}>{status}</div>
+    </div>
+  );
+}
+
+// ─── Main dashboard ──────────────────────────────────────────────────────────
+function Dashboard() {
+  return (
+    <div style={{
+      display: 'grid', gridTemplateColumns: '258px 1fr',
+      height: '100vh', overflow: 'hidden',
+      background: C.paper, color: C.ink,
+      fontFamily: 'Manrope, system-ui, sans-serif',
+    }}>
+
+      {/* ── SIDEBAR ── */}
+      <aside style={{
+        background: C.forest, color: '#e9e2ce',
+        padding: '26px 18px 20px',
+        display: 'flex', flexDirection: 'column',
+        borderRight: `1px solid ${C.ruleForest}`,
+        overflowY: 'auto',
+      }}>
+        {/* Wordmark */}
+        <div style={{ marginBottom: 4 }}>
+          <div style={{ fontFamily: '"Libre Caslon Text", serif', fontSize: 23, color: '#f6e9c8', letterSpacing: '-0.01em', fontStyle: 'italic' }}>
+            A&thinsp;Worthy
+          </div>
+          <div style={{ fontSize: 10, letterSpacing: '0.26em', textTransform: 'uppercase', color: C.brassLight, marginTop: 3 }}>
+            Singapore · est. MMXX
+          </div>
+        </div>
+
+        <div style={{ height: 1, background: C.ruleForest, margin: '16px 0 14px' }}/>
+
+        {/* Core nav */}
+        <NavItem active>Dashboard</NavItem>
+        <NavItem badge={3}>Live Classroom</NavItem>
+        <NavItem>Notes</NavItem>
+        <NavItem>Goals</NavItem>
+        <NavItem badge={4}>Mistake Journal</NavItem>
+        <NavItem>Revision Checklist</NavItem>
+
+        {/* Subjects */}
+        <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.brassLight, padding: '18px 12px 6px', fontWeight: 700 }}>Subjects</div>
+        <NavItem dot={C.subEng}>O-Level English</NavItem>
+        <NavItem dot={C.subGP}>H1 General Paper</NavItem>
+        <NavItem dot={C.subEc1}>H1 Economics</NavItem>
+        <NavItem dot={C.subEc2}>H2 Economics</NavItem>
+
+        {/* Engage */}
+        <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.brassLight, padding: '18px 12px 6px', fontWeight: 700 }}>Engage</div>
+        <NavItem>Leaderboard</NavItem>
+        <NavItem>Events &amp; Prizes</NavItem>
+        <NavItem>Community</NavItem>
+
+        {/* User footer */}
+        <div style={{ marginTop: 'auto', borderTop: `1px solid ${C.ruleForest}`, paddingTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 38, height: 38, borderRadius: 38, background: C.brassLight, color: C.forest, display: 'grid', placeItems: 'center', fontFamily: '"Libre Caslon Text", serif', fontSize: 18, fontWeight: 700, flexShrink: 0 }}>C</div>
+          <div>
+            <div style={{ fontWeight: 600, color: '#f6e9c8', fontSize: 13.5 }}>Creator J.</div>
+            <div style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.brassLight }}>Form V · Student</div>
+          </div>
+        </div>
+      </aside>
+
+      {/* ── MAIN ── */}
+      <main style={{ overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+
+        {/* Masthead strip — Studio newspaper style */}
+        <div style={{
+          borderBottom: `2px solid ${C.ink}`,
+          padding: '13px 44px 10px',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+          flexShrink: 0,
+        }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.inkFaint }}>
+            Vol. III · Thursday, 22 May 2026 · Singapore
+          </div>
+          <div style={{ display: 'flex', gap: 20, fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.inkFaint }}>
+            <span>Study hrs: <b style={{ color: C.ink }}>0</b></span>
+            <span>Coins: <b style={{ color: C.ink }}>0</b></span>
+            <span>Streak: <b style={{ color: C.ink }}>0</b></span>
+          </div>
+        </div>
+
+        {/* Hero headline — Studio lede */}
+        <header style={{ padding: '28px 44px 20px', flexShrink: 0 }}>
+          <h1 style={{ fontFamily: 'Spectral, serif', fontWeight: 400, fontSize: 52, lineHeight: 1.04, letterSpacing: '-0.025em' }}>
+            Welcome back, <em style={{ color: C.brass }}>Creator</em>.<br/>
+            <span style={{ fontFamily: 'Spectral, serif', fontWeight: 400, fontSize: 42, color: C.oxblood, fontStyle: 'italic' }}>One essay overdue.</span>
+          </h1>
+          <p style={{ fontSize: 13.5, color: C.inkSoft, marginTop: 10, maxWidth: 600, lineHeight: 1.6 }}>
+            A quiet Thursday evening. Begin where the work is heaviest — your Market Failure essay was due on the 28th of March.
+          </p>
+
+          {/* Inline stat row */}
+          <div style={{ display: 'flex', gap: 20, marginTop: 16, flexWrap: 'wrap', fontSize: 13 }}>
+            {[
+              ['Coins', '0', C.ink],
+              ['Streak', '0d', C.oxblood],
+              ['Graded', '2', C.ink],
+              ['Level', '1', C.ink],
+              ['Rank', '#847', C.inkFaint],
+            ].map(([label, val, col], i) => (
+              <React.Fragment key={label}>
+                {i > 0 && <span style={{ width: 1, background: C.rule, alignSelf: 'stretch' }}/>}
+                <div><span style={{ color: C.inkFaint }}>{label} </span><b style={{ color: col }}>{val}</b></div>
+              </React.Fragment>
+            ))}
+          </div>
+        </header>
+
+        {/* ─── Three-column editorial row ─── */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1.25fr 0.95fr 1fr',
+          gap: 32, padding: '0 44px 28px',
+          borderTop: `1px solid ${C.rule}`, paddingTop: 22,
+          flexShrink: 0,
+        }}>
+
+          {/* Col 1 — Today's Brief (Salon dark panel) */}
+          <article style={{ background: C.forest, borderRadius: 16, padding: 26, position: 'relative', overflow: 'hidden', color: '#e9e2ce' }}>
+            <div style={{ fontSize: 9.5, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.brassLight, fontWeight: 700 }}>
+              Today's Brief · 22 May
+            </div>
+            <div style={{ fontFamily: '"Libre Caslon Text", serif', fontStyle: 'italic', fontSize: 13, color: C.brassLight, marginTop: 14 }}>
+              Daily Challenge · Argumentative
+            </div>
+            <h2 style={{ fontFamily: 'Spectral, serif', fontWeight: 500, fontSize: 22, lineHeight: 1.18, margin: '6px 0 10px', letterSpacing: '-0.01em' }}>
+              "Should social media platforms be banned for under-16s?"
+            </h2>
+            <p style={{ fontSize: 13, color: 'rgba(233,226,206,0.7)', lineHeight: 1.55, margin: '0 0 18px' }}>
+              An argumentative opener. Lead with the strongest objection, then turn it. Stake a clear position by sentence two.
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <button style={{
+                background: C.brassLight, color: C.forest, border: 'none',
+                padding: '10px 20px', borderRadius: 999,
+                fontWeight: 700, fontSize: 13, letterSpacing: '0.02em',
+              }}>
+                Begin the Brief
+              </button>
+              <div style={{ fontSize: 10.5, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.brassLight }}>
+                +10 coins
+              </div>
+            </div>
+            {/* Decorative monogram */}
+            <div style={{ position: 'absolute', right: -16, bottom: -52, fontFamily: '"Libre Caslon Text", serif', fontStyle: 'italic', fontSize: 200, lineHeight: 1, color: 'rgba(199,154,69,0.09)', userSelect: 'none', pointerEvents: 'none' }}>aw</div>
+          </article>
+
+          {/* Col 2 — Lexicon (Studio editorial) */}
+          <article style={{ borderLeft: `1px solid ${C.rule}`, paddingLeft: 28 }}>
+            <div style={{ fontSize: 9.5, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.inkFaint, fontWeight: 700 }}>
+              Lexicon · O-Level English
+            </div>
+            <h2 style={{ fontFamily: 'Spectral, serif', fontWeight: 400, fontSize: 40, lineHeight: 1, margin: '8px 0 4px', letterSpacing: '-0.02em' }}>
+              Ubiquitous
+            </h2>
+            <div style={{ fontFamily: 'Spectral, serif', fontStyle: 'italic', fontSize: 13, color: C.inkFaint, marginBottom: 10 }}>
+              /juːˈbɪkwɪtəs/ · adj.
+            </div>
+            <p style={{ fontSize: 13.5, color: C.ink, margin: '0 0 10px', lineHeight: 1.55 }}>
+              Found everywhere; omnipresent.
+            </p>
+            <p style={{ fontFamily: 'Spectral, serif', fontStyle: 'italic', fontSize: 14, color: C.inkSoft, margin: 0, borderLeft: `2px solid ${C.brass}`, paddingLeft: 12, lineHeight: 1.5 }}>
+              "Smartphones have become ubiquitous in modern classrooms, raising concerns about distraction."
+            </p>
+            <div style={{ marginTop: 14, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {['prevalent', 'pervasive', 'omnipresent', 'rife'].map((s) => (
+                <span key={s} style={{ padding: '4px 10px', background: C.paperMid, border: `1px solid ${C.rule}`, borderRadius: 999, fontSize: 11, color: C.inkSoft, fontFamily: '"Libre Caslon Text", serif', fontStyle: 'italic' }}>{s}</span>
+              ))}
+            </div>
+          </article>
+
+          {/* Col 3 — On Your Desk (Studio homework) */}
+          <article style={{ borderLeft: `1px solid ${C.rule}`, paddingLeft: 28 }}>
+            <div style={{ fontSize: 9.5, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.inkFaint, fontWeight: 700, marginBottom: 10 }}>
+              On Your Desk
+            </div>
+
+            {[
+              { title: 'Market Failure Essay', sub: 'H2 Economics · 28 Mar', status: 'Overdue', statusColor: C.oxblood },
+              { title: 'GP Paper 1 Timed Essay', sub: 'H1 General Paper · 18 May', status: 'Graded · A−', statusColor: C.subGP },
+              { title: 'Comprehension Drill, set 4', sub: 'O-Level English · Due 24 May', status: 'Due Fri', statusColor: C.brass },
+            ].map((item, i) => (
+              <div key={i} style={{ paddingBottom: 13, marginBottom: 13, borderBottom: i < 2 ? `1px solid ${C.rule}` : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+                  <div style={{ fontFamily: 'Spectral, serif', fontSize: 17, fontWeight: 500, lineHeight: 1.2, flex: 1 }}>{item.title}</div>
+                  <div style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: item.statusColor, fontWeight: 700, flexShrink: 0 }}>{item.status}</div>
+                </div>
+                <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{item.sub}</div>
+              </div>
+            ))}
+          </article>
+        </div>
+
+        {/* ─── Exam countdowns — Studio typographic style in Salon cards ─── */}
+        <section style={{ padding: '0 44px 28px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
+            <div style={{ fontSize: 9.5, letterSpacing: '0.3em', textTransform: 'uppercase', color: C.inkFaint, fontWeight: 700 }}>
+              Examinations · Countdown
+            </div>
+            <div style={{ fontSize: 11, color: C.inkFaint }}>Updated daily · MOE / SEAB / CAIE</div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+            <CountdownCard days={151} exam="O-Level English" paper="Paper 1" tone={C.subEng} />
+            <CountdownCard days={152} exam="O-Level English" paper="Paper 2" tone={C.subEng} />
+            <CountdownCard days={172} exam="A-Level GP" paper="Paper 1" tone={C.subGP} />
+          </div>
+        </section>
+
+        {/* ─── Lower row: Agenda + Week plan ─── */}
+        <section style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 32, padding: '0 44px 40px', flexShrink: 0 }}>
+
+          {/* Agenda (Salon table in Studio typography) */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
+              <h3 style={{ fontFamily: 'Spectral, serif', fontWeight: 400, fontSize: 22, letterSpacing: '-0.01em' }}>Your Agenda</h3>
+              <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.brass, fontWeight: 700 }}>4 entries</div>
+            </div>
+            <div style={{ background: C.paperMid, border: `1px solid ${C.rule}`, borderRadius: 14, overflow: 'hidden' }}>
+              <AgendaRow date="28 Mar" subject="H2 Economics" title="Market Failure Essay — Externalities" status="Overdue" statusColor={C.oxblood} bold />
+              <AgendaRow date="24 May" subject="O-Level English" title="Comprehension Drill, set 4" status="Due in 3 days" statusColor={C.brass} />
+              <AgendaRow date="18 May" subject="H1 General Paper" title="GP Paper 1 Timed Essay — Tech" status="Graded · A−" statusColor={C.subGP} />
+              <AgendaRow date="10 May" subject="O-Level English" title="Vocab Quiz · set 17" status="Graded · 92%" statusColor={C.subGP} last />
+            </div>
+          </div>
+
+          {/* Week plan (Studio grid, Salon labels) */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
+              <h3 style={{ fontFamily: 'Spectral, serif', fontWeight: 400, fontSize: 22, letterSpacing: '-0.01em' }}>This Week</h3>
+              <div style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.inkFaint, fontWeight: 600 }}>Wk 21 / 52</div>
+            </div>
+            <div>
+              {[
+                { day: 'Thu 22', sub: 'ENG', subColor: C.subEng, items: 'Drills 25m · Essay 45m', today: true },
+                { day: 'Fri 23', sub: 'GPR', subColor: C.subGP,  items: 'Example review · Lesson 20m' },
+                { day: 'Sat 24', sub: 'EC1', subColor: C.subEc1, items: 'Essay 45m · Game 15m' },
+                { day: 'Sun 25', sub: 'EC2', subColor: C.oxblood, items: 'Lesson 20m · Past paper 60m' },
+                { day: 'Mon 26', sub: 'ENG', subColor: C.subEng, items: 'Game 15m · Drills 25m' },
+              ].map((x, i) => (
+                <div key={i} style={{
+                  display: 'grid', gridTemplateColumns: '72px 44px 1fr',
+                  alignItems: 'center', gap: 14,
+                  padding: '10px 0',
+                  borderBottom: i < 4 ? `1px solid ${C.rule}` : 'none',
+                  background: x.today ? C.brassGlow : 'transparent',
+                  borderRadius: x.today ? 8 : 0,
+                  paddingLeft: x.today ? 10 : 0,
+                  paddingRight: x.today ? 10 : 0,
+                  marginLeft: x.today ? -10 : 0,
+                }}>
+                  <div style={{ fontFamily: 'Spectral, serif', fontSize: 15, color: x.today ? C.brass : C.inkSoft, fontWeight: x.today ? 600 : 400 }}>{x.day}</div>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em', color: x.subColor, padding: '2px 7px', border: `1px solid ${x.subColor}`, borderRadius: 4, textAlign: 'center', width: 'fit-content' }}>{x.sub}</div>
+                  <div style={{ fontSize: 13, color: C.inkSoft }}>{x.items}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Dashboard />);
+</script>
+</body>
+</html>
