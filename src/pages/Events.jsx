@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { T } from '../theme/theme.js';
 import { Confetti, Trophy, Crown, Medal, Star, Gift, CalendarBlank, Users, ArrowLeft, CheckCircle, Flame, CaretRight, RocketLaunch } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, BackBtn, Progress, StatCard } from '../components/ui';
-import { StudentAvatar, XPBar } from '../components/gamification';
+import { StudentAvatar } from '../components/gamification';
 import { initialEvents } from '../data/seedEvents.js';
 
 function Events({ state, dispatch }) {

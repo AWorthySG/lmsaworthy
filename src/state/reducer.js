@@ -1,5 +1,3 @@
-import { getStreakReward } from "../data/gamification.js";
-
 /* ━━━ REDUCER ━━━ */
 export function appReducer(state, action) {
   switch (action.type) {
@@ -171,24 +169,6 @@ export function appReducer(state, action) {
       const checklist = state.revisionChecklist || {};
       const key = action.payload;
       return { ...state, revisionChecklist: { ...checklist, [key]: !checklist[key] } };
-    }
-    case "CLAIM_DAILY_REWARD": {
-      const today = new Date().toISOString().split("T")[0];
-      if (state.wallet.lastClaim === today) return state; // already claimed today
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-      const streakContinues = state.wallet.lastClaim === yesterday;
-      const newStreak = streakContinues ? state.wallet.streak + 1 : 1;
-      const reward = getStreakReward(newStreak);
-      return {
-        ...state,
-        wallet: {
-          coins: state.wallet.coins + reward.coins,
-          streak: newStreak,
-          lastClaim: today,
-          totalClaimed: state.wallet.totalClaimed + 1,
-          history: [...state.wallet.history, { date: today, coins: reward.coins, streak: newStreak }].slice(-30),
-        },
-      };
     }
     case "MERGE_FIREBASE_STATE": {
       const merged = { ...state };

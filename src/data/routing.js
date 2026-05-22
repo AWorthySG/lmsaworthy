@@ -1,8 +1,8 @@
 import {
   House, Broadcast, Notebook, Target, BookOpen, ClipboardText,
-  Books, VideoCamera, Lightning, Scroll, RocketLaunch, BookmarkSimple,
+  Books, VideoCamera, Lightning, Scroll, BookmarkSimple,
   Sparkle, GraduationCap, Timer, Lightbulb, Hash,
-  Confetti, Crown, PencilSimpleLine, Handshake,
+  Confetti, PencilSimpleLine, Handshake,
   CalendarCheck, ChartLineUp, Eye, Scales, Medal, Gear,
 } from '../icons/icons.jsx';
 
@@ -21,7 +21,6 @@ export const NAV = [
     { id: "quizzes-eng", label: "Quizzes", icon: Lightning },
     { id: "practice-eng", label: "Practice Drills", icon: Target },
     { id: "vocab", label: "Vocabulary", icon: Scroll },
-    { id: "games-eng", label: "Games", icon: RocketLaunch },
     { id: "pastpapers-eng", label: "Past Papers", icon: Notebook },
     { id: "micro-eng", label: "Quick Lessons", icon: BookmarkSimple },
   ]},
@@ -31,7 +30,6 @@ export const NAV = [
     { id: "essaygrader", label: "Essay Grader", icon: GraduationCap },
     { id: "timedwrite", label: "Timed Writer", icon: Timer },
     { id: "example-finder", label: "Example Finder", icon: Lightbulb },
-    { id: "games-gp", label: "Games", icon: RocketLaunch },
     { id: "modelessays", label: "Model Essays", icon: GraduationCap },
     { id: "pastpapers-gp", label: "Past Papers", icon: Notebook },
     { id: "micro-gp", label: "Quick Lessons", icon: BookmarkSimple },
@@ -42,7 +40,6 @@ export const NAV = [
     { id: "quizzes-h1econ", label: "Quizzes", icon: Lightning },
     { id: "practice-h1econ", label: "Practice Drills", icon: Target },
     { id: "exams-h1econ", label: "Mock Exams", icon: Scales },
-    { id: "games-h1econ", label: "Games", icon: RocketLaunch },
     { id: "pastpapers-h1econ", label: "Past Papers", icon: Notebook },
     { id: "micro-h1econ", label: "Quick Lessons", icon: BookmarkSimple },
   ]},
@@ -52,14 +49,12 @@ export const NAV = [
     { id: "quizzes-h2econ", label: "Quizzes", icon: Lightning },
     { id: "practice-h2econ", label: "Practice Drills", icon: Target },
     { id: "exams-h2econ", label: "Mock Exams", icon: Scales },
-    { id: "games-h2econ", label: "Games", icon: RocketLaunch },
     { id: "formulas", label: "Formula Cards", icon: Hash },
     { id: "pastpapers-h2econ", label: "Past Papers", icon: Notebook },
     { id: "micro-h2econ", label: "Quick Lessons", icon: BookmarkSimple },
   ]},
   { group: "Engage", items: [
     { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
-    { id: "leaderboard", label: "Leaderboard", icon: Crown },
     { id: "peerreview", label: "Peer Review", icon: PencilSimpleLine },
     { id: "community", label: "Community", icon: Handshake },
   ]},
@@ -80,7 +75,7 @@ export const NAV = [
 export const PAGE_TO_PATH = {
   dashboard: "/", library: "/library", videos: "/videos", quizzes: "/quizzes",
   exams: "/exams", attendance: "/attendance", progress: "/progress",
-  leaderboard: "/leaderboard", community: "/community", classroom: "/classroom",
+  community: "/community", classroom: "/classroom",
   infographics: "/infographics",
   "practice-gp": "/practice/gp", "practice-eng": "/practice/eng",
   "practice-h1econ": "/practice/h1econ", "practice-h2econ": "/practice/h2econ",
@@ -97,8 +92,7 @@ export const PAGE_TO_PATH = {
   goals: "/goals", mistakes: "/mistake-journal", checklist: "/revision-checklist",
   formulas: "/formula-cards",
   certificates: "/certificates",
-  "games-eng": "/games/eng", "games-gp": "/games/gp",
-  "games-h1econ": "/games/h1econ", "games-h2econ": "/games/h2econ", events: "/events",
+  events: "/events",
   settings: "/settings",
   // Subject-suffixed IDs mapping to shared pages
   "library-eng": "/library", "library-h1econ": "/library", "library-h2econ": "/library",

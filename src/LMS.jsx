@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { T } from "./theme/theme.js";
-import { List, CaretDown, House, Books, ClipboardText, Handshake, Crown, Bell, MagnifyingGlass, Flame, Megaphone, PencilSimpleLine, Gift, Trophy, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users } from "./icons/icons.jsx";
+import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
@@ -16,8 +16,6 @@ import { EmptyStateIllustration } from "./components/ui/EmptyState.jsx";
 import ToastContainer from "./components/toast/ToastContainer.jsx";
 import BackToTop from "./components/ui/BackToTop.jsx";
 import InstallPrompt from "./components/ui/InstallPrompt.jsx";
-import { CelebrationOverlay } from "./components/gamification/CelebrationOverlay.jsx";
-import DailyRewardModal from "./components/gamification/DailyRewardModal.jsx";
 import LoginScreen from "./pages/LoginScreen.jsx";
 
 // Lazy-loaded page imports (code-split per route)
@@ -28,7 +26,6 @@ const QuizGenerator = lazy(() => import("./pages/QuizGenerator.jsx"));
 const MockExams = lazy(() => import("./pages/MockExams.jsx"));
 const Attendance = lazy(() => import("./pages/Attendance.jsx"));
 const ProgressTracker = lazy(() => import("./pages/ProgressTracker.jsx"));
-const Leaderboard = lazy(() => import("./pages/Leaderboard.jsx"));
 const Community = lazy(() => import("./pages/Community.jsx"));
 const Classroom = lazy(() => import("./pages/Classroom.jsx"));
 const LiveInfographics = lazy(() => import("./pages/infographics/LiveInfographics.jsx"));
@@ -40,7 +37,6 @@ const ExampleConnector = lazy(() => import("./pages/tools/ExampleConnector.jsx")
 const EssayGrader = lazy(() => import("./pages/tools/EssayGrader.jsx"));
 const AIMarker = lazy(() => import("./pages/tools/AIMarker.jsx"));
 const Homework = lazy(() => import("./pages/homework/Homework.jsx"));
-const GameHub = lazy(() => import("./pages/games/GameHub.jsx"));
 const Events = lazy(() => import("./pages/Events.jsx"));
 const PastPapers = lazy(() => import("./pages/study/PastPapers.jsx"));
 const MicrolearningPage = lazy(() => import("./pages/study/MicrolearningPage.jsx"));
@@ -65,7 +61,6 @@ export default function LMSAuthWrapper() {
   useEffect(() => {
     const unsub = onAuthStateChanged(firebaseAuth, async (user) => {
       if (user) {
-        // Fetch profile from database
         try {
           const snap = await get(ref(firebaseDb, `users/${user.uid}`));
           const profile = snap.val();
@@ -82,7 +77,6 @@ export default function LMSAuthWrapper() {
     return unsub;
   }, []);
 
-  // Loading state with skeleton
   if (authUser === undefined) {
     return (
       <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0B0F1A" }}>
@@ -99,12 +93,8 @@ export default function LMSAuthWrapper() {
     );
   }
 
-  // Not logged in — show login screen
-  if (!authUser) {
-    return <LoginScreen />;
-  }
+  if (!authUser) return <LoginScreen />;
 
-  // Logged in — show the LMS
   return <LMS authUser={authUser} userProfile={userProfile} />;
 }
 
@@ -112,21 +102,20 @@ function LMS({ authUser, userProfile }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [state, dispatch] = useReducer(appReducer, initialState);
-  // Persist state changes to localStorage (debounced)
+
   useEffect(() => {
     const timer = setTimeout(() => savePersistedState(state), 300);
     return () => clearTimeout(timer);
   }, [state]);
-  // Sync state to/from Firebase per user
+
   useFirebaseSync(authUser, state, dispatch);
-  // Set role from user profile on login
+
   useEffect(() => {
     if (userProfile?.role && state.role !== userProfile.role) {
       dispatch({ type: "SET_ROLE", payload: userProfile.role });
     }
   }, [userProfile?.role]);
 
-  // ━━━ URL → Page: On initial load or browser back/forward, sync URL to state
   const initializedRef = useRef(false);
   useEffect(() => {
     const pageFromUrl = PATH_TO_PAGE[location.pathname] || "dashboard";
@@ -136,20 +125,16 @@ function LMS({ authUser, userProfile }) {
     initializedRef.current = true;
   }, [location.pathname]);
 
-  // ━━━ Page → URL: When state.page changes (via dispatch), push URL
   const prevPageRef = useRef(state.page);
   useEffect(() => {
     if (!initializedRef.current) return;
     if (state.page !== prevPageRef.current) {
       const path = PAGE_TO_PATH[state.page] || "/";
-      if (location.pathname !== path) {
-        navigate(path);
-      }
+      if (location.pathname !== path) navigate(path);
       prevPageRef.current = state.page;
     }
   }, [state.page]);
 
-  // Compute notifications
   const notifications = useMemo(() => {
     const notifs = [];
     const today = new Date().toISOString().split("T")[0];
@@ -160,16 +145,9 @@ function LMS({ authUser, userProfile }) {
     if (pendingGrades > 0 && state.role === "tutor") notifs.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
     return notifs;
   }, [state.homework, state.submissions, state.role]);
+
   const [showNotifs, setShowNotifs] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [showRewardModal, setShowRewardModal] = useState(false);
-  const [celebration, setCelebration] = useState(null); // null | "coins" | "streak" | "levelup"
-  // Listen for celebration events from child components
-  useEffect(() => {
-    const handler = (e) => setCelebration(e.detail.type);
-    window.addEventListener("aworthy-celebrate", handler);
-    return () => window.removeEventListener("aworthy-celebrate", handler);
-  }, []);
   const [expandedSection, setExpandedSection] = useState(null);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("aworthy-dark") === "true");
   const [showSearch, setShowSearch] = useState(false);
@@ -177,14 +155,11 @@ function LMS({ authUser, userProfile }) {
   const searchRef = useRef(null);
   const windowWidth = useWindowWidth();
   const isMobileLayout = windowWidth < 768;
-  // On mobile, sidebar starts closed
   useEffect(() => { if (isMobileLayout) setSidebarOpen(false); }, [isMobileLayout]);
   const page = state.page;
 
-  // Dark mode persistence
   useEffect(() => { localStorage.setItem("aworthy-dark", darkMode); document.documentElement.classList.toggle("dark", darkMode); }, [darkMode]);
 
-  // Offline/online indicator
   useEffect(() => {
     const handleOffline = () => dispatch({ type: "ADD_TOAST", payload: { message: "You're offline. Changes will sync when you're back online.", variant: "info" } });
     const handleOnline = () => dispatch({ type: "ADD_TOAST", payload: { message: "Back online!", variant: "success" } });
@@ -193,13 +168,9 @@ function LMS({ authUser, userProfile }) {
     return () => { window.removeEventListener("offline", handleOffline); window.removeEventListener("online", handleOnline); };
   }, [dispatch]);
 
-  // Request push notification permission on first load
   useEffect(() => { requestPushPermission(); }, []);
-
-  // Push notifications for homework due dates
   useEffect(() => { sendHomeworkReminders(state.homework); }, [state.homework]);
 
-  // Keyboard shortcuts
   useEffect(() => {
     function handleKey(e) {
       if (e.metaKey && e.key === "k") { e.preventDefault(); setShowSearch(s => !s); }
@@ -210,7 +181,6 @@ function LMS({ authUser, userProfile }) {
   }, []);
   useEffect(() => { if (showSearch && searchRef.current) searchRef.current.focus(); }, [showSearch]);
 
-  // Global search results
   const searchResults = useMemo(() => {
     if (searchQuery.trim().length <= 1) return [];
     const q = searchQuery.toLowerCase();
@@ -223,7 +193,6 @@ function LMS({ authUser, userProfile }) {
     ].slice(0, 8);
   }, [searchQuery, state.resources, state.homework, state.videoLessons, state.posts]);
 
-  // Notification badge counts
   const hwBadge = useMemo(() => state.role === "tutor" ? state.submissions.filter(s => s.status === "submitted").length : state.homework.filter(h => h.status === "active").length, [state.role, state.submissions, state.homework]);
   const attendanceBadge = useMemo(() => state.role === "tutor" ? state.sessions.filter(s => {
     const rec = state.attendance[s.id] || {};
@@ -247,7 +216,6 @@ function LMS({ authUser, userProfile }) {
       case "exams": case "exams-h1econ": case "exams-h2econ": return <MockExams state={state} />;
       case "attendance": return <Attendance state={state} dispatch={dispatch} />;
       case "progress": return <ProgressTracker state={state} dispatch={dispatch} />;
-      case "leaderboard": return <Leaderboard state={state} dispatch={dispatch} />;
       case "community": return <Community state={state} dispatch={dispatch} />;
       case "classroom": return <Classroom state={state} dispatch={dispatch} userProfile={userProfile} />;
       case "infographics": return <LiveInfographics state={state} dispatch={dispatch} />;
@@ -261,10 +229,6 @@ function LMS({ authUser, userProfile }) {
       case "essaygrader": return <EssayGrader />;
       case "aimarker": return <AIMarker />;
       case "homework": return <Homework state={state} dispatch={dispatch} userProfile={userProfile} />;
-      case "games-eng": return <GameHub subject="eng" />;
-      case "games-gp": return <GameHub subject="gp" />;
-      case "games-h1econ": return <GameHub subject="h1econ" />;
-      case "games-h2econ": return <GameHub subject="h2econ" />;
       case "events": return <Events state={state} dispatch={dispatch} />;
       case "pastpapers": return <PastPapers state={state} dispatch={dispatch} />;
       case "pastpapers-eng": return <PastPapers state={state} dispatch={dispatch} defaultSubject="eng" />;
@@ -293,25 +257,9 @@ function LMS({ authUser, userProfile }) {
 
   return (
     <div style={{ display: "flex", minHeight: "100dvh", background: T.bg, color: T.text, fontSize: 14, lineHeight: 1.6 }}>
-      {/* Celebration overlay */}
-      {celebration && <CelebrationOverlay type={celebration} onComplete={() => setCelebration(null)} />}
-      {/* Daily Reward Modal */}
-      {showRewardModal && (
-        <DailyRewardModal
-          wallet={state.wallet}
-          onClaim={() => {
-            const prevStreak = state.wallet.streak;
-            dispatch({ type: "CLAIM_DAILY_REWARD" });
-            // Trigger celebration: streak milestone (7,14,21,30) or normal coins
-            const nextStreak = (state.wallet.lastClaim === new Date(Date.now() - 86400000).toISOString().split("T")[0]) ? prevStreak + 1 : 1;
-            if (nextStreak % 7 === 0) setCelebration("streak");
-            else setCelebration("coins");
-          }}
-          onClose={() => setShowRewardModal(false)}
-        />
-      )}
       {/* Mobile overlay backdrop */}
       {isMobileLayout && sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: T.bgOverlay, zIndex: 49, transition: "opacity 0.2s" }} />}
+
       {/* Sidebar */}
       <aside style={{
         width: sidebarOpen ? 232 : (isMobileLayout ? 0 : 56),
@@ -330,95 +278,72 @@ function LMS({ authUser, userProfile }) {
           {sidebarOpen && (
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, objectFit: "contain", borderRadius: 6 }} />
-              <span style={{ fontSize: 14, fontWeight: 600, color: T.text, letterSpacing: "-0.02em" }}>A Worthy</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: T.text, letterSpacing: "-0.01em" }}>A Worthy</span>
             </div>
           )}
         </div>
 
         {/* Nav */}
         <div style={{ flex: "1 1 0%", position: "relative", minHeight: 0 }}>
-        <nav style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, padding: sidebarOpen ? "4px 8px" : "4px 6px", overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
-          {NAV.filter(g => !g.tutorOnly || state.role === "tutor").map((group, gi) => {
-            const subjTheme = group.subject ? T[group.subject] : null;
-            const isSubject = !!group.subject;
-            const isExpanded = expandedSection === group.group;
-            const hasActiveChild = group.items.some(item => page === item.id);
+          <nav style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, padding: sidebarOpen ? "4px 8px" : "4px 6px", overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
+            {NAV.filter(g => !g.tutorOnly || state.role === "tutor").map((group, gi) => {
+              const subjTheme = group.subject ? T[group.subject] : null;
+              const isSubject = !!group.subject;
+              const isExpanded = expandedSection === group.group;
+              const hasActiveChild = group.items.some(item => page === item.id);
+              const showItems = isSubject ? (isExpanded || hasActiveChild) : true;
 
-            // Auto-expand if a child page is active
-            const showItems = isSubject ? (isExpanded || hasActiveChild) : true;
-
-            return (
-            <div key={group.group}>
-              {/* Section header — clickable for subjects, static for non-subjects */}
-              {sidebarOpen && (
-                isSubject ? (
-                  <button onClick={() => setExpandedSection(isExpanded ? null : group.group)}
-                    style={{ display: "flex", alignItems: "center", gap: 7, width: "100%", padding: "6px 8px", marginTop: gi > 0 ? 4 : 0, borderRadius: T.r2, border: "none", background: hasActiveChild ? T.bgCard : "transparent", cursor: "pointer", transition: "all 0.12s" }}
-                    onMouseEnter={e => { if (!hasActiveChild) e.currentTarget.style.background = T.sidebarHover; }}
-                    onMouseLeave={e => { if (!hasActiveChild) e.currentTarget.style.background = hasActiveChild ? T.bgCard : "transparent"; }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: hasActiveChild ? (subjTheme?.accent || T.accent) : T.textTer, flexShrink: 0 }} />
-                    <span style={{ fontSize: 11, fontWeight: 600, color: hasActiveChild ? T.text : T.textSec, flex: 1, textAlign: "left", letterSpacing: "0.02em" }}>{group.group}</span>
-                    <CaretDown size={11} color={T.textTer} style={{ transform: showItems ? "rotate(180deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }} />
-                  </button>
-                ) : (
-                  gi > 0 ? (
-                    <div style={{ padding: "12px 8px 4px", marginTop: 2 }}>
-                      <span style={{ fontSize: 10, fontWeight: 500, color: T.textTer, letterSpacing: "0.06em", textTransform: "uppercase" }}>{group.group}</span>
-                    </div>
-                  ) : null
-                )
-              )}
-              {!sidebarOpen && gi > 0 && <div style={{ height: 1, background: T.border, margin: "4px 6px" }} />}
-
-              {/* Items — collapsible for subjects, always visible otherwise */}
-              {showItems && (
-                <div style={{ animation: isSubject ? "fadeSlideIn 0.15s ease" : "none" }}>
-                  {group.items.map((item, itemIdx) => {
-                    const active = page === item.id;
-                    const hl = item.highlight && !active;
-                    const activeAccent = isSubject ? (subjTheme?.accent || T.accent) : T.accent;
-                    const activeBg = isSubject ? (subjTheme?.bg || T.accentLight) : T.accentLight;
-                    return (
-                      <button key={item.id} onClick={() => { dispatch({ type: "SET_PAGE", payload: item.id }); if (isMobileLayout) setSidebarOpen(false); }} title={item.label}
-                        onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = T.sidebarHover; }}
-                        onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = active ? T.bgCard : "transparent"; }}
-                        style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: sidebarOpen ? "7px 8px 7px 10px" : "9px 0", borderRadius: T.r2, border: "none", background: active ? T.bgCard : "transparent", color: active ? T.text : T.textSec, cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, marginBottom: 1, transition: "background 0.12s, color 0.12s", whiteSpace: "nowrap", justifyContent: sidebarOpen ? "flex-start" : "center", minHeight: 36, animation: isSubject ? `itemIn 0.15s ease ${itemIdx * 25}ms both` : "none", boxShadow: active ? T.shadow1 : "none" }}>
-                        <item.icon size={15} color={active ? T.accent : T.textTer} />
-                        {sidebarOpen && <span style={{ flex: 1, textAlign: "left" }}>{item.label}</span>}
-                        {sidebarOpen && item.id === "homework" && hwBadge > 0 && <span style={{ background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 10 }}>{hwBadge}</span>}
-                        {sidebarOpen && item.id === "attendance" && attendanceBadge > 0 && <span style={{ background: T.warning, color: "#fff", fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 10 }}>{attendanceBadge}</span>}
-                        {sidebarOpen && hl && !hwBadge && <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.accent, opacity: 0.6 }} />}
+              return (
+                <div key={group.group}>
+                  {sidebarOpen && (
+                    isSubject ? (
+                      <button onClick={() => setExpandedSection(isExpanded ? null : group.group)}
+                        style={{ display: "flex", alignItems: "center", gap: 7, width: "100%", padding: "6px 8px", marginTop: gi > 0 ? 4 : 0, borderRadius: T.r2, border: "none", background: hasActiveChild ? T.bgCard : "transparent", cursor: "pointer", transition: "all 0.12s" }}
+                        onMouseEnter={e => { if (!hasActiveChild) e.currentTarget.style.background = T.sidebarHover; }}
+                        onMouseLeave={e => { if (!hasActiveChild) e.currentTarget.style.background = hasActiveChild ? T.bgCard : "transparent"; }}>
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: hasActiveChild ? (subjTheme?.accent || T.accent) : T.textTer, flexShrink: 0 }} />
+                        <span style={{ fontSize: 11, fontWeight: 600, color: hasActiveChild ? T.text : T.textSec, flex: 1, textAlign: "left", letterSpacing: "0.02em" }}>{group.group}</span>
+                        <CaretDown size={11} color={T.textTer} style={{ transform: showItems ? "rotate(180deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }} />
                       </button>
-                    );
-                  })}
+                    ) : (
+                      gi > 0 ? (
+                        <div style={{ padding: "12px 8px 4px", marginTop: 2 }}>
+                          <span style={{ fontSize: 10, fontWeight: 500, color: T.textTer, letterSpacing: "0.06em", textTransform: "uppercase" }}>{group.group}</span>
+                        </div>
+                      ) : null
+                    )
+                  )}
+                  {!sidebarOpen && gi > 0 && <div style={{ height: 1, background: T.border, margin: "4px 6px" }} />}
+
+                  {showItems && (
+                    <div style={{ animation: isSubject ? "fadeSlideIn 0.15s ease" : "none" }}>
+                      {group.items.map((item, itemIdx) => {
+                        const active = page === item.id;
+                        const hl = item.highlight && !active;
+                        return (
+                          <button key={item.id} onClick={() => { dispatch({ type: "SET_PAGE", payload: item.id }); if (isMobileLayout) setSidebarOpen(false); }} title={item.label}
+                            onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = T.sidebarHover; }}
+                            onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = active ? T.bgCard : "transparent"; }}
+                            style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: sidebarOpen ? "7px 8px 7px 10px" : "9px 0", borderRadius: T.r2, border: "none", background: active ? T.bgCard : "transparent", color: active ? T.text : T.textSec, cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, marginBottom: 1, transition: "background 0.12s, color 0.12s", whiteSpace: "nowrap", justifyContent: sidebarOpen ? "flex-start" : "center", minHeight: 36, animation: isSubject ? `itemIn 0.15s ease ${itemIdx * 25}ms both` : "none", boxShadow: active ? T.shadow1 : "none" }}>
+                            <item.icon size={15} color={active ? T.accent : T.textTer} />
+                            {sidebarOpen && <span style={{ flex: 1, textAlign: "left" }}>{item.label}</span>}
+                            {sidebarOpen && item.id === "homework" && hwBadge > 0 && <span style={{ background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 10 }}>{hwBadge}</span>}
+                            {sidebarOpen && item.id === "attendance" && attendanceBadge > 0 && <span style={{ background: T.warning, color: "#fff", fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 10 }}>{attendanceBadge}</span>}
+                            {sidebarOpen && hl && !hwBadge && <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.accent, opacity: 0.6 }} />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          );
-          })}
-        </nav>
+              );
+            })}
+          </nav>
         </div>
 
-        {/* Bottom: coin bar + profile */}
+        {/* Bottom: profile */}
         {sidebarOpen && (
           <div style={{ padding: "10px 12px 14px", borderTop: `1px solid ${T.border}` }}>
-            {/* Coin + Streak */}
-            <button onClick={() => setShowRewardModal(true)}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: T.r2, background: T.bgCard, border: `1px solid ${T.border}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, transition: "all 0.12s", boxShadow: T.shadow1 }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = T.shadow2}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = T.shadow1}>
-              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <span style={{ fontSize: 12, color: T.gold }}>◆</span>
-                <span style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{state.wallet.coins}</span>
-                <span style={{ fontSize: 10, color: T.textTer }}>coins</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <Flame size={12} color={T.accent} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{state.wallet.streak}</span>
-                <span style={{ fontSize: 10, color: T.textTer }}>streak</span>
-              </div>
-            </button>
-            {/* User profile */}
             <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 8 }}>
               <div style={{ width: 32, height: 32, borderRadius: T.r2, background: T.accent, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, fontSize: 13, flexShrink: 0 }}>{(userProfile?.name || authUser?.displayName || "U").charAt(0).toUpperCase()}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -448,7 +373,7 @@ function LMS({ authUser, userProfile }) {
 
       {/* Main */}
       <main style={{ flex: 1, padding: isMobileLayout ? "0 16px 80px" : "0 40px 28px", overflowY: "auto", maxHeight: "100dvh", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain" }}>
-        {/* Top bar — mobile: hamburger + logo + bell. Desktop: just bell */}
+        {/* Top bar */}
         <div className="glass-header" style={{ display: "flex", alignItems: "center", gap: 10, padding: isMobileLayout ? "12px 0" : "14px 0 8px", position: "sticky", top: 0, zIndex: 10, maxWidth: 1080, margin: "0 auto" }}>
           {isMobileLayout && (
             <button onClick={() => setSidebarOpen(true)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
@@ -457,11 +382,9 @@ function LMS({ authUser, userProfile }) {
           )}
           {isMobileLayout && <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, objectFit: "contain" }} />}
           <div style={{ flex: 1 }} />
-          {/* Search button */}
           <button onClick={() => setShowSearch(true)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 40, fontSize: 12, color: T.textTer }}>
             <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: T.fontMono }}>⌘K</kbd>}
           </button>
-          {/* Notification bell */}
           <div style={{ position: "relative" }}>
             <button onClick={() => setShowNotifs(n => !n)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", position: "relative", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
               <Bell size={20} color={T.textSec} />
@@ -473,9 +396,9 @@ function LMS({ authUser, userProfile }) {
                 {notifications.length === 0 ? (
                   <div style={{ padding: "20px 14px", textAlign: "center", fontSize: 12, color: T.textTer }}><EmptyStateIllustration type="celebration" size={60} /><div style={{ marginTop: 6 }}>All caught up!</div></div>
                 ) : notifications.map((n, i) => (
-                  <button key={i} onClick={() => { dispatch({ type: "SET_PAGE", payload: n.page }); setShowNotifs(false); if (n.type === "reward") setShowRewardModal(true); }}
+                  <button key={i} onClick={() => { dispatch({ type: "SET_PAGE", payload: n.page }); setShowNotifs(false); }}
                     style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", borderBottom: `1px solid ${T.border}`, background: "none", border: "none", borderBottomStyle: "solid", borderBottomWidth: 1, borderBottomColor: T.border, cursor: "pointer", width: "100%", textAlign: "left" }}>
-                    <span style={{ display: "flex", alignItems: "center" }}>{n.type === "homework" ? <ClipboardText size={16} color={T.textSec} /> : n.type === "grading" ? <PencilSimpleLine size={16} color={T.textSec} /> : <Gift size={16} color={T.textSec} />}</span>
+                    <span style={{ display: "flex", alignItems: "center" }}>{n.type === "homework" ? <ClipboardText size={16} color={T.textSec} /> : <PencilSimpleLine size={16} color={T.textSec} />}</span>
                     <span style={{ fontSize: 12, color: T.text, lineHeight: 1.4 }}>{n.msg}</span>
                   </button>
                 ))}
@@ -483,6 +406,7 @@ function LMS({ authUser, userProfile }) {
             )}
           </div>
         </div>
+
         {/* Tutor Announcement Banner */}
         {state.announcement && (
           <div style={{ maxWidth: 1080, margin: "0 auto 8px", padding: "10px 16px", borderRadius: T.r2, background: "linear-gradient(135deg, #0F172A, #1E2A4A)", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
@@ -491,6 +415,7 @@ function LMS({ authUser, userProfile }) {
             {state.role === "tutor" && <button onClick={() => dispatch({ type: "SET_ANNOUNCEMENT", payload: null })} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>Dismiss</button>}
           </div>
         )}
+
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
@@ -509,23 +434,18 @@ function LMS({ authUser, userProfile }) {
         </AnimatePresence>
       </main>
 
-      {/* Toast notifications */}
       <ToastContainer toasts={state.toasts} dispatch={dispatch} />
-
-      {/* Back to top button */}
       <BackToTop />
-
-      {/* PWA install prompt */}
       <InstallPrompt />
 
-      {/* ═══ GLOBAL SEARCH OVERLAY (Cmd+K) ═══ */}
+      {/* Global Search (Cmd+K) */}
       <AnimatePresence>
         {showSearch && (
           <motion.div onClick={() => setShowSearch(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: "8vh" }}>
             <motion.div onClick={e => e.stopPropagation()} initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }} transition={{ duration: 0.2, ease: "easeOut" }} style={{ width: "100%", maxWidth: 520, background: darkMode ? "#0B0F1A" : T.bgCard, borderRadius: T.r3, boxShadow: "0 25px 80px rgba(0,0,0,0.4)", border: `1px solid ${T.border}`, overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 20px", borderBottom: `1px solid ${T.border}`, background: T.bgMuted }}>
                 <MagnifyingGlass size={18} color={T.accent} />
-                <input ref={searchRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search resources, homework, pages, students…"
+                <input ref={searchRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search resources, homework, pages…"
                   autoFocus
                   style={{ flex: 1, background: "none", border: "none", outline: "none", fontSize: 15, color: T.text, fontFamily: T.fontBody, fontWeight: 500 }} />
                 <kbd style={{ fontSize: 9, padding: "3px 8px", borderRadius: 4, background: T.bgCard, border: `1px solid ${T.border}`, color: T.textTer, fontWeight: 600 }}>ESC</kbd>
@@ -552,13 +472,13 @@ function LMS({ authUser, userProfile }) {
                 <div style={{ padding: "32px 20px", textAlign: "center", fontSize: 13, color: T.textTer }}>No results for "{searchQuery}"</div>
               ) : (
                 <div style={{ padding: "20px" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Quick Access</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Quick Access</div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
                     {[
                       { label: "Dashboard", page: "dashboard", icon: House },
                       { label: "Homework", page: "homework", icon: ClipboardText },
-                      { label: "Leaderboard", page: "leaderboard", icon: Trophy },
-                      { label: "Community", page: "community", icon: Users },
+                      { label: "Community", page: "community", icon: Handshake },
+                      { label: "Students", page: "progress", icon: Users },
                     ].map(q => (
                       <button key={q.page} onClick={() => { dispatch({ type: "SET_PAGE", payload: q.page }); setShowSearch(false); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, cursor: "pointer", fontSize: 12, fontWeight: 600, color: T.text, transition: "all 0.15s" }}
                         onMouseEnter={e => { e.currentTarget.style.background = T.border; e.currentTarget.style.transform = "translateY(-1px)"; }}
@@ -574,7 +494,7 @@ function LMS({ authUser, userProfile }) {
         )}
       </AnimatePresence>
 
-      {/* ═══ MOBILE BOTTOM NAVIGATION ═══ */}
+      {/* Mobile Bottom Nav */}
       {isMobileLayout && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: darkMode ? "rgba(11,15,26,0.97)" : "rgba(255,255,255,0.97)", borderTop: `1px solid ${T.border}`, display: "flex", zIndex: 60, paddingBottom: "env(safe-area-inset-bottom, 0px)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}>
           {[
@@ -582,7 +502,7 @@ function LMS({ authUser, userProfile }) {
             { id: "library", icon: Books, label: "Library" },
             { id: "homework", icon: ClipboardText, label: "Work", badge: hwBadge },
             { id: "community", icon: Handshake, label: "Social" },
-            { id: "leaderboard", icon: Crown, label: "Rank" },
+            { id: "events", icon: Users, label: "Events" },
           ].map(tab => {
             const active = page === tab.id;
             return (
@@ -590,10 +510,7 @@ function LMS({ authUser, userProfile }) {
                 style={{ flex: 1, padding: "8px 4px 6px", background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, position: "relative", minHeight: 52, transition: "transform 0.1s ease" }}
                 onTouchStart={e => e.currentTarget.style.transform = "scale(0.92)"}
                 onTouchEnd={e => e.currentTarget.style.transform = "scale(1)"}>
-                {/* Active background pill */}
-                {active && (
-                  <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", width: 44, height: 30, borderRadius: 10, background: T.accentLight, zIndex: 0 }} />
-                )}
+                {active && <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", width: 44, height: 30, borderRadius: 10, background: T.accentLight, zIndex: 0 }} />}
                 <tab.icon size={20} color={active ? T.accent : T.textTer} style={{ position: "relative", zIndex: 1 }} />
                 <span style={{ fontSize: 9, fontWeight: active ? 700 : 500, color: active ? T.accent : T.textTer, position: "relative", zIndex: 1 }}>{tab.label}</span>
                 {tab.badge > 0 && <div style={{ position: "absolute", top: 4, right: "calc(50% - 16px)", width: 14, height: 14, borderRadius: "50%", background: T.danger, color: "#fff", fontSize: 8, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>{tab.badge}</div>}

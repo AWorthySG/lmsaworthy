@@ -3,7 +3,6 @@ import { T } from '../../theme/theme.js';
 import { PencilSimpleLine, Eye, CheckCircle, Lightbulb } from '../../icons/icons.jsx';
 import { SUBJECTS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
-import { triggerCelebration } from '../../components/gamification';
 import { PageHeader } from '../../components/ui';
 
 function PeerReview({ state, dispatch }) {
@@ -29,8 +28,7 @@ function PeerReview({ state, dispatch }) {
   function submitReview() {
     if (!reviewTarget || !reviewFeedback.trim()) return;
     dispatch({ type: "ADD_PEER_REVIEW", payload: { essayId: reviewTarget.id, reviewerId: 0, scores: reviewScores, feedback: reviewFeedback } });
-    dispatch({ type: "ADD_TOAST", payload: { message: "Review submitted! +15 coins", variant: "success" } });
-    triggerCelebration("coins");
+    dispatch({ type: "ADD_TOAST", payload: { message: "Review submitted!", variant: "success" } });
     setReviewTarget(null); setReviewFeedback(""); setReviewScores({ content: 3, language: 3, structure: 3 }); setView("hub");
   }
 

@@ -6,7 +6,7 @@ import { StudentAvatar } from '../components/gamification';
 import { formatDate, getSubjectTheme, getSubject } from '../utils/helpers.js';
 import { EmptyStateIllustration } from '../components/ui/EmptyState.jsx';
 import { SUBJECTS } from '../data/subjects.js';
-import { COMMUNITY_REACTIONS } from '../data/gamification.js';
+const COMMUNITY_REACTIONS = ["👍", "❤️", "😂", "🔥", "👏", "🤔"];
 
 function Community({ state, dispatch }) {
   const [filter, setFilter] = useState("all");

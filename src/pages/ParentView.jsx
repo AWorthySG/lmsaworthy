@@ -2,13 +2,11 @@ import React from 'react';
 import { T } from '../theme/theme.js';
 import { Users, ChartLineUp, CalendarCheck, Trophy, Star, CheckCircle, ArrowSquareOut, Flame, ClipboardText, CalendarBlank, PencilSimpleLine, Timer } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
-import { ShareableProgressCard, StudentAvatar, XPBar, BadgeChip, StreakCalendar } from '../components/gamification';
+import { StudentAvatar } from '../components/gamification';
 import { getExamCountdowns } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
-import { LEVELS } from '../data/gamification.js';
 
 function ParentView({ state }) {
-  const wallet = state.wallet;
   const exams = getExamCountdowns().slice(0, 3);
   const gradedSubs = (state.submissions || []).filter(s => s.status === "graded");
   let attended = 0;
@@ -31,8 +29,6 @@ function ParentView({ state }) {
       {/* Key Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
         {[
-          { label: "Study Streak", value: `${wallet.streak} days`, icon: <Flame size={12} />, color: T.accent },
-          { label: "Coins Earned", value: wallet.coins, icon: <Star size={12} />, color: T.gold },
           { label: "Homework Graded", value: gradedSubs.length, icon: <ClipboardText size={12} />, color: T.success },
           { label: "Sessions Attended", value: attended, icon: <CalendarBlank size={12} />, color: T.teal },
         ].map(s => (
@@ -79,11 +75,6 @@ function ParentView({ state }) {
         </div>
       )}
 
-      {/* Study Streak Calendar */}
-      <StreakCalendar wallet={wallet} />
-
-      {/* Shareable Progress Card */}
-      <ShareableProgressCard state={state} />
 
       <div style={{ textAlign: "center", fontSize: 11, color: T.textTer, padding: "12px 0" }}>
         <button onClick={() => window.print()} style={{ background: T.accent, color: "#fff", border: "none", borderRadius: T.r2, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>Print Report</button>

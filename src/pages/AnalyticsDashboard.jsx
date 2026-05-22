@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { T } from '../theme/theme.js';
 import { ChartLineUp, ChartBar, ChartPie, Users, Trophy, CalendarCheck, Gauge, Target, Flame, CalendarBlank, Timer, Star } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
-import { StudentAvatar, XPBar, ShareableProgressCard } from '../components/gamification';
+import { StudentAvatar } from '../components/gamification';
 import { getExamCountdowns } from '../utils/helpers.js';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 
@@ -59,9 +59,6 @@ function AnalyticsDashboard({ state }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <PageHeader title="Analytics" subtitle="Track performance, study habits, and exam readiness" />
-
-      {/* Shareable Progress Card */}
-      <ShareableProgressCard state={state} />
 
       {/* Key metrics */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>

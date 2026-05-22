@@ -3,11 +3,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { T } from '../theme/theme.js';
 import { ChartLineUp, ChartBar, Trophy, Star, CheckCircle, ArrowSquareOut, Users, CalendarCheck, PencilSimpleLine, Notebook, CaretRight, X } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard, BackBtn, FileIcon, Input, Textarea } from '../components/ui';
-import { ShareableProgressCard, XPBar, BadgeChip, StudentAvatar } from '../components/gamification';
-import { calcStudentXP, getLevel, getStudentBadges } from '../utils/gamificationUtils.js';
+import { StudentAvatar } from '../components/gamification';
 import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
-import { LEVELS, BADGE_DEFS, AVATAR_OPTIONS } from '../data/gamification.js';
 
 function ProgressTracker({ state, dispatch }) {
   const [sel, setSel] = useState(null);
@@ -34,37 +32,6 @@ function ProgressTracker({ state, dispatch }) {
             <div style={{ flex: 1 }}>
               <h1 style={{ color: T.text, fontSize: 22, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.3 }}>{student.name}</h1>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{student.subjects.map((s) => <SubjectBadge key={s} subjectId={s} small />)}</div>
-            </div>
-          </div>
-          {/* XP / Level */}
-          <div style={{ marginBottom: 16 }}>
-            <XPBar xp={calcStudentXP(student, state)} />
-          </div>
-          {/* Badges */}
-          {(() => {
-            const badges = getStudentBadges(student, state);
-            if (badges.length === 0) return null;
-            return (
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: T.textSec, marginBottom: 8, letterSpacing: 0.5, textTransform: "uppercase" }}>Achievements</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {BADGE_DEFS.map(b => <BadgeChip key={b.id} badge={b} earned={badges.some(sb => sb.id === b.id)} size="sm" />)}
-                </div>
-              </div>
-            );
-          })()}
-          {/* Avatar Picker */}
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: T.textSec, marginBottom: 10, letterSpacing: 0.5, textTransform: "uppercase" }}>Choose Avatar</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(48px, 1fr))", gap: 8 }}>
-              {AVATAR_OPTIONS.map(av => {
-                const selected = student.avatar === av.id;
-                return (
-                  <button key={av.id} title={av.id} onClick={() => dispatch({ type: "UPDATE_STUDENT_AVATAR", payload: { studentId: student.id, avatar: av.id } })} style={{ width: "100%", aspectRatio: "1", borderRadius: T.r2, border: `2.5px solid ${selected ? av.ring : T.border}`, background: selected ? av.bg : T.bgMuted, cursor: "pointer", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s", boxShadow: selected ? `0 0 0 3px ${av.ring}33` : "none", transform: selected ? "scale(1.1)" : "scale(1)" }}>
-                    {av.emoji}
-                  </button>
-                );
-              })}
             </div>
           </div>
         </Card>
@@ -266,35 +233,21 @@ function ProgressTracker({ state, dispatch }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
         {state.students.map((student) => {
           const avg = student.quizResults.length > 0 ? Math.round(student.quizResults.reduce((sum, r) => sum + (r.score / r.total) * 100, 0) / student.quizResults.length) : 0;
-          const xp = calcStudentXP(student, state);
-          const lv = getLevel(xp);
-          const badges = getStudentBadges(student, state);
           return (
             <Card key={student.id} onClick={() => setSel(student.id)} elevated>
               <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
                 <StudentAvatar student={student} size={48} radius={T.r3} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 15, fontWeight: 650, color: T.text }}>{student.name}</div>
-                  <div style={{ display: "flex", gap: 4, marginTop: 5, flexWrap: "wrap", alignItems: "center" }}>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{student.name}</div>
+                  <div style={{ display: "flex", gap: 4, marginTop: 5, flexWrap: "wrap" }}>
                     {student.subjects.map((s) => <SubjectBadge key={s} subjectId={s} small />)}
-                    <span style={{ fontSize: 10, fontWeight: 700, color: lv.color, background: lv.bg, padding: "2px 7px", borderRadius: 20, marginLeft: 2 }}>{lv.emoji} {lv.name}</span>
                   </div>
                 </div>
               </div>
-              {/* XP bar compact */}
-              <div style={{ marginBottom: 12 }}>
-                <XPBar xp={xp} compact />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, textAlign: "center" }}>
+                <div style={{ padding: 10, background: T.accentLight, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 700, color: T.accent }}>{student.quizResults.length}</div><div style={{ fontSize: 11, color: T.textTer }}>Quizzes</div></div>
+                <div style={{ padding: 10, background: avg >= 70 ? T.successBg : avg >= 50 ? T.warningBg : T.dangerBg, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 700, color: avg >= 70 ? T.success : avg >= 50 ? T.warning : T.danger }}>{avg}%</div><div style={{ fontSize: 11, color: T.textTer }}>Avg Score</div></div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, textAlign: "center", marginBottom: badges.length > 0 ? 12 : 0 }}>
-                <div style={{ padding: 10, background: T.accentLight, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 800, color: T.accent }}>{student.quizResults.length}</div><div style={{ fontSize: 11, color: T.textTer }}>Quizzes</div></div>
-                <div style={{ padding: 10, background: avg >= 70 ? T.successBg : avg >= 50 ? T.warningBg : T.dangerBg, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 800, color: avg >= 70 ? T.success : avg >= 50 ? T.warning : T.danger }}>{avg}%</div><div style={{ fontSize: 11, color: T.textTer }}>Avg Score</div></div>
-                <div style={{ padding: 10, background: lv.bg, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 800, color: lv.color, fontFamily: T.fontMono }}>{xp}</div><div style={{ fontSize: 11, color: T.textTer }}>XP</div></div>
-              </div>
-              {badges.length > 0 && (
-                <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                  {badges.map(b => <span key={b.id} title={b.name} style={{ fontSize: 16 }}>{b.emoji}</span>)}
-                </div>
-              )}
             </Card>
           );
         })}

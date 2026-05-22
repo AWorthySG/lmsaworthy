@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { T } from '../theme/theme.js';
 import { Lightning, Plus, X, CheckCircle, XCircle, Clock, Trophy, Star, ArrowRight, ArrowLeft, Trash, Timer, Warning, Exam, Play } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Input, Select, Textarea, BackBtn, EmptyStateIllustration } from '../components/ui';
-import { ConfettiEffect, triggerCelebration } from '../components/gamification';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import useTimer from '../hooks/useTimer.js';
 
@@ -17,7 +16,7 @@ function QuizGenerator({ state, dispatch }) {
   const timer = useTimer(selQuiz?.timeLimit || 15, () => setTimeUp(true));
 
   function startQuiz(q) { setSelQuiz(q); setAnswers({}); setSubmitted(false); setTimeUp(false); setView("take"); }
-  function submitQuiz() { setSubmitted(true); timer.stop(); setView("results"); dispatch({ type: "ADD_TOAST", payload: { message: "Quiz submitted!", variant: "success" } }); triggerCelebration("coins"); }
+  function submitQuiz() { setSubmitted(true); timer.stop(); setView("results"); dispatch({ type: "ADD_TOAST", payload: { message: "Quiz submitted!", variant: "success" } }); }
   function getAutoScore() { if (!selQuiz) return { earned: 0, total: 0 }; let e = 0, t = 0; selQuiz.questions.forEach((q) => { t += q.marks; if (q.type === "mcq" && answers[q.id] === q.correct) e += q.marks; }); return { earned: e, total: t }; }
 
   if (view === "create") {
