@@ -1,94 +1,90 @@
 /* ━━━ A WORTHY DESIGN SYSTEM ━━━
-   Studio × Salon — Spectral · Manrope · Libre Caslon Text · JetBrains Mono
-   Warm cream paper · Forest green sidebar · Brass accent · Oxblood alert */
+   Bear-minimal — Geist · warm whites · soft borders · content-first */
 
 export const T = {
   // ── Surfaces ─────────────────────────────────────────────────────────────
-  bg:          "#f1ebde",    // Studio cream paper
-  bgSidebar:   "#1b2a23",    // Salon forest panel
-  bgCard:      "#ece5d5",    // warm card surface
-  bgMuted:     "#e7dfcf",    // deeper muted cream
-  bgHover:     "#ddd5c5",    // hover on cream
-  bgOverlay:   "rgba(15,23,42,0.5)",
+  bg:        "#FAFAF7",   // warm white main canvas
+  bgSidebar: "#F2EFE8",   // slightly warmer sidebar
+  bgCard:    "#FFFFFF",   // clean white cards
+  bgMuted:   "#F4F1EB",   // muted fills
+  bgHover:   "#EDEAD3",   // hover state
+  bgOverlay: "rgba(28,27,25,0.4)",
 
   // ── Text ─────────────────────────────────────────────────────────────────
-  text:        "#1d1916",    // Studio deep ink
-  textSec:     "#5a5247",
-  textTer:     "#9c9384",
-  textInverse: "#f1ebde",
+  text:        "#1C1B19",
+  textSec:     "#6B6760",
+  textTer:     "#A09C94",
+  textInverse: "#FAFAF7",
 
-  // ── Accent (brass) ───────────────────────────────────────────────────────
-  accent:      "#a07a2e",
-  accentLight: "rgba(199,154,69,0.14)",
-  accentMid:   "#c79a45",
-  accentDark:  "#7a5520",
-  accentText:  "#7a5520",
+  // ── Accent — warm rust (Bear-like) ───────────────────────────────────────
+  accent:      "#C0392B",
+  accentLight: "rgba(192,57,43,0.08)",
+  accentMid:   "#E05040",
+  accentDark:  "#962D22",
+  accentText:  "#962D22",
 
-  // ── Gold (brass alias — for gamification) ────────────────────────────────
-  gold:        "#a07a2e",
-  goldLight:   "#f5ead5",
-  goldDark:    "#7a5520",
+  // ── Gold (achievements) ───────────────────────────────────────────────────
+  gold:      "#B07D2A",
+  goldLight: "#FBF3E2",
+  goldDark:  "#8A6020",
 
-  // ── Danger / oxblood ─────────────────────────────────────────────────────
-  oxblood:     "#7a2418",    // Studio overdue/alert accent
-
-  // ── Atmospheric helpers ───────────────────────────────────────────────────
-  gradPrimary: "linear-gradient(135deg, #1b2a23, #2c4d3a)",
-  gradGold:    "linear-gradient(135deg, #a07a2e, #c79a45)",
-  gradNavy:    "#1b2a23",
-  gradTeal:    "#E4F4F0",
-  navy:        "#1b2a23",
-  navyLight:   "#243830",
-  navyMid:     "#2e4a3e",
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  gradPrimary: "linear-gradient(135deg, #1C1B19, #3a3835)",
+  gradGold:    "linear-gradient(135deg, #B07D2A, #D4A254)",
+  gradNavy:    "#1C1B19",
+  gradTeal:    "#E6F4F1",
+  navy:        "#1C1B19",
+  navyLight:   "#2e2d2a",
+  navyMid:     "#4a4845",
   teal:        "#0D9488",
 
-  // ── Sidebar dark tokens ───────────────────────────────────────────────────
-  sidebarText:         "#e9e2ce",
-  sidebarTextSoft:     "rgba(233,226,206,0.72)",
-  sidebarTextFaint:    "#c79a45",
-  sidebarBorder:       "rgba(233,226,206,0.12)",
-  sidebarActive:       "rgba(199,154,69,0.16)",
-  sidebarActiveText:   "#f6e9c8",
-  sidebarActiveBorder: "#c79a45",
-  sidebarHover:        "rgba(233,226,206,0.07)",
-  sidebarMuted:        "rgba(233,226,206,0.04)",
+  // ── Sidebar (shares light palette — no separate dark tokens needed) ───────
+  sidebarText:         "#1C1B19",
+  sidebarTextSoft:     "#6B6760",
+  sidebarTextFaint:    "#A09C94",
+  sidebarBorder:       "rgba(28,27,25,0.07)",
+  sidebarActive:       "#FFFFFF",
+  sidebarActiveText:   "#1C1B19",
+  sidebarActiveBorder: "#C0392B",
+  sidebarHover:        "rgba(28,27,25,0.04)",
+  sidebarMuted:        "rgba(28,27,25,0.03)",
 
   // ── Subject palette ───────────────────────────────────────────────────────
-  eng:    { bg: "#e8edf8", text: "#2a4080", accent: "#3b5bb5" },
-  h1econ: { bg: "#f0e8f8", text: "#5B21B6", accent: "#7C3AED" },
-  h2econ: { bg: "#f8e8e6", text: "#7a2418", accent: "#a03020" },
-  gp:     { bg: "#e4f0e8", text: "#2f5a38", accent: "#2f7a3e" },
+  eng:    { bg: "#EEF2FF", text: "#2D3A8C", accent: "#4F5BD5" },
+  h1econ: { bg: "#F3EEFE", text: "#5B21B6", accent: "#7C3AED" },
+  h2econ: { bg: "#FFF0EE", text: "#962D22", accent: "#C0392B" },
+  gp:     { bg: "#EDFAF4", text: "#0F766E", accent: "#0D9488" },
 
   // ── Status ───────────────────────────────────────────────────────────────
   success:   "#16A34A",
-  successBg: "#E8F8EE",
+  successBg: "#EDFAF4",
   warning:   "#9A5C04",
   warningBg: "#FEF8E8",
-  danger:    "#7a2418",
-  dangerBg:  "#fce8e5",
+  danger:    "#C0392B",
+  dangerBg:  "#FFF0EE",
 
   // ── Borders ───────────────────────────────────────────────────────────────
-  border:       "rgba(29,25,22,0.13)",
-  borderHover:  "rgba(29,25,22,0.22)",
-  borderFocus:  "#a07a2e",
+  border:      "rgba(28,27,25,0.08)",
+  borderHover: "rgba(28,27,25,0.16)",
+  borderFocus: "#C0392B",
 
-  // ── Shadows (warm-tinted) ─────────────────────────────────────────────────
-  shadow1:       "0 1px 3px rgba(29,25,22,0.05)",
-  shadow2:       "0 3px 8px rgba(29,25,22,0.08)",
-  shadow3:       "0 8px 24px rgba(29,25,22,0.12)",
-  shadowAccent:  "0 3px 12px rgba(160,122,46,0.25)",
+  // ── Shadows — very soft ────────────────────────────────────────────────────
+  shadow1:      "0 1px 2px rgba(28,27,25,0.04)",
+  shadow2:      "0 2px 8px rgba(28,27,25,0.06)",
+  shadow3:      "0 4px 20px rgba(28,27,25,0.08)",
+  shadowAccent: "0 2px 10px rgba(192,57,43,0.18)",
 
   // ── Radii ─────────────────────────────────────────────────────────────────
-  r1: 6, r2: 10, r3: 14, r4: 18, r5: 24,
+  r1: 6, r2: 8, r3: 12, r4: 16, r5: 20,
 
-  // ── Fonts ─────────────────────────────────────────────────────────────────
-  fontDisplay: "'Spectral', serif",
-  fontBody:    "'Manrope', sans-serif",
+  // ── Fonts — Geist only ────────────────────────────────────────────────────
+  fontDisplay: "'Geist', sans-serif",
+  fontBody:    "'Geist', sans-serif",
   fontMono:    "'JetBrains Mono', monospace",
-  fontSerif:   "'Libre Caslon Text', serif",
+  fontSerif:   "'Geist', sans-serif",
 
   // ── Grade colours ─────────────────────────────────────────────────────────
-  gradeS: "#a07a2e", gradeA: "#16A34A", gradeB: "#3b5bb5", gradeC: "#9A5C04", gradeD: "#7a2418",
+  gradeS: "#B07D2A", gradeA: "#16A34A", gradeB: "#2D3A8C", gradeC: "#9A5C04", gradeD: "#C0392B",
 };
 
 export const SUBJ_THEME = { eng: T.eng, h1econ: T.h1econ, h2econ: T.h2econ, gp: T.gp };

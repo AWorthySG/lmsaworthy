@@ -89,43 +89,42 @@ function HeroBanner() {
 function WelcomeHero({ state, authUser, userProfile, myHomework, mySubs, gradedHw }) {
   const firstName = (userProfile?.name || authUser?.displayName || authUser?.email || "Scholar").split(" ")[0].split("@")[0];
   const today = new Date();
-  const dateStr = today.toLocaleDateString("en-SG", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  const overdueCount = myHomework.filter(h => h.dueDate < today.toISOString().split("T")[0] && !mySubs.find(s => s.homeworkId === h.id && s.status === "graded")).length;
+  const todayStr = today.toISOString().split("T")[0];
+  const overdueCount = myHomework.filter(h => h.dueDate < todayStr && !mySubs.find(s => s.homeworkId === h.id && s.status === "graded")).length;
   const pendingCount = myHomework.filter(h => !mySubs.find(s => s.homeworkId === h.id && (s.status === "graded" || s.status === "submitted"))).length;
+  const level = Math.floor((state.wallet.coins || 0) / 100) + 1;
 
   return (
-    <div style={{ marginBottom: 24 }}>
-      {/* Newspaper masthead strip */}
-      <div style={{ borderBottom: `2px solid ${T.text}`, paddingBottom: 8, marginBottom: 18, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <div style={{ fontSize: 10, letterSpacing: "0.28em", textTransform: "uppercase", color: T.textTer, fontWeight: 600 }}>
-          {dateStr} · Singapore
-        </div>
-        <div style={{ display: "flex", gap: 16, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: T.textTer, fontWeight: 600 }}>
-          <span>Coins: <b style={{ color: T.text }}>{state.wallet.coins}</b></span>
-          <span>Streak: <b style={{ color: T.text }}>{state.wallet.streak}d</b></span>
-          <span>Graded: <b style={{ color: T.text }}>{gradedHw.length}</b></span>
-        </div>
-      </div>
-
-      {/* Large editorial headline */}
-      <h1 style={{ fontFamily: T.fontDisplay, fontWeight: 400, fontSize: 46, lineHeight: 1.05, letterSpacing: "-0.025em", marginBottom: 10 }}>
-        Welcome back, <em style={{ color: T.accent, fontStyle: "italic" }}>{firstName}</em>.
-        {overdueCount > 0 && (
-          <><br /><span style={{ fontFamily: T.fontDisplay, fontWeight: 400, fontSize: 36, color: T.oxblood, fontStyle: "italic" }}>
-            {overdueCount} essay{overdueCount > 1 ? "s" : ""} overdue.
-          </span></>
-        )}
-        {overdueCount === 0 && pendingCount > 0 && (
-          <><br /><span style={{ fontFamily: T.fontDisplay, fontWeight: 400, fontSize: 36, color: T.textSec, fontStyle: "italic" }}>
-            {pendingCount} task{pendingCount > 1 ? "s" : ""} waiting.
-          </span></>
-        )}
-        {overdueCount === 0 && pendingCount === 0 && (
-          <><br /><span style={{ fontFamily: T.fontDisplay, fontWeight: 400, fontSize: 36, color: T.textSec, fontStyle: "italic" }}>
-            All caught up.
-          </span></>
-        )}
+    <div style={{ marginBottom: 32 }}>
+      <h1 style={{ fontSize: 28, fontWeight: 600, color: T.text, letterSpacing: "-0.025em", marginBottom: 6 }}>
+        Good {today.getHours() < 12 ? "morning" : today.getHours() < 17 ? "afternoon" : "evening"}, {firstName}
       </h1>
+      <p style={{ fontSize: 14, color: T.textSec, marginBottom: 20, lineHeight: 1.5 }}>
+        {overdueCount > 0
+          ? <span>You have <span style={{ color: T.danger, fontWeight: 600 }}>{overdueCount} overdue {overdueCount === 1 ? "assignment" : "assignments"}</span> — worth tackling first.</span>
+          : pendingCount > 0
+          ? <span>{pendingCount} {pendingCount === 1 ? "task" : "tasks"} waiting for you today.</span>
+          : <span>You're all caught up. Keep the momentum going.</span>
+        }
+      </p>
+
+      {/* Stat row — inline, minimal */}
+      <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+        {[
+          { label: "Coins",  value: state.wallet.coins },
+          { label: "Streak", value: `${state.wallet.streak}d` },
+          { label: "Graded", value: gradedHw.length },
+          { label: "Level",  value: level },
+        ].map((s, i) => (
+          <React.Fragment key={s.label}>
+            {i > 0 && <div style={{ width: 1, background: T.border, alignSelf: "stretch" }} />}
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 600, color: T.text, letterSpacing: "-0.02em" }}>{s.value}</div>
+              <div style={{ fontSize: 11, color: T.textTer, marginTop: 1 }}>{s.label}</div>
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
 }
@@ -134,28 +133,21 @@ function ExamCountdownSection() {
   const exams = getExamCountdowns().slice(0, 3);
   if (exams.length === 0) return null;
   return (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
-        <div style={{ fontSize: 9.5, letterSpacing: "0.28em", textTransform: "uppercase", color: T.textTer, fontWeight: 700 }}>
-          Examinations · Countdown
-        </div>
-        <div style={{ fontSize: 10, color: T.textTer }}>MOE / SEAB / CAIE</div>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${exams.length}, 1fr)`, gap: 12 }}>
+    <div style={{ marginBottom: 28 }}>
+      <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Exam Countdown</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {exams.map((e, i) => {
           const theme = T[e.subject] || T.eng;
           const urgent = e.daysLeft <= 30;
           return (
-            <div key={i} style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3, padding: "16px 18px", display: "flex", alignItems: "center", gap: 14 }}>
-              <div style={{ width: 4, alignSelf: "stretch", background: urgent ? T.oxblood : theme.accent, borderRadius: 4, flexShrink: 0 }} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: T.fontSerif, fontSize: 15, lineHeight: 1.15 }}>{e.name}</div>
-                <div style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: T.textTer, marginTop: 3 }}>Paper {i + 1}</div>
+            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: urgent ? T.danger : theme.accent, flexShrink: 0 }} />
+                <span style={{ fontSize: 14, fontWeight: 500, color: T.text }}>{e.name}</span>
               </div>
-              <div style={{ textAlign: "right", flexShrink: 0 }}>
-                <div style={{ fontFamily: T.fontDisplay, fontWeight: 500, fontSize: 42, lineHeight: 0.95, color: urgent ? T.oxblood : theme.accent, letterSpacing: "-0.04em" }}>{e.daysLeft}</div>
-                <div style={{ fontSize: 9.5, letterSpacing: "0.2em", textTransform: "uppercase", color: T.textTer, marginTop: 4 }}>days</div>
-              </div>
+              <span style={{ fontSize: 13, fontWeight: 600, color: urgent ? T.danger : T.textSec }}>
+                {e.daysLeft} <span style={{ fontSize: 11, fontWeight: 400, color: T.textTer }}>days</span>
+              </span>
             </div>
           );
         })}
@@ -167,30 +159,15 @@ function ExamCountdownSection() {
 function DailyChallengeSection() {
   const challenge = getDailyChallenge();
   return (
-    <div style={{ marginBottom: 24, background: T.bgSidebar, borderRadius: T.r4, padding: "24px 26px", position: "relative", overflow: "hidden", color: "#e9e2ce" }}>
-      {/* Decorative monogram */}
-      <div style={{ position: "absolute", right: -16, bottom: -50, fontFamily: T.fontSerif, fontStyle: "italic", fontSize: 190, lineHeight: 1, color: "rgba(199,154,69,0.09)", userSelect: "none", pointerEvents: "none" }}>aw</div>
-
-      <div style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ fontSize: 9.5, letterSpacing: "0.28em", textTransform: "uppercase", color: "#c79a45", fontWeight: 700, marginBottom: 4 }}>
-          Today's Brief · Daily Challenge
-        </div>
-        <div style={{ fontFamily: T.fontSerif, fontStyle: "italic", fontSize: 13, color: "#c79a45", marginBottom: 6 }}>{challenge.type}</div>
-        <div style={{ fontFamily: T.fontDisplay, fontSize: 22, fontWeight: 400, lineHeight: 1.2, letterSpacing: "-0.01em", marginBottom: 12 }}>
-          "{challenge.question}"
-        </div>
-        <div style={{ fontSize: 12.5, color: "rgba(233,226,206,0.7)", lineHeight: 1.55, maxWidth: 540, marginBottom: 18 }}>
-          Write a compelling opening paragraph. Stake a position by sentence two; reserve evidence for the third.
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <button style={{ background: "#c79a45", color: T.bgSidebar, border: "none", padding: "10px 22px", borderRadius: 999, fontWeight: 700, fontSize: 13, fontFamily: "inherit", letterSpacing: "0.02em", cursor: "pointer" }}>
-            Begin the Brief
-          </button>
-          <div style={{ fontSize: 10.5, letterSpacing: "0.18em", textTransform: "uppercase", color: "#c79a45" }}>
-            +10 coins · refreshes 24:00
-          </div>
-        </div>
+    <div style={{ marginBottom: 28, background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}` }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: T.accent, textTransform: "uppercase", letterSpacing: "0.06em" }}>Daily Challenge</span>
+        <span style={{ fontSize: 11, color: T.textTer }}>{challenge.type} · +10 coins</span>
       </div>
+      <p style={{ fontSize: 15, fontWeight: 500, color: T.text, lineHeight: 1.5, marginBottom: 14 }}>{challenge.question}</p>
+      <button style={{ background: T.accent, color: "#fff", border: "none", padding: "8px 18px", borderRadius: T.r2, fontWeight: 600, fontSize: 13, fontFamily: "inherit", cursor: "pointer", letterSpacing: "-0.01em" }}>
+        Start writing
+      </button>
     </div>
   );
 }
@@ -198,18 +175,14 @@ function DailyChallengeSection() {
 function WordOfTheDaySection() {
   const wotd = getWordOfTheDay();
   return (
-    <div style={{ marginBottom: 24, background: T.bgCard, borderRadius: T.r3, padding: "20px 22px", border: `1px solid ${T.border}` }}>
-      <div style={{ fontSize: 9.5, letterSpacing: "0.28em", textTransform: "uppercase", color: T.accent, fontWeight: 700, marginBottom: 10 }}>
-        Lexicon · {getSubject(wotd.subject)?.name}
+    <div style={{ marginBottom: 28, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
+      <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Word of the Day</div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 6 }}>
+        <span style={{ fontSize: 22, fontWeight: 600, color: T.text, letterSpacing: "-0.02em" }}>{wotd.word}</span>
+        <span style={{ fontSize: 12, color: T.textTer }}>{getSubject(wotd.subject)?.name}</span>
       </div>
-      <div style={{ fontFamily: T.fontDisplay, fontSize: 38, fontWeight: 400, letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 4 }}>{wotd.word}</div>
-      <div style={{ fontFamily: T.fontSerif, fontStyle: "italic", fontSize: 13, color: T.textFaint || T.textTer, marginBottom: 10 }}>
-        · adj.
-      </div>
-      <div style={{ fontSize: 14, color: T.text, marginBottom: 10, lineHeight: 1.5 }}>{wotd.def}</div>
-      <div style={{ fontFamily: T.fontSerif, fontStyle: "italic", fontSize: 13.5, color: T.textSec, borderLeft: `2px solid ${T.accent}`, paddingLeft: 12, lineHeight: 1.55 }}>
-        "{wotd.usage}"
-      </div>
+      <p style={{ fontSize: 13, color: T.textSec, marginBottom: 8, lineHeight: 1.5 }}>{wotd.def}</p>
+      <p style={{ fontSize: 13, color: T.textTer, fontStyle: "italic", lineHeight: 1.5, margin: 0 }}>"{wotd.usage}"</p>
     </div>
   );
 }
@@ -218,18 +191,18 @@ function WeeklyProgressSection({ state }) {
   const wp = getWeeklyProgress(state);
   return (
     <div style={{ marginTop: 20, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 12, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><ChartLineUp size={15} color={T.text} /> This Week's Progress</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+      <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>This Week</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
         {[
-          { label: "Homework", value: wp.hwCompleted, icon: <ClipboardText size={10} color={T.accent} />, color: T.accent },
-          { label: "Notes", value: wp.notesCreated, icon: <PencilSimpleLine size={10} color={T.teal} />, color: T.teal },
-          { label: "Reviews", value: wp.reviewsGiven, icon: <Eye size={10} color={T.success} />, color: T.success },
-          { label: "Streak", value: `${wp.streakDays}d`, icon: <Flame size={10} color={T.gold} />, color: T.gold },
-          { label: "Coins", value: `+${wp.coinsEarned}`, icon: <span style={{ fontWeight: 700, fontSize: 10, color: T.goldDark }}>$</span>, color: T.goldDark },
+          { label: "Done", value: wp.hwCompleted, color: T.accent },
+          { label: "Notes", value: wp.notesCreated, color: T.teal },
+          { label: "Reviews", value: wp.reviewsGiven, color: T.success },
+          { label: "Streak", value: `${wp.streakDays}d`, color: T.gold },
+          { label: "Coins", value: `+${wp.coinsEarned}`, color: T.goldDark },
         ].map(s => (
-          <div key={s.label} style={{ textAlign: "center", padding: "8px", borderRadius: T.r1, background: T.bgMuted }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: s.color, fontFamily: T.fontDisplay }}>{s.value}</div>
-            <div style={{ fontSize: 10, color: T.textTer, display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>{s.icon} {s.label}</div>
+          <div key={s.label} style={{ textAlign: "center", padding: "10px 4px", borderRadius: T.r2, background: T.bgMuted }}>
+            <div style={{ fontSize: 17, fontWeight: 600, color: s.color, letterSpacing: "-0.02em" }}>{s.value}</div>
+            <div style={{ fontSize: 10, color: T.textTer, marginTop: 2 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -275,11 +248,9 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
       {/* Your Agenda — combined homework + grades */}
       {(pendingHw.length > 0 || gradedHw.length > 0) && (
         <div style={{ marginBottom: 24 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
-            <h3 style={{ fontFamily: T.fontDisplay, fontWeight: 400, fontSize: 22, letterSpacing: "-0.01em", margin: 0 }}>Your Agenda</h3>
-            <div style={{ fontSize: 9.5, letterSpacing: "0.22em", textTransform: "uppercase", color: T.accent, fontWeight: 700 }}>
-              {pendingHw.length + gradedHw.slice(0,3).length} entries
-            </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em" }}>Your Agenda</div>
+            <div style={{ fontSize: 11, color: T.textTer }}>{pendingHw.length + gradedHw.slice(0,3).length} items</div>
           </div>
           <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3, overflow: "hidden" }}>
             {pendingHw.map((h, i) => {
@@ -294,7 +265,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
                     <div style={{ fontWeight: 600, fontSize: 13.5 }}>{h.title}</div>
                     <div style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: T.textTer, marginTop: 2 }}>{h.subject || "Assignment"}</div>
                   </div>
-                  <div style={{ fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase", textAlign: "right", color: overdue ? T.oxblood : T.accent, fontWeight: 700 }}>
+                  <div style={{ fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase", textAlign: "right", color: overdue ? T.danger : T.accent, fontWeight: 700 }}>
                     {overdue ? "Overdue" : `Due ${h.dueDate?.slice(8)} ${new Date(h.dueDate).toLocaleString("en-SG", { month: "short" })}`}
                   </div>
                 </div>
@@ -321,50 +292,50 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
       )}
 
       {/* Quick actions */}
-      <div style={{ marginBottom: 8 }}>
-        <h3 style={{ fontFamily: T.fontDisplay, fontWeight: 400, fontSize: 22, letterSpacing: "-0.01em", margin: "0 0 12px" }}>Jump In</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Jump In</div>
+        <div style={{ background: T.bgCard, borderRadius: T.r3, border: `1px solid ${T.border}`, overflow: "hidden" }}>
           {[
             { label: "Practice Drills", sub: "GP & English",  page: "practice",    accent: T.eng.accent    },
             { label: "Games",           sub: "20+ games",     page: "games-eng",   accent: T.h1econ.accent },
             { label: "Infographics",    sub: "Visual notes",  page: "infographics", accent: T.accent       },
-            { label: "Events",          sub: "Prizes & more", page: "events",      accent: T.oxblood       },
+            { label: "Events",          sub: "Prizes & more", page: "events",      accent: T.danger        },
             { label: "Community",       sub: "Chat & share",  page: "community",   accent: T.success       },
-          ].map((a, i) => (
+          ].map((a, i, arr) => (
             <button key={a.page} onClick={() => dispatch({ type: "SET_PAGE", payload: a.page })}
-              className="card-lift card-enter"
-              style={{ "--i": i, padding: "16px 12px", borderRadius: T.r3, background: T.bgCard, border: `1px solid ${T.border}`, cursor: "pointer", textAlign: "center", transition: "all 0.15s", borderTop: `3px solid ${a.accent}` }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = T.shadow2; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-              <div style={{ fontFamily: T.fontDisplay, fontSize: 28, fontWeight: 400, color: a.accent, lineHeight: 1, marginBottom: 8 }}>
-                {a.label.charAt(0)}
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "11px 16px", background: "transparent", border: "none", borderBottom: i < arr.length - 1 ? `1px solid ${T.border}` : "none", cursor: "pointer", textAlign: "left", transition: "background 0.12s" }}
+              onMouseEnter={e => e.currentTarget.style.background = T.bgMuted}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: a.accent, flexShrink: 0 }} />
+                <span style={{ fontSize: 13, fontWeight: 500, color: T.text }}>{a.label}</span>
               </div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 2 }}>{a.label}</div>
-              <div style={{ fontSize: 10, color: T.textTer, fontWeight: 500 }}>{a.sub}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 11, color: T.textTer }}>{a.sub}</span>
+                <CaretRight size={12} color={T.textTer} />
+              </div>
             </button>
           ))}
         </div>
       </div>
 
       {/* Study Plan */}
-      <div style={{ marginTop: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
-          <h3 style={{ fontFamily: T.fontDisplay, fontWeight: 400, fontSize: 22, letterSpacing: "-0.01em", margin: 0 }}>This Week</h3>
-          <div style={{ fontSize: 9.5, color: T.textTer, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-            {new Date().toLocaleDateString("en-SG", { week: "long" }) ? `Wk ${Math.ceil(new Date().getDate() / 7)}` : ""}
-          </div>
+      <div style={{ marginTop: 4 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em" }}>Study Plan</div>
+          <div style={{ fontSize: 11, color: T.textTer }}>Wk {Math.ceil(new Date().getDate() / 7)}</div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ background: T.bgCard, borderRadius: T.r3, border: `1px solid ${T.border}`, padding: "4px 16px", display: "flex", flexDirection: "column" }}>
           {generateStudyPlan(state).slice(0, 5).map((day, i) => {
             const theme = T[day.subjectId] || T.eng;
             const isToday = day.day === new Date().toLocaleDateString("en-SG", { weekday: "long" });
             return (
-              <div key={i} style={{ display: "grid", gridTemplateColumns: "72px 48px 1fr", alignItems: "center", gap: 14, padding: "10px 0", borderBottom: i < 4 ? `1px solid ${T.border}` : "none", background: isToday ? "rgba(160,122,46,0.06)" : "transparent", borderRadius: isToday ? T.r1 : 0, paddingLeft: isToday ? 10 : 0, paddingRight: isToday ? 10 : 0, marginLeft: isToday ? -10 : 0 }}>
-                <div style={{ fontFamily: T.fontDisplay, fontSize: 15, color: isToday ? T.accent : T.textSec, fontWeight: isToday ? 600 : 400 }}>{day.day.slice(0, 3)} {day.date.split(" ")[1]}</div>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: theme.accent, padding: "2px 6px", border: `1px solid ${theme.accent}`, borderRadius: 4, textAlign: "center" }}>
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "56px 40px 1fr", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < 4 ? `1px solid ${T.border}` : "none" }}>
+                <div style={{ fontSize: 13, color: isToday ? T.accent : T.textSec, fontWeight: isToday ? 600 : 400 }}>{day.day.slice(0, 3)} {day.date.split(" ")[1]}</div>
+                <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.08em", color: theme.text, background: theme.bg, padding: "2px 5px", borderRadius: T.r1, textAlign: "center" }}>
                   {day.subjectId?.slice(0, 3).toUpperCase()}
                 </div>
-                <div style={{ fontSize: 13, color: T.textSec }}>
+                <div style={{ fontSize: 12, color: T.textSec }}>
                   {day.tasks.map(t => `${t.type} ${t.duration}`).join(" · ")}
                 </div>
               </div>
