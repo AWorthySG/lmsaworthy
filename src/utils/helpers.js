@@ -61,12 +61,10 @@ export function getWeeklyProgress(state) {
   const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
   const weekStr = weekAgo.toISOString().split("T")[0];
   const hwCompleted = (state.submissions || []).filter(s => s.submittedAt && s.submittedAt >= weekStr).length;
-  const quizzesTaken = 0; // Would track from quiz results
+  const quizzesTaken = 0;
   const notesCreated = (state.notes || []).filter(n => n.createdAt >= weekStr).length;
   const reviewsGiven = (state.peerReviews || []).filter(r => r.createdAt >= weekStr).length;
-  const streakDays = state.wallet.streak;
-  const coinsEarned = (state.wallet.history || []).filter(h => h.date >= weekStr).reduce((a, h) => a + h.coins, 0);
-  return { hwCompleted, quizzesTaken, notesCreated, reviewsGiven, streakDays, coinsEarned };
+  return { hwCompleted, quizzesTaken, notesCreated, reviewsGiven };
 }
 
 /* ━━━ VOCAB WORD OF THE DAY ━━━ */
