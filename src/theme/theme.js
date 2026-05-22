@@ -1,69 +1,94 @@
 /* ━━━ A WORTHY DESIGN SYSTEM ━━━
-   Bricolage Grotesque · Plus Jakarta Sans · JetBrains Mono
-   Warm parchment surfaces · Terracotta accent · Deep editorial contrast */
+   Studio × Salon — Spectral · Manrope · Libre Caslon Text · JetBrains Mono
+   Warm cream paper · Forest green sidebar · Brass accent · Oxblood alert */
 
 export const T = {
-  // Surfaces — warm off-white, not sterile
-  bg: "#F8F7F4",
-  bgSidebar: "#FDFCFA",
-  bgCard: "#FFFFFF",
-  bgMuted: "#F0EFF2",
-  bgHover: "#E8E7EE",
-  bgOverlay: "rgba(15,23,42,0.45)",
-  // Text — deep charcoal with blue undertone (not pure black)
-  text: "#1E1E2E",
-  textSec: "#4B5563",
-  textTer: "#556478",
-  textInverse: "#F8F7F4",
-  // Accent — deep indigo (trust + aspiration)
-  accent: "#2D3A8C",
-  accentLight: "#EEF0FF",
-  accentMid: "#4F5BD5",
-  accentDark: "#1E2A6E",
-  accentText: "#1E2A6E",
-  // Gold — achievement, excellence, aspiration
-  gold: "#996E2A",
-  goldLight: "#FBF4E4",
-  goldDark: "#A07830",
-  // Atmospheric helpers
-  gradPrimary: "linear-gradient(135deg, #2D3A8C, #4F5BD5)",
-  gradGold: "linear-gradient(135deg, #996E2A, #C49A50)",
-  gradNavy: "#0F172A",
-  gradTeal: "#E4F4F0",
-  navy: "#0F172A",
-  navyLight: "#1E2A4A",
-  navyMid: "#334155",
-  teal: "#0D9488",
-  // Subject palette — distinctive per subject
-  eng:    { bg: "#EEF0FF", text: "#2D3A8C", accent: "#4F5BD5" },
-  h1econ: { bg: "#F0E8F8", text: "#5B21B6", accent: "#7C3AED" },
-  h2econ: { bg: "#FEF2E8", text: "#A5360A", accent: "#EA580C" },
-  gp:     { bg: "#E4F4F0", text: "#0F766E", accent: "#0D9488" },
-  // Status — clear, decisive
-  success: "#16A34A",
+  // ── Surfaces ─────────────────────────────────────────────────────────────
+  bg:          "#f1ebde",    // Studio cream paper
+  bgSidebar:   "#1b2a23",    // Salon forest panel
+  bgCard:      "#ece5d5",    // warm card surface
+  bgMuted:     "#e7dfcf",    // deeper muted cream
+  bgHover:     "#ddd5c5",    // hover on cream
+  bgOverlay:   "rgba(15,23,42,0.5)",
+
+  // ── Text ─────────────────────────────────────────────────────────────────
+  text:        "#1d1916",    // Studio deep ink
+  textSec:     "#5a5247",
+  textTer:     "#9c9384",
+  textInverse: "#f1ebde",
+
+  // ── Accent (brass) ───────────────────────────────────────────────────────
+  accent:      "#a07a2e",
+  accentLight: "rgba(199,154,69,0.14)",
+  accentMid:   "#c79a45",
+  accentDark:  "#7a5520",
+  accentText:  "#7a5520",
+
+  // ── Gold (brass alias — for gamification) ────────────────────────────────
+  gold:        "#a07a2e",
+  goldLight:   "#f5ead5",
+  goldDark:    "#7a5520",
+
+  // ── Danger / oxblood ─────────────────────────────────────────────────────
+  oxblood:     "#7a2418",    // Studio overdue/alert accent
+
+  // ── Atmospheric helpers ───────────────────────────────────────────────────
+  gradPrimary: "linear-gradient(135deg, #1b2a23, #2c4d3a)",
+  gradGold:    "linear-gradient(135deg, #a07a2e, #c79a45)",
+  gradNavy:    "#1b2a23",
+  gradTeal:    "#E4F4F0",
+  navy:        "#1b2a23",
+  navyLight:   "#243830",
+  navyMid:     "#2e4a3e",
+  teal:        "#0D9488",
+
+  // ── Sidebar dark tokens ───────────────────────────────────────────────────
+  sidebarText:         "#e9e2ce",
+  sidebarTextSoft:     "rgba(233,226,206,0.72)",
+  sidebarTextFaint:    "#c79a45",
+  sidebarBorder:       "rgba(233,226,206,0.12)",
+  sidebarActive:       "rgba(199,154,69,0.16)",
+  sidebarActiveText:   "#f6e9c8",
+  sidebarActiveBorder: "#c79a45",
+  sidebarHover:        "rgba(233,226,206,0.07)",
+  sidebarMuted:        "rgba(233,226,206,0.04)",
+
+  // ── Subject palette ───────────────────────────────────────────────────────
+  eng:    { bg: "#e8edf8", text: "#2a4080", accent: "#3b5bb5" },
+  h1econ: { bg: "#f0e8f8", text: "#5B21B6", accent: "#7C3AED" },
+  h2econ: { bg: "#f8e8e6", text: "#7a2418", accent: "#a03020" },
+  gp:     { bg: "#e4f0e8", text: "#2f5a38", accent: "#2f7a3e" },
+
+  // ── Status ───────────────────────────────────────────────────────────────
+  success:   "#16A34A",
   successBg: "#E8F8EE",
-  warning: "#9A5C04",
+  warning:   "#9A5C04",
   warningBg: "#FEF8E8",
-  danger: "#DC2626",
-  dangerBg: "#FEF0F0",
-  // Borders — cool-tinted, subtle
-  border: "#E2E4EA",
-  borderHover: "#C8CCD4",
-  borderFocus: "#2D3A8C",
-  // Shadows — cool-tinted, layered
-  shadow1: "0 1px 3px rgba(15,23,42,0.04)",
-  shadow2: "0 3px 8px rgba(15,23,42,0.07)",
-  shadow3: "0 8px 24px rgba(15,23,42,0.10)",
-  shadowAccent: "0 3px 12px rgba(45,58,140,0.25)",
-  // Grade colors — centralized for consistency
-  gradeS: "#996E2A", gradeA: "#16A34A", gradeB: "#2D3A8C", gradeC: "#9A5C04", gradeD: "#DC2626",
-  // Radii — editorial with a touch of softness
+  danger:    "#7a2418",
+  dangerBg:  "#fce8e5",
+
+  // ── Borders ───────────────────────────────────────────────────────────────
+  border:       "rgba(29,25,22,0.13)",
+  borderHover:  "rgba(29,25,22,0.22)",
+  borderFocus:  "#a07a2e",
+
+  // ── Shadows (warm-tinted) ─────────────────────────────────────────────────
+  shadow1:       "0 1px 3px rgba(29,25,22,0.05)",
+  shadow2:       "0 3px 8px rgba(29,25,22,0.08)",
+  shadow3:       "0 8px 24px rgba(29,25,22,0.12)",
+  shadowAccent:  "0 3px 12px rgba(160,122,46,0.25)",
+
+  // ── Radii ─────────────────────────────────────────────────────────────────
   r1: 6, r2: 10, r3: 14, r4: 18, r5: 24,
-  // Font families — shortcuts to avoid repeating full stacks
-  fontDisplay: "'Bricolage Grotesque', sans-serif",
-  fontBody: "'Plus Jakarta Sans', sans-serif",
-  fontMono: "'JetBrains Mono', monospace",
-  fontSerif: "'Fraunces', serif",
+
+  // ── Fonts ─────────────────────────────────────────────────────────────────
+  fontDisplay: "'Spectral', serif",
+  fontBody:    "'Manrope', sans-serif",
+  fontMono:    "'JetBrains Mono', monospace",
+  fontSerif:   "'Libre Caslon Text', serif",
+
+  // ── Grade colours ─────────────────────────────────────────────────────────
+  gradeS: "#a07a2e", gradeA: "#16A34A", gradeB: "#3b5bb5", gradeC: "#9A5C04", gradeD: "#7a2418",
 };
 
 export const SUBJ_THEME = { eng: T.eng, h1econ: T.h1econ, h2econ: T.h2econ, gp: T.gp };

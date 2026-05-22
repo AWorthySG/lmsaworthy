@@ -315,24 +315,24 @@ function LMS({ authUser, userProfile }) {
       {/* Sidebar */}
       <aside style={{
         width: sidebarOpen ? 240 : (isMobileLayout ? 0 : 64),
-        background: T.bgSidebar, borderRight: `1px solid ${T.border}`,
+        background: T.bgSidebar, borderRight: `1px solid ${T.sidebarBorder}`,
         display: "flex", flexDirection: "column", transition: "width 0.25s ease", flexShrink: 0,
         overflowX: "hidden", overflowY: "hidden",
-        ...(isMobileLayout ? { position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 50, boxShadow: sidebarOpen ? T.shadow3 : "none" } : {}),
+        ...(isMobileLayout ? { position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 50, boxShadow: sidebarOpen ? "0 8px 32px rgba(0,0,0,0.3)" : "none" } : {}),
       }}>
         {/* Logo */}
-        <div style={{ padding: sidebarOpen ? "18px 16px 12px" : "18px 12px 12px", display: "flex", alignItems: "center", gap: 10, borderBottom: `1px solid ${T.border}` }}>
+        <div style={{ padding: sidebarOpen ? "18px 16px 14px" : "18px 12px 14px", display: "flex", alignItems: "center", gap: 10, borderBottom: `1px solid ${T.sidebarBorder}` }}>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: "none", border: "none", cursor: "pointer", padding: 10, display: "flex", borderRadius: T.r1, minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", transition: "background 0.15s" }}
-            onMouseEnter={e => e.currentTarget.style.background = T.bgMuted}
+            onMouseEnter={e => e.currentTarget.style.background = T.sidebarHover}
             onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-            <List size={20} color={T.textSec} />
+            <List size={20} color={T.sidebarTextSoft} />
           </button>
           {sidebarOpen && (
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 36, objectFit: "contain", borderRadius: 8 }} />
+              <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 34, objectFit: "contain", borderRadius: 7 }} />
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay, letterSpacing: "-0.02em" }}>A Worthy</span>
-                <span style={{ fontSize: 9, fontWeight: 500, color: T.textTer, letterSpacing: "0.05em" }}>Learning Platform</span>
+                <span style={{ fontSize: 14, fontWeight: 400, color: "#f6e9c8", fontFamily: T.fontSerif, fontStyle: "italic", letterSpacing: "-0.01em" }}>A&thinsp;Worthy</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: T.sidebarTextFaint, letterSpacing: "0.22em", textTransform: "uppercase" }}>Singapore · MMXX</span>
               </div>
             </div>
           )}
@@ -356,24 +356,24 @@ function LMS({ authUser, userProfile }) {
               {sidebarOpen && (
                 isSubject ? (
                   <button onClick={() => setExpandedSection(isExpanded ? null : group.group)}
-                    style={{ display: "flex", alignItems: "center", gap: 7, width: "100%", padding: "8px 10px", marginTop: gi > 0 ? 4 : 0, borderRadius: T.r2, border: "none", background: hasActiveChild ? (subjTheme?.bg || T.bgMuted) : "transparent", cursor: "pointer", transition: "all 0.15s" }}
-                    onMouseEnter={e => { if (!hasActiveChild) e.currentTarget.style.background = T.bgHover; }}
-                    onMouseLeave={e => { if (!hasActiveChild) e.currentTarget.style.background = hasActiveChild ? (subjTheme?.bg || T.bgMuted) : "transparent"; }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: hasActiveChild ? (subjTheme?.accent || T.accent) : T.textTer, flexShrink: 0, boxShadow: hasActiveChild ? `0 0 6px ${subjTheme?.accent || T.accent}60` : "none", transition: "all 0.2s" }} />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: hasActiveChild ? (subjTheme?.accent || T.accent) : T.textSec, flex: 1, textAlign: "left", letterSpacing: "0.01em" }}>{group.group}</span>
-                    <CaretDown size={12} color={hasActiveChild ? (subjTheme?.accent || T.accent) : T.textTer} style={{ transform: showItems ? "rotate(180deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }} />
+                    style={{ display: "flex", alignItems: "center", gap: 7, width: "100%", padding: "8px 10px", marginTop: gi > 0 ? 4 : 0, borderRadius: T.r2, border: "none", background: hasActiveChild ? T.sidebarActive : "transparent", cursor: "pointer", transition: "all 0.15s" }}
+                    onMouseEnter={e => { if (!hasActiveChild) e.currentTarget.style.background = T.sidebarHover; }}
+                    onMouseLeave={e => { if (!hasActiveChild) e.currentTarget.style.background = hasActiveChild ? T.sidebarActive : "transparent"; }}>
+                    <div style={{ width: 7, height: 7, borderRadius: "50%", background: hasActiveChild ? T.sidebarTextFaint : T.sidebarTextSoft, flexShrink: 0, transition: "all 0.2s" }} />
+                    <span style={{ fontSize: 11, fontWeight: 700, color: hasActiveChild ? T.sidebarTextFaint : T.sidebarTextSoft, flex: 1, textAlign: "left", letterSpacing: "0.18em", textTransform: "uppercase" }}>{group.group}</span>
+                    <CaretDown size={12} color={hasActiveChild ? T.sidebarTextFaint : T.sidebarTextSoft} style={{ transform: showItems ? "rotate(180deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }} />
                   </button>
                 ) : (
                   gi > 0 ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 10px 4px", marginTop: 4 }}>
-                      <div style={{ flex: 1, height: 1, background: T.border }} />
-                      <span style={{ fontSize: 9, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 1, whiteSpace: "nowrap" }}>{group.group}</span>
-                      <div style={{ flex: 1, height: 1, background: T.border }} />
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "14px 10px 4px", marginTop: 4 }}>
+                      <div style={{ flex: 1, height: 1, background: T.sidebarBorder }} />
+                      <span style={{ fontSize: 9, fontWeight: 700, color: T.sidebarTextFaint, textTransform: "uppercase", letterSpacing: "0.22em", whiteSpace: "nowrap" }}>{group.group}</span>
+                      <div style={{ flex: 1, height: 1, background: T.sidebarBorder }} />
                     </div>
                   ) : null
                 )
               )}
-              {!sidebarOpen && gi > 0 && <div style={{ height: 1, background: T.border, margin: "4px 6px" }} />}
+              {!sidebarOpen && gi > 0 && <div style={{ height: 1, background: T.sidebarBorder, margin: "4px 6px" }} />}
 
               {/* Items — collapsible for subjects, always visible otherwise */}
               {showItems && (
@@ -385,17 +385,15 @@ function LMS({ authUser, userProfile }) {
                     const activeBg = isSubject ? (subjTheme?.bg || T.accentLight) : T.accentLight;
                     return (
                       <button key={item.id} onClick={() => { dispatch({ type: "SET_PAGE", payload: item.id }); if (isMobileLayout) setSidebarOpen(false); }} title={item.label}
-                        onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = darkMode ? "rgba(255,255,255,0.06)" : T.bgHover; }}
-                        onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = active ? activeBg : "transparent"; }}
-                        style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", padding: sidebarOpen ? "9px 10px 9px 22px" : "10px 0", borderRadius: T.r2, border: "none", background: active ? activeBg : "transparent", color: active ? activeAccent : T.textSec, cursor: "pointer", fontSize: 13, fontWeight: active ? 700 : 450, marginBottom: 1, transition: "background 0.15s, color 0.15s", whiteSpace: "nowrap", justifyContent: sidebarOpen ? "flex-start" : "center", minHeight: 38, animation: isSubject ? `itemIn 0.15s ease ${itemIdx * 25}ms both` : "none", position: "relative" }}>
-                        {/* Active indicator bar */}
-                        {active && <div style={{ position: "absolute", left: sidebarOpen ? 8 : 4, top: "50%", transform: "translateY(-50%)", width: 3, height: 18, borderRadius: 3, background: activeAccent, animation: "scaleIn 0.2s ease", boxShadow: `0 0 6px ${activeAccent}60` }} />}
-                        <item.icon size={17} color={active ? activeAccent : T.textTer} />
+                        onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = T.sidebarHover; }}
+                        onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = active ? T.sidebarActive : "transparent"; }}
+                        style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", padding: sidebarOpen ? "8px 10px 8px 22px" : "10px 0", borderRadius: T.r2, border: "none", borderLeft: active ? `2px solid ${T.sidebarActiveBorder}` : "2px solid transparent", background: active ? T.sidebarActive : "transparent", color: active ? T.sidebarActiveText : T.sidebarTextSoft, cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 500, marginBottom: 1, transition: "background 0.15s, color 0.15s", whiteSpace: "nowrap", justifyContent: sidebarOpen ? "flex-start" : "center", minHeight: 38, animation: isSubject ? `itemIn 0.15s ease ${itemIdx * 25}ms both` : "none", position: "relative" }}>
+                        <item.icon size={16} color={active ? T.sidebarTextFaint : T.sidebarTextSoft} />
                         {sidebarOpen && <span style={{ flex: 1, textAlign: "left" }}>{item.label}</span>}
                         {/* Notification badges */}
-                        {sidebarOpen && item.id === "homework" && hwBadge > 0 && <span style={{ background: T.accent, color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 10, minWidth: 16, textAlign: "center" }}>{hwBadge}</span>}
+                        {sidebarOpen && item.id === "homework" && hwBadge > 0 && <span style={{ background: T.oxblood, color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 10, minWidth: 16, textAlign: "center" }}>{hwBadge}</span>}
                         {sidebarOpen && item.id === "attendance" && attendanceBadge > 0 && <span style={{ background: T.warning, color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 10, minWidth: 16, textAlign: "center" }}>{attendanceBadge}</span>}
-                        {sidebarOpen && hl && !hwBadge && <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#3D9470", animation: "breathe 2.5s ease infinite" }} />}
+                        {sidebarOpen && hl && !hwBadge && <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.sidebarTextFaint, animation: "breathe 2.5s ease infinite" }} />}
                       </button>
                     );
                   })}
@@ -409,30 +407,28 @@ function LMS({ authUser, userProfile }) {
 
         {/* Bottom: coin bar + profile */}
         {sidebarOpen && (
-          <div style={{ padding: "10px 10px 12px", borderTop: `1px solid ${T.border}`, background: T.bgMuted + "80" }}>
-            {/* Coin + Streak bar — enhanced */}
+          <div style={{ padding: "12px 14px 14px", borderTop: `1px solid ${T.sidebarBorder}` }}>
+            {/* Coin + Streak bar */}
             <button onClick={() => setShowRewardModal(true)}
-              style={{ width: "100%", padding: "10px 14px", borderRadius: T.r2, background: "linear-gradient(135deg, #0F172A, #1E2A4A)", border: "1px solid rgba(212,162,84,0.15)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, transition: "all 0.15s" }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(212,162,84,0.35)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(212,162,84,0.15)"; e.currentTarget.style.boxShadow = "none"; }}>
+              style={{ width: "100%", padding: "10px 14px", borderRadius: T.r2, background: "rgba(160,122,46,0.14)", border: `1px solid rgba(199,154,69,0.25)`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, transition: "all 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(199,154,69,0.5)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(199,154,69,0.25)"; }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: 14, fontWeight: 800, color: "#D4A254" }}>$</span>
-                <span style={{ fontSize: 13, fontWeight: 800, color: "#D4A254", fontFamily: T.fontDisplay }}>{state.wallet.coins}</span>
-                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>coins</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: T.sidebarTextFaint, fontFamily: T.fontDisplay }}>{state.wallet.coins}</span>
+                <span style={{ fontSize: 9, color: T.sidebarTextSoft, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>coins</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <Flame size={14} color="#818CF8" />
-                <span style={{ fontSize: 13, fontWeight: 800, color: "#818CF8", fontFamily: T.fontDisplay }}>{state.wallet.streak}</span>
-                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>day streak</span>
+                <Flame size={13} color={T.sidebarTextFaint} />
+                <span style={{ fontSize: 13, fontWeight: 800, color: T.sidebarTextFaint }}>{state.wallet.streak}</span>
+                <span style={{ fontSize: 9, color: T.sidebarTextSoft, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>streak</span>
               </div>
             </button>
             {/* User profile */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 4px 8px" }}>
-              <div style={{ width: 34, height: 34, borderRadius: T.r2, background: state.role === "tutor" ? T.gradPrimary : "linear-gradient(135deg, #0D9488, #14B8A6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 13, boxShadow: "0 2px 8px rgba(0,0,0,0.15)", flexShrink: 0 }}>{(userProfile?.name || authUser?.displayName || "U").charAt(0).toUpperCase()}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 36, background: T.sidebarTextFaint, color: T.bgSidebar, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: T.fontSerif, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>{(userProfile?.name || authUser?.displayName || "U").charAt(0).toUpperCase()}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ color: T.text, fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userProfile?.name || authUser?.displayName || "User"}</div>
-                <div style={{ color: T.textTer, fontSize: 10, fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}>
-                  <span style={{ display: "inline-block", width: 5, height: 5, borderRadius: "50%", background: "#22C55E" }} />
+                <div style={{ color: "#f6e9c8", fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userProfile?.name || authUser?.displayName || "User"}</div>
+                <div style={{ color: T.sidebarTextFaint, fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>
                   {userProfile?.role === "tutor" ? "Creator" : "Student"}
                 </div>
               </div>
@@ -441,16 +437,16 @@ function LMS({ authUser, userProfile }) {
             <div style={{ display: "flex", gap: 6 }}>
               {userProfile?.role === "tutor" && (
                 <button onClick={() => dispatch({ type: "SET_ROLE", payload: state.role === "tutor" ? "student" : "tutor" })}
-                  style={{ flex: 1, padding: "8px", borderRadius: T.r1, background: T.bgCard, border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 11, fontWeight: 600, color: T.textSec, textAlign: "center", transition: "all 0.15s" }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = T.accent; e.currentTarget.style.color = T.accent; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.textSec; }}>
+                  style={{ flex: 1, padding: "7px", borderRadius: T.r1, background: "transparent", border: `1px solid ${T.sidebarBorder}`, cursor: "pointer", fontSize: 11, fontWeight: 600, color: T.sidebarTextSoft, textAlign: "center", transition: "all 0.15s" }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = T.sidebarTextFaint; e.currentTarget.style.color = T.sidebarTextFaint; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = T.sidebarBorder; e.currentTarget.style.color = T.sidebarTextSoft; }}>
                   {state.role === "tutor" ? "Student View" : "Tutor View"}
                 </button>
               )}
               <button onClick={() => signOut(firebaseAuth)}
-                style={{ flex: userProfile?.role === "tutor" ? "none" : 1, padding: "8px 12px", borderRadius: T.r1, background: T.bgCard, border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 11, fontWeight: 500, color: T.textTer, textAlign: "center", transition: "all 0.15s" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = T.danger; e.currentTarget.style.color = T.danger; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.textTer; }}>
+                style={{ flex: userProfile?.role === "tutor" ? "none" : 1, padding: "7px 12px", borderRadius: T.r1, background: "transparent", border: `1px solid ${T.sidebarBorder}`, cursor: "pointer", fontSize: 11, fontWeight: 500, color: T.sidebarTextSoft, textAlign: "center", transition: "all 0.15s" }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(220,50,40,0.5)"; e.currentTarget.style.color = "#e87a6a"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = T.sidebarBorder; e.currentTarget.style.color = T.sidebarTextSoft; }}>
                 Sign Out
               </button>
             </div>
