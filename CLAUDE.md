@@ -35,10 +35,10 @@ There is no test suite.
 ### Entry / shell
 - `src/main.jsx` — React root, wraps `<App />` with `<BrowserRouter>`.
 - `src/App.jsx` — renders `<LMS />` (default export of `src/LMS.jsx`, named `LMSAuthWrapper`).
-- `src/LMS.jsx` (~619 lines) — auth gate (Firebase `onAuthStateChanged`), then the main `LMS` component: sidebar, header, mobile bottom nav, global Cmd-K search, notification bell, toast container, celebration overlay, offline indicator, and the `renderPage()` switch (wrapped in `<PageErrorBoundary>` + `<Suspense>`) that maps `state.page` → a lazy-loaded page component. Notifications, search results, and badge counts are memoized with `useMemo`. **Sidebar** is Bear-minimal: 232px open / 56px collapsed, `T.bgSidebar` (`#F2EFE8`) background, active items get a white card pill with a 2px rust accent left border, no dark panel.
+- `src/LMS.jsx` (~600 lines) — auth gate (Firebase `onAuthStateChanged`), then the main `LMS` component: sidebar, header, mobile bottom nav, global Cmd-K search, notification bell, toast container, offline indicator, and the `renderPage()` switch (wrapped in `<PageErrorBoundary>` + `<Suspense>`) that maps `state.page` → a lazy-loaded page component. Notifications and search results are memoized with `useMemo`. **Sidebar** is Bear-minimal: 232px open / 56px collapsed, `T.bgSidebar` (`#F2EFE8`) background, active items get a white card pill with a 2px rust accent left border, no dark panel.
 
 ### Code splitting
-- All 34 page components are loaded via `lazy()` from React — each page becomes its own chunk at build time.
+- All page components are loaded via `lazy()` from React — each page becomes its own chunk at build time.
 - `renderPage()` is wrapped in `<Suspense fallback={...}>` for loading states.
 - Tutor-only pages (`aimarker`, `attendance`, `analytics`, `parentview`, `certificates`) are gated in `renderPage()` — students accessing these URLs are redirected to the dashboard.
 
@@ -70,9 +70,9 @@ There is no test suite.
 - `src/data/seedData.js` — all initial collections (resources, video lessons, quizzes, exams, students, sessions, attendance, reports, posts, homework, submissions). Resource `fileUrl`s point to Firebase Storage download URLs.
 - `src/data/{routing,subjects,gpQuestionTypes,infoPackThemes,microModules,pastPapersData,practiceQuestions,essayData,vocabDrills,seedEvents}.js` — static content used by individual pages.
 - `src/theme/theme.js` — exports `T` (one global design-token object: colors, radii, shadows, gradients, font families, per-subject palette) and `SUBJ_THEME`. **Design aesthetic: Bear-minimal** — warm whites, soft `rgba` borders, content-first layout, no decorative chrome. Font tokens: `T.fontDisplay` / `T.fontBody` / `T.fontSerif` → `'Nunito', sans-serif` (weights 300–800, rounded and warm); `T.fontMono` → `'JetBrains Mono', monospace`. Key palette: `T.bg` `#FAFAF7` (warm white canvas), `T.bgSidebar` `#F2EFE8`, `T.bgCard` `#FFFFFF`, `T.accent` `#C0392B` (rust red), `T.text` `#1C1B19`, `T.textSec` `#6B6760`, `T.border` `rgba(28,27,25,0.08)`. Subject themes: `T.eng`, `T.gp`, `T.h1econ`, `T.h2econ` (each with `bg`, `text`, `accent`). Styling is inline `style={{...}}` driven by `T`; there are no CSS-in-JS libraries or Tailwind. Subject themes are looked up via `T[subjectId]` or `getSubjectTheme(id)` from `src/utils/helpers.js`. Colors are WCAG AA compliant against the `T.bg` background.
-- `src/icons/icons.jsx` — Phosphor icon wrappers used throughout. All UI indicators use these icons, not raw emojis. Add new icons here rather than importing `@phosphor-icons/react` directly in pages. Iconify (`@iconify/react`) is used only for full-colour emoji in game content data.
-- `src/hooks/` — `useFirebaseSync.js` (bidirectional RTDB sync), `useWindowWidth.js` (responsive breakpoint), `useTimer.js` (countdown/stopwatch for games and timed features).
-- `src/utils/` — `helpers.js` (subject themes, exam countdowns, daily challenges, word of the day, study plan generation), `gamificationUtils.js` (XP calculation, level/badge logic), `notifications.js` (homework reminders), `spacedRepetition.js` (spaced repetition scheduling for revision).
+- `src/icons/icons.jsx` — Phosphor icon wrappers used throughout. All UI indicators use these icons, not raw emojis. Add new icons here rather than importing `@phosphor-icons/react` directly in pages.
+- `src/hooks/` — `useFirebaseSync.js` (bidirectional RTDB sync), `useWindowWidth.js` (responsive breakpoint), `useTimer.js` (countdown/stopwatch for timed features).
+- `src/utils/` — `helpers.js` (subject themes, exam countdowns, daily challenges, word of the day, study plan generation), `notifications.js` (homework reminders), `spacedRepetition.js` (spaced repetition scheduling for revision).
 
 ### Firebase
 - `src/config/firebase.js` initialises the `aworthy-lms` project (Auth, Realtime DB region `asia-southeast1`, Storage). **Config keys are hardcoded in source** — these are client SDK keys, not secrets, but treat them accordingly.
