@@ -10,7 +10,7 @@ function MistakeJournal({ state, dispatch }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <PageHeader title="Mistake Journal" subtitle="Track errors from quizzes and games to prevent repeating them" />
+      <PageHeader title="Mistake Journal" subtitle="Track errors from practice sessions and homework to prevent repeating them" />
 
       <div style={{ display: "flex", gap: 10 }}>
         <div style={{ flex: 1, background: T.dangerBg, borderRadius: T.r2, padding: "14px", textAlign: "center", border: `1px solid ${T.danger}22` }}>
@@ -27,7 +27,7 @@ function MistakeJournal({ state, dispatch }) {
         <div style={{ textAlign: "center", padding: "40px 20px" }}>
           <EmptyStateIllustration type="celebration" size={80} />
           <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginTop: 10 }}>No mistakes recorded yet</div>
-          <div style={{ fontSize: 12, color: T.textTer, marginTop: 4 }}>Mistakes from quizzes and games will appear here automatically.</div>
+          <div style={{ fontSize: 12, color: T.textTer, marginTop: 4 }}>Log mistakes from homework and practice here to track and review them.</div>
         </div>
       ) : (
         <>

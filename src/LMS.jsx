@@ -265,7 +265,7 @@ function LMS({ authUser, userProfile }) {
       }}>
         {/* Logo */}
         <div style={{ padding: sidebarOpen ? "16px 14px 12px" : "16px 8px 12px", display: "flex", alignItems: "center", gap: 10, borderBottom: `1px solid ${T.border}` }}>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: "none", border: "none", cursor: "pointer", padding: 8, display: "flex", borderRadius: T.r2, minWidth: 40, minHeight: 40, alignItems: "center", justifyContent: "center", transition: "background 0.12s" }}
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"} style={{ background: "none", border: "none", cursor: "pointer", padding: 8, display: "flex", borderRadius: T.r2, minWidth: 40, minHeight: 40, alignItems: "center", justifyContent: "center", transition: "background 0.12s" }}
             onMouseEnter={e => e.currentTarget.style.background = T.bgHover}
             onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
             <List size={18} color={T.textSec} />
@@ -371,17 +371,17 @@ function LMS({ authUser, userProfile }) {
         {/* Top bar */}
         <div className="glass-header" style={{ display: "flex", alignItems: "center", gap: 10, padding: isMobileLayout ? "12px 0" : "14px 0 8px", position: "sticky", top: 0, zIndex: 10, maxWidth: 1080, margin: "0 auto" }}>
           {isMobileLayout && (
-            <button onClick={() => setSidebarOpen(true)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
+            <button onClick={() => setSidebarOpen(true)} aria-label="Open menu" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
               <List size={20} color={T.textSec} />
             </button>
           )}
           {isMobileLayout && <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, objectFit: "contain" }} />}
           <div style={{ flex: 1 }} />
-          <button onClick={() => setShowSearch(true)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 40, fontSize: 12, color: T.textTer }}>
+          <button onClick={() => setShowSearch(true)} aria-label="Search" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 40, fontSize: 12, color: T.textTer }}>
             <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: T.fontMono }}>⌘K</kbd>}
           </button>
           <div style={{ position: "relative" }}>
-            <button onClick={() => setShowNotifs(n => !n)} style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", position: "relative", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
+            <button onClick={() => setShowNotifs(n => !n)} aria-label="Notifications" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", position: "relative", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
               <Bell size={20} color={T.textSec} />
               {notifications.length > 0 && <div style={{ position: "absolute", top: -2, right: -2, width: 14, height: 14, borderRadius: "50%", background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{notifications.length}</div>}
             </button>
@@ -404,7 +404,7 @@ function LMS({ authUser, userProfile }) {
 
         {/* Tutor Announcement Banner */}
         {state.announcement && (
-          <div style={{ maxWidth: 1080, margin: "0 auto 8px", padding: "10px 16px", borderRadius: T.r2, background: "linear-gradient(135deg, #0F172A, #1E2A4A)", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
+          <div style={{ maxWidth: 1080, margin: "0 auto 8px", padding: "10px 16px", borderRadius: T.r2, background: "linear-gradient(135deg, #1C1B19, #2A2927)", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
             <Megaphone size={16} color="#fff" />
             <span style={{ flex: 1, fontWeight: 600 }}>{state.announcement}</span>
             {state.role === "tutor" && <button onClick={() => dispatch({ type: "SET_ANNOUNCEMENT", payload: null })} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>Dismiss</button>}

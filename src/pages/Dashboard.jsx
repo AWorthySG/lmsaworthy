@@ -118,7 +118,7 @@ function ResumeCard({ state, dispatch }) {
           <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.3, color: T.text }}>Start today's practice drill</div>
           <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>Keep your skills sharp with a quick drill</div>
         </div>
-        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'practice-gp' })}
+        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'practice-eng' })}
           style={{ padding: '11px 20px', borderRadius: T.r2, background: T.accent, color: '#fff', fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
           Start drill <ArrowRight size={14} />
         </button>
@@ -342,7 +342,7 @@ function AssignmentsCard({ state, dispatch }) {
 /* ━━━ JUMP IN ━━━ */
 function JumpInCard({ dispatch }) {
   const tiles = [
-    { label: 'Practice Drills', meta: 'GP & English',  icon: Target,    color: T.eng.accent,    page: 'practice-gp'  },
+    { label: 'Practice Drills', meta: 'English drills', icon: Target,    color: T.eng.accent,    page: 'practice-eng'  },
     { label: 'Model Essays',    meta: 'GP examples',   icon: BookOpen,  color: T.h1econ.accent, page: 'modelessays'  },
     { label: 'Infographics',    meta: 'Visual notes',  icon: Sparkle,   color: T.accent,        page: 'infographics' },
     { label: 'Community',       meta: 'Chat & share',  icon: Handshake, color: T.success,       page: 'community'    },
@@ -516,7 +516,7 @@ function DailyChallengeCard({ dispatch }) {
       <div style={{ marginTop: 10, display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: 12, color: T.textSec }}>Spot the fallacy</span>
         <div style={{ flex: 1 }} />
-        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'practice-gp' })}
+        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'practice-eng' })}
           style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: T.accent, fontSize: 12, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
           Try it <ArrowRight size={12} />
         </button>

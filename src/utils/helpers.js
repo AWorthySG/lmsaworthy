@@ -101,15 +101,14 @@ export function getAdaptiveDifficulty(studentHistory) {
 export function generateStudyPlan(_state) {
   const today = new Date();
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const subjects = ["eng", "gp", "h1econ", "h2econ"];
-  const subjectNames = { eng: "English", gp: "General Paper", h1econ: "H1 Economics", h2econ: "H2 Economics" };
+  const subjects = ["eng", "omath", "amath", "gp", "h1econ", "h2econ", "ibmyp"];
+  const subjectNames = { eng: "English", omath: "O-Level Maths", amath: "Add. Maths", gp: "General Paper", h1econ: "H1 Economics", h2econ: "H2 Economics", ibmyp: "IB MYP Maths" };
   const activities = [
-    { type: "Practice Drills", duration: "25 min", icon: "🎯" },
-    { type: "Example Review", duration: "15 min", icon: "🧠" },
-    { type: "Essay Practice", duration: "45 min", icon: "✍️" },
-    { type: "Video Lesson", duration: "20 min", icon: "📺" },
-    { type: "Game Session", duration: "15 min", icon: "🎮" },
-    { type: "Past Paper", duration: "60 min", icon: "📝" },
+    { type: "Practice Drills", duration: "25 min" },
+    { type: "Example Review", duration: "15 min" },
+    { type: "Essay Practice", duration: "45 min" },
+    { type: "Video Lesson", duration: "20 min" },
+    { type: "Past Paper", duration: "60 min" },
   ];
   const plan = [];
   for (let d = 0; d < 7; d++) {

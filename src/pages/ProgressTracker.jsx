@@ -18,9 +18,10 @@ function ProgressTracker({ state, dispatch }) {
   if (sel) {
     const student = state.students.find((s) => s.id === sel);
     if (!student) return null;
-    const scoreData = student.quizResults.map((r) => ({ date: formatDate(r.date), score: Math.round((r.score / r.total) * 100) }));
+    const quizResults = student.quizResults || [];
+    const scoreData = quizResults.map((r) => ({ date: formatDate(r.date), score: Math.round((r.score / r.total) * 100) }));
     const subjScores = {};
-    student.quizResults.forEach((r) => { const q = state.quizzes.find((q) => q.id === r.quizId); if (q) { if (!subjScores[q.subject]) subjScores[q.subject] = []; subjScores[q.subject].push(Math.round((r.score / r.total) * 100)); } });
+    quizResults.forEach((r) => { const q = (state.quizzes || []).find((q) => q.id === r.quizId); if (q) { if (!subjScores[q.subject]) subjScores[q.subject] = []; subjScores[q.subject].push(Math.round((r.score / r.total) * 100)); } });
     const barData = Object.entries(subjScores).map(([s, scores]) => ({ name: getSubject(s)?.name || s, value: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length), color: getSubjectTheme(s).accent }));
 
     return (
@@ -67,18 +68,20 @@ function ProgressTracker({ state, dispatch }) {
             })}
           </Card>
           <Card elevated>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Quiz History</h3>
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Recent Submissions</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {student.quizResults.map((r, idx) => {
-                const quiz = state.quizzes.find((q) => q.id === r.quizId);
-                const pct = Math.round((r.score / r.total) * 100);
+              {state.submissions.filter(s => s.studentId === student.id).slice(0, 5).map((sub, idx) => {
+                const hw = state.homework.find(h => h.id === sub.homeworkId);
                 return (
                   <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", background: T.bgMuted, borderRadius: T.r2, border: `1px solid ${T.border}` }}>
-                    <div><div style={{ fontSize: 13, fontWeight: 550, color: T.text }}>{quiz?.title || "Quiz"}</div><div style={{ fontSize: 11, color: T.textTer }}>{formatDate(r.date)}</div></div>
-                    <div style={{ textAlign: "right" }}><div style={{ fontSize: 16, fontWeight: 800, color: pct >= 70 ? T.success : pct >= 50 ? T.warning : T.danger }}>{pct}%</div><div style={{ fontSize: 11, color: T.textTer }}>{r.score}/{r.total}</div></div>
+                    <div><div style={{ fontSize: 13, fontWeight: 550, color: T.text }}>{hw?.title || "Assignment"}</div><div style={{ fontSize: 11, color: T.textTer }}>{formatDate(sub.submittedAt)}</div></div>
+                    <div style={{ textAlign: "right" }}><div style={{ fontSize: 12, fontWeight: 700, color: sub.status === "graded" ? T.success : sub.status === "submitted" ? T.warning : T.textTer, textTransform: "capitalize" }}>{sub.status}</div>{sub.grade && <div style={{ fontSize: 11, color: T.textTer }}>{sub.grade}</div>}</div>
                   </div>
                 );
               })}
+              {state.submissions.filter(s => s.studentId === student.id).length === 0 && (
+                <div style={{ fontSize: 13, color: T.textTer, padding: "8px 0" }}>No submissions yet.</div>
+              )}
             </div>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "20px 0 14px" }}>Materials Accessed</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
