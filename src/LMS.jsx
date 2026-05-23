@@ -204,8 +204,8 @@ function LMS({ authUser, userProfile }) {
     }
     switch (page) {
       case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
-      case "library": case "library-eng": case "library-h1econ": case "library-h2econ": return <ContentLibrary state={state} dispatch={dispatch} />;
-      case "videos": case "videos-eng": case "videos-h1econ": case "videos-h2econ": return <VideoLessons state={state} dispatch={dispatch} />;
+      case "library": case "library-eng": case "library-h1econ": case "library-h2econ": case "library-omath": case "library-amath": case "library-ibmyp": return <ContentLibrary state={state} dispatch={dispatch} />;
+      case "videos": case "videos-eng": case "videos-h1econ": case "videos-h2econ": case "videos-omath": case "videos-amath": case "videos-ibmyp": return <VideoLessons state={state} dispatch={dispatch} />;
       case "attendance": return <Attendance state={state} dispatch={dispatch} />;
       case "progress": return <ProgressTracker state={state} dispatch={dispatch} />;
       case "community": return <Community state={state} dispatch={dispatch} />;
@@ -213,6 +213,9 @@ function LMS({ authUser, userProfile }) {
       case "infographics": return <LiveInfographics state={state} dispatch={dispatch} />;
       case "practice-eng": return <SubjectDrills subject="eng" />;
       case "practice-h1econ": return <SubjectDrills subject="h1econ" />;
+      case "practice-omath": return <SubjectDrills subject="omath" />;
+      case "practice-amath": return <SubjectDrills subject="amath" />;
+      case "practice-ibmyp": return <SubjectDrills subject="ibmyp" />;
       case "vocab": return <VocabBuilder />;
       case "example-finder": return <ExampleConnector />;
       case "essaygrader": return <EssayGrader />;
@@ -224,17 +227,23 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-gp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="gp" />;
       case "pastpapers-h1econ": return <PastPapers state={state} dispatch={dispatch} defaultSubject="h1econ" />;
       case "pastpapers-h2econ": return <PastPapers state={state} dispatch={dispatch} defaultSubject="h2econ" />;
+      case "pastpapers-omath": return <PastPapers state={state} dispatch={dispatch} defaultSubject="omath" />;
+      case "pastpapers-amath": return <PastPapers state={state} dispatch={dispatch} defaultSubject="amath" />;
+      case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "microlearning": return <MicrolearningPage state={state} dispatch={dispatch} />;
       case "micro-eng": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="eng" />;
       case "micro-h1econ": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="h1econ" />;
       case "micro-h2econ": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="h2econ" />;
+      case "micro-omath": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="omath" />;
+      case "micro-amath": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="amath" />;
+      case "micro-ibmyp": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "analytics": return <AnalyticsDashboard state={state} />;
       case "parentview": return <ParentView state={state} />;
       case "notes": return <NotesPage state={state} dispatch={dispatch} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
-      case "formulas": return <FormulaCards />;
+      case "formulas": case "formulas-omath": case "formulas-amath": case "formulas-ibmyp": return <FormulaCards />;
       case "certificates": return <Certificates state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;

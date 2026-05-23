@@ -22,6 +22,22 @@ export const NAV = [
     { id: "pastpapers-eng", label: "Past Papers", icon: Notebook },
     { id: "micro-eng", label: "Quick Lessons", icon: BookmarkSimple },
   ]},
+  { group: "O-Level Mathematics", subject: "omath", items: [
+    { id: "library-omath", label: "Resources", icon: Books },
+    { id: "videos-omath", label: "Video Lessons", icon: VideoCamera },
+    { id: "practice-omath", label: "Practice Drills", icon: Target },
+    { id: "formulas-omath", label: "Formula Cards", icon: Hash },
+    { id: "pastpapers-omath", label: "Past Papers", icon: Notebook },
+    { id: "micro-omath", label: "Quick Lessons", icon: BookmarkSimple },
+  ]},
+  { group: "O-Level Add. Maths", subject: "amath", items: [
+    { id: "library-amath", label: "Resources", icon: Books },
+    { id: "videos-amath", label: "Video Lessons", icon: VideoCamera },
+    { id: "practice-amath", label: "Practice Drills", icon: Target },
+    { id: "formulas-amath", label: "Formula Cards", icon: Hash },
+    { id: "pastpapers-amath", label: "Past Papers", icon: Notebook },
+    { id: "micro-amath", label: "Quick Lessons", icon: BookmarkSimple },
+  ]},
   { group: "H1 General Paper", subject: "gp", items: [
     { id: "infographics", label: "Infographics", icon: Sparkle },
     { id: "essaygrader", label: "Essay Grader", icon: GraduationCap },
@@ -42,6 +58,14 @@ export const NAV = [
     { id: "formulas", label: "Formula Cards", icon: Hash },
     { id: "pastpapers-h2econ", label: "Past Papers", icon: Notebook },
     { id: "micro-h2econ", label: "Quick Lessons", icon: BookmarkSimple },
+  ]},
+  { group: "IB MYP Mathematics", subject: "ibmyp", items: [
+    { id: "library-ibmyp", label: "Resources", icon: Books },
+    { id: "videos-ibmyp", label: "Video Lessons", icon: VideoCamera },
+    { id: "practice-ibmyp", label: "Practice Drills", icon: Target },
+    { id: "formulas-ibmyp", label: "Formula Cards", icon: Hash },
+    { id: "pastpapers-ibmyp", label: "Past Papers", icon: Notebook },
+    { id: "micro-ibmyp", label: "Quick Lessons", icon: BookmarkSimple },
   ]},
   { group: "Engage", items: [
     { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
@@ -72,8 +96,16 @@ export const PAGE_TO_PATH = {
   homework: "/homework", pastpapers: "/past-papers", microlearning: "/microlearning",
   "pastpapers-eng": "/past-papers/eng", "pastpapers-gp": "/past-papers/gp",
   "pastpapers-h1econ": "/past-papers/h1econ", "pastpapers-h2econ": "/past-papers/h2econ",
+  "pastpapers-omath": "/past-papers/omath", "pastpapers-amath": "/past-papers/amath",
+  "pastpapers-ibmyp": "/past-papers/ibmyp",
+  "practice-omath": "/practice/omath", "practice-amath": "/practice/amath",
+  "practice-ibmyp": "/practice/ibmyp",
   "micro-eng": "/quick-lessons/eng",
   "micro-h1econ": "/quick-lessons/h1econ", "micro-h2econ": "/quick-lessons/h2econ",
+  "micro-omath": "/quick-lessons/omath", "micro-amath": "/quick-lessons/amath",
+  "micro-ibmyp": "/quick-lessons/ibmyp",
+  "formulas-omath": "/formula-cards/omath", "formulas-amath": "/formula-cards/amath",
+  "formulas-ibmyp": "/formula-cards/ibmyp",
   analytics: "/analytics", parentview: "/parent-view",
   notes: "/notes", modelessays: "/model-essays",
   mistakes: "/mistake-journal", checklist: "/revision-checklist",
@@ -83,7 +115,9 @@ export const PAGE_TO_PATH = {
   settings: "/settings",
   // Subject-suffixed IDs mapping to shared pages
   "library-eng": "/library", "library-h1econ": "/library", "library-h2econ": "/library",
+  "library-omath": "/library", "library-amath": "/library", "library-ibmyp": "/library",
   "videos-eng": "/videos", "videos-h1econ": "/videos", "videos-h2econ": "/videos",
+  "videos-omath": "/videos", "videos-amath": "/videos", "videos-ibmyp": "/videos",
 };
 
 // Auto-generate reverse mapping; for shared paths the base ID (without subject suffix) wins

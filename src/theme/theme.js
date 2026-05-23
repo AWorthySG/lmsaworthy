@@ -51,9 +51,12 @@ export const T = {
 
   // ── Subject palette ───────────────────────────────────────────────────────
   eng:    { bg: "#EEF2FF", text: "#2D3A8C", accent: "#4F5BD5" },
+  omath:  { bg: "#E0F7FA", text: "#00695C", accent: "#00897B" },
+  amath:  { bg: "#FFF3E0", text: "#BF360C", accent: "#E64A19" },
   h1econ: { bg: "#F3EEFE", text: "#5B21B6", accent: "#7C3AED" },
   h2econ: { bg: "#FFF0EE", text: "#962D22", accent: "#C0392B" },
   gp:     { bg: "#EDFAF4", text: "#0F766E", accent: "#0D9488" },
+  ibmyp:  { bg: "#E8F5E9", text: "#1B5E20", accent: "#2E7D32" },
 
   // ── Status ───────────────────────────────────────────────────────────────
   success:   "#16A34A",
@@ -87,4 +90,4 @@ export const T = {
   gradeS: "#B07D2A", gradeA: "#16A34A", gradeB: "#2D3A8C", gradeC: "#9A5C04", gradeD: "#C0392B",
 };
 
-export const SUBJ_THEME = { eng: T.eng, h1econ: T.h1econ, h2econ: T.h2econ, gp: T.gp };
+export const SUBJ_THEME = { eng: T.eng, omath: T.omath, amath: T.amath, h1econ: T.h1econ, h2econ: T.h2econ, gp: T.gp, ibmyp: T.ibmyp };
