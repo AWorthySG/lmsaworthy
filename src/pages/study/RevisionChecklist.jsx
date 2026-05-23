@@ -1,5 +1,6 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
+import { Check } from '../../icons/icons.jsx';
 import { PageHeader } from '../../components/ui';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 
@@ -42,7 +43,7 @@ function RevisionChecklist({ state, dispatch }) {
                   <button key={key} onClick={() => dispatch({ type: "TOGGLE_CHECKLIST_ITEM", payload: key })}
                     style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: T.r1, background: done ? T.successBg : T.bgCard, border: `1px solid ${done ? T.success + "33" : T.border}`, cursor: "pointer", textAlign: "left", transition: "all 0.15s" }}>
                     <div style={{ width: 20, height: 20, borderRadius: 4, border: `2px solid ${done ? T.success : T.border}`, background: done ? T.success : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s" }}>
-                      {done && <span style={{ color: "#fff", fontSize: 12, fontWeight: 800 }}>✓</span>}
+                      {done && <Check size={12} color="#fff" />}
                     </div>
                     <span style={{ fontSize: 13, fontWeight: done ? 600 : 400, color: done ? T.success : T.text, textDecoration: done ? "line-through" : "none" }}>{topic}</span>
                   </button>

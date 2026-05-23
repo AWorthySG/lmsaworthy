@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { T } from '../../theme/theme.js';
+import { Upload, Sparkle, Warning } from '../../icons/icons.jsx';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 import { SUBJECT_RUBRICS, pickDefaultTask, rubricToText, getDefaultRubricForHomework } from './rubrics.js';
 import { extractFromFile, mergeExtractions } from './extractText.js';
@@ -123,8 +124,8 @@ function AIMarker() {
               onChange={(e) => onFilesPicked(e.target.files)}
               style={{ display: "none" }} />
             <button type="button" onClick={() => fileInputRef.current?.click()}
-              style={{ width: "100%", padding: "20px", borderRadius: T.r2, border: `2px dashed ${T.border}`, background: T.bgMuted, color: T.textSec, fontSize: 13, cursor: "pointer", textAlign: "center" }}>
-              📎 Click to choose files
+              style={{ width: "100%", padding: "20px", borderRadius: T.r2, border: `2px dashed ${T.border}`, background: T.bgMuted, color: T.textSec, fontSize: 13, cursor: "pointer", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <Upload size={16} /> Click to choose files
             </button>
             {files.length > 0 && (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 6 }}>
@@ -146,7 +147,7 @@ function AIMarker() {
 
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={mark} disabled={busy} style={{ flex: 1, padding: "12px 18px", borderRadius: T.r2, background: busy ? T.bgMuted : "linear-gradient(135deg, #7C3AED, #4338CA)", color: busy ? T.textTer : "#fff", border: "none", fontWeight: 700, fontSize: 14, cursor: busy ? "wait" : "pointer", boxShadow: busy ? "none" : "0 4px 16px rgba(124,58,237,0.3)" }}>
-              {busy ? "Marking..." : "✨ Mark Submission"}
+              {busy ? "Marking..." : <><Sparkle size={14} /> Mark Submission</>}
             </button>
             <button onClick={clearAll} disabled={busy} style={{ padding: "12px 18px", borderRadius: T.r2, background: T.bgCard, color: T.textSec, border: `1px solid ${T.border}`, fontWeight: 600, fontSize: 13, cursor: busy ? "not-allowed" : "pointer" }}>
               Reset
@@ -173,7 +174,7 @@ function AIMarker() {
           )}
           {warnings.length > 0 && (
             <div style={{ padding: "8px 12px", borderRadius: T.r1, background: T.warningBg || "#FFF4E8", color: T.warning, fontSize: 11 }}>
-              {warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
+              {warnings.map((w, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}><Warning size={12} />{w}</div>)}
             </div>
           )}
           {result && (

@@ -30,7 +30,8 @@ export default function SubjectIllustration({ subject, size = 200 }) {
         <circle cx="110" cy="40" r="3" fill="#D4A254"/>
         <line x1="55" y1="85" x2="140" y2="85" stroke="#A78BFA44" strokeWidth="1"/>
         <line x1="55" y1="85" x2="55" y2="35" stroke="#A78BFA44" strokeWidth="1"/>
-        <text x="125" y="37" fontSize="9" fill="#D4A254" fontWeight="700">📈</text>
+        <polyline points="125,38 130,32 135,35 140,28" fill="none" stroke="#D4A254" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <polyline points="138,28 140,28 140,30" fill="none" stroke="#D4A254" strokeWidth="1.5" strokeLinecap="round"/>
       </g>
     )},
     h2econ: { gradient: ["#C2410C", "#EA580C"], elements: (

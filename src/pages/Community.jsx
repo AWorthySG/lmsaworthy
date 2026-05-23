@@ -1,12 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
-import { ChatCircle, ChatText, Handshake, Megaphone, ThumbsUp, PushPin, Plus, X, Star, ClipboardText } from '../icons/icons.jsx';
+import { ChatCircle, ChatText, Handshake, Megaphone, ThumbsUp, PushPin, Plus, X, Star, ClipboardText, Heart, Flame, HandsClapping, Brain, Smiley } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, Input, Textarea, Select } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
 import { formatDate, getSubjectTheme, getSubject } from '../utils/helpers.js';
 import { EmptyStateIllustration } from '../components/ui/EmptyState.jsx';
 import { SUBJECTS } from '../data/subjects.js';
-const COMMUNITY_REACTIONS = ["👍", "❤️", "😂", "🔥", "👏", "🤔"];
+const COMMUNITY_REACTIONS = [
+  { key: "thumbsup", icon: ThumbsUp, label: "Like" },
+  { key: "heart", icon: Heart, label: "Love" },
+  { key: "laugh", icon: Smiley, label: "Haha" },
+  { key: "fire", icon: Flame, label: "Fire" },
+  { key: "clap", icon: HandsClapping, label: "Clap" },
+  { key: "think", icon: Brain, label: "Interesting" },
+];
 
 function Community({ state, dispatch }) {
   const [filter, setFilter] = useState("all");
@@ -149,12 +156,12 @@ function Community({ state, dispatch }) {
 
               {/* Reactions bar */}
               <div style={{ padding: "10px 20px", borderTop: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                {COMMUNITY_REACTIONS.map(emoji => {
-                  const count = (post.reactions?.[emoji] || []).length;
-                  const reacted = (post.reactions?.[emoji] || []).includes(0);
+                {COMMUNITY_REACTIONS.map(({ key, icon: ReactionIcon, label }) => {
+                  const count = (post.reactions?.[key] || []).length;
+                  const reacted = (post.reactions?.[key] || []).includes(0);
                   return (
-                    <button key={emoji} onClick={() => dispatch({ type: "TOGGLE_REACTION", payload: { postId: post.id, emoji } })} style={{ padding: "8px 12px", borderRadius: 20, border: `1.5px solid ${reacted ? T.accent : T.border}`, background: reacted ? T.accentLight : T.bgCard, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 4, color: reacted ? T.accentText : T.textSec, fontWeight: reacted ? 700 : 400, transition: "all 0.15s" }}>
-                      {emoji}{count > 0 && <span style={{ fontSize: 11 }}>{count}</span>}
+                    <button key={key} onClick={() => dispatch({ type: "TOGGLE_REACTION", payload: { postId: post.id, emoji: key } })} aria-label={label} title={label} style={{ padding: "6px 10px", borderRadius: 20, border: `1.5px solid ${reacted ? T.accent : T.border}`, background: reacted ? T.accentLight : T.bgCard, cursor: "pointer", display: "flex", alignItems: "center", gap: 4, color: reacted ? T.accentText : T.textSec, fontWeight: reacted ? 700 : 400, transition: "all 0.15s" }}>
+                      <ReactionIcon size={14} color={reacted ? T.accent : T.textSec} />{count > 0 && <span style={{ fontSize: 11 }}>{count}</span>}
                     </button>
                   );
                 })}

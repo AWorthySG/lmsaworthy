@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ArrowFatUp } from '../../icons/icons.jsx';
 
 export default function BackToTop() {
   const [visible, setVisible] = useState(false);
@@ -10,6 +11,6 @@ export default function BackToTop() {
     return () => main.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <button className={`back-to-top ${visible ? "visible" : ""}`} onClick={() => document.querySelector("main")?.scrollTo({ top: 0, behavior: "smooth" })} title="Back to top" aria-label="Back to top">↑</button>
+    <button className={`back-to-top ${visible ? "visible" : ""}`} onClick={() => document.querySelector("main")?.scrollTo({ top: 0, behavior: "smooth" })} title="Back to top" aria-label="Back to top"><ArrowFatUp size={16} /></button>
   );
 }

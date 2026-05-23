@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { T } from '../../theme/theme.js';
-import { CaretDown } from '../../icons/icons.jsx';
+import { CaretDown, XCircle, CheckCircle } from '../../icons/icons.jsx';
 import { GP2_QTYPES } from '../../data/gpQuestionTypes.js';
 
 const GP2_OVERVIEW = [
@@ -59,8 +59,8 @@ function QTypeDetail({ qt, showStrong, setShowStrong }) {
           <span style={{ fontWeight: 700, color: T.textSec }}>Passage: </span>{qt.eg.passage}
         </div>
         <div style={{ display: "flex", gap: 0, background: T.bgMuted, borderRadius: T.r1, padding: 3, marginBottom: 10, width: "fit-content" }}>
-          <button onClick={() => setShowStrong(false)} style={{ padding: "4px 12px", borderRadius: 7, border: "none", background: !showStrong ? "#FB424E" : "transparent", color: !showStrong ? "#fff" : T.textSec, fontSize: 11, fontWeight: 700, cursor: "pointer", transition: "all 0.15s" }}>✗ Weak</button>
-          <button onClick={() => setShowStrong(true)} style={{ padding: "4px 12px", borderRadius: 7, border: "none", background: showStrong ? "#17a2b8" : "transparent", color: showStrong ? "#fff" : T.textSec, fontSize: 11, fontWeight: 700, cursor: "pointer", transition: "all 0.15s" }}>✓ Strong</button>
+          <button onClick={() => setShowStrong(false)} style={{ padding: "4px 12px", borderRadius: 7, border: "none", background: !showStrong ? "#FB424E" : "transparent", color: !showStrong ? "#fff" : T.textSec, fontSize: 11, fontWeight: 700, cursor: "pointer", transition: "all 0.15s", display: "inline-flex", alignItems: "center", gap: 4 }}><XCircle size={12} /> Weak</button>
+          <button onClick={() => setShowStrong(true)} style={{ padding: "4px 12px", borderRadius: 7, border: "none", background: showStrong ? "#17a2b8" : "transparent", color: showStrong ? "#fff" : T.textSec, fontSize: 11, fontWeight: 700, cursor: "pointer", transition: "all 0.15s", display: "inline-flex", alignItems: "center", gap: 4 }}><CheckCircle size={12} /> Strong</button>
         </div>
         <div style={{ background: showStrong ? "#E0F6F9" : "#FFEBEC", border: `1px solid ${showStrong ? "#17a2b8" : "#FB424E"}44`, borderRadius: T.r1, padding: "10px 12px", fontSize: 12, color: T.text, lineHeight: 1.7, marginBottom: showStrong ? 8 : 0, transition: "background 0.25s" }}>
           {showStrong ? qt.eg.strong : qt.eg.weak}

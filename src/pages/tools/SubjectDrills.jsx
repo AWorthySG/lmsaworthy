@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
+import { CheckCircle } from '../../icons/icons.jsx';
 import { ALL_SUBJECT_DRILLS } from '../../data/practiceQuestions.js';
 import { PageHeader } from '../../components/ui';
 import PracticeQuestions from './PracticeQuestions.jsx';
@@ -93,7 +94,7 @@ function SubjectDrills({ subject }) {
                 <button key={i} onClick={() => answer(i)}
                   style={{ padding: "12px 16px", borderRadius: T.r2, border: `2px solid ${border}`, background: bg, color, fontWeight: 600, fontSize: 13, cursor: answered !== null ? "default" : "pointer", textAlign: "left", transition: "all 0.15s" }}>
                   <span style={{ fontWeight: 700, marginRight: 8, opacity: 0.5 }}>{String.fromCharCode(65 + i)}.</span> {opt}
-                  {answered !== null && isCorrect && " ✓"}
+                  {answered !== null && isCorrect && <CheckCircle size={13} style={{ marginLeft: 6, verticalAlign: "middle" }} />}
                 </button>
               );
             })}

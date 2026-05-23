@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
-import { CaretDown, Warning, Trophy, BookOpen, Target, ChartPie } from '../../icons/icons.jsx';
+import { CaretDown, Warning, Trophy, BookOpen, Target, ChartPie, XCircle, CheckCircle } from '../../icons/icons.jsx';
 import { GP1_QTYPES, GP1_FRAMEWORKS, GP1_TOOLS } from '../../data/gpQuestionTypes.js';
 
 function GP1QTypeDetail({ qt, showStrong, setShowStrong }) {
@@ -61,7 +61,7 @@ function GP1QTypeDetail({ qt, showStrong, setShowStrong }) {
         <div style={{ fontSize: 11, fontWeight: 700, color: "#FB424E", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8 }}>Common Mistakes to Avoid</div>
         {qt.mistakes.map((m, i) => (
           <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 4 }}>
-            <span style={{ fontSize: 14, lineHeight: 1, marginTop: 1 }}>✗</span>
+            <XCircle size={14} color="#FB424E" style={{ flexShrink: 0, marginTop: 1 }} />
             <span style={{ fontSize: 12, color: T.text, lineHeight: 1.5 }}>{m}</span>
           </div>
         ))}
@@ -227,8 +227,8 @@ function GP1Infographic() {
           <div style={{ background: "#F5F7FE", borderRadius: T.r1, padding: "10px 14px" }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, marginBottom: 4 }}>KEY RULE: Topic sentences must be REASON-DRIVEN, not area-driven</div>
             <div style={{ fontSize: 12, color: T.text }}>
-              <span style={{ color: "#FB424E" }}>✗ Weak:</span> "In terms of the economy…" (area-driven — describes a domain, not an argument)<br/>
-              <span style={{ color: "#006840" }}>✓ Strong:</span> "Countries should host events because it generates needed revenue…" (reason-driven — Topic + Cause + Effect)
+              <span style={{ color: "#FB424E", display: "inline-flex", alignItems: "center", gap: 4 }}><XCircle size={12} color="#FB424E" /> Weak:</span> "In terms of the economy…" (area-driven — describes a domain, not an argument)<br/>
+              <span style={{ color: "#006840", display: "inline-flex", alignItems: "center", gap: 4 }}><CheckCircle size={12} color="#006840" /> Strong:</span> "Countries should host events because it generates needed revenue…" (reason-driven — Topic + Cause + Effect)
             </div>
           </div>
         </div>

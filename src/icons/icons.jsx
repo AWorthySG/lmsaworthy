@@ -106,10 +106,13 @@ export const HandsClapping = ic("ph:hands-clapping-bold");
 export const SealCheck = ic("ph:seal-check-bold");
 
 // Status & Feedback
+export const Check = ic("ph:check-bold");
 export const CheckCircle = ic("ph:check-circle-bold");
 export const XCircle = ic("ph:x-circle-bold");
 export const Warning = ic("ph:warning-bold");
 export const ArrowFatUp = ic("ph:arrow-fat-up-bold");
+export const Paperclip = ic("ph:paperclip-bold");
+export const Smiley = ic("ph:smiley-bold");
 
 // Data & Charts
 export const ChartLineUp = ic("ph:chart-line-up-bold");

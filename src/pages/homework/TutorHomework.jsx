@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
-import { ArrowLeft, Plus, ClipboardText, Clock, Warning } from '../../icons/icons.jsx';
+import { ArrowLeft, Plus, ClipboardText, Clock, Warning, Sparkle } from '../../icons/icons.jsx';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
 import { getDefaultRubricForHomework } from '../tools/rubrics.js';
@@ -399,7 +399,7 @@ function TutorHomework({ state, dispatch }) {
                             disabled={aiBusyId === sub.id}
                             title={selectedHw.rubric ? "Auto-grade with AI using the rubric" : "No rubric set — add one in the homework details for sharper marking."}
                             style={{ padding: "4px 10px", borderRadius: T.r1, background: aiBusyId === sub.id ? T.bgMuted : "#7C3AED", color: aiBusyId === sub.id ? T.textTer : "#fff", fontWeight: 700, fontSize: 11, border: "none", cursor: aiBusyId === sub.id ? "wait" : "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                            {aiBusyId === sub.id ? "Marking..." : "✨ Auto-grade"}
+                            {aiBusyId === sub.id ? "Marking..." : <><Sparkle size={11} /> Auto-grade</>}
                           </button>
                           <button onClick={() => { setGradingId(isGrading ? null : sub.id); setGradeVal(sub.aiGrade?.grade || ""); setGradeComment(sub.aiGrade?.summary || ""); }}
                             style={{ padding: "4px 12px", borderRadius: T.r1, background: T.gradPrimary, color: "#fff", fontWeight: 700, fontSize: 11, border: "none", cursor: "pointer" }}>
