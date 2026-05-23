@@ -15,6 +15,7 @@ export const List = ic("ph:list-bold");
 export const ArrowLeft = ic("ph:arrow-left-bold");
 export const ArrowRight = ic("ph:arrow-right-bold");
 export const CaretRight = ic("ph:caret-right-bold");
+export const CaretLeft = ic("ph:caret-left-bold");
 export const CaretDown = ic("ph:caret-down-bold");
 export const Monitor = ic("ph:monitor-bold");
 export const Eye = ic("ph:eye-bold");
