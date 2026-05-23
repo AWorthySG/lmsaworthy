@@ -10,7 +10,6 @@ export const NAV = [
   { group: "Home", items: [
     { id: "dashboard", label: "Dashboard", icon: House },
     { id: "classroom", label: "Live Classroom", icon: Broadcast, highlight: true },
-    { id: "notes", label: "My Notes", icon: Notebook },
     { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
     { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
   ]},
@@ -74,7 +73,7 @@ export const PAGE_TO_PATH = {
   "pastpapers-omath": "/past-papers/omath", "pastpapers-amath": "/past-papers/amath",
   "pastpapers-ibmyp": "/past-papers/ibmyp",
   analytics: "/analytics", parentview: "/parent-view",
-  notes: "/notes", modelessays: "/model-essays",
+  modelessays: "/model-essays",
   mistakes: "/mistake-journal", checklist: "/revision-checklist",
   certificates: "/certificates",
   events: "/events",
