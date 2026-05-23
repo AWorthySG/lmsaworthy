@@ -59,7 +59,7 @@ There is no test suite.
 - `renderPage()` in `LMS.jsx` is a `switch` on `state.page` returning the page component. Adding a page = (1) component file, (2) entry in `NAV`, (3) entry in `PAGE_TO_PATH`, (4) `case` in `renderPage()`, (5) lazy import at top of `LMS.jsx`.
 - Subject-scoped page IDs use consistent suffixes: `practice-eng`, `practice-h1econ`, `practice-omath`, `pastpapers-gp`, `micro-h1econ`, `library-eng`, `videos-h1econ`, `formulas-omath`, etc. Shared pages (library, videos) have subject-suffixed NAV IDs that all map to the same route path (`/library`, `/videos`). Math subjects also have per-subject formula card routes (`/formula-cards/omath`, etc.) that all render `<FormulaCards />`.
 - URL slugs use hyphens: `/essay-grader`, `/example-finder`, `/ai-marker`, `/past-papers/eng`, `/past-papers/gp`, `/past-papers/h1econ`, `/past-papers/h2econ`, `/past-papers/omath`, `/past-papers/amath`, `/past-papers/ibmyp`.
-- **Removed routes** (do not re-add): `goals`, `timedwrite` (Timed Writer), `practice-gp`, `practice-h2econ`, `micro-gp`, `exams-h1econ`, `exams-h2econ`. These pages and their lazy imports have been deleted from `LMS.jsx` and `routing.js`.
+- **Removed routes** (do not re-add): `goals`, `timedwrite` (Timed Writer), `practice-gp`, `practice-h2econ`, `micro-gp`, `exams-h1econ`, `exams-h2econ`, and all `micro-*` Quick Lessons routes (`micro-eng`, `micro-h1econ`, `micro-h2econ`, `micro-omath`, `micro-amath`, `micro-ibmyp`, `microlearning`). `MicrolearningPage` lazy import has been fully removed from `LMS.jsx`.
 
 ### Page / component layout
 - `src/pages/*.jsx` — top-level pages mapped from the route switch.
