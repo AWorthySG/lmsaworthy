@@ -1,74 +1,68 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
-import { House, Books, VideoCamera, Lightning, Target, RocketLaunch, CheckCircle, ChartLineUp, Clock, ArrowRight, BookOpen, ClipboardText, PencilSimpleLine, Bell, CalendarCheck, ChartBar, Handshake, FolderSimpleStar, PlayCircle, Users, Upload, Play, Exam, Plus, CaretRight, Megaphone, ChatText, Eye, FlowArrow } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, Progress, StatCard, SubjectIllustration } from '../components/ui';
-import { getSubject, getSubjectTheme, getExamCountdowns, getDailyChallenge, getWeeklyProgress, getWordOfTheDay, generateStudyPlan } from '../utils/helpers.js';
-import PomodoroTimer from './tools/PomodoroTimer.jsx';
-import { SUBJECTS, TOPICS } from '../data/subjects.js';
-import { ACTIVITY_FEED } from '../data/seedData.js';
+import {
+  Target, CheckCircle, ArrowRight, BookOpen, ClipboardText,
+  Bell, CalendarCheck, ChartLineUp, Handshake, FolderSimpleStar,
+  PlayCircle, Users, Upload, CaretRight, ChatText, Sparkle,
+  Megaphone,
+} from '../icons/icons.jsx';
+import { SubjectIllustration, Progress } from '../components/ui';
+import { getSubject, getSubjectTheme, getExamCountdowns, getDailyChallenge, getWeeklyProgress, generateStudyPlan } from '../utils/helpers.js';
+import { SUBJECTS } from '../data/subjects.js';
+import useWindowWidth from '../hooks/useWindowWidth.js';
 
-function HeroBanner() {
+/* ━━━ SHARED CARD PRIMITIVE ━━━ */
+function DCard({ title, hint, action, children, style }) {
   return (
-    <div style={{ marginBottom: 24, borderRadius: T.r4, overflow: "hidden", border: `1px solid ${T.border}`, position: "relative", background: "linear-gradient(135deg, #1C1B19 0%, #2A2927 60%, #3A2220 100%)" }}>
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 80% 20%, rgba(192,57,43,0.12), transparent 60%)" }} />
-      <div style={{ position: "relative", zIndex: 2, padding: "36px 32px 28px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-          <img src="/logo-aworthy.jpeg" alt="A Worthy logo" style={{ height: 60, objectFit: "contain", borderRadius: 10 }} />
-          <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.5)", letterSpacing: 2, textTransform: "uppercase", fontFamily: T.fontMono }}>A Worthy · Learning Platform</span>
-        </div>
-        <div style={{ fontSize: 32, fontWeight: 700, color: "#FEFEFE", lineHeight: 1.15, letterSpacing: "-0.02em", maxWidth: 480 }}>Master Every<br/><span style={{ background: "linear-gradient(135deg, #E8C078, #D4A254)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Question Type</span></div>
-        <div style={{ fontSize: 14, color: "rgba(255,255,255,0.6)", marginTop: 10, maxWidth: 400, lineHeight: 1.6, fontWeight: 300 }}>Structured frameworks for O-Level English, GP, and Economics.</div>
-      </div>
-      <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "flex-start", gap: 0, background: "rgba(255,255,255,0.04)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        {[
-          { label: "Subjects", value: "4", icon: <BookOpen size={13} color="rgba(255,255,255,0.9)" /> },
-          { label: "Question Types", value: "Every", icon: <Target size={13} color="rgba(255,255,255,0.9)" /> },
-          { label: "Approach", value: "Structured", icon: <FlowArrow size={13} color="rgba(255,255,255,0.9)" /> },
-        ].map((s, i) => (
-          <div key={s.label} style={{ flex: 1, textAlign: "center", padding: "12px 20px", borderRight: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>{s.icon} {s.value}</div>
-            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.5)", fontWeight: 500, textTransform: "uppercase", letterSpacing: 1, marginTop: 2 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <section style={{
+      background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3,
+      display: 'flex', flexDirection: 'column',
+      boxShadow: '0 1px 3px rgba(28,27,25,0.04)', ...style,
+    }}>
+      {title && (
+        <header style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '15px 18px 11px', flexShrink: 0, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, fontWeight: 800, letterSpacing: -0.2, color: T.text }}>{title}</span>
+          {hint && <span style={{ fontSize: 11, color: T.textTer, fontFamily: T.fontMono, letterSpacing: 0.4 }}>{hint}</span>}
+          <div style={{ flex: 1 }} />
+          {action}
+        </header>
+      )}
+      <div style={{ padding: '0 18px 16px', flex: 1 }}>{children}</div>
+    </section>
   );
 }
 
-/* ━━━ STUDENT DASHBOARD ━━━ */
-
-function WelcomeHero({ state, authUser, userProfile, myHomework, mySubs, gradedHw }) {
-  const firstName = (userProfile?.name || authUser?.displayName || authUser?.email || "Scholar").split(" ")[0].split("@")[0];
-  const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
-  const overdueCount = myHomework.filter(h => h.dueDate < todayStr && !mySubs.find(s => s.homeworkId === h.id && s.status === "graded")).length;
-  const pendingCount = myHomework.filter(h => !mySubs.find(s => s.homeworkId === h.id && (s.status === "graded" || s.status === "submitted"))).length;
+/* ━━━ GREETING ━━━ */
+function Greeting({ authUser, userProfile, overdueCount, pendingCount, gradedCount }) {
+  const firstName = (userProfile?.name || authUser?.displayName || authUser?.email || 'Scholar')
+    .split(' ')[0].split('@')[0];
+  const hour = new Date().getHours();
+  const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
 
   return (
-    <div style={{ marginBottom: 32 }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: T.text, letterSpacing: "-0.02em", marginBottom: 6 }}>
-        Good {today.getHours() < 12 ? "morning" : today.getHours() < 17 ? "afternoon" : "evening"}, {firstName}
+    <div style={{ marginBottom: 22 }}>
+      <h1 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: -0.6, color: T.text, lineHeight: 1.1 }}>
+        Good {timeOfDay}, {firstName}.
       </h1>
-      <p style={{ fontSize: 14, color: T.textSec, marginBottom: 20, lineHeight: 1.5 }}>
-        {overdueCount > 0
-          ? <span>You have <span style={{ color: T.danger, fontWeight: 600 }}>{overdueCount} overdue {overdueCount === 1 ? "assignment" : "assignments"}</span> — worth tackling first.</span>
-          : pendingCount > 0
-          ? <span>{pendingCount} {pendingCount === 1 ? "task" : "tasks"} waiting for you today.</span>
-          : <span>You're all caught up. Keep the momentum going.</span>
-        }
-      </p>
-      <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+      <div style={{ marginTop: 8, fontSize: 14, color: T.textSec, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+        <span>
+          {overdueCount > 0
+            ? <><span style={{ color: T.danger, fontWeight: 600 }}>{overdueCount} overdue {overdueCount === 1 ? 'assignment' : 'assignments'}</span> — worth tackling first.</>
+            : pendingCount > 0 ? `${pendingCount} ${pendingCount === 1 ? 'task' : 'tasks'} waiting for you today.`
+            : "You're all caught up. Keep the momentum going."}
+        </span>
+        <div style={{ width: 1, height: 14, background: T.border }} />
         {[
-          { label: "Pending",  value: pendingCount },
-          { label: "Graded",   value: gradedHw.length },
-          { label: "Overdue",  value: overdueCount },
+          { label: 'Overdue', value: overdueCount, tone: overdueCount > 0 ? T.danger : undefined },
+          { label: 'Pending', value: pendingCount },
+          { label: 'Graded',  value: gradedCount,  tone: T.success },
         ].map((s, i) => (
           <React.Fragment key={s.label}>
-            {i > 0 && <div style={{ width: 1, background: T.border, alignSelf: "stretch" }} />}
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 20, fontWeight: 600, color: s.label === "Overdue" && s.value > 0 ? T.danger : T.text, letterSpacing: "-0.02em" }}>{s.value}</div>
-              <div style={{ fontSize: 11, color: T.textTer, marginTop: 1 }}>{s.label}</div>
-            </div>
+            {i > 0 && <span style={{ width: 3, height: 3, borderRadius: '50%', background: T.textTer }} />}
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: T.textSec }}>
+              <span style={{ fontWeight: 800, color: s.tone || T.text, fontVariantNumeric: 'tabular-nums', fontSize: 14 }}>{s.value}</span>
+              {s.label}
+            </span>
           </React.Fragment>
         ))}
       </div>
@@ -76,77 +70,519 @@ function WelcomeHero({ state, authUser, userProfile, myHomework, mySubs, gradedH
   );
 }
 
-function ExamCountdownSection() {
-  const exams = getExamCountdowns().slice(0, 3);
-  if (exams.length === 0) return null;
+/* ━━━ SUBJECT CHIP ━━━ */
+function SubjectChip({ subject }) {
+  const theme = getSubjectTheme(subject) || T.eng;
+  const subj = getSubject(subject);
+  const label = subj ? subj.name.split(' ').slice(0, 2).join(' ') : (subject || 'General').toUpperCase();
   return (
-    <div style={{ marginBottom: 28 }}>
-      <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Exam Countdown</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 5,
+      fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: 'uppercase',
+      color: T.text, background: '#fff', border: `1px solid ${theme.accent}40`,
+      borderRadius: T.r1, padding: '2px 8px',
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: theme.accent }} />
+      {label}
+    </span>
+  );
+}
+
+/* ━━━ RESUME CARD ━━━ */
+function ResumeCard({ state, dispatch }) {
+  const today = new Date().toISOString().split('T')[0];
+  const activeHw = state.homework.filter(h => h.status === 'active');
+  const subs = state.submissions || [];
+
+  let resumeSub = subs.find(s => s.status === 'in_progress');
+  if (!resumeSub) {
+    resumeSub = subs.find(s => {
+      const hw = activeHw.find(h => h.id === s.homeworkId);
+      return hw && hw.dueDate < today && s.status === 'not_started';
+    });
+  }
+  if (!resumeSub) resumeSub = subs.find(s => s.status === 'not_started');
+  const resumeHw = resumeSub ? state.homework.find(h => h.id === resumeSub.homeworkId) : null;
+
+  if (!resumeHw) {
+    return (
+      <div style={{
+        background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3,
+        padding: '20px 22px', display: 'flex', alignItems: 'center', gap: 20,
+        boxShadow: '0 1px 3px rgba(28,27,25,0.04)', marginBottom: 20,
+      }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: T.textSec, marginBottom: 6 }}>
+            Nothing overdue — great work!
+          </div>
+          <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.3, color: T.text }}>Start today's practice drill</div>
+          <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>Keep your skills sharp with a quick drill</div>
+        </div>
+        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'practice-gp' })}
+          style={{ padding: '11px 20px', borderRadius: T.r2, background: T.accent, color: '#fff', fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          Start drill <ArrowRight size={14} />
+        </button>
+      </div>
+    );
+  }
+
+  const subjectTheme = getSubjectTheme(resumeHw.subject) || T.eng;
+  const isOverdue = resumeHw.dueDate < today;
+  const statusLabel = resumeSub.status === 'in_progress' ? 'In Progress' : isOverdue ? 'Overdue' : 'Not Started';
+
+  return (
+    <div style={{
+      background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3,
+      padding: 20, display: 'flex', alignItems: 'stretch', gap: 18,
+      boxShadow: '0 1px 3px rgba(28,27,25,0.04)', marginBottom: 20, overflow: 'hidden',
+    }}>
+      <div style={{
+        width: 90, flexShrink: 0, borderRadius: T.r2, background: subjectTheme.bg,
+        border: `1px solid ${T.border}`, padding: '10px 8px',
+        display: 'flex', flexDirection: 'column', gap: 4, position: 'relative',
+      }}>
+        <div style={{ fontSize: 9, fontWeight: 700, color: subjectTheme.accent, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+          {resumeHw.subject?.toUpperCase()}
+        </div>
+        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {[90, 70, 85, 45, 60].map((w, i) => (
+            <div key={i} style={{ height: 3, background: subjectTheme.accent + '30', borderRadius: 2, width: `${w}%` }} />
+          ))}
+        </div>
+        {isOverdue && <div style={{ position: 'absolute', top: 7, right: 7, width: 6, height: 6, borderRadius: '50%', background: T.danger }} />}
+      </div>
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: isOverdue ? T.danger : T.accent, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <ArrowRight size={11} />
+          {isOverdue ? 'Overdue assignment' : 'Pick up where you left off'}
+        </div>
+        <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: -0.3, lineHeight: 1.2, color: T.text }}>{resumeHw.title}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <SubjectChip subject={resumeHw.subject} />
+          <span style={{ fontSize: 11, color: T.textSec }}>{isOverdue ? `Was due ${resumeHw.dueDate}` : `Due ${resumeHw.dueDate}`}</span>
+          <span style={{ width: 3, height: 3, borderRadius: '50%', background: T.textTer }} />
+          <span style={{ fontSize: 11, color: statusLabel === 'In Progress' ? T.accent : T.textSec, fontWeight: 600 }}>{statusLabel}</span>
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 8, flexShrink: 0 }}>
+        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
+          style={{ padding: '10px 18px', borderRadius: T.r2, background: isOverdue ? T.danger : T.accent, color: '#fff', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+          Open assignment <ArrowRight size={13} />
+        </button>
+        <button style={{ background: 'transparent', border: 'none', color: T.textSec, fontSize: 12, fontFamily: T.fontBody, cursor: 'pointer', padding: '2px 0', textAlign: 'center' }}>
+          Show something else
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ━━━ TODAY'S PLAN ━━━ */
+function TodaysPlanCard({ state }) {
+  const today = new Date().toISOString().split('T')[0];
+  const todayHint = new Date().toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase();
+  const todayName = new Date().toLocaleDateString('en-SG', { weekday: 'long' });
+  const plan = generateStudyPlan(state);
+  const todayPlan = plan.find(d => d.day === todayName);
+
+  const hwTasks = state.homework
+    .filter(h => h.status === 'active' && h.dueDate <= today)
+    .map(h => {
+      const sub = (state.submissions || []).find(s => s.homeworkId === h.id);
+      return { label: h.title, subject: h.subject, meta: h.dueDate === today ? 'Due today' : 'Overdue', done: sub?.status === 'submitted' || sub?.status === 'graded', overdue: h.dueDate < today };
+    });
+
+  const planTasks = (todayPlan?.tasks || []).map(t => ({
+    label: `${t.type} — ${todayPlan.subjectId?.toUpperCase().slice(0, 3)} ${t.duration}`,
+    subject: todayPlan.subjectId, meta: t.duration, done: false, overdue: false,
+  }));
+
+  const tasks = [...hwTasks, ...planTasks].slice(0, 5);
+  const doneCount = tasks.filter(t => t.done).length;
+
+  return (
+    <DCard
+      title="Today's plan" hint={todayHint}
+      action={tasks.length > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 11, color: T.textTer, fontFamily: T.fontMono }}>{doneCount}/{tasks.length}</span>
+          <div style={{ width: 52, height: 4, borderRadius: 999, background: T.bgMuted, overflow: 'hidden' }}>
+            <div style={{ width: `${tasks.length > 0 ? (doneCount / tasks.length) * 100 : 0}%`, height: '100%', background: T.accent, borderRadius: 999 }} />
+          </div>
+        </div>
+      )}
+    >
+      {tasks.length === 0 ? (
+        <div style={{ padding: '6px 0', fontSize: 13, color: T.textTer, fontStyle: 'italic' }}>No tasks for today — great time to practice!</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {tasks.map((task, i) => {
+            const theme = getSubjectTheme(task.subject) || T.eng;
+            return (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
+                <div style={{
+                  width: 20, height: 20, borderRadius: 6, flexShrink: 0,
+                  border: `1.5px solid ${task.done ? theme.accent : T.border}`,
+                  background: task.done ? theme.accent : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {task.done && <CheckCircle size={12} color="#fff" weight="fill" />}
+                </div>
+                <div style={{ flex: 1, minWidth: 0, fontSize: 13, fontWeight: 600, color: task.done ? T.textTer : T.text, textDecoration: task.done ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {task.label}
+                </div>
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 0.5, padding: '2px 6px', borderRadius: T.r1, background: theme.accent + '18', color: theme.accent, flexShrink: 0 }}>
+                  {(task.subject || 'GEN').slice(0, 3).toUpperCase()}
+                </span>
+                {task.overdue && <span style={{ fontSize: 10, fontWeight: 700, color: T.danger, flexShrink: 0 }}>LATE</span>}
+                <span style={{ fontSize: 11, color: T.textSec, minWidth: 50, textAlign: 'right', fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>{task.meta}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </DCard>
+  );
+}
+
+/* ━━━ ASSIGNMENTS ━━━ */
+function AssignmentsCard({ state, dispatch }) {
+  const [tab, setTab] = useState('due');
+  const today = new Date().toISOString().split('T')[0];
+  const activeHw = state.homework.filter(h => h.status === 'active');
+  const subs = state.submissions || [];
+
+  const dueItems = activeHw
+    .map(h => ({ hw: h, sub: subs.find(s => s.homeworkId === h.id) }))
+    .filter(({ sub }) => sub && (sub.status === 'not_started' || sub.status === 'in_progress'))
+    .sort((a, b) => (a.hw.dueDate || '').localeCompare(b.hw.dueDate || ''));
+
+  const submittedItems = subs
+    .filter(s => s.status === 'submitted')
+    .map(s => ({ sub: s, hw: state.homework.find(h => h.id === s.homeworkId) }))
+    .filter(({ hw }) => hw);
+
+  const returnedItems = subs
+    .filter(s => s.status === 'graded')
+    .sort((a, b) => (b.gradedAt || '').localeCompare(a.gradedAt || ''))
+    .slice(0, 5)
+    .map(s => ({ sub: s, hw: state.homework.find(h => h.id === s.homeworkId) }))
+    .filter(({ hw }) => hw);
+
+  const tabs = [
+    { id: 'due', label: 'Due', count: dueItems.length },
+    { id: 'submitted', label: 'Submitted', count: submittedItems.length },
+    { id: 'returned', label: 'Returned', count: returnedItems.length },
+  ];
+  const items = tab === 'due' ? dueItems : tab === 'submitted' ? submittedItems : returnedItems;
+
+  return (
+    <DCard
+      title="Assignments"
+      action={
+        <div style={{ display: 'flex', gap: 2 }}>
+          {tabs.map(({ id, label, count }) => (
+            <button key={id} onClick={() => setTab(id)} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px',
+              borderRadius: T.r1, cursor: 'pointer', border: 'none', fontFamily: T.fontBody,
+              background: tab === id ? T.bgMuted : 'transparent',
+              color: tab === id ? T.text : T.textSec,
+              fontSize: 12, fontWeight: tab === id ? 700 : 500,
+            }}>
+              {label}
+              <span style={{ fontSize: 10, padding: '1px 5px', borderRadius: 999, fontVariantNumeric: 'tabular-nums', color: T.textSec, background: tab === id ? T.bgCard : 'transparent', border: tab === id ? `1px solid ${T.border}` : '1px solid transparent' }}>
+                {count}
+              </span>
+            </button>
+          ))}
+        </div>
+      }
+    >
+      {items.length === 0 ? (
+        <div style={{ padding: '6px 0', fontSize: 13, color: T.textTer, fontStyle: 'italic' }}>
+          {tab === 'due' ? 'No pending assignments.' : tab === 'submitted' ? 'Nothing awaiting feedback yet.' : 'No returned work yet.'}
+        </div>
+      ) : (
+        <div>
+          {items.map(({ hw, sub }, i) => {
+            if (!hw) return null;
+            const isOverdue = hw.dueDate < today;
+            const theme = getSubjectTheme(hw.subject) || T.eng;
+            return (
+              <div key={sub?.id || i}
+                onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
+                role="button" tabIndex={0}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') dispatch({ type: 'SET_PAGE', payload: 'homework' }); }}
+                style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '11px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}`, cursor: 'pointer' }}>
+                <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 0.5, padding: '3px 7px', borderRadius: T.r1, background: theme.accent + '18', color: theme.accent, minWidth: 34, textAlign: 'center', flexShrink: 0 }}>
+                  {(hw.subject || 'GEN').slice(0, 3).toUpperCase()}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{hw.title}</div>
+                  <div style={{ fontSize: 11, marginTop: 2 }}>
+                    {tab === 'returned'
+                      ? <span style={{ color: T.success, fontWeight: 600 }}>Graded · {sub.grade}</span>
+                      : isOverdue && tab === 'due'
+                      ? <span style={{ color: T.danger, fontWeight: 600 }}>Overdue · {hw.dueDate}</span>
+                      : <span style={{ color: T.textSec }}>Due {hw.dueDate}</span>}
+                  </div>
+                </div>
+                <button style={{ padding: '5px 11px', borderRadius: T.r1, background: isOverdue && tab === 'due' ? T.dangerBg : T.bgMuted, color: isOverdue && tab === 'due' ? T.danger : T.textSec, border: `1px solid ${isOverdue && tab === 'due' ? T.danger + '30' : T.border}`, fontSize: 11, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                  {tab === 'returned' ? 'View' : tab === 'submitted' ? 'View' : isOverdue ? 'Start' : 'Open'} <ArrowRight size={11} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </DCard>
+  );
+}
+
+/* ━━━ JUMP IN ━━━ */
+function JumpInCard({ dispatch }) {
+  const tiles = [
+    { label: 'Practice Drills', meta: 'GP & English',  icon: Target,    color: T.eng.accent,    page: 'practice-gp'  },
+    { label: 'Model Essays',    meta: 'GP examples',   icon: BookOpen,  color: T.h1econ.accent, page: 'modelessays'  },
+    { label: 'Infographics',    meta: 'Visual notes',  icon: Sparkle,   color: T.accent,        page: 'infographics' },
+    { label: 'Community',       meta: 'Chat & share',  icon: Handshake, color: T.success,       page: 'community'    },
+  ];
+  return (
+    <DCard title="Jump in" action={
+      <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'library-eng' })}
+        style={{ fontSize: 12, color: T.accent, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
+        Browse library →
+      </button>
+    }>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+        {tiles.map(tile => (
+          <button key={tile.label} onClick={() => dispatch({ type: 'SET_PAGE', payload: tile.page })}
+            style={{ padding: '12px 8px', borderRadius: T.r2, background: T.bg, border: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: 8, cursor: 'pointer', textAlign: 'left', minHeight: 84, transition: 'border-color 0.15s' }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = tile.color + '60'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = T.border}>
+            <div style={{ width: 26, height: 26, borderRadius: T.r1, background: tile.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <tile.icon size={14} color={tile.color} />
+            </div>
+            <div style={{ marginTop: 'auto' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.text }}>{tile.label}</div>
+              <div style={{ fontSize: 10, color: T.textSec, marginTop: 1 }}>{tile.meta}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </DCard>
+  );
+}
+
+/* ━━━ WEEK PROGRESS ━━━ */
+function WeekProgressCard({ state }) {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const activeDates = new Set([
+    ...(state.studyLogs || []).map(l => new Date(l.timestamp).toISOString().split('T')[0]),
+    ...(state.submissions || []).filter(s => s.submittedAt).map(s => s.submittedAt),
+    ...(state.notes || []).map(n => n.createdAt),
+  ]);
+  const last7 = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today); d.setDate(today.getDate() - (6 - i));
+    const ds = d.toISOString().split('T')[0];
+    return { ds, label: d.toLocaleDateString('en-SG', { weekday: 'narrow' }), done: activeDates.has(ds), isToday: ds === todayStr };
+  });
+  const doneCount = last7.filter(d => d.done).length;
+  const wp = getWeeklyProgress(state);
+
+  let streak = 0;
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    if (activeDates.has(d.toISOString().split('T')[0])) { streak++; } else if (i > 0) break;
+  }
+
+  return (
+    <DCard title="This week" hint={`WK ${Math.ceil(new Date().getDate() / 7)}`}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
+        <span style={{ fontSize: 26, fontWeight: 800, letterSpacing: -0.6, fontVariantNumeric: 'tabular-nums', color: T.text }}>{doneCount}</span>
+        <span style={{ fontSize: 13, color: T.textSec }}>of 7 days active</span>
+        <div style={{ flex: 1 }} />
+        {streak > 1 && (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 999, background: T.accentLight, color: T.accent, fontSize: 11, fontWeight: 700 }}>
+            {streak}-day streak
+          </span>
+        )}
+      </div>
+      <div style={{ display: 'flex', gap: 5 }}>
+        {last7.map((day, i) => (
+          <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+            <div style={{
+              width: '100%', height: 26, borderRadius: T.r1,
+              background: day.done ? T.accent : T.bgMuted,
+              border: day.isToday ? `1.5px dashed ${T.accent}` : `1px solid ${T.border}`,
+              opacity: day.done ? 1 : 0.55,
+            }} />
+            <span style={{ fontSize: 9, color: day.isToday ? T.accent : T.textTer, fontWeight: day.isToday ? 700 : 400 }}>{day.label}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 12 }}>
+        {[
+          { label: 'HW Done', value: wp.hwCompleted, color: T.accent },
+          { label: 'Notes',   value: wp.notesCreated, color: T.teal },
+        ].map(s => (
+          <div key={s.label} style={{ textAlign: 'center', padding: '8px 4px', borderRadius: T.r2, background: T.bgMuted }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: s.color, fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
+            <div style={{ fontSize: 10, color: T.textTer, marginTop: 1 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </DCard>
+  );
+}
+
+/* ━━━ EXAM COUNTDOWN ━━━ */
+function ExamCountdownCard() {
+  const exams = getExamCountdowns().slice(0, 4);
+  if (!exams.length) return null;
+  return (
+    <DCard title="Exam countdown">
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         {exams.map((e, i) => {
           const theme = T[e.subject] || T.eng;
           const urgent = e.daysLeft <= 30;
           return (
-            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: urgent ? T.danger : theme.accent, flexShrink: 0 }} />
-                <span style={{ fontSize: 14, fontWeight: 500, color: T.text }}>{e.name}</span>
-              </div>
-              <span style={{ fontSize: 13, fontWeight: 600, color: urgent ? T.danger : T.textSec }}>
-                {e.daysLeft} <span style={{ fontSize: 11, fontWeight: 400, color: T.textTer }}>days</span>
-              </span>
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: urgent ? T.danger : theme.accent, flexShrink: 0 }} />
+              <span style={{ fontSize: 13, color: T.text, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.name}</span>
+              <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 800, fontSize: 14, color: urgent ? T.danger : T.text, flexShrink: 0 }}>{e.daysLeft}</span>
+              <span style={{ fontSize: 11, color: T.textTer, flexShrink: 0 }}>days</span>
             </div>
           );
         })}
       </div>
-    </div>
+    </DCard>
   );
 }
 
-function DailyChallengeSection() {
+/* ━━━ RECENTLY RETURNED ━━━ */
+function RecentlyReturnedCard({ state, dispatch }) {
+  const returned = (state.submissions || [])
+    .filter(s => s.status === 'graded')
+    .sort((a, b) => (b.gradedAt || '').localeCompare(a.gradedAt || ''))
+    .slice(0, 3)
+    .map(s => ({ sub: s, hw: state.homework.find(h => h.id === s.homeworkId) }))
+    .filter(({ hw }) => hw);
+
+  if (!returned.length) return null;
+
+  const gradeColor = g => {
+    if (!g) return T.textSec;
+    const u = g.toUpperCase();
+    if (u.startsWith('A')) return T.success;
+    if (u.startsWith('B')) return T.accent;
+    return T.warning;
+  };
+
+  return (
+    <DCard title="Recently returned" action={
+      <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
+        style={{ fontSize: 12, color: T.accent, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
+        See all →
+      </button>
+    }>
+      <div>
+        {returned.map(({ sub, hw }, i) => (
+          <div key={sub.id} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
+            <div style={{ width: 38, height: 38, borderRadius: T.r2, background: gradeColor(sub.grade) + '18', color: gradeColor(sub.grade), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13, flexShrink: 0 }}>
+              {sub.grade || '—'}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{hw.title}</div>
+              {sub.gradeComment && <div style={{ fontSize: 11, color: T.textSec, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.gradeComment.slice(0, 50)}</div>}
+            </div>
+            <span style={{ fontSize: 11, color: T.textTer, fontFamily: T.fontMono, flexShrink: 0 }}>{sub.gradedAt || ''}</span>
+          </div>
+        ))}
+      </div>
+    </DCard>
+  );
+}
+
+/* ━━━ DAILY CHALLENGE ━━━ */
+function DailyChallengeCard({ dispatch }) {
   const challenge = getDailyChallenge();
   return (
-    <div style={{ marginBottom: 28, background: T.bgCard, borderRadius: T.r3, padding: "20px", border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}` }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: T.accent, textTransform: "uppercase", letterSpacing: "0.06em" }}>Daily Challenge</span>
-        <span style={{ fontSize: 11, color: T.textTer }}>{challenge.type}</span>
+    <DCard title="Daily challenge" hint={challenge.type?.toUpperCase()}>
+      <div style={{ fontSize: 14, lineHeight: 1.5, color: T.textSec, fontStyle: 'italic' }}>
+        "{challenge.question}"
       </div>
-      <p style={{ fontSize: 15, fontWeight: 500, color: T.text, lineHeight: 1.5, marginBottom: 14 }}>{challenge.question}</p>
-      <button style={{ background: T.accent, color: "#fff", border: "none", padding: "8px 18px", borderRadius: T.r2, fontWeight: 600, fontSize: 13, fontFamily: "inherit", cursor: "pointer" }}>
-        Start writing
-      </button>
+      <div style={{ marginTop: 10, display: 'flex', alignItems: 'center' }}>
+        <span style={{ fontSize: 12, color: T.textSec }}>Spot the fallacy</span>
+        <div style={{ flex: 1 }} />
+        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'practice-gp' })}
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: T.accent, fontSize: 12, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          Try it <ArrowRight size={12} />
+        </button>
+      </div>
+    </DCard>
+  );
+}
+
+/* ━━━ STUDENT DASHBOARD ━━━ */
+function StudentDashboard({ state, dispatch, authUser, userProfile }) {
+  const winW = useWindowWidth();
+  const isMobile = winW < 768;
+  const today = new Date().toISOString().split('T')[0];
+  const activeHw = state.homework.filter(h => h.status === 'active');
+  const subs = state.submissions || [];
+
+  const overdueCount = activeHw.filter(h => {
+    const sub = subs.find(s => s.homeworkId === h.id);
+    return h.dueDate < today && sub && sub.status !== 'graded' && sub.status !== 'submitted';
+  }).length;
+  const pendingCount = activeHw.filter(h => {
+    const sub = subs.find(s => s.homeworkId === h.id);
+    return sub && sub.status !== 'graded' && sub.status !== 'submitted';
+  }).length;
+  const gradedCount = subs.filter(s => s.status === 'graded').length;
+
+  return (
+    <div>
+      <Greeting authUser={authUser} userProfile={userProfile} overdueCount={overdueCount} pendingCount={pendingCount} gradedCount={gradedCount} />
+      <ResumeCard state={state} dispatch={dispatch} />
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.55fr 1fr', gap: 18 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <TodaysPlanCard state={state} />
+          <AssignmentsCard state={state} dispatch={dispatch} />
+          <JumpInCard dispatch={dispatch} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <WeekProgressCard state={state} />
+          <ExamCountdownCard />
+          <RecentlyReturnedCard state={state} dispatch={dispatch} />
+          <DailyChallengeCard dispatch={dispatch} />
+        </div>
+      </div>
     </div>
   );
 }
 
-function WordOfTheDaySection() {
-  const wotd = getWordOfTheDay();
+/* ━━━ HERO BANNER (tutor only) ━━━ */
+function HeroBanner() {
   return (
-    <div style={{ marginBottom: 28, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
-      <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Word of the Day</div>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 6 }}>
-        <span style={{ fontSize: 22, fontWeight: 600, color: T.text, letterSpacing: "-0.02em" }}>{wotd.word}</span>
-        <span style={{ fontSize: 12, color: T.textTer }}>{getSubject(wotd.subject)?.name}</span>
+    <div style={{ marginBottom: 24, borderRadius: T.r4, overflow: 'hidden', border: `1px solid ${T.border}`, position: 'relative', background: 'linear-gradient(135deg, #1C1B19 0%, #2A2927 60%, #3A2220 100%)' }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 80% 20%, rgba(192,57,43,0.12), transparent 60%)' }} />
+      <div style={{ position: 'relative', zIndex: 2, padding: '36px 32px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <img src="/logo-aworthy.jpeg" alt="A Worthy logo" style={{ height: 60, objectFit: 'contain', borderRadius: 10 }} />
+          <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.5)', letterSpacing: 2, textTransform: 'uppercase', fontFamily: T.fontMono }}>A Worthy · Learning Platform</span>
+        </div>
+        <div style={{ fontSize: 30, fontWeight: 700, color: '#FEFEFE', lineHeight: 1.15, letterSpacing: '-0.02em', maxWidth: 480 }}>
+          Master Every<br />
+          <span style={{ background: 'linear-gradient(135deg, #E8C078, #D4A254)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Question Type</span>
+        </div>
       </div>
-      <p style={{ fontSize: 13, color: T.textSec, marginBottom: 8, lineHeight: 1.5 }}>{wotd.def}</p>
-      <p style={{ fontSize: 13, color: T.textTer, fontStyle: "italic", lineHeight: 1.5, margin: 0 }}>"{wotd.usage}"</p>
-    </div>
-  );
-}
-
-function WeeklyProgressSection({ state }) {
-  const wp = getWeeklyProgress(state);
-  return (
-    <div style={{ marginTop: 20, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
-      <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>This Week</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 6 }}>
-        {[
-          { label: "Done",    value: wp.hwCompleted,   color: T.accent },
-          { label: "Notes",   value: wp.notesCreated,  color: T.teal },
-        ].map(s => (
-          <div key={s.label} style={{ textAlign: "center", padding: "10px 4px", borderRadius: T.r2, background: T.bgMuted }}>
-            <div style={{ fontSize: 17, fontWeight: 600, color: s.color, letterSpacing: "-0.02em" }}>{s.value}</div>
-            <div style={{ fontSize: 10, color: T.textTer, marginTop: 2 }}>{s.label}</div>
+      <div style={{ position: 'relative', zIndex: 3, display: 'flex', background: 'rgba(255,255,255,0.04)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        {['4 Subjects', 'Every Question Type', 'Structured Approach'].map((s, i) => (
+          <div key={s} style={{ flex: 1, textAlign: 'center', padding: '12px 20px', borderRight: i < 2 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>{s}</div>
           </div>
         ))}
       </div>
@@ -154,331 +590,167 @@ function WeeklyProgressSection({ state }) {
   );
 }
 
-function StudentDashboard({ state, dispatch, authUser, userProfile }) {
-  const today = new Date().toISOString().split("T")[0];
-  const myHomework = state.homework.filter(h => h.status === "active");
-  const mySubs = state.submissions;
-  const pendingHw = myHomework.filter(h => {
-    const sub = mySubs.find(s => s.homeworkId === h.id);
-    return sub && sub.status !== "graded" && sub.status !== "submitted";
-  });
-  const gradedHw = mySubs.filter(s => s.status === "graded");
+/* ━━━ TUTOR DASHBOARD ━━━ */
+function TutorDashboard({ state, dispatch, authUser, userProfile }) {
+  const winW = useWindowWidth();
+  const isMobile = winW < 768;
+  const firstName = (userProfile?.name || authUser?.displayName || authUser?.email || 'Tutor').split(' ')[0].split('@')[0];
+  const pendingSubmissions = (state.submissions || []).filter(s => s.status === 'submitted').length;
+  const activeHomework = (state.homework || []).filter(h => h.status === 'active').length;
 
-  return (
-    <div>
-      <WelcomeHero state={state} authUser={authUser} userProfile={userProfile} myHomework={myHomework} mySubs={mySubs} gradedHw={gradedHw} />
-      <ExamCountdownSection />
-      <DailyChallengeSection />
-      <WordOfTheDaySection />
-
-      <div style={{ marginBottom: 20 }}>
-        <PomodoroTimer dispatch={dispatch} />
-      </div>
-
-      {/* Your Agenda */}
-      {(pendingHw.length > 0 || gradedHw.length > 0) && (
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em" }}>Your Agenda</div>
-            <div style={{ fontSize: 11, color: T.textTer }}>{pendingHw.length + gradedHw.slice(0,3).length} items</div>
-          </div>
-          <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3, overflow: "hidden" }}>
-            {pendingHw.map((h, i) => {
-              const overdue = h.dueDate < today;
-              return (
-                <div key={h.id} onClick={() => dispatch({ type: "SET_PAGE", payload: "homework" })}
-                  role="button" tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") dispatch({ type: "SET_PAGE", payload: "homework" }); }}
-                  style={{ display: "grid", gridTemplateColumns: "68px 1fr 120px", alignItems: "center", gap: 14, padding: "13px 18px", borderBottom: `1px solid ${T.border}`, cursor: "pointer" }}>
-                  <div style={{ fontSize: 16, color: T.textSec, fontWeight: overdue ? 600 : 400 }}>{h.dueDate?.slice(5).replace("-", " ")}</div>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 13.5 }}>{h.title}</div>
-                    <div style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: T.textTer, marginTop: 2 }}>{h.subject || "Assignment"}</div>
-                  </div>
-                  <div style={{ fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", textAlign: "right", color: overdue ? T.danger : T.accent, fontWeight: 700 }}>
-                    {overdue ? "Overdue" : `Due ${h.dueDate?.slice(8)} ${new Date(h.dueDate).toLocaleString("en-SG", { month: "short" })}`}
-                  </div>
-                </div>
-              );
-            })}
-            {gradedHw.slice(0, 3).map((sub, i) => {
-              const hw = state.homework.find(h => h.id === sub.homeworkId);
-              const isLast = i === Math.min(gradedHw.length, 3) - 1 && pendingHw.length === 0;
-              return (
-                <div key={sub.id} style={{ display: "grid", gridTemplateColumns: "68px 1fr 120px", alignItems: "center", gap: 14, padding: "13px 18px", borderBottom: isLast ? "none" : `1px solid ${T.border}` }}>
-                  <div style={{ fontSize: 16, color: T.textSec }}>{sub.gradedAt?.slice(5).replace("-", " ") || "—"}</div>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 13.5 }}>{hw?.title || "Homework"}</div>
-                    {sub.gradeComment && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{sub.gradeComment.slice(0, 55)}…</div>}
-                  </div>
-                  <div style={{ fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", textAlign: "right", color: T.success, fontWeight: 700 }}>
-                    Graded · {sub.grade}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Jump In */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Jump In</div>
-        <div style={{ background: T.bgCard, borderRadius: T.r3, border: `1px solid ${T.border}`, overflow: "hidden" }}>
-          {[
-            { label: "Practice Drills", sub: "GP & English",  page: "practice-gp",   accent: T.eng.accent    },
-            { label: "Infographics",    sub: "Visual notes",  page: "infographics",  accent: T.accent        },
-            { label: "Model Essays",    sub: "GP examples",   page: "modelessays",   accent: T.h1econ.accent },
-            { label: "Events",          sub: "Prizes & more", page: "events",        accent: T.danger        },
-            { label: "Community",       sub: "Chat & share",  page: "community",     accent: T.success       },
-          ].map((a, i, arr) => (
-            <button key={a.page} onClick={() => dispatch({ type: "SET_PAGE", payload: a.page })}
-              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "11px 16px", background: "transparent", border: "none", borderBottom: i < arr.length - 1 ? `1px solid ${T.border}` : "none", cursor: "pointer", textAlign: "left", transition: "background 0.12s" }}
-              onMouseEnter={e => e.currentTarget.style.background = T.bgMuted}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: a.accent, flexShrink: 0 }} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: T.text }}>{a.label}</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 11, color: T.textTer }}>{a.sub}</span>
-                <CaretRight size={12} color={T.textTer} />
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Study Plan */}
-      <div style={{ marginTop: 4 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em" }}>Study Plan</div>
-          <div style={{ fontSize: 11, color: T.textTer }}>Wk {Math.ceil(new Date().getDate() / 7)}</div>
-        </div>
-        <div style={{ background: T.bgCard, borderRadius: T.r3, border: `1px solid ${T.border}`, padding: "4px 16px", display: "flex", flexDirection: "column" }}>
-          {generateStudyPlan(state).slice(0, 5).map((day, i) => {
-            const theme = T[day.subjectId] || T.eng;
-            const isToday = day.day === new Date().toLocaleDateString("en-SG", { weekday: "long" });
-            return (
-              <div key={i} style={{ display: "grid", gridTemplateColumns: "56px 40px 1fr", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < 4 ? `1px solid ${T.border}` : "none" }}>
-                <div style={{ fontSize: 13, color: isToday ? T.accent : T.textSec, fontWeight: isToday ? 600 : 400 }}>{day.day.slice(0, 3)} {day.date.split(" ")[1]}</div>
-                <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.08em", color: theme.text, background: theme.bg, padding: "2px 5px", borderRadius: T.r1, textAlign: "center" }}>
-                  {day.subjectId?.slice(0, 3).toUpperCase()}
-                </div>
-                <div style={{ fontSize: 12, color: T.textSec }}>
-                  {day.tasks.map(t => `${t.type} ${t.duration}`).join(" · ")}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <WeeklyProgressSection state={state} />
-    </div>
-  );
-}
-
-function Dashboard({ state, dispatch, authUser, userProfile }) {
   const subjectProgress = useMemo(() => SUBJECTS.map((s, i) => {
     const hash = ((i + 1) * 16807) % 2147483647;
     return { ...s, progress: (hash % 40) + 30 };
   }), []);
 
-  if (state.role === "student") return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
-
-  const actIcons = { upload: Upload, check: CheckCircle, play: Play, plus: Plus };
-  const pendingSubmissions = state.submissions.filter(s => s.status === "submitted").length;
-  const activeHomework = state.homework.filter(h => h.status === "active").length;
-
   return (
     <div>
       <HeroBanner />
 
-      {/* Tutor Hero */}
-      <div style={{ borderRadius: T.r3, background: T.bgCard, border: `1px solid ${T.border}`, padding: "24px 28px", marginBottom: 24 }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+      <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3, padding: '22px 24px', marginBottom: 22 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <h1 style={{ color: T.text, fontSize: 22, fontWeight: 700, margin: "0 0 6px", letterSpacing: "-0.02em" }}>Welcome back</h1>
+            <h1 style={{ color: T.text, fontSize: 22, fontWeight: 800, margin: '0 0 6px', letterSpacing: '-0.03em' }}>Welcome back, {firstName}</h1>
             <p style={{ color: T.textSec, fontSize: 14, margin: 0 }}>Your students are waiting — let's make today count.</p>
           </div>
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {pendingSubmissions > 0 && (
-              <button onClick={() => dispatch({ type: "SET_PAGE", payload: "homework" })} style={{ display: "flex", alignItems: "center", gap: 6, background: T.dangerBg, border: `1px solid ${T.danger}30`, borderRadius: T.r2, padding: "7px 14px", cursor: "pointer", color: T.danger, fontSize: 12, fontWeight: 600 }}>
-                <Bell size={13} />{pendingSubmissions} to grade
+              <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, background: T.dangerBg, border: `1px solid ${T.danger}30`, borderRadius: T.r2, padding: '7px 14px', cursor: 'pointer', color: T.danger, fontSize: 12, fontWeight: 600 }}>
+                <Bell size={13} /> {pendingSubmissions} to grade
               </button>
             )}
             {activeHomework > 0 && (
-              <button onClick={() => dispatch({ type: "SET_PAGE", payload: "homework" })} style={{ display: "flex", alignItems: "center", gap: 6, background: T.warningBg, border: `1px solid ${T.warning}30`, borderRadius: T.r2, padding: "7px 14px", cursor: "pointer", color: T.warning, fontSize: 12, fontWeight: 600 }}>
-                <ClipboardText size={13} />{activeHomework} active tasks
+              <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, background: T.warningBg, border: `1px solid ${T.warning}30`, borderRadius: T.r2, padding: '7px 14px', cursor: 'pointer', color: T.warning, fontSize: 12, fontWeight: 600 }}>
+                <ClipboardText size={13} /> {activeHomework} active tasks
               </button>
             )}
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8, marginTop: 18, flexWrap: "wrap" }}>
+        <div style={{ display: 'flex', gap: 8, marginTop: 18, flexWrap: 'wrap' }}>
           {[
-            { label: "Take Attendance", icon: CalendarCheck, page: "attendance" },
-            { label: "Grade Homework",  icon: ClipboardText,  page: "homework"   },
-            { label: "View Progress",   icon: ChartBar,       page: "progress"   },
-            { label: "Community",       icon: Handshake,      page: "community"  },
+            { label: 'Take Attendance', icon: CalendarCheck, page: 'attendance' },
+            { label: 'Grade Homework',  icon: ClipboardText,  page: 'homework'   },
+            { label: 'View Progress',   icon: ChartLineUp,   page: 'progress'   },
+            { label: 'Community',       icon: Handshake,     page: 'community'  },
           ].map(a => (
-            <button key={a.label} onClick={() => dispatch({ type: "SET_PAGE", payload: a.page })}
-              style={{ display: "flex", alignItems: "center", gap: 7, background: T.bgMuted, border: `1px solid ${T.border}`, borderRadius: T.r2, padding: "8px 14px", cursor: "pointer", color: T.text, fontSize: 12, fontWeight: 500, transition: "all 0.12s" }}
+            <button key={a.label} onClick={() => dispatch({ type: 'SET_PAGE', payload: a.page })}
+              style={{ display: 'flex', alignItems: 'center', gap: 7, background: T.bgMuted, border: `1px solid ${T.border}`, borderRadius: T.r2, padding: '8px 14px', cursor: 'pointer', color: T.text, fontSize: 12, fontWeight: 500, transition: 'all 0.12s' }}
               onMouseEnter={e => { e.currentTarget.style.background = T.bgHover; e.currentTarget.style.borderColor = T.borderHover; }}
               onMouseLeave={e => { e.currentTarget.style.background = T.bgMuted; e.currentTarget.style.borderColor = T.border; }}>
-              <a.icon size={14} />{a.label}
+              <a.icon size={14} /> {a.label}
             </button>
           ))}
         </div>
       </div>
 
       {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 28 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10, marginBottom: 22 }}>
         {[
-          { icon: FolderSimpleStar, value: state.resources.length,    label: "Resources", color: T.accent,        bg: T.accentLight, page: "library"    },
-          { icon: PlayCircle,       value: state.videoLessons.length, label: "Videos",    color: "#A85A38",       bg: "#F6EAE4",     page: "videos"     },
-          { icon: Lightning,        value: state.quizzes.length,      label: "Quizzes",   color: "#C49030",       bg: "#F6F0E0",     page: "quizzes"    },
-          { icon: Users,            value: state.students.length,     label: "Students",  color: "#4A8E9E",       bg: "#E4EFF2",     page: "progress"   },
-          { icon: CalendarCheck,    value: state.sessions.length,     label: "Sessions",  color: "#3B6EA6",       bg: "#E8EFF6",     page: "attendance" },
-          { icon: Handshake,        value: (state.posts || []).length,label: "Community", color: "#2E8058",       bg: "#E4F0EA",     page: "community"  },
-        ].map((s, i) => (
-          <div key={s.label} className="card-enter"
-            role="button" tabIndex={0}
-            aria-label={`Go to ${s.label}`}
-            onClick={() => dispatch({ type: "SET_PAGE", payload: s.page })}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); dispatch({ type: "SET_PAGE", payload: s.page }); } }}
-            style={{ "--i": i, cursor: "pointer", padding: "16px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, transition: "all 0.15s" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = s.color + "60"; e.currentTarget.style.boxShadow = `0 4px 20px ${s.color}18`; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = "none"; }}>
-            <div style={{ width: 36, height: 36, borderRadius: T.r2, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
+          { icon: FolderSimpleStar, value: (state.resources || []).length,    label: 'Resources', color: T.accent,  bg: T.accentLight, page: 'library-eng' },
+          { icon: PlayCircle,       value: (state.videoLessons || []).length, label: 'Videos',    color: '#A85A38', bg: '#F6EAE4',     page: 'videos-eng'  },
+          { icon: Users,            value: (state.students || []).length,     label: 'Students',  color: '#4A8E9E', bg: '#E4EFF2',     page: 'progress'    },
+          { icon: CalendarCheck,    value: (state.sessions || []).length,     label: 'Sessions',  color: '#3B6EA6', bg: '#E8EFF6',     page: 'attendance'  },
+          { icon: ChatText,         value: (state.posts || []).length,        label: 'Community', color: '#2E8058', bg: '#E4F0EA',     page: 'community'   },
+        ].map((s) => (
+          <div key={s.label}
+            role="button" tabIndex={0} aria-label={`Go to ${s.label}`}
+            onClick={() => dispatch({ type: 'SET_PAGE', payload: s.page })}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dispatch({ type: 'SET_PAGE', payload: s.page }); } }}
+            style={{ padding: 16, background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, cursor: 'pointer', transition: 'all 0.15s' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = s.color + '60'; e.currentTarget.style.boxShadow = `0 4px 16px ${s.color}18`; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = 'none'; }}>
+            <div style={{ width: 36, height: 36, borderRadius: T.r2, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
               <s.icon size={18} color={s.color} />
             </div>
-            <div style={{ fontSize: 28, fontWeight: 700, color: T.text, lineHeight: 1 }}>{s.value}</div>
-            <div style={{ fontSize: 10, fontWeight: 500, color: T.textTer, marginTop: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>{s.label}</div>
+            <div style={{ fontSize: 26, fontWeight: 700, color: T.text, lineHeight: 1 }}>{s.value}</div>
+            <div style={{ fontSize: 10, fontWeight: 500, color: T.textTer, marginTop: 4, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{s.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Your Subjects */}
-      <h2 style={{ fontSize: 16, fontWeight: 600, color: T.text, margin: "0 0 14px", letterSpacing: "-0.01em" }}>Your Subjects</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: 14, marginBottom: 28 }}>
-        {subjectProgress.map((s, idx) => {
+      {/* Subjects */}
+      <h2 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: '0 0 12px', letterSpacing: '-0.02em' }}>Your Subjects</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 12, marginBottom: 22 }}>
+        {subjectProgress.map(s => {
           const theme = getSubjectTheme(s.id);
           return (
-            <Card key={s.id} className="card-enter" style={{ "--i": idx, padding: 0, overflow: "hidden" }} onClick={() => dispatch({ type: "SET_PAGE", payload: "library" })} elevated>
-              <div style={{ position: "relative", overflow: "hidden" }}>
-                <SubjectIllustration subject={s.id} size={240} />
-                <div style={{ position: "absolute", top: 10, left: 14, display: "flex", alignItems: "center", gap: 8 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: T.r2, background: "rgba(255,255,255,0.9)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-                    <BookOpen size={16} color={theme.accent} />
-                  </div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: theme.accent, background: "rgba(255,255,255,0.85)", padding: "2px 10px", borderRadius: 20, backdropFilter: "blur(4px)" }}>{TOPICS[s.id]?.length || 0} topics</span>
-                </div>
-              </div>
-              <div style={{ padding: "14px 16px 16px" }}>
-                <div style={{ fontSize: 15, fontWeight: 600, color: T.text, marginBottom: 8 }}>{s.name}</div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: T.textSec, marginBottom: 6 }}>
+            <div key={s.id} onClick={() => dispatch({ type: 'SET_PAGE', payload: 'library-eng' })}
+              style={{ background: T.bgCard, borderRadius: T.r3, border: `1px solid ${T.border}`, overflow: 'hidden', cursor: 'pointer', transition: 'all 0.15s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = theme.accent + '60'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = 'none'; }}>
+              <SubjectIllustration subject={s.id} size={210} />
+              <div style={{ padding: '12px 14px 14px' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8 }}>{s.name}</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.textSec, marginBottom: 5 }}>
                   <span>Progress</span><span style={{ color: theme.accent, fontWeight: 600 }}>{s.progress}%</span>
                 </div>
                 <Progress value={s.progress} color={theme.accent} bg={theme.bg} />
               </div>
-            </Card>
+            </div>
           );
         })}
       </div>
 
-      {/* Today's Classes */}
-      {(() => {
-        const todayClasses = state.sessions.filter(s => s.date === new Date().toISOString().split("T")[0]);
-        if (todayClasses.length === 0) return null;
-        return (
-          <div style={{ marginBottom: 28 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 600, color: T.text, margin: "0 0 14px", letterSpacing: "-0.01em" }}>Today's Classes</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 14 }}>
-              {todayClasses.map(session => {
-                const theme = getSubjectTheme(session.subject);
-                const students = state.students.filter(st => st.subjects.includes(session.subject));
-                const rec = state.attendance[session.id] || {};
-                const marked = Object.keys(rec).length;
-                return (
-                  <Card key={session.id} onClick={() => dispatch({ type: "SET_PAGE", payload: "attendance" })} elevated style={{ borderLeft: `3px solid ${theme.accent}` }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                      <div style={{ width: 40, height: 40, borderRadius: T.r2, background: theme.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <CalendarCheck size={20} color={theme.accent} />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{getSubject(session.subject)?.name}</div>
-                        <div style={{ fontSize: 12, color: T.textTer }}>{session.time}</div>
-                      </div>
-                      {marked < students.length ? (
-                        <Badge color={T.warning} bg={T.warningBg}>{students.length - marked} unmarked</Badge>
-                      ) : (
-                        <Badge color={T.success} bg={T.successBg}><CheckCircle size={12} weight="fill" /> Done</Badge>
-                      )}
-                    </div>
-                    {session.notes
-                      ? <div style={{ fontSize: 12, color: T.textSec, background: T.bgMuted, padding: "6px 10px", borderRadius: T.r1 }}>{session.notes}</div>
-                      : <div style={{ fontSize: 12, color: T.textTer, fontStyle: "italic" }}>Click to take attendance</div>
-                    }
-                  </Card>
-                );
-              })}
-            </div>
+      {/* Community + Quick Actions */}
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+        <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3, padding: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, color: T.text, margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}><ChatText size={14} color={T.text} /> Community</h3>
+            <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'community' })} style={{ background: T.accentLight, border: 'none', borderRadius: 20, padding: '4px 12px', fontSize: 11, fontWeight: 600, color: T.accent, cursor: 'pointer' }}>View All →</button>
           </div>
-        );
-      })()}
-
-      {/* Community Preview + Activity */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
-        <Card elevated style={{ padding: 22 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, color: T.text, margin: 0, display: "flex", alignItems: "center", gap: 6 }}><ChatText size={15} color={T.text} /> Community</h3>
-            <button onClick={() => dispatch({ type: "SET_PAGE", payload: "community" })} style={{ background: T.accentLight, border: "none", borderRadius: 20, padding: "5px 14px", fontSize: 11, fontWeight: 600, color: T.accentText, cursor: "pointer" }}>View All →</button>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             {(state.posts || []).slice(0, 3).map(post => (
-              <div key={post.id} onClick={() => dispatch({ type: "SET_PAGE", payload: "community" })}
+              <div key={post.id} onClick={() => dispatch({ type: 'SET_PAGE', payload: 'community' })}
                 role="button" tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); dispatch({ type: "SET_PAGE", payload: "community" }); } }}
-                style={{ cursor: "pointer", padding: "10px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, transition: "all 0.15s" }}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dispatch({ type: 'SET_PAGE', payload: 'community' }); } }}
+                style={{ cursor: 'pointer', padding: '9px 11px', borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, transition: 'all 0.15s' }}
                 onMouseEnter={e => e.currentTarget.style.background = T.bgHover}
                 onMouseLeave={e => e.currentTarget.style.background = T.bgMuted}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                  {post.isAnnouncement && <span style={{ fontSize: 10, fontWeight: 700, color: "#92400E", background: "#FEF3C7", padding: "1px 5px", borderRadius: 20, display: "inline-flex", alignItems: "center" }}><Megaphone size={10} color="#92400E" /></span>}
-                  <span style={{ fontSize: 12, fontWeight: 600, color: T.text }}>{post.title}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
+                  {post.isAnnouncement && <Megaphone size={10} color="#92400E" />}
+                  <span style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</span>
                 </div>
                 <div style={{ fontSize: 11, color: T.textTer }}>{post.author} · {post.comments.length} comments</div>
               </div>
             ))}
           </div>
-        </Card>
+        </div>
 
-        <Card elevated style={{ padding: 24 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: T.text, margin: "0 0 16px" }}>Quick Actions</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3, padding: 20 }}>
+          <h3 style={{ fontSize: 13, fontWeight: 700, color: T.text, margin: '0 0 12px' }}>Quick Actions</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             {[
-              { label: "Take Attendance",      icon: CalendarCheck, page: "attendance", color: "#3F51EC" },
-              { label: "Upload New Resource",  icon: Upload,        page: "library",    color: "#0C8CE9" },
-              { label: "Create a Quiz",        icon: Lightning,     page: "quizzes",    color: "#6660B9" },
-              { label: "View Student Progress",icon: ChartLineUp,   page: "progress",   color: "#00A85A" },
-              { label: "Start Mock Exam",      icon: Target,        page: "exams",      color: "#E07800" },
-            ].map((item) => (
-              <button key={item.label} onClick={() => dispatch({ type: "SET_PAGE", payload: item.page })}
-                onMouseEnter={(e) => e.currentTarget.style.background = T.bgHover}
-                onMouseLeave={(e) => e.currentTarget.style.background = T.bgMuted}
-                style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: T.bgMuted, borderRadius: T.r2, border: "none", cursor: "pointer", transition: "all 0.15s", width: "100%", textAlign: "left" }}>
-                <div style={{ width: 30, height: 30, borderRadius: T.r1, background: item.color + "14", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <item.icon size={15} color={item.color} />
+              { label: 'Take Attendance',       icon: CalendarCheck, page: 'attendance',     color: '#3F51EC' },
+              { label: 'Upload New Resource',   icon: Upload,        page: 'library-eng',    color: '#0C8CE9' },
+              { label: 'View Student Progress', icon: ChartLineUp,   page: 'progress',       color: '#00A85A' },
+              { label: 'Past Papers',           icon: BookOpen,      page: 'pastpapers-gp',  color: '#6660B9' },
+            ].map(item => (
+              <button key={item.label} onClick={() => dispatch({ type: 'SET_PAGE', payload: item.page })}
+                onMouseEnter={e => e.currentTarget.style.background = T.bgHover}
+                onMouseLeave={e => e.currentTarget.style.background = T.bgMuted}
+                style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '10px 12px', background: T.bgMuted, borderRadius: T.r2, border: 'none', cursor: 'pointer', transition: 'all 0.15s', width: '100%', textAlign: 'left' }}>
+                <div style={{ width: 28, height: 28, borderRadius: T.r1, background: item.color + '14', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <item.icon size={14} color={item.color} />
                 </div>
                 <span style={{ fontSize: 13, fontWeight: 500, color: T.text }}>{item.label}</span>
-                <CaretRight size={13} color={T.textTer} style={{ marginLeft: "auto" }} />
+                <CaretRight size={12} color={T.textTer} style={{ marginLeft: 'auto' }} />
               </button>
             ))}
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );
+}
+
+/* ━━━ ROOT EXPORT ━━━ */
+function Dashboard({ state, dispatch, authUser, userProfile }) {
+  if (state.role === 'student') {
+    return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
+  }
+  return <TutorDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
 }
 
 export { StudentDashboard };
