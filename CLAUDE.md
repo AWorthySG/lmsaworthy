@@ -44,7 +44,7 @@ There is no test suite.
 
 ### State management
 - One `useReducer` in `LMS.jsx`: `appReducer` (in `src/state/reducer.js`) with ~43 action types. State shape and initial values are in `src/state/persistence.js` (`DEFAULT_STATE`).
-- `initialState` is rehydrated from `localStorage` key `aworthy-lms-state` on load. Only keys listed in `PERSIST_KEYS` are persisted: `bookmarks`, `attendance`, `submissions`, `homework`, `peerEssays`, `peerReviews`, `studyLogs`, `notes`, `ratings`, `announcement`, `goals`, `mistakes`, `revisionChecklist`, `posts`, `reports`. Everything else re-seeds from `src/data/seedData.js` on every load.
+- `initialState` is rehydrated from `localStorage` key `aworthy-lms-state` on load. Only keys listed in `PERSIST_KEYS` are persisted: `bookmarks`, `attendance`, `submissions`, `homework`, `pastPaperDocs`, `studyLogs`, `notes`, `ratings`, `announcement`, `goals`, `mistakes`, `revisionChecklist`, `posts`, `reports`. Everything else re-seeds from `src/data/seedData.js` on every load.
 - **`role` is NOT persisted** — it always comes from Firebase RTDB on login to prevent localStorage privilege escalation.
 - Adding a new persistent field requires adding it to both `DEFAULT_STATE` and `PERSIST_KEYS`.
 - localStorage writes are debounced (300ms). Firebase sync (`src/hooks/useFirebaseSync.js`) is also debounced (2s) and uses a write guard to prevent read-write loops.
@@ -55,8 +55,8 @@ There is no test suite.
 - `src/data/routing.js` is the source of truth for both sidebar nav (`NAV`) and the URL map (`PAGE_TO_PATH` / `PATH_TO_PAGE`).
 - `LMS.jsx` has two effects: one reads `location.pathname` and dispatches `SET_PAGE`; the other watches `state.page` and calls `navigate(path)`. An `initializedRef` prevents the first render from racing.
 - `renderPage()` in `LMS.jsx` is a `switch` on `state.page` returning the page component. Adding a page = (1) component file, (2) entry in `NAV`, (3) entry in `PAGE_TO_PATH`, (4) `case` in `renderPage()`, (5) lazy import at top of `LMS.jsx`.
-- Subject-scoped page IDs use consistent suffixes: `practice-gp`, `practice-eng`, `pastpapers-gp`, `micro-h1econ`, `library-eng`, `videos-h1econ`, `quizzes-h2econ`, `exams-h1econ`, etc. Shared pages (library, videos, quizzes, exams) have subject-suffixed NAV IDs that map to the same route path.
-- URL slugs use hyphens: `/timed-writer`, `/essay-grader`, `/example-finder`, `/ai-marker`, `/past-papers`, `/peer-review`.
+- Subject-scoped page IDs use consistent suffixes: `practice-gp`, `practice-eng`, `pastpapers-gp`, `micro-h1econ`, `library-eng`, `videos-h1econ`, `exams-h1econ`, etc. Shared pages (library, videos, exams) have subject-suffixed NAV IDs that map to the same route path.
+- URL slugs use hyphens: `/timed-writer`, `/essay-grader`, `/example-finder`, `/ai-marker`, `/past-papers/eng`, `/past-papers/gp`, `/past-papers/h1econ`, `/past-papers/h2econ`.
 
 ### Page / component layout
 - `src/pages/*.jsx` — top-level pages mapped from the route switch.
@@ -67,8 +67,8 @@ There is no test suite.
 - `src/components/toast/` — `ToastContainer` listens to `state.toasts`; dispatch `{ type: "ADD_TOAST", payload: { message, variant } }` (`variant`: `success` | `error` | `info`).
 
 ### Data / config
-- `src/data/seedData.js` — all initial collections (resources, video lessons, quizzes, exams, students, sessions, attendance, reports, posts, homework, submissions). Resource `fileUrl`s point to Firebase Storage download URLs.
-- `src/data/{routing,subjects,gpQuestionTypes,infoPackThemes,microModules,pastPapersData,practiceQuestions,essayData,vocabDrills,seedEvents}.js` — static content used by individual pages.
+- `src/data/seedData.js` — all initial collections (resources, video lessons, exams, students, sessions, attendance, reports, posts, homework, submissions). Resource `fileUrl`s point to Firebase Storage download URLs.
+- `src/data/{routing,subjects,gpQuestionTypes,infoPackThemes,microModules,practiceQuestions,essayData,vocabDrills,seedEvents}.js` — static content used by individual pages. `pastPapersData.js` exists but is no longer used — Past Papers is now a dynamic document folder: tutors upload PDF/DOCX files to Firebase Storage, stored in `state.pastPaperDocs` (persisted).
 - `src/theme/theme.js` — exports `T` (one global design-token object: colors, radii, shadows, gradients, font families, per-subject palette) and `SUBJ_THEME`. **Design aesthetic: Bear-minimal** — warm whites, soft `rgba` borders, content-first layout, no decorative chrome. Font tokens: `T.fontDisplay` / `T.fontBody` / `T.fontSerif` → `'Nunito', sans-serif` (weights 300–800, rounded and warm); `T.fontMono` → `'JetBrains Mono', monospace`. Key palette: `T.bg` `#FAFAF7` (warm white canvas), `T.bgSidebar` `#F2EFE8`, `T.bgCard` `#FFFFFF`, `T.accent` `#C0392B` (rust red), `T.text` `#1C1B19`, `T.textSec` `#6B6760`, `T.border` `rgba(28,27,25,0.08)`. Subject themes: `T.eng`, `T.gp`, `T.h1econ`, `T.h2econ` (each with `bg`, `text`, `accent`). Styling is inline `style={{...}}` driven by `T`; there are no CSS-in-JS libraries or Tailwind. Subject themes are looked up via `T[subjectId]` or `getSubjectTheme(id)` from `src/utils/helpers.js`. Colors are WCAG AA compliant against the `T.bg` background.
 - `src/icons/icons.jsx` — Phosphor icon wrappers used throughout. All UI indicators use these icons, not raw emojis. Add new icons here rather than importing `@phosphor-icons/react` directly in pages.
 - `src/hooks/` — `useFirebaseSync.js` (bidirectional RTDB sync), `useWindowWidth.js` (responsive breakpoint), `useTimer.js` (countdown/stopwatch for timed features).
