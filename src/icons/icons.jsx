@@ -53,6 +53,7 @@ export const Plus = ic("ph:plus-bold");
 export const X = ic("ph:x-bold");
 export const Trash = ic("ph:trash-bold");
 export const MagnifyingGlass = ic("ph:magnifying-glass-bold");
+export const SortAscending = ic("ph:sort-ascending-bold");
 export const PencilSimpleLine = ic("ph:pencil-simple-line-bold");
 export const Pen = ic("ph:pen-bold");
 export const Eraser = ic("ph:eraser-bold");
