@@ -131,7 +131,7 @@ function Community({ state, dispatch }) {
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     {post.authorType === "tutor"
                       ? <div style={{ width: 38, height: 38, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #3F51EC)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 14, flexShrink: 0 }}>J</div>
-                      : <StudentAvatar student={state.students.find(s => s.id === post.studentId)} size={38} radius="50%" />
+                      : <StudentAvatar student={state.students.find(s => s.id === post.studentId)} avatarMap={state.studentAvatars} size={38} radius="50%" />
                     }
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
@@ -177,7 +177,7 @@ function Community({ state, dispatch }) {
                     {post.comments.map(comment => (
                       <div key={comment.id} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                         {comment.studentId
-                          ? <StudentAvatar student={state.students.find(s => s.id === comment.studentId)} size={30} radius="50%" />
+                          ? <StudentAvatar student={state.students.find(s => s.id === comment.studentId)} avatarMap={state.studentAvatars} size={30} radius="50%" />
                           : <div style={{ width: 30, height: 30, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #3F51EC)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 11, flexShrink: 0 }}>J</div>
                         }
                         <div style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "10px 14px", border: `1px solid ${T.border}` }}>

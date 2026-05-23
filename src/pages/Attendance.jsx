@@ -87,7 +87,7 @@ function Attendance({ state, dispatch }) {
             return (
               <Card key={st.id} elevated>
                 <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
-                  <StudentAvatar student={st} size={44} radius={T.r3} />
+                  <StudentAvatar student={st} avatarMap={state.studentAvatars} size={44} radius={T.r3} />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 15, fontWeight: 650, color: T.text }}>{st.name}</div>
                     <div style={{ display: "flex", gap: 4, marginTop: 4, flexWrap: "wrap" }}>{st.subjects.map(s => <SubjectBadge key={s} subjectId={s} small />)}</div>

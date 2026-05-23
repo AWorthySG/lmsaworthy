@@ -7,11 +7,9 @@ import {
 } from '../icons/icons.jsx';
 
 export const NAV = [
-  { group: "Home", items: [
+  { group: "Overview", items: [
     { id: "dashboard", label: "Dashboard", icon: House },
-    { id: "classroom", label: "Live Classroom", icon: Broadcast, highlight: true },
-    { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
-    { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
+    { id: "classroom", label: "Live Classroom Whiteboard", icon: Broadcast, highlight: true },
   ]},
   { group: "O-Level English", subject: "eng", items: [
     { id: "library-eng", label: "Resources", icon: Books },
@@ -43,7 +41,9 @@ export const NAV = [
     { id: "library-ibmyp", label: "Resources", icon: Books },
     { id: "pastpapers-ibmyp", label: "Past Papers", icon: Notebook },
   ]},
-  { group: "Engage", items: [
+  { group: "My Work", items: [
+    { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
+    { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
     { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
     { id: "community", label: "Community", icon: Handshake },
   ]},

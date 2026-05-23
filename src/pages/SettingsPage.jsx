@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { T } from "../theme/theme.js";
 import { PageHeader } from "../components/ui";
+import { AvatarPicker, AvatarDisplay } from "../components/gamification/StudentAvatar.jsx";
 
 /* ━━━ HELPERS ━━━ */
 
@@ -109,10 +110,11 @@ function ToggleSwitch({ checked, onChange, "aria-describedby": ariaDescribedBy, 
 
 /* ━━━ SETTINGS PAGE ━━━ */
 
-function SettingsPage({ darkMode, setDarkMode, authUser, userProfile }) {
+function SettingsPage({ darkMode, setDarkMode, authUser, userProfile, state, dispatch }) {
   const [fontSize, setFontSize] = useState(loadFontSize);
   const [notifPrefs, setNotifPrefs] = useState(loadNotifPrefs);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
   // Persist font size
   useEffect(() => {
@@ -171,6 +173,35 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 680 }}>
       <PageHeader title="Settings" subtitle="Manage your preferences, notifications, and account" />
+
+      {/* ━━━ 0. Profile / Avatar ━━━ */}
+      <div style={sectionCard}>
+        <h2 style={sectionTitle}>Your Profile</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, paddingBottom: 16, borderBottom: `1px solid ${T.border}`, marginBottom: 16 }}>
+          {state?.myAvatar
+            ? <AvatarDisplay avatarKey={state.myAvatar} size={56} radius={T.r2} />
+            : <div style={{ width: 56, height: 56, borderRadius: T.r2, background: `linear-gradient(135deg, ${T.accent}, #B45309)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 20 }}>
+                {(userProfile?.name || authUser?.displayName || "U").charAt(0).toUpperCase()}
+              </div>
+          }
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: T.text }}>{userProfile?.name || authUser?.displayName || "User"}</div>
+            <div style={{ fontSize: 12, color: T.textTer, marginTop: 2 }}>{authUser?.email}</div>
+          </div>
+          <button onClick={() => setShowAvatarPicker(v => !v)}
+            style={{ padding: "7px 16px", borderRadius: T.r5, border: `1px solid ${T.border}`, background: T.bgMuted, color: T.textSec, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+            {showAvatarPicker ? "Close" : "Change Avatar"}
+          </button>
+        </div>
+
+        {showAvatarPicker && (
+          <AvatarPicker
+            value={state?.myAvatar}
+            onSave={(key) => { dispatch({ type: "SET_MY_AVATAR", payload: key }); setShowAvatarPicker(false); }}
+            onCancel={() => setShowAvatarPicker(false)}
+          />
+        )}
+      </div>
 
       {/* ━━━ 1. Appearance ━━━ */}
       <div style={sectionCard}>

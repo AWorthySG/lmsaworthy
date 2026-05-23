@@ -4,6 +4,7 @@ import { T } from '../theme/theme.js';
 import { ChartLineUp, ChartBar, Trophy, Star, CheckCircle, ArrowSquareOut, Users, CalendarCheck, PencilSimpleLine, Notebook, CaretRight, X } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard, BackBtn, FileIcon, Input, Textarea } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
+import { AvatarPicker } from '../components/gamification/StudentAvatar.jsx';
 import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 
@@ -14,6 +15,7 @@ function ProgressTracker({ state, dispatch }) {
   const [reportContent, setReportContent] = useState("");
   const [editingReport, setEditingReport] = useState(null);
   const [viewingReport, setViewingReport] = useState(null);
+  const [editingAvatar, setEditingAvatar] = useState(false);
 
   if (sel) {
     const student = state.students.find((s) => s.id === sel);
@@ -26,15 +28,37 @@ function ProgressTracker({ state, dispatch }) {
 
     return (
       <div>
-        <BackBtn onClick={() => setSel(null)} />
+        <BackBtn onClick={() => { setSel(null); setEditingAvatar(false); }} />
         <Card elevated style={{ padding: "24px 32px", marginBottom: 20, borderTop: `3px solid ${T.accent}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-            <StudentAvatar student={student} size={52} radius={T.r3} />
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: editingAvatar ? 16 : 20 }}>
+            <button
+              onClick={() => setEditingAvatar(v => !v)}
+              title="Change avatar"
+              style={{ position: "relative", background: "none", border: "none", padding: 0, cursor: "pointer", borderRadius: T.r3 }}
+            >
+              <StudentAvatar student={student} avatarMap={state.studentAvatars} size={52} radius={T.r3} />
+              <div style={{ position: "absolute", bottom: -4, right: -4, width: 20, height: 20, borderRadius: "50%", background: T.accent, border: `2px solid ${T.bgCard}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <PencilSimpleLine size={10} weight="bold" color="#fff" />
+              </div>
+            </button>
             <div style={{ flex: 1 }}>
               <h1 style={{ color: T.text, fontSize: 22, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.3 }}>{student.name}</h1>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{student.subjects.map((s) => <SubjectBadge key={s} subjectId={s} small />)}</div>
             </div>
           </div>
+          {editingAvatar && (
+            <div style={{ marginBottom: 20 }}>
+              <AvatarPicker
+                value={state.studentAvatars?.[student.id]}
+                onSave={(key) => {
+                  dispatch({ type: "UPDATE_STUDENT_AVATAR", payload: { studentId: student.id, avatar: key } });
+                  dispatch({ type: "ADD_TOAST", payload: { message: "Avatar updated", variant: "success" } });
+                  setEditingAvatar(false);
+                }}
+                onCancel={() => setEditingAvatar(false)}
+              />
+            </div>
+          )}
         </Card>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
           <Card elevated>
@@ -239,7 +263,7 @@ function ProgressTracker({ state, dispatch }) {
           return (
             <Card key={student.id} onClick={() => setSel(student.id)} elevated>
               <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
-                <StudentAvatar student={student} size={48} radius={T.r3} />
+                <StudentAvatar student={student} avatarMap={state.studentAvatars} size={48} radius={T.r3} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{student.name}</div>
                   <div style={{ display: "flex", gap: 4, marginTop: 5, flexWrap: "wrap" }}>

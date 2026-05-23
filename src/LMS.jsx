@@ -17,6 +17,7 @@ import ToastContainer from "./components/toast/ToastContainer.jsx";
 import BackToTop from "./components/ui/BackToTop.jsx";
 import InstallPrompt from "./components/ui/InstallPrompt.jsx";
 import LoginScreen from "./pages/LoginScreen.jsx";
+import { AvatarDisplay } from "./components/gamification/StudentAvatar.jsx";
 
 // Lazy-loaded page imports (code-split per route)
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
@@ -237,7 +238,7 @@ function LMS({ authUser, userProfile }) {
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
       case "formulas": case "formulas-omath": case "formulas-amath": case "formulas-ibmyp": return <FormulaCards />;
       case "certificates": return <Certificates state={state} dispatch={dispatch} />;
-      case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} />;
+      case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
     }
   };
@@ -264,7 +265,7 @@ function LMS({ authUser, userProfile }) {
           </button>
           {sidebarOpen && (
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, objectFit: "contain", borderRadius: 6 }} />
+              <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 56, objectFit: "contain", borderRadius: 8 }} />
               <span style={{ fontSize: 14, fontWeight: 600, color: T.text, letterSpacing: "-0.01em" }}>A Worthy</span>
             </div>
           )}
@@ -332,7 +333,10 @@ function LMS({ authUser, userProfile }) {
         {sidebarOpen && (
           <div style={{ padding: "10px 12px 14px", borderTop: `1px solid ${T.border}` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 8 }}>
-              <div style={{ width: 32, height: 32, borderRadius: T.r2, background: T.accent, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, fontSize: 13, flexShrink: 0 }}>{(userProfile?.name || authUser?.displayName || "U").charAt(0).toUpperCase()}</div>
+              {state.myAvatar
+                ? <AvatarDisplay avatarKey={state.myAvatar} size={32} radius={T.r2} />
+                : <div style={{ width: 32, height: 32, borderRadius: T.r2, background: `linear-gradient(135deg, ${T.accent}, #B45309)`, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{(userProfile?.name || authUser?.displayName || "U").charAt(0).toUpperCase()}</div>
+              }
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ color: T.text, fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userProfile?.name || authUser?.displayName || "User"}</div>
                 <div style={{ color: T.textTer, fontSize: 11 }}>{userProfile?.role === "tutor" ? "Creator" : "Student"}</div>

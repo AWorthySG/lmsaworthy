@@ -81,7 +81,10 @@ export function appReducer(state, action) {
     }
     case "UPDATE_STUDENT_AVATAR": {
       const { studentId, avatar } = action.payload;
-      return { ...state, students: state.students.map(s => s.id === studentId ? { ...s, avatar } : s) };
+      return { ...state, studentAvatars: { ...state.studentAvatars, [studentId]: avatar } };
+    }
+    case "SET_MY_AVATAR": {
+      return { ...state, myAvatar: action.payload };
     }
     case "ADD_HOMEWORK": {
       const hw = action.payload;
