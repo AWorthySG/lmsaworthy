@@ -1,14 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
 import {
-  Target, CheckCircle, ArrowRight, BookOpen, ClipboardText,
+  CheckCircle, ArrowRight, BookOpen, ClipboardText,
   Bell, CalendarCheck, ChartLineUp, Handshake, FolderSimpleStar,
-  PlayCircle, Users, Upload, CaretRight, ChatText, Sparkle,
-  Megaphone,
+  Users, Upload, CaretRight, ChatText, Sparkle,
+  Megaphone, Scroll, GraduationCap, Notebook,
 } from '../icons/icons.jsx';
-import { SubjectIllustration, Progress } from '../components/ui';
-import { getSubject, getSubjectTheme, getExamCountdowns, getDailyChallenge, getWeeklyProgress, generateStudyPlan } from '../utils/helpers.js';
+import { SubjectIllustration } from '../components/ui';
+import { getSubject, getSubjectTheme, getExamCountdowns, getWeeklyProgress, generateStudyPlan } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
+import { VOCAB_DRILLS } from '../data/vocabDrills.js';
 import useWindowWidth from '../hooks/useWindowWidth.js';
 
 /* ━━━ SHARED CARD PRIMITIVE ━━━ */
@@ -115,12 +116,12 @@ function ResumeCard({ state, dispatch }) {
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: T.textSec, marginBottom: 6 }}>
             Nothing overdue — great work!
           </div>
-          <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.3, color: T.text }}>Start today's practice drill</div>
-          <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>Keep your skills sharp with a quick drill</div>
+          <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.3, color: T.text }}>Build your vocabulary</div>
+          <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>Practise high-value words with flashcards and quizzes</div>
         </div>
-        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'practice-eng' })}
+        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'vocab' })}
           style={{ padding: '11px 20px', borderRadius: T.r2, background: T.accent, color: '#fff', fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          Start drill <ArrowRight size={14} />
+          Vocab Builder <ArrowRight size={14} />
         </button>
       </div>
     );
@@ -342,10 +343,10 @@ function AssignmentsCard({ state, dispatch }) {
 /* ━━━ JUMP IN ━━━ */
 function JumpInCard({ dispatch }) {
   const tiles = [
-    { label: 'Practice Drills', meta: 'English drills', icon: Target,    color: T.eng.accent,    page: 'practice-eng'  },
-    { label: 'Model Essays',    meta: 'GP examples',   icon: BookOpen,  color: T.h1econ.accent, page: 'modelessays'  },
-    { label: 'Infographics',    meta: 'Visual notes',  icon: Sparkle,   color: T.accent,        page: 'infographics' },
-    { label: 'Community',       meta: 'Chat & share',  icon: Handshake, color: T.success,       page: 'community'    },
+    { label: 'Vocabulary',   meta: 'Flashcards & quizzes', icon: Scroll,        color: T.eng.accent,    page: 'vocab'        },
+    { label: 'Model Essays', meta: 'GP examples',           icon: GraduationCap, color: T.gp.accent,     page: 'modelessays'  },
+    { label: 'Mistake Log',  meta: 'Track your errors',     icon: Notebook,      color: T.accent,        page: 'mistakes'     },
+    { label: 'Community',    meta: 'Chat & share',          icon: Handshake,     color: T.success,       page: 'community'    },
   ];
   return (
     <DCard title="Jump in" action={
@@ -505,20 +506,38 @@ function RecentlyReturnedCard({ state, dispatch }) {
   );
 }
 
-/* ━━━ DAILY CHALLENGE ━━━ */
-function DailyChallengeCard({ dispatch }) {
-  const challenge = getDailyChallenge();
+/* ━━━ WORD OF THE DAY ━━━ */
+function WordOfTheDayCard({ dispatch }) {
+  const dayIdx = Math.floor(Date.now() / 86400000) % VOCAB_DRILLS.length;
+  const word = VOCAB_DRILLS[dayIdx];
+
+  const CAT_COLOR = {
+    "Tone Words":         T.eng.accent,
+    "Connotation":        T.gp.accent,
+    "Discourse Markers":  T.omath.accent,
+    "Literary Devices":   T.amath.accent,
+    "Paraphrasing":       T.h1econ.accent,
+    "Evaluative Language": T.h2econ.accent,
+  };
+  const accent = CAT_COLOR[word.cat] || T.accent;
+
   return (
-    <DCard title="Daily challenge" hint={challenge.type?.toUpperCase()}>
-      <div style={{ fontSize: 14, lineHeight: 1.5, color: T.textSec, fontStyle: 'italic' }}>
-        "{challenge.question}"
+    <DCard title="Word of the day" hint={word.cat.toUpperCase()}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
+        <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.4, color: T.text }}>{word.word}</span>
+        <span style={{ fontSize: 11, color: T.textTer, fontFamily: T.fontMono }}>{word.pos}</span>
       </div>
-      <div style={{ marginTop: 10, display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: 12, color: T.textSec }}>Spot the fallacy</span>
-        <div style={{ flex: 1 }} />
-        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'practice-eng' })}
+      <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.5, marginBottom: 8 }}>{word.def}</div>
+      <div style={{ fontSize: 12, color: T.textTer, fontStyle: 'italic', padding: '8px 12px', background: accent + '0D', borderLeft: `3px solid ${accent}40`, borderRadius: `0 ${T.r1} ${T.r1} 0`, lineHeight: 1.5, marginBottom: 10 }}>
+        "{word.example}"
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: T.r1, background: accent + '18', color: accent, fontWeight: 700 }}>
+          {word.upgrade.weak} → {word.upgrade.strong}
+        </span>
+        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'vocab' })}
           style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: T.accent, fontSize: 12, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-          Try it <ArrowRight size={12} />
+          Practice all <ArrowRight size={12} />
         </button>
       </div>
     </DCard>
@@ -557,7 +576,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
           <WeekProgressCard state={state} />
           <ExamCountdownCard />
           <RecentlyReturnedCard state={state} dispatch={dispatch} />
-          <DailyChallengeCard dispatch={dispatch} />
+          <WordOfTheDayCard dispatch={dispatch} />
         </div>
       </div>
     </div>
@@ -580,7 +599,7 @@ function HeroBanner() {
         </div>
       </div>
       <div style={{ position: 'relative', zIndex: 3, display: 'flex', background: 'rgba(255,255,255,0.04)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        {['4 Subjects', 'Every Question Type', 'Structured Approach'].map((s, i) => (
+        {['7 Subjects', 'Every Question Type', 'Structured Approach'].map((s, i) => (
           <div key={s} style={{ flex: 1, textAlign: 'center', padding: '12px 20px', borderRight: i < 2 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>{s}</div>
           </div>
@@ -598,10 +617,10 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
   const pendingSubmissions = (state.submissions || []).filter(s => s.status === 'submitted').length;
   const activeHomework = (state.homework || []).filter(h => h.status === 'active').length;
 
-  const subjectProgress = useMemo(() => SUBJECTS.map((s, i) => {
-    const hash = ((i + 1) * 16807) % 2147483647;
-    return { ...s, progress: (hash % 40) + 30 };
-  }), []);
+  const subjectProgress = useMemo(() => SUBJECTS.map((s) => {
+    const count = (state.resources || []).filter(r => r.subject === s.id).length;
+    return { ...s, resourceCount: count };
+  }), [state.resources]);
 
   return (
     <div>
@@ -645,14 +664,37 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
         </div>
       </div>
 
+      {/* Pending submissions banner */}
+      {pendingSubmissions > 0 && (
+        <div onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
+          role="button" tabIndex={0}
+          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') dispatch({ type: 'SET_PAGE', payload: 'homework' }); }}
+          style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px', background: T.dangerBg, border: `1px solid ${T.danger}30`, borderRadius: T.r3, marginBottom: 18, cursor: 'pointer', transition: 'all 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = T.danger + '60'; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = T.danger + '30'; }}>
+          <div style={{ width: 36, height: 36, borderRadius: T.r2, background: T.danger, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Bell size={18} color="#fff" weight="fill" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: T.danger }}>
+              {pendingSubmissions} submission{pendingSubmissions > 1 ? 's' : ''} awaiting your review
+            </div>
+            <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>Students are waiting for feedback</div>
+          </div>
+          <span style={{ fontSize: 12, fontWeight: 600, color: T.danger, display: 'flex', alignItems: 'center', gap: 4 }}>
+            Grade now <ArrowRight size={13} />
+          </span>
+        </div>
+      )}
+
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10, marginBottom: 22 }}>
         {[
-          { icon: FolderSimpleStar, value: (state.resources || []).length,    label: 'Resources', color: T.accent,  bg: T.accentLight, page: 'library-eng' },
-          { icon: PlayCircle,       value: (state.videoLessons || []).length, label: 'Videos',    color: '#A85A38', bg: '#F6EAE4',     page: 'videos-eng'  },
-          { icon: Users,            value: (state.students || []).length,     label: 'Students',  color: '#4A8E9E', bg: '#E4EFF2',     page: 'progress'    },
-          { icon: CalendarCheck,    value: (state.sessions || []).length,     label: 'Sessions',  color: '#3B6EA6', bg: '#E8EFF6',     page: 'attendance'  },
-          { icon: ChatText,         value: (state.posts || []).length,        label: 'Community', color: '#2E8058', bg: '#E4F0EA',     page: 'community'   },
+          { icon: FolderSimpleStar, value: (state.resources || []).length,   label: 'Resources', color: T.accent,         bg: T.accentLight,       page: 'library-eng' },
+          { icon: ClipboardText,    value: (state.homework || []).filter(h => h.status === 'active').length, label: 'Active HW', color: T.amath.accent, bg: T.amath.bg, page: 'homework' },
+          { icon: Users,            value: (state.students || []).length,    label: 'Students',  color: T.omath.accent,   bg: T.omath.bg,          page: 'progress'    },
+          { icon: CalendarCheck,    value: (state.sessions || []).length,    label: 'Sessions',  color: T.gp.accent,      bg: T.gp.bg,             page: 'attendance'  },
+          { icon: ChatText,         value: (state.posts || []).length,       label: 'Community', color: T.success,        bg: T.successBg,         page: 'community'   },
         ].map((s) => (
           <div key={s.label}
             role="button" tabIndex={0} aria-label={`Go to ${s.label}`}
@@ -675,18 +717,21 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 12, marginBottom: 22 }}>
         {subjectProgress.map(s => {
           const theme = getSubjectTheme(s.id);
+          const libPage = `library-${s.id}`;
           return (
-            <div key={s.id} onClick={() => dispatch({ type: 'SET_PAGE', payload: 'library-eng' })}
+            <div key={s.id} onClick={() => dispatch({ type: 'SET_PAGE', payload: libPage })}
               style={{ background: T.bgCard, borderRadius: T.r3, border: `1px solid ${T.border}`, overflow: 'hidden', cursor: 'pointer', transition: 'all 0.15s' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = theme.accent + '60'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.boxShadow = 'none'; }}>
               <SubjectIllustration subject={s.id} size={210} />
               <div style={{ padding: '12px 14px 14px' }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 8 }}>{s.name}</div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.textSec, marginBottom: 5 }}>
-                  <span>Progress</span><span style={{ color: theme.accent, fontWeight: 600 }}>{s.progress}%</span>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 6 }}>{s.name}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <FolderSimpleStar size={12} color={theme.accent} />
+                  <span style={{ fontSize: 11, color: T.textSec }}>
+                    <span style={{ fontWeight: 700, color: theme.accent }}>{s.resourceCount}</span> resource{s.resourceCount !== 1 ? 's' : ''}
+                  </span>
                 </div>
-                <Progress value={s.progress} color={theme.accent} bg={theme.bg} />
               </div>
             </div>
           );
@@ -722,10 +767,10 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
           <h3 style={{ fontSize: 13, fontWeight: 700, color: T.text, margin: '0 0 12px' }}>Quick Actions</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             {[
-              { label: 'Take Attendance',       icon: CalendarCheck, page: 'attendance',     color: '#3F51EC' },
-              { label: 'Upload New Resource',   icon: Upload,        page: 'library-eng',    color: '#0C8CE9' },
-              { label: 'View Student Progress', icon: ChartLineUp,   page: 'progress',       color: '#00A85A' },
-              { label: 'Past Papers',           icon: BookOpen,      page: 'pastpapers-gp',  color: '#6660B9' },
+              { label: 'Take Attendance',       icon: CalendarCheck, page: 'attendance',     color: T.omath.accent },
+              { label: 'Upload New Resource',   icon: Upload,        page: 'library-eng',    color: T.amath.accent },
+              { label: 'View Student Progress', icon: ChartLineUp,   page: 'progress',       color: T.success      },
+              { label: 'Past Papers',           icon: BookOpen,      page: 'pastpapers-gp',  color: T.gp.accent    },
             ].map(item => (
               <button key={item.label} onClick={() => dispatch({ type: 'SET_PAGE', payload: item.page })}
                 onMouseEnter={e => e.currentTarget.style.background = T.bgHover}
