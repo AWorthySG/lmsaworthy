@@ -36,6 +36,8 @@ There is no test suite.
 - `src/main.jsx` — React root, wraps `<App />` with `<BrowserRouter>`.
 - `src/App.jsx` — renders `<LMS />` (default export of `src/LMS.jsx`, named `LMSAuthWrapper`).
 - `src/LMS.jsx` (~600 lines) — auth gate (Firebase `onAuthStateChanged`), then the main `LMS` component: sidebar, header, mobile bottom nav, global Cmd-K search, notification bell, toast container, offline indicator, and the `renderPage()` switch (wrapped in `<PageErrorBoundary>` + `<Suspense>`) that maps `state.page` → a lazy-loaded page component. Notifications and search results are memoized with `useMemo`. **Sidebar** is Bear-minimal: 232px open / 56px collapsed, `T.bgSidebar` (`#F2EFE8`) background, active items get a white card pill with a 2px rust accent left border, no dark panel.
+- **Live Classroom** (`src/pages/Classroom.jsx`) — 44-line component that auto-opens `https://whiteboard.a-worthy.com` in a new tab on mount, with a fallback launch card if the popup is blocked. The built-in canvas whiteboard has been fully removed.
+- **Dashboard** (`src/pages/Dashboard.jsx`) — 2-column responsive layout (collapses to 1-col below 768px). Student view: `ResumeCard`, `TodaysPlanCard`, `AssignmentsCard`, `JumpInCard`, `WeekProgressCard`, `ExamCountdownCard`, `RecentlyReturnedCard`, `DailyChallengeCard`. Tutor view: HeroBanner + stat tiles + quick actions. All cards draw from real `state` data — no hardcoded mockup values.
 
 ### Code splitting
 - All page components are loaded via `lazy()` from React — each page becomes its own chunk at build time.
@@ -55,13 +57,14 @@ There is no test suite.
 - `src/data/routing.js` is the source of truth for both sidebar nav (`NAV`) and the URL map (`PAGE_TO_PATH` / `PATH_TO_PAGE`).
 - `LMS.jsx` has two effects: one reads `location.pathname` and dispatches `SET_PAGE`; the other watches `state.page` and calls `navigate(path)`. An `initializedRef` prevents the first render from racing.
 - `renderPage()` in `LMS.jsx` is a `switch` on `state.page` returning the page component. Adding a page = (1) component file, (2) entry in `NAV`, (3) entry in `PAGE_TO_PATH`, (4) `case` in `renderPage()`, (5) lazy import at top of `LMS.jsx`.
-- Subject-scoped page IDs use consistent suffixes: `practice-gp`, `practice-eng`, `pastpapers-gp`, `micro-h1econ`, `library-eng`, `videos-h1econ`, `exams-h1econ`, etc. Shared pages (library, videos, exams) have subject-suffixed NAV IDs that map to the same route path.
-- URL slugs use hyphens: `/timed-writer`, `/essay-grader`, `/example-finder`, `/ai-marker`, `/past-papers/eng`, `/past-papers/gp`, `/past-papers/h1econ`, `/past-papers/h2econ`.
+- Subject-scoped page IDs use consistent suffixes: `practice-eng`, `practice-h1econ`, `pastpapers-gp`, `micro-h1econ`, `library-eng`, `videos-h1econ`, etc. Shared pages (library, videos) have subject-suffixed NAV IDs that map to the same route path.
+- URL slugs use hyphens: `/essay-grader`, `/example-finder`, `/ai-marker`, `/past-papers/eng`, `/past-papers/gp`, `/past-papers/h1econ`, `/past-papers/h2econ`.
+- **Removed routes** (do not re-add): `goals`, `timedwrite` (Timed Writer), `practice-gp`, `practice-h2econ`, `micro-gp`, `exams-h1econ`, `exams-h2econ`. These pages and their lazy imports have been deleted from `LMS.jsx` and `routing.js`.
 
 ### Page / component layout
 - `src/pages/*.jsx` — top-level pages mapped from the route switch.
 - `src/pages/{homework,infographics,study,tools}/` — grouped feature folders.
-  - `pages/tools/` contains both student tools (PomodoroTimer, VocabBuilder, PracticeQuestions) and tutor tools (AIMarker, EssayGrader), plus the AI grading utilities (`extractText.js`, `gradeClient.js`, `rubrics.js`).
+  - `pages/tools/` contains both student tools (PomodoroTimer, VocabBuilder) and tutor tools (AIMarker, EssayGrader), plus the AI grading utilities (`extractText.js`, `gradeClient.js`, `rubrics.js`). `PracticeQuestions` component exists on disk but is no longer routed.
 - `src/components/ui/` — 19 design-system primitives (`Btn`, `Card`, `Badge`, `Progress`, `Input`, `Select`, `Textarea`, `StatCard`, `EmptyState`, `DocumentViewer`, `PageHeader`, `PageErrorBoundary`, `BackBtn`, `BackToTop`, `FileIcon`, `InstallPrompt`, `LoadingSkeleton`, `SimpleQRDisplay`, `SubjectIllustration`). Prefer these over ad-hoc markup. `Card` supports keyboard accessibility when `onClick` is provided. `DocumentViewer` has a focus trap for accessibility.
 - `src/components/gamification/` — 1 component: `StudentAvatar` (initials avatar used in attendance, events, community, progress views; no gamification dependency).
 - `src/components/toast/` — `ToastContainer` listens to `state.toasts`; dispatch `{ type: "ADD_TOAST", payload: { message, variant } }` (`variant`: `success` | `error` | `info`).
@@ -130,6 +133,8 @@ There is no test suite.
 - **PageHeader** — use the `PageHeader` component from `src/components/ui` for consistent page titles. It accepts `title`, `subtitle`, and `action` props.
 - **Mobile-first responsive.** `src/hooks/useWindowWidth.js` is used to switch layouts; the breakpoint is `< 768px`. On mobile, sidebar becomes a slide-over and the bottom nav bar appears.
 - **No gamification** — the XP/coins/streak/leaderboard/badges/wallet system and all mini-games have been fully removed. `state.wallet` does not exist. Do not re-introduce gamification imports, game routes, celebration overlays, or wallet state references.
+- **No quizzes, no peer review** — both systems have been fully removed from state, routing, and UI. Do not re-add quiz routes, `peerEssays`, or `peerReviews` state keys.
+- **Removed nav sections** — Goals, Timed Writer, GP Practice Drills, GP Quick Lessons, H1/H2 Econ Mock Exams, H2 Econ Practice Drills are gone. Their component files may still exist on disk but are not imported or rendered anywhere.
 - **Toasts**: `dispatch({ type: "ADD_TOAST", payload: { message, variant } })`.
 - **Reducers** return new objects — never mutate state. All actions auto-assign incrementing IDs via `Math.max(...arr.map(x => x.id), 0) + 1`; follow the same pattern.
 - **Subjects** are identified by the codes `eng`, `gp`, `h1econ`, `h2econ` everywhere (in `NAV` groups, route slugs, theme keys, seed data, etc.). When adding subject-scoped features, mirror the existing four-way fan-out (route id with subject suffix + sidebar entry + render case).
