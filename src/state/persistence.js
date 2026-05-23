@@ -29,8 +29,6 @@ export const DEFAULT_STATE = {
   posts: initialPosts,
   homework: initialHomework,
   submissions: initialSubmissions,
-  peerEssays: [],
-  peerReviews: [],
   studyLogs: [],
   notes: [],
   ratings: {},
@@ -43,7 +41,7 @@ export const DEFAULT_STATE = {
 // Persist key parts of state to localStorage
 export const PERSIST_KEYS = [
   "bookmarks", "attendance", "submissions", "homework",
-  "peerEssays", "peerReviews", "studyLogs", "notes", "ratings",
+  "studyLogs", "notes", "ratings",
   "announcement", "goals", "mistakes", "revisionChecklist",
   "posts", "reports",
 ];

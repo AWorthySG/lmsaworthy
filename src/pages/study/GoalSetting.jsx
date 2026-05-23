@@ -75,7 +75,7 @@ function GoalSetting({ state, dispatch }) {
       {/* Suggested goals */}
       <div style={{ background: T.accentLight, borderRadius: T.r2, padding: "14px 16px", border: `1px solid ${T.accent}22` }}>
         <div style={{ fontSize: 11, fontWeight: 700, color: T.accentText, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><Lightbulb size={12} color={T.accentText} /> Suggested Goals</div>
-        {["Complete all daily challenges this week", "Submit 1 essay for peer review", "Achieve 80%+ on a practice drill", "Review all notes before the next class"].map((s, i) => (
+        {["Complete all daily challenges this week", "Write a timed essay using the Timed Writer", "Achieve 80%+ on a practice drill", "Review all notes before the next class"].map((s, i) => (
           <button key={i} onClick={() => { setNewGoal(s); }} style={{ display: "block", fontSize: 12, color: T.accent, background: "none", border: "none", cursor: "pointer", padding: "3px 0", textAlign: "left" }}>+ {s}</button>
         ))}
       </div>

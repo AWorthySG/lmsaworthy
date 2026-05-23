@@ -139,11 +139,10 @@ function WeeklyProgressSection({ state }) {
   return (
     <div style={{ marginTop: 20, background: T.bgCard, borderRadius: T.r3, padding: "18px 20px", border: `1px solid ${T.border}` }}>
       <div style={{ fontSize: 11, fontWeight: 600, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>This Week</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 6 }}>
         {[
           { label: "Done",    value: wp.hwCompleted,   color: T.accent },
           { label: "Notes",   value: wp.notesCreated,  color: T.teal },
-          { label: "Reviews", value: wp.reviewsGiven,  color: T.success },
         ].map(s => (
           <div key={s.label} style={{ textAlign: "center", padding: "10px 4px", borderRadius: T.r2, background: T.bgMuted }}>
             <div style={{ fontSize: 17, fontWeight: 600, color: s.color, letterSpacing: "-0.02em" }}>{s.value}</div>

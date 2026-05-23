@@ -2,7 +2,7 @@ import {
   House, Broadcast, Notebook, Target, BookOpen, ClipboardText,
   Books, VideoCamera, Lightning, Scroll, BookmarkSimple,
   Sparkle, GraduationCap, Timer, Lightbulb, Hash,
-  Confetti, PencilSimpleLine, Handshake,
+  Confetti, Handshake,
   CalendarCheck, ChartLineUp, Eye, Scales, Medal, Gear,
 } from '../icons/icons.jsx';
 
@@ -55,7 +55,6 @@ export const NAV = [
   ]},
   { group: "Engage", items: [
     { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
-    { id: "peerreview", label: "Peer Review", icon: PencilSimpleLine },
     { id: "community", label: "Community", icon: Handshake },
   ]},
   { group: "Manage", tutorOnly: true, items: [
@@ -87,7 +86,7 @@ export const PAGE_TO_PATH = {
   "pastpapers-h1econ": "/past-papers/h1econ", "pastpapers-h2econ": "/past-papers/h2econ",
   "micro-eng": "/quick-lessons/eng", "micro-gp": "/quick-lessons/gp",
   "micro-h1econ": "/quick-lessons/h1econ", "micro-h2econ": "/quick-lessons/h2econ",
-  peerreview: "/peer-review", analytics: "/analytics", parentview: "/parent-view",
+  analytics: "/analytics", parentview: "/parent-view",
   notes: "/notes", modelessays: "/model-essays",
   goals: "/goals", mistakes: "/mistake-journal", checklist: "/revision-checklist",
   formulas: "/formula-cards",

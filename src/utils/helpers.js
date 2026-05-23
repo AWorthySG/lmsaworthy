@@ -63,8 +63,7 @@ export function getWeeklyProgress(state) {
   const hwCompleted = (state.submissions || []).filter(s => s.submittedAt && s.submittedAt >= weekStr).length;
   const quizzesTaken = 0;
   const notesCreated = (state.notes || []).filter(n => n.createdAt >= weekStr).length;
-  const reviewsGiven = (state.peerReviews || []).filter(r => r.createdAt >= weekStr).length;
-  return { hwCompleted, quizzesTaken, notesCreated, reviewsGiven };
+  return { hwCompleted, quizzesTaken, notesCreated };
 }
 
 /* ━━━ VOCAB WORD OF THE DAY ━━━ */

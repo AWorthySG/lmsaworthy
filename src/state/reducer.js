@@ -117,17 +117,6 @@ export function appReducer(state, action) {
     case "ARCHIVE_HOMEWORK": {
       return { ...state, homework: state.homework.map(h => h.id === action.payload ? { ...h, status: "archived" } : h) };
     }
-    case "ADD_PEER_REVIEW": {
-      const { essayId, reviewerId, scores, feedback } = action.payload;
-      const reviews = state.peerReviews || [];
-      const id = reviews.length > 0 ? Math.max(...reviews.map(r => r.id)) + 1 : 1;
-      return { ...state, peerReviews: [...reviews, { id, essayId, reviewerId, scores, feedback, createdAt: new Date().toISOString().split("T")[0] }] };
-    }
-    case "SUBMIT_PEER_ESSAY": {
-      const essays = state.peerEssays || [];
-      const id = essays.length > 0 ? Math.max(...essays.map(e => e.id)) + 1 : 1;
-      return { ...state, peerEssays: [...essays, { ...action.payload, id, createdAt: new Date().toISOString().split("T")[0], status: "pending" }] };
-    }
     case "LOG_STUDY_TIME": {
       const logs = state.studyLogs || [];
       return { ...state, studyLogs: [...logs, { ...action.payload, timestamp: Date.now() }].slice(-200) };

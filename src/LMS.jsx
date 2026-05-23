@@ -40,7 +40,6 @@ const Homework = lazy(() => import("./pages/homework/Homework.jsx"));
 const Events = lazy(() => import("./pages/Events.jsx"));
 const PastPapers = lazy(() => import("./pages/study/PastPapers.jsx"));
 const MicrolearningPage = lazy(() => import("./pages/study/MicrolearningPage.jsx"));
-const PeerReview = lazy(() => import("./pages/study/PeerReview.jsx"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard.jsx"));
 const ParentView = lazy(() => import("./pages/ParentView.jsx"));
 const NotesPage = lazy(() => import("./pages/study/NotesPage.jsx"));
@@ -240,7 +239,6 @@ function LMS({ authUser, userProfile }) {
       case "micro-gp": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="gp" />;
       case "micro-h1econ": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="h1econ" />;
       case "micro-h2econ": return <MicrolearningPage state={state} dispatch={dispatch} defaultSubject="h2econ" />;
-      case "peerreview": return <PeerReview state={state} dispatch={dispatch} />;
       case "analytics": return <AnalyticsDashboard state={state} />;
       case "parentview": return <ParentView state={state} />;
       case "notes": return <NotesPage state={state} dispatch={dispatch} />;
