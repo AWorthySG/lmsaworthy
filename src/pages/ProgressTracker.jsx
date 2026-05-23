@@ -16,6 +16,8 @@ function ProgressTracker({ state, dispatch }) {
   const [editingReport, setEditingReport] = useState(null);
   const [viewingReport, setViewingReport] = useState(null);
   const [editingAvatar, setEditingAvatar] = useState(false);
+  const [editingEnrollment, setEditingEnrollment] = useState(false);
+  const [enrollEmail, setEnrollEmail] = useState("");
 
   if (sel) {
     const student = state.students.find((s) => s.id === sel);
@@ -28,7 +30,7 @@ function ProgressTracker({ state, dispatch }) {
 
     return (
       <div>
-        <BackBtn onClick={() => { setSel(null); setEditingAvatar(false); }} />
+        <BackBtn onClick={() => { setSel(null); setEditingAvatar(false); setEditingEnrollment(false); }} />
         <Card elevated style={{ padding: "24px 32px", marginBottom: 20, borderTop: `3px solid ${T.accent}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: editingAvatar ? 16 : 20 }}>
             <button
@@ -47,7 +49,7 @@ function ProgressTracker({ state, dispatch }) {
             </div>
           </div>
           {editingAvatar && (
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 16 }}>
               <AvatarPicker
                 value={state.studentAvatars?.[student.id]}
                 onSave={(key) => {
@@ -59,6 +61,76 @@ function ProgressTracker({ state, dispatch }) {
               />
             </div>
           )}
+
+          {/* Enrollment settings */}
+          <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
+            <button
+              onClick={() => { setEditingEnrollment(v => !v); setEnrollEmail(student.email || ""); }}
+              style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", padding: 0, color: T.textSec, fontSize: 12, fontWeight: 600 }}
+            >
+              <PencilSimpleLine size={13} /> Enrollment settings {editingEnrollment ? "▲" : "▼"}
+            </button>
+
+            {editingEnrollment && (
+              <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 14 }}>
+                {/* Login email */}
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Student Login Email</div>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <input
+                      type="email"
+                      value={enrollEmail}
+                      onChange={e => setEnrollEmail(e.target.value)}
+                      placeholder="student@email.com"
+                      style={{ flex: 1, padding: "8px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, fontSize: 13, color: T.text, fontFamily: T.fontBody, outline: "none" }}
+                    />
+                    <button
+                      onClick={() => {
+                        dispatch({ type: "UPDATE_STUDENT", payload: { id: student.id, email: enrollEmail.trim().toLowerCase() } });
+                        dispatch({ type: "ADD_TOAST", payload: { message: "Login email saved", variant: "success" } });
+                      }}
+                      style={{ padding: "8px 16px", borderRadius: T.r2, background: T.accent, color: "#fff", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700, flexShrink: 0 }}
+                    >
+                      Save
+                    </button>
+                  </div>
+                  <div style={{ fontSize: 11, color: T.textTer, marginTop: 5 }}>Must match the email the student uses to log in. Controls which subjects they see in the sidebar.</div>
+                </div>
+
+                {/* Subject toggles */}
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Enrolled Subjects</div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {SUBJECTS.map(subj => {
+                      const theme = getSubjectTheme(subj.id);
+                      const enrolled = student.subjects?.includes(subj.id);
+                      return (
+                        <button
+                          key={subj.id}
+                          onClick={() => {
+                            const current = student.subjects || [];
+                            const next = enrolled
+                              ? current.filter(s => s !== subj.id)
+                              : [...current, subj.id];
+                            dispatch({ type: "UPDATE_STUDENT", payload: { id: student.id, subjects: next } });
+                          }}
+                          style={{
+                            padding: "5px 12px", borderRadius: T.r5, fontSize: 12, fontWeight: 600,
+                            border: `1.5px solid ${enrolled ? theme.accent : T.border}`,
+                            background: enrolled ? theme.bg : "transparent",
+                            color: enrolled ? theme.accent : T.textSec,
+                            cursor: "pointer", transition: "all 0.15s",
+                          }}
+                        >
+                          {enrolled ? "✓ " : ""}{subj.name.split(" ").slice(-2).join(" ")}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </Card>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
           <Card elevated>

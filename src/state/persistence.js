@@ -44,7 +44,7 @@ export const PERSIST_KEYS = [
   "bookmarks", "attendance", "submissions", "homework",
   "pastPaperDocs", "studyLogs", "notes", "ratings",
   "announcement", "goals", "mistakes", "revisionChecklist",
-  "posts", "reports", "myAvatar", "studentAvatars",
+  "posts", "reports", "myAvatar", "studentAvatars", "students",
 ];
 
 export function loadPersistedState() {

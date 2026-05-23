@@ -140,6 +140,16 @@ function LMS({ authUser, userProfile }) {
     return notifs;
   }, [state.homework, state.submissions, state.role]);
 
+  // Subject filtering for students: match logged-in email to roster entry
+  const enrolledSubjects = useMemo(() => {
+    if (state.role !== "student") return null; // null = show all
+    const match = state.students.find(s =>
+      s.email && authUser?.email &&
+      s.email.toLowerCase() === authUser.email.toLowerCase()
+    );
+    return match?.subjects || null; // null = show all (no roster match)
+  }, [state.role, state.students, authUser?.email]);
+
   const [showNotifs, setShowNotifs] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedSection, setExpandedSection] = useState(null);
@@ -274,7 +284,11 @@ function LMS({ authUser, userProfile }) {
         {/* Nav */}
         <div style={{ flex: "1 1 0%", position: "relative", minHeight: 0 }}>
           <nav style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, padding: sidebarOpen ? "4px 8px" : "4px 6px", overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
-            {NAV.filter(g => !g.tutorOnly || state.role === "tutor").map((group, gi) => {
+            {NAV.filter(g => {
+              if (g.tutorOnly && state.role !== "tutor") return false;
+              if (g.subject && enrolledSubjects && !enrolledSubjects.includes(g.subject)) return false;
+              return true;
+            }).map((group, gi) => {
               const subjTheme = group.subject ? T[group.subject] : null;
               const isSubject = !!group.subject;
               const isExpanded = expandedSection === group.group;

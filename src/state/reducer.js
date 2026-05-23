@@ -83,6 +83,10 @@ export function appReducer(state, action) {
       const { studentId, avatar } = action.payload;
       return { ...state, studentAvatars: { ...state.studentAvatars, [studentId]: avatar } };
     }
+    case "UPDATE_STUDENT": {
+      const { id, ...updates } = action.payload;
+      return { ...state, students: state.students.map(s => s.id === id ? { ...s, ...updates } : s) };
+    }
     case "SET_MY_AVATAR": {
       return { ...state, myAvatar: action.payload };
     }
