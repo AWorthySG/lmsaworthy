@@ -1,7 +1,6 @@
 import {
   initialResources,
   initialVideoLessons,
-  initialQuizzes,
   initialExams,
   initialStudents,
   initialSessions,
@@ -18,8 +17,8 @@ export const DEFAULT_STATE = {
   role: "tutor",
   resources: initialResources,
   videoLessons: initialVideoLessons,
-  quizzes: initialQuizzes,
   exams: initialExams,
+  pastPaperDocs: [],
   students: initialStudents,
   sessions: initialSessions,
   attendance: initialAttendanceRecords,
@@ -41,7 +40,7 @@ export const DEFAULT_STATE = {
 // Persist key parts of state to localStorage
 export const PERSIST_KEYS = [
   "bookmarks", "attendance", "submissions", "homework",
-  "studyLogs", "notes", "ratings",
+  "pastPaperDocs", "studyLogs", "notes", "ratings",
   "announcement", "goals", "mistakes", "revisionChecklist",
   "posts", "reports",
 ];

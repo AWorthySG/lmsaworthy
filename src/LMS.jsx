@@ -22,7 +22,6 @@ import LoginScreen from "./pages/LoginScreen.jsx";
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
 const ContentLibrary = lazy(() => import("./pages/ContentLibrary.jsx"));
 const VideoLessons = lazy(() => import("./pages/VideoLessons.jsx"));
-const QuizGenerator = lazy(() => import("./pages/QuizGenerator.jsx"));
 const MockExams = lazy(() => import("./pages/MockExams.jsx"));
 const Attendance = lazy(() => import("./pages/Attendance.jsx"));
 const ProgressTracker = lazy(() => import("./pages/ProgressTracker.jsx"));
@@ -211,7 +210,6 @@ function LMS({ authUser, userProfile }) {
       case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
       case "library": case "library-eng": case "library-h1econ": case "library-h2econ": return <ContentLibrary state={state} dispatch={dispatch} />;
       case "videos": case "videos-eng": case "videos-h1econ": case "videos-h2econ": return <VideoLessons state={state} dispatch={dispatch} />;
-      case "quizzes": case "quizzes-eng": case "quizzes-h1econ": case "quizzes-h2econ": return <QuizGenerator state={state} dispatch={dispatch} />;
       case "exams": case "exams-h1econ": case "exams-h2econ": return <MockExams state={state} />;
       case "attendance": return <Attendance state={state} dispatch={dispatch} />;
       case "progress": return <ProgressTracker state={state} dispatch={dispatch} />;

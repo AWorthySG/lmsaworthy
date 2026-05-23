@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
 import { SUBJECTS } from '../../data/subjects.js';
-import { PAST_PAPERS } from '../../data/pastPapersData.js';
-import { ESSAY_RUBRICS } from '../../data/essayData.js';
-import { getExamCountdowns } from '../../utils/helpers.js';
-import { FilePdf } from '../../icons/icons.jsx';
+import { FilePdf, FileDoc, Folder, Upload, Trash, DownloadSimple, Eye } from '../../icons/icons.jsx';
 import { PageHeader } from '../../components/ui';
 import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
 
 /* ━━━ PDF VIEWER MODAL ━━━ */
-function PdfViewer({ url, title, onClose }) {
+function DocViewer({ url, title, onClose }) {
   React.useEffect(() => {
     const handleEsc = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handleEsc);
@@ -17,15 +14,14 @@ function PdfViewer({ url, title, onClose }) {
   }, [onClose]);
 
   return (
-    <div role="dialog" aria-modal="true" aria-label={`PDF viewer: ${title}`}
+    <div role="dialog" aria-modal="true" aria-label={`Viewing: ${title}`}
       style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
       onClick={onClose}>
       <div style={{ background: T.bgCard, borderRadius: T.r3, width: "100%", maxWidth: 900, height: "85vh", display: "flex", flexDirection: "column", overflow: "hidden", border: `1px solid ${T.border}` }}
         onClick={e => e.stopPropagation()}>
-        {/* Header */}
         <div style={{ padding: "14px 18px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{title}</div>
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "60%" }}>{title}</div>
+          <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
             <a href={url} target="_blank" rel="noopener noreferrer"
               style={{ padding: "6px 14px", borderRadius: T.r1, background: T.accent, color: "#fff", fontSize: 12, fontWeight: 600, textDecoration: "none" }}>
               Open in New Tab
@@ -36,180 +32,169 @@ function PdfViewer({ url, title, onClose }) {
             </button>
           </div>
         </div>
-        {/* PDF iframe */}
-        <div style={{ flex: 1, position: "relative" }}>
-          <iframe
-            src={url}
-            title={title}
-            style={{ width: "100%", height: "100%", border: "none" }}
-          />
+        <div style={{ flex: 1 }}>
+          <iframe src={url} title={title} style={{ width: "100%", height: "100%", border: "none" }} />
         </div>
       </div>
     </div>
   );
 }
 
-/* ━━━ UPLOAD BUTTON ━━━ */
-function PdfUpload({ onUploaded, label }) {
+/* ━━━ PAST PAPERS — DOCUMENT FOLDER ━━━ */
+function PastPapers({ state, dispatch, defaultSubject }) {
+  const [activeSubj, setActiveSubj] = useState(defaultSubject || SUBJECTS[0].id);
+  const [viewingDoc, setViewingDoc] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  const isTutor = state.role === "tutor";
+  const allDocs = state.pastPaperDocs || [];
+  const docs = allDocs.filter(d => d.subject === activeSubj);
+  const activeTheme = T[activeSubj] || T.eng;
 
   async function handleUpload(e) {
     const file = e.target.files?.[0];
-    if (!file || file.type !== "application/pdf") return;
+    if (!file) return;
+    const isPdf = file.type === "application/pdf";
+    const isDocx = file.name.toLowerCase().endsWith(".docx") ||
+      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    if (!isPdf && !isDocx) {
+      dispatch({ type: "ADD_TOAST", payload: { message: "Only PDF and DOCX files are supported.", variant: "error" } });
+      return;
+    }
     setUploading(true);
     try {
-      const path = `past-papers/${Date.now()}_${file.name}`;
+      const path = `past-papers/${activeSubj}/${Date.now()}_${file.name}`;
       const sRef = storageRef(firebaseStorage, path);
       await uploadBytes(sRef, file);
       const url = await getDownloadURL(sRef);
-      onUploaded({ name: file.name, url });
-    } catch (err) {
-      console.warn("PDF upload failed:", err);
+      dispatch({
+        type: "ADD_PAST_PAPER_DOC",
+        payload: {
+          name: file.name,
+          url,
+          subject: activeSubj,
+          fileType: isPdf ? "pdf" : "docx",
+          uploadedAt: new Date().toISOString().split("T")[0],
+          uploadedBy: state.userProfile?.name || "Tutor",
+        },
+      });
+      dispatch({ type: "ADD_TOAST", payload: { message: `"${file.name}" uploaded.`, variant: "success" } });
+    } catch {
+      dispatch({ type: "ADD_TOAST", payload: { message: "Upload failed. Please try again.", variant: "error" } });
     }
     setUploading(false);
     e.target.value = "";
   }
 
-  return (
-    <label style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: T.r2, border: `1px solid ${T.accent}`, background: T.accentLight, color: T.accent, fontWeight: 700, fontSize: 12, cursor: uploading ? "wait" : "pointer" }}>
-      <span>{uploading ? "Uploading..." : label || "Upload PDF"}</span>
-      <input type="file" accept="application/pdf" onChange={handleUpload} style={{ display: "none" }} disabled={uploading} />
-    </label>
-  );
-}
-
-/* ━━━ PAST PAPERS PAGE ━━━ */
-function PastPapers({ state, defaultSubject }) {
-  const [filterSubj, setFilterSubj] = useState(defaultSubject || "all");
-  const [viewingPdf, setViewingPdf] = useState(null); // { url, title }
-  const [uploadedPdfs, setUploadedPdfs] = useState([]); // user-uploaded PDFs
-  const filtered = filterSubj === "all" ? PAST_PAPERS : PAST_PAPERS.filter(p => p.subject === filterSubj);
-
-  function handlePdfUploaded(pdf) {
-    setUploadedPdfs(prev => [...prev, { ...pdf, id: Date.now(), uploadedAt: new Date().toISOString().split("T")[0] }]);
+  function handleDelete(id) {
+    if (!window.confirm("Remove this document from the folder?")) return;
+    dispatch({ type: "DELETE_PAST_PAPER_DOC", payload: id });
   }
+
+  const subjectName = SUBJECTS.find(s => s.id === activeSubj)?.name || activeSubj;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <PageHeader title="Past-Year Papers" subtitle="Practice with real Cambridge exam papers and model answers" action={state.role === "tutor" ? <PdfUpload onUploaded={handlePdfUploaded} label="Upload Past Paper PDF" /> : null} />
+      <PageHeader
+        title="Past Papers"
+        subtitle="Upload and access past exam papers and study documents by subject"
+        action={isTutor ? (
+          <label style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: T.r2, border: `1px solid ${T.accent}`, background: T.accentLight, color: T.accent, fontWeight: 700, fontSize: 12, cursor: uploading ? "wait" : "pointer", userSelect: "none" }}>
+            <Upload size={14} />
+            <span>{uploading ? "Uploading…" : "Upload Document"}</span>
+            <input type="file" accept=".pdf,.docx" onChange={handleUpload} style={{ display: "none" }} disabled={uploading} />
+          </label>
+        ) : null}
+      />
 
-      {/* Exam countdown banner */}
-      {(() => {
-        const next = getExamCountdowns()[0];
-        return next && (
-          <div style={{ background: "linear-gradient(135deg, #1A1816, #2E2218)", borderRadius: T.r3, padding: "16px 20px", color: "#fff", display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ fontSize: 32, fontWeight: 900, color: "#D4A254", fontFamily: T.fontMono }}>{next.daysLeft}</div>
-            <div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1 }}>Days to next exam</div>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>{next.name}</div>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Subject filters */}
+      {/* Subject folder tabs */}
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-        <button onClick={() => setFilterSubj("all")} style={{ padding: "5px 12px", borderRadius: 20, border: `2px solid ${filterSubj === "all" ? T.accent : T.border}`, background: filterSubj === "all" ? T.accentLight : T.bgCard, color: filterSubj === "all" ? T.accent : T.textSec, fontWeight: 600, fontSize: 11, cursor: "pointer" }}>All</button>
-        {SUBJECTS.map(s => (
-          <button key={s.id} onClick={() => setFilterSubj(s.id)} style={{ padding: "5px 12px", borderRadius: 20, border: `2px solid ${filterSubj === s.id ? (T[s.id]?.accent || T.accent) : T.border}`, background: filterSubj === s.id ? (T[s.id]?.bg || T.accentLight) : T.bgCard, color: filterSubj === s.id ? (T[s.id]?.accent || T.accent) : T.textSec, fontWeight: 600, fontSize: 11, cursor: "pointer" }}>{s.name}</button>
-        ))}
+        {SUBJECTS.map(s => {
+          const theme = T[s.id] || T.eng;
+          const count = allDocs.filter(d => d.subject === s.id).length;
+          const active = activeSubj === s.id;
+          return (
+            <button key={s.id} onClick={() => setActiveSubj(s.id)}
+              style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: T.r2, border: `2px solid ${active ? theme.accent : T.border}`, background: active ? theme.bg : T.bgCard, color: active ? theme.accent : T.textSec, fontWeight: 700, fontSize: 12, cursor: "pointer", transition: "all 0.15s" }}>
+              <Folder size={14} />
+              {s.name}
+              {count > 0 && (
+                <span style={{ fontSize: 10, fontWeight: 800, background: active ? theme.accent : T.bgMuted, color: active ? "#fff" : T.textTer, borderRadius: 20, padding: "1px 6px", minWidth: 18, textAlign: "center" }}>
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Uploaded PDFs section */}
-      {uploadedPdfs.length > 0 && (
-        <div>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: T.text, margin: "0 0 8px", fontFamily: T.fontDisplay }}>Uploaded Papers</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {uploadedPdfs.map(pdf => (
-              <div key={pdf.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}` }}>
-                <FilePdf size={20} color={T.accent} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{pdf.name}</div>
-                  <div style={{ fontSize: 10, color: T.textTer }}>Uploaded {pdf.uploadedAt}</div>
+      {/* Folder contents */}
+      <div style={{ background: T.bgCard, borderRadius: T.r3, border: `1px solid ${T.border}`, overflow: "hidden" }}>
+        {/* Folder header */}
+        <div style={{ padding: "12px 18px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 8, background: T.bgMuted }}>
+          <Folder size={16} color={activeTheme.accent} />
+          <span style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{subjectName}</span>
+          <span style={{ fontSize: 11, color: T.textTer }}>
+            — {docs.length} document{docs.length !== 1 ? "s" : ""}
+          </span>
+          {isTutor && docs.length === 0 && (
+            <span style={{ fontSize: 11, color: T.textTer, marginLeft: 4 }}>
+              · Upload files using the button above
+            </span>
+          )}
+        </div>
+
+        {docs.length === 0 ? (
+          <div style={{ padding: "48px 20px", textAlign: "center", color: T.textTer }}>
+            <Folder size={36} color={T.border} style={{ marginBottom: 10 }} />
+            <div style={{ fontSize: 13, fontWeight: 600, color: T.textSec, marginBottom: 4 }}>This folder is empty</div>
+            <div style={{ fontSize: 12 }}>
+              {isTutor
+                ? "Upload a PDF or DOCX using the button above to add documents here."
+                : "No documents have been uploaded for this subject yet."}
+            </div>
+          </div>
+        ) : (
+          <div>
+            {docs.map((doc, i) => (
+              <div key={doc.id}
+                style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 18px", borderBottom: i < docs.length - 1 ? `1px solid ${T.border}` : "none" }}>
+                {doc.fileType === "pdf"
+                  ? <FilePdf size={22} color={T.accent} style={{ flexShrink: 0 }} />
+                  : <FileDoc size={22} color={T.teal} style={{ flexShrink: 0 }} />}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: T.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {doc.name}
+                  </div>
+                  <div style={{ fontSize: 10, color: T.textTer, marginTop: 2 }}>
+                    {doc.fileType?.toUpperCase()} · {doc.uploadedAt}{doc.uploadedBy ? ` · ${doc.uploadedBy}` : ""}
+                  </div>
                 </div>
-                <button onClick={() => setViewingPdf({ url: pdf.url, title: pdf.name })}
-                  style={{ padding: "6px 14px", borderRadius: T.r1, border: `1px solid ${T.accent}`, background: T.accentLight, color: T.accent, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-                  View PDF
-                </button>
+                <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                  {doc.fileType === "pdf" && (
+                    <button onClick={() => setViewingDoc({ url: doc.url, title: doc.name })}
+                      style={{ padding: "5px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgMuted, color: T.textSec, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                      <Eye size={12} /> View
+                    </button>
+                  )}
+                  <a href={doc.url} download target="_blank" rel="noopener noreferrer"
+                    style={{ padding: "5px 12px", borderRadius: T.r1, border: `1px solid ${T.accent}`, background: T.accentLight, color: T.accent, fontSize: 11, fontWeight: 700, textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
+                    <DownloadSimple size={12} /> Download
+                  </a>
+                  {isTutor && (
+                    <button onClick={() => handleDelete(doc.id)} aria-label="Delete document"
+                      style={{ padding: "5px 8px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", color: T.textTer, cursor: "pointer", display: "flex", alignItems: "center" }}>
+                      <Trash size={13} />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Paper cards */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {filtered.map(p => {
-          const theme = T[p.subject] || T.eng;
-          return (
-            <div key={p.id} className="card-hover" style={{ display: "flex", gap: 14, padding: "16px 18px", background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, borderLeft: `3px solid ${theme.accent}` }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: theme.accent, background: theme.bg, padding: "2px 8px", borderRadius: 20 }}>{p.paper}</span>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: T.textTer }}>{p.year}</span>
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{p.title}</div>
-                <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
-                  {p.topics.map(t => <span key={t} style={{ fontSize: 9, color: T.textTer, background: T.bgMuted, padding: "2px 6px", borderRadius: 10 }}>{t}</span>)}
-                </div>
-                {/* Model answer hints */}
-                {p.modelHints && p.modelHints.length > 0 && (
-                  <div style={{ marginTop: 10, padding: "10px 12px", background: T.goldLight, borderRadius: T.r1, border: `1px solid ${T.gold}22` }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: T.goldDark, marginBottom: 4 }}>Model Answer Hints</div>
-                    {p.modelHints.map((h, i) => (
-                      <div key={i} style={{ fontSize: 11, color: T.text, lineHeight: 1.6, marginBottom: i < p.modelHints.length - 1 ? 6 : 0 }}>• {h}</div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-end", justifyContent: "center" }}>
-                <span style={{ fontSize: 9, fontWeight: 600, color: T.textTer, background: T.bgMuted, padding: "2px 8px", borderRadius: 10 }}>{p.difficulty}</span>
-                {p.modelHints && <span style={{ fontSize: 9, fontWeight: 700, color: T.gold, background: T.goldLight, padding: "2px 8px", borderRadius: 10 }}>Hints</span>}
-                {p.pdfUrl && (
-                  <button onClick={() => setViewingPdf({ url: p.pdfUrl, title: `${p.paper} ${p.year} - ${p.title}` })}
-                    style={{ marginTop: 4, padding: "5px 12px", borderRadius: T.r1, border: `1px solid ${theme.accent}`, background: theme.bg, color: theme.accent, fontSize: 10, fontWeight: 700, cursor: "pointer" }}>
-                    View PDF
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
+        )}
       </div>
 
-      {/* Rubrics section */}
-      <div style={{ marginTop: 8 }}>
-        <h2 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 12px", fontFamily: T.fontDisplay }}>Cambridge Marking Rubrics</h2>
-        {Object.entries(ESSAY_RUBRICS).map(([subj, rubric]) => {
-          const theme = T[subj] || T.eng;
-          return (
-            <div key={subj} style={{ marginBottom: 16, background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, overflow: "hidden" }}>
-              <div style={{ padding: "12px 18px", background: theme.bg, borderBottom: `1px solid ${theme.accent}22` }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: theme.accent }}>{rubric.name}</div>
-              </div>
-              {rubric.criteria.map((c, ci) => (
-                <div key={ci} style={{ padding: "12px 18px", borderBottom: ci < rubric.criteria.length - 1 ? `1px solid ${T.border}` : "none" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{c.name}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: theme.accent }}>{c.weight}%</span>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                    {c.levels.map((l, li) => (
-                      <div key={li} style={{ display: "flex", gap: 8, fontSize: 11, lineHeight: 1.5 }}>
-                        <span style={{ fontWeight: 700, color: li === 0 ? T.success : li === 1 ? "#3D7DD6" : li === 2 ? T.warning : T.danger, minWidth: 70, flexShrink: 0 }}>{l.level}</span>
-                        <span style={{ color: T.textSec }}>{l.desc}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* PDF Viewer Modal */}
-      {viewingPdf && <PdfViewer url={viewingPdf.url} title={viewingPdf.title} onClose={() => setViewingPdf(null)} />}
+      {viewingDoc && <DocViewer url={viewingDoc.url} title={viewingDoc.title} onClose={() => setViewingDoc(null)} />}
     </div>
   );
 }

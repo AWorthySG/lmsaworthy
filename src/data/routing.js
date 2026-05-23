@@ -1,6 +1,6 @@
 import {
   House, Broadcast, Notebook, Target, BookOpen, ClipboardText,
-  Books, VideoCamera, Lightning, Scroll, BookmarkSimple,
+  Books, VideoCamera, Scroll, BookmarkSimple,
   Sparkle, GraduationCap, Timer, Lightbulb, Hash,
   Confetti, Handshake,
   CalendarCheck, ChartLineUp, Eye, Scales, Medal, Gear,
@@ -18,7 +18,6 @@ export const NAV = [
   { group: "O-Level English", subject: "eng", items: [
     { id: "library-eng", label: "Resources", icon: Books },
     { id: "videos-eng", label: "Video Lessons", icon: VideoCamera },
-    { id: "quizzes-eng", label: "Quizzes", icon: Lightning },
     { id: "practice-eng", label: "Practice Drills", icon: Target },
     { id: "vocab", label: "Vocabulary", icon: Scroll },
     { id: "pastpapers-eng", label: "Past Papers", icon: Notebook },
@@ -37,7 +36,6 @@ export const NAV = [
   { group: "H1 Economics", subject: "h1econ", items: [
     { id: "library-h1econ", label: "Resources", icon: Books },
     { id: "videos-h1econ", label: "Video Lessons", icon: VideoCamera },
-    { id: "quizzes-h1econ", label: "Quizzes", icon: Lightning },
     { id: "practice-h1econ", label: "Practice Drills", icon: Target },
     { id: "exams-h1econ", label: "Mock Exams", icon: Scales },
     { id: "pastpapers-h1econ", label: "Past Papers", icon: Notebook },
@@ -46,7 +44,6 @@ export const NAV = [
   { group: "H2 Economics", subject: "h2econ", items: [
     { id: "library-h2econ", label: "Resources", icon: Books },
     { id: "videos-h2econ", label: "Video Lessons", icon: VideoCamera },
-    { id: "quizzes-h2econ", label: "Quizzes", icon: Lightning },
     { id: "practice-h2econ", label: "Practice Drills", icon: Target },
     { id: "exams-h2econ", label: "Mock Exams", icon: Scales },
     { id: "formulas", label: "Formula Cards", icon: Hash },
@@ -72,7 +69,7 @@ export const NAV = [
 ];
 
 export const PAGE_TO_PATH = {
-  dashboard: "/", library: "/library", videos: "/videos", quizzes: "/quizzes",
+  dashboard: "/", library: "/library", videos: "/videos",
   exams: "/exams", attendance: "/attendance", progress: "/progress",
   community: "/community", classroom: "/classroom",
   infographics: "/infographics",
@@ -96,7 +93,6 @@ export const PAGE_TO_PATH = {
   // Subject-suffixed IDs mapping to shared pages
   "library-eng": "/library", "library-h1econ": "/library", "library-h2econ": "/library",
   "videos-eng": "/videos", "videos-h1econ": "/videos", "videos-h2econ": "/videos",
-  "quizzes-eng": "/quizzes", "quizzes-h1econ": "/quizzes", "quizzes-h2econ": "/quizzes",
   "exams-h1econ": "/exams", "exams-h2econ": "/exams",
 };
 
@@ -105,6 +101,5 @@ const _autoPath = Object.fromEntries(Object.entries(PAGE_TO_PATH).map(([k, v]) =
 // Override shared paths so they resolve to the unsuffixed base page ID
 _autoPath["/library"] = "library";
 _autoPath["/videos"] = "videos";
-_autoPath["/quizzes"] = "quizzes";
 _autoPath["/exams"] = "exams";
 export const PATH_TO_PAGE = _autoPath;

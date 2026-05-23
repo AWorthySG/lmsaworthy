@@ -8,7 +8,13 @@ export function appReducer(state, action) {
       const lessons = state.videoLessons.map((l) => l.id === action.payload.lessonId ? { ...l, chapters: l.chapters.map((ch) => ch.id === action.payload.chapterId ? { ...ch, completed: !ch.completed } : ch) } : l);
       return { ...state, videoLessons: lessons };
     }
-    case "ADD_QUIZ": return { ...state, quizzes: [...state.quizzes, { ...action.payload, id: state.quizzes.length + 1 }] };
+    case "ADD_PAST_PAPER_DOC": {
+      const docs = state.pastPaperDocs || [];
+      const id = Math.max(...docs.map(d => d.id), 0) + 1;
+      return { ...state, pastPaperDocs: [...docs, { ...action.payload, id }] };
+    }
+    case "DELETE_PAST_PAPER_DOC":
+      return { ...state, pastPaperDocs: (state.pastPaperDocs || []).filter(d => d.id !== action.payload) };
     case "MARK_ATTENDANCE": {
       const { sessionId, studentId, status } = action.payload;
       const prev = { ...(state.attendance[sessionId] || {}) };
