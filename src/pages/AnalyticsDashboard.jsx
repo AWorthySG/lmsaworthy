@@ -103,7 +103,7 @@ function AnalyticsDashboard({ state }) {
                   return (
                     <div key={t.topic} title={`${t.topic}: ${t.mastery !== null ? Math.round(t.mastery) + "%" : "No data"} (${t.count} graded)`}
                       style={{ padding: "6px 10px", borderRadius: T.r1, background: colors[level] + "33", border: `1px solid ${colors[level]}55`, fontSize: 10, fontWeight: 600, color: level === 0 ? T.textTer : T.text, cursor: "default" }}>
-                      {t.topic} {level > 0 && <span>{level === 1 ? <span style={{ color: "#DC2626", fontSize: 8 }}>●</span> : level === 2 ? <span style={{ color: "#D97706", fontSize: 8 }}>●</span> : level === 3 ? <span style={{ color: "#16A34A", fontSize: 8 }}>●</span> : <Star size={9} color="#D4940A" />}</span>}
+                      {t.topic} {level > 0 && <span>{level === 1 ? <span style={{ color: T.danger, fontSize: 8 }}>●</span> : level === 2 ? <span style={{ color: "#D97706", fontSize: 8 }}>●</span> : level === 3 ? <span style={{ color: T.success, fontSize: 8 }}>●</span> : <Star size={9} color={T.gold} />}</span>}
                     </div>
                   );
                 })}
@@ -112,7 +112,7 @@ function AnalyticsDashboard({ state }) {
           );
         })}
         <div style={{ display: "flex", gap: 8, marginTop: 8, fontSize: 10, color: T.textTer }}>
-          <span>&#9633; No data</span><span style={{ color: "#DC2626" }}>● Needs work</span><span style={{ color: "#D97706" }}>● Developing</span><span style={{ color: "#16A34A" }}>● Good</span><span style={{ display: "inline-flex", alignItems: "center", gap: 2 }}><Star size={10} color="#D4940A" /> Mastered</span>
+          <span>&#9633; No data</span><span style={{ color: T.danger }}>● Needs work</span><span style={{ color: "#D97706" }}>● Developing</span><span style={{ color: T.success }}>● Good</span><span style={{ display: "inline-flex", alignItems: "center", gap: 2 }}><Star size={10} color={T.gold} /> Mastered</span>
         </div>
       </div>
 

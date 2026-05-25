@@ -39,13 +39,13 @@ function ResourceCard({ r, isTutor, isBookmarked, onView, onBookmark, onDelete }
   );
 }
 
-function ContentLibrary({ state, dispatch }) {
+function ContentLibrary({ state, dispatch, defaultSubject }) {
   const [search, setSearch] = useState("");
   const [showUpload, setShowUpload] = useState(false);
   const [viewingResource, setViewingResource] = useState(null);
   const [newTitle, setNewTitle] = useState(""); const [newSubject, setNewSubject] = useState(""); const [newTopic, setNewTopic] = useState(""); const [newType, setNewType] = useState("pdf");
-  const [nav, setNav] = useState(null);
-  const [expandedSubjects, setExpandedSubjects] = useState({});
+  const [nav, setNav] = useState(defaultSubject || null);
+  const [expandedSubjects, setExpandedSubjects] = useState(defaultSubject ? { [defaultSubject]: true } : {});
   const [sortBy, setSortBy] = useState("newest");
   const [typeFilter, setTypeFilter] = useState("all");
 

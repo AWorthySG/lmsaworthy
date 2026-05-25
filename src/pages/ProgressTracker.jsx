@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { T } from '../theme/theme.js';
 import { ChartLineUp, ChartBar, Trophy, Star, CheckCircle, ArrowSquareOut, Users, CalendarCheck, PencilSimpleLine, Notebook, CaretRight, X } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard, BackBtn, FileIcon, Input, Textarea } from '../components/ui';
@@ -22,11 +22,28 @@ function ProgressTracker({ state, dispatch }) {
   if (sel) {
     const student = state.students.find((s) => s.id === sel);
     if (!student) return null;
-    const quizResults = student.quizResults || [];
-    const scoreData = quizResults.map((r) => ({ date: formatDate(r.date), score: Math.round((r.score / r.total) * 100) }));
-    const subjScores = {};
-    quizResults.forEach((r) => { const q = (state.quizzes || []).find((q) => q.id === r.quizId); if (q) { if (!subjScores[q.subject]) subjScores[q.subject] = []; subjScores[q.subject].push(Math.round((r.score / r.total) * 100)); } });
-    const barData = Object.entries(subjScores).map(([s, scores]) => ({ name: getSubject(s)?.name || s, value: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length), color: getSubjectTheme(s).accent }));
+    const studentSubs = state.submissions.filter(s => s.studentId === student.id);
+    // Monthly submission trend (last 6 months with submissions)
+    const monthBuckets = {};
+    studentSubs.filter(s => s.submittedAt).forEach(s => {
+      const month = s.submittedAt.slice(0, 7);
+      monthBuckets[month] = (monthBuckets[month] || 0) + 1;
+    });
+    const monthlyData = Object.entries(monthBuckets)
+      .sort(([a], [b]) => a.localeCompare(b)).slice(-6)
+      .map(([month, count]) => ({ date: month.slice(5), count }));
+    // Submissions by subject (via homework lookup)
+    const subjectBuckets = {};
+    studentSubs.forEach(s => {
+      const hw = state.homework.find(h => h.id === s.homeworkId);
+      if (!hw?.subject) return;
+      subjectBuckets[hw.subject] = (subjectBuckets[hw.subject] || 0) + 1;
+    });
+    const subjectData = Object.entries(subjectBuckets).map(([subj, count]) => ({
+      name: getSubject(subj)?.name?.split(" ").slice(-2).join(" ") || subj,
+      value: count,
+      color: getSubjectTheme(subj).accent,
+    }));
 
     return (
       <div>
@@ -134,15 +151,15 @@ function ProgressTracker({ state, dispatch }) {
         </Card>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
           <Card elevated>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Score Trend</h3>
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Submission Trend</h3>
             <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={scoreData}><CartesianGrid strokeDasharray="3 3" stroke={T.border} /><XAxis dataKey="date" tick={{ fontSize: 11, fill: T.textTer }} /><YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textTer }} /><Tooltip contentStyle={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, color: T.text, fontSize: 12, boxShadow: T.shadow2 }} /><Line type="monotone" dataKey="score" stroke={T.accent} strokeWidth={2.5} dot={{ fill: T.accent, r: 4, strokeWidth: 2, stroke: T.bgCard }} activeDot={{ r: 6, fill: T.accent }} /></LineChart>
+              <BarChart data={monthlyData}><CartesianGrid strokeDasharray="3 3" stroke={T.border} /><XAxis dataKey="date" tick={{ fontSize: 11, fill: T.textTer }} /><YAxis allowDecimals={false} tick={{ fontSize: 11, fill: T.textTer }} /><Tooltip contentStyle={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, color: T.text, fontSize: 12, boxShadow: T.shadow2 }} formatter={(v) => [v, "Submissions"]} /><Bar dataKey="count" fill={T.accent} radius={[6, 6, 0, 0]} /></BarChart>
             </ResponsiveContainer>
           </Card>
           <Card elevated>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Average by Subject</h3>
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Submissions by Subject</h3>
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={barData}><CartesianGrid strokeDasharray="3 3" stroke={T.border} /><XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textTer }} /><YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textTer }} /><Tooltip contentStyle={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, color: T.text, fontSize: 12, boxShadow: T.shadow2 }} /><Bar dataKey="value" radius={[6, 6, 0, 0]}>{barData.map((e, i) => <Cell key={i} fill={e.color} />)}</Bar></BarChart>
+              <BarChart data={subjectData}><CartesianGrid strokeDasharray="3 3" stroke={T.border} /><XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textTer }} /><YAxis allowDecimals={false} tick={{ fontSize: 11, fill: T.textTer }} /><Tooltip contentStyle={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, color: T.text, fontSize: 12, boxShadow: T.shadow2 }} formatter={(v) => [v, "Submissions"]} /><Bar dataKey="value" radius={[6, 6, 0, 0]}>{subjectData.map((e, i) => <Cell key={i} fill={e.color} />)}</Bar></BarChart>
             </ResponsiveContainer>
           </Card>
         </div>

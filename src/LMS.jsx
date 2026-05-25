@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { T } from "./theme/theme.js";
-import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users } from "./icons/icons.jsx";
+import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
@@ -22,27 +22,21 @@ import { AvatarDisplay } from "./components/gamification/StudentAvatar.jsx";
 // Lazy-loaded page imports (code-split per route)
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
 const ContentLibrary = lazy(() => import("./pages/ContentLibrary.jsx"));
-const VideoLessons = lazy(() => import("./pages/VideoLessons.jsx"));
 const Attendance = lazy(() => import("./pages/Attendance.jsx"));
 const ProgressTracker = lazy(() => import("./pages/ProgressTracker.jsx"));
 const Community = lazy(() => import("./pages/Community.jsx"));
 const Classroom = lazy(() => import("./pages/Classroom.jsx"));
-const LiveInfographics = lazy(() => import("./pages/infographics/LiveInfographics.jsx"));
-const SubjectDrills = lazy(() => import("./pages/tools/SubjectDrills.jsx"));
 const VocabBuilder = lazy(() => import("./pages/tools/VocabBuilder.jsx"));
 const ExampleConnector = lazy(() => import("./pages/tools/ExampleConnector.jsx"));
-const EssayGrader = lazy(() => import("./pages/tools/EssayGrader.jsx"));
 const AIMarker = lazy(() => import("./pages/tools/AIMarker.jsx"));
 const Homework = lazy(() => import("./pages/homework/Homework.jsx"));
 const Events = lazy(() => import("./pages/Events.jsx"));
 const PastPapers = lazy(() => import("./pages/study/PastPapers.jsx"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard.jsx"));
 const ParentView = lazy(() => import("./pages/ParentView.jsx"));
-const NotesPage = lazy(() => import("./pages/study/NotesPage.jsx"));
 const ModelEssayBank = lazy(() => import("./pages/study/ModelEssayBank.jsx"));
 const MistakeJournal = lazy(() => import("./pages/study/MistakeJournal.jsx"));
 const RevisionChecklist = lazy(() => import("./pages/study/RevisionChecklist.jsx"));
-const FormulaCards = lazy(() => import("./pages/tools/FormulaCards.jsx"));
 const Certificates = lazy(() => import("./pages/Certificates.jsx"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
 
@@ -72,7 +66,7 @@ export default function LMSAuthWrapper() {
 
   if (authUser === undefined) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0B0F1A" }}>
+      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#1C1B19" }}>
         <div style={{ textAlign: "center", width: 240 }}>
           <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, objectFit: "contain", marginBottom: 12, borderRadius: 8 }} />
           <div style={{ fontSize: 12, color: "rgba(254,254,254,0.3)", fontWeight: 200, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: T.fontDisplay, marginBottom: 20 }}>Loading</div>
@@ -111,9 +105,14 @@ function LMS({ authUser, userProfile }) {
 
   const initializedRef = useRef(false);
   useEffect(() => {
-    const pageFromUrl = PATH_TO_PAGE[location.pathname] || "dashboard";
-    if (state.page !== pageFromUrl) {
-      dispatch({ type: "SET_PAGE", payload: pageFromUrl });
+    const pageFromUrl = PATH_TO_PAGE[location.pathname];
+    if (pageFromUrl) {
+      if (state.page !== pageFromUrl) dispatch({ type: "SET_PAGE", payload: pageFromUrl });
+    } else {
+      // Root URL: apply default page preference
+      const pref = localStorage.getItem("aworthy-default-page");
+      const defaultPage = pref || "dashboard";
+      if (state.page !== defaultPage) dispatch({ type: "SET_PAGE", payload: defaultPage });
     }
     initializedRef.current = true;
   }, [location.pathname]);
@@ -150,7 +149,7 @@ function LMS({ authUser, userProfile }) {
   }, [state.students, authUser]);
 
   const [showNotifs, setShowNotifs] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => localStorage.getItem("aworthy-sidebar-collapsed") !== "true");
   const [expandedSection, setExpandedSection] = useState(null);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("aworthy-dark") === "true");
   const [showSearch, setShowSearch] = useState(false);
@@ -172,7 +171,7 @@ function LMS({ authUser, userProfile }) {
   }, [dispatch]);
 
   useEffect(() => { requestPushPermission(); }, []);
-  useEffect(() => { sendHomeworkReminders(state.homework); }, [state.homework]);
+  useEffect(() => { sendHomeworkReminders(Array.isArray(state.homework) ? state.homework : []); }, [state.homework]);
 
   useEffect(() => {
     function handleKey(e) {
@@ -189,8 +188,8 @@ function LMS({ authUser, userProfile }) {
     const q = searchQuery.toLowerCase();
     return [
       ...state.resources.filter(r => r.title.toLowerCase().includes(q)).slice(0, 3).map(r => ({ type: "file", label: r.title, page: "library" })),
-      ...state.homework.filter(h => h.title.toLowerCase().includes(q)).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
-      ...state.videoLessons.filter(v => v.title.toLowerCase().includes(q)).slice(0, 2).map(v => ({ type: "video", label: v.title, page: "videos" })),
+      ...(Array.isArray(state.homework) ? state.homework : []).filter(h => h.title.toLowerCase().includes(q)).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
+      ...(Array.isArray(state.videoLessons) ? state.videoLessons : []).filter(v => v.title.toLowerCase().includes(q)).slice(0, 2).map(v => ({ type: "video", label: v.title, page: "videos" })),
       ...(state.posts || []).filter(p => p.title.toLowerCase().includes(q)).slice(0, 2).map(p => ({ type: "chat", label: p.title, page: "community" })),
       ...NAV.flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(q)).map(i => ({ type: "link", label: i.label, page: i.id })),
     ].slice(0, 8);
@@ -214,21 +213,19 @@ function LMS({ authUser, userProfile }) {
   const renderPage = () => {
     switch (page) {
       case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
-      case "library": case "library-eng": case "library-h1econ": case "library-h2econ": case "library-omath": case "library-amath": case "library-ibmyp": return <ContentLibrary state={state} dispatch={dispatch} />;
-      case "videos": case "videos-eng": case "videos-h1econ": case "videos-h2econ": case "videos-omath": case "videos-amath": case "videos-ibmyp": return <VideoLessons state={state} dispatch={dispatch} />;
+      case "library": return <ContentLibrary key="library" state={state} dispatch={dispatch} />;
+      case "library-eng": return <ContentLibrary key="library-eng" state={state} dispatch={dispatch} defaultSubject="eng" />;
+      case "library-h1econ": return <ContentLibrary key="library-h1econ" state={state} dispatch={dispatch} defaultSubject="h1econ" />;
+      case "library-h2econ": return <ContentLibrary key="library-h2econ" state={state} dispatch={dispatch} defaultSubject="h2econ" />;
+      case "library-omath": return <ContentLibrary key="library-omath" state={state} dispatch={dispatch} defaultSubject="omath" />;
+      case "library-amath": return <ContentLibrary key="library-amath" state={state} dispatch={dispatch} defaultSubject="amath" />;
+      case "library-ibmyp": return <ContentLibrary key="library-ibmyp" state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "attendance": return <Attendance state={state} dispatch={dispatch} />;
       case "progress": return <ProgressTracker state={state} dispatch={dispatch} />;
       case "community": return <Community state={state} dispatch={dispatch} />;
       case "classroom": return <Classroom state={state} dispatch={dispatch} userProfile={userProfile} />;
-      case "infographics": return <LiveInfographics state={state} dispatch={dispatch} />;
-      case "practice-eng": return <SubjectDrills subject="eng" />;
-      case "practice-h1econ": return <SubjectDrills subject="h1econ" />;
-      case "practice-omath": return <SubjectDrills subject="omath" />;
-      case "practice-amath": return <SubjectDrills subject="amath" />;
-      case "practice-ibmyp": return <SubjectDrills subject="ibmyp" />;
       case "vocab": return <VocabBuilder />;
       case "example-finder": return <ExampleConnector />;
-      case "essaygrader": return <EssayGrader />;
       case "aimarker": return <AIMarker />;
       case "homework": return <Homework state={state} dispatch={dispatch} userProfile={userProfile} />;
       case "events": return <Events state={state} dispatch={dispatch} />;
@@ -242,11 +239,9 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "analytics": return <AnalyticsDashboard state={state} />;
       case "parentview": return <ParentView state={state} />;
-      case "notes": return <NotesPage state={state} dispatch={dispatch} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
-      case "formulas": case "formulas-omath": case "formulas-amath": case "formulas-ibmyp": return <FormulaCards />;
       case "certificates": return <Certificates state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
@@ -438,7 +433,7 @@ function LMS({ authUser, userProfile }) {
       <AnimatePresence>
         {showSearch && (
           <motion.div onClick={() => setShowSearch(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: "8vh" }}>
-            <motion.div onClick={e => e.stopPropagation()} initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }} transition={{ duration: 0.2, ease: "easeOut" }} style={{ width: "100%", maxWidth: 520, background: darkMode ? "#0B0F1A" : T.bgCard, borderRadius: T.r3, boxShadow: "0 25px 80px rgba(0,0,0,0.4)", border: `1px solid ${T.border}`, overflow: "hidden" }}>
+            <motion.div onClick={e => e.stopPropagation()} initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }} transition={{ duration: 0.2, ease: "easeOut" }} style={{ width: "100%", maxWidth: 520, background: darkMode ? "#1C1B19" : T.bgCard, borderRadius: T.r3, boxShadow: "0 25px 80px rgba(0,0,0,0.4)", border: `1px solid ${T.border}`, overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 20px", borderBottom: `1px solid ${T.border}`, background: T.bgMuted }}>
                 <MagnifyingGlass size={18} color={T.accent} />
                 <input ref={searchRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search resources, homework, pages…"
@@ -492,13 +487,13 @@ function LMS({ authUser, userProfile }) {
 
       {/* Mobile Bottom Nav */}
       {isMobileLayout && (
-        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: darkMode ? "rgba(11,15,26,0.97)" : "rgba(255,255,255,0.97)", borderTop: `1px solid ${T.border}`, display: "flex", zIndex: 60, paddingBottom: "env(safe-area-inset-bottom, 0px)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}>
+        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: darkMode ? "rgba(28,27,25,0.97)" : "rgba(255,255,255,0.97)", borderTop: `1px solid ${T.border}`, display: "flex", zIndex: 60, paddingBottom: "env(safe-area-inset-bottom, 0px)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}>
           {[
             { id: "dashboard", icon: House, label: "Home" },
             { id: "library", icon: Books, label: "Library" },
             { id: "homework", icon: ClipboardText, label: "Work", badge: hwBadge },
             { id: "community", icon: Handshake, label: "Social" },
-            { id: "events", icon: Users, label: "Events" },
+            { id: "events", icon: Confetti, label: "Events" },
           ].map(tab => {
             const active = page === tab.id;
             return (
