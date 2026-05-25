@@ -104,7 +104,7 @@ function LMS({ authUser, userProfile }) {
   useFirebaseSync(authUser, state, dispatch);
 
   useEffect(() => {
-    if (userProfile?.role && state.role !== userProfile.role) {
+    if (userProfile?.role) {
       dispatch({ type: "SET_ROLE", payload: userProfile.role });
     }
   }, [userProfile?.role]);
@@ -146,7 +146,7 @@ function LMS({ authUser, userProfile }) {
       s.email.toLowerCase() === authUser.email.toLowerCase()
     );
     return match?.subjects || null;
-  }, [state.students, authUser?.email]);
+  }, [state.students, authUser]);
 
   const [showNotifs, setShowNotifs] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);

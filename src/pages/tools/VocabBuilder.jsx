@@ -78,7 +78,6 @@ function VocabBuilder() {
 
   // Spaced repetition
   const [srCards, setSrCards] = useState(() => loadSRData());
-  const [srQuality, setSrQuality] = useState(null);
 
   useEffect(() => {
     if (srCards.length === 0 && VOCAB_DRILLS.length > 0) {
@@ -103,7 +102,7 @@ function VocabBuilder() {
       : VOCAB_DRILLS;
     const shuffled = [...source].sort(() => Math.random() - 0.5);
     setDeck(shuffled); setPos(0); setScore(0); setMissed([]);
-    setAnswered(null); setFlipped(false); setSrQuality(null);
+    setAnswered(null); setFlipped(false);
     setDrillMode(type);
     setMode(type === "flashcard" ? "flashcard" : type === "upgrade" ? "upgrade" : "quiz");
   }
@@ -114,7 +113,7 @@ function VocabBuilder() {
     const items = reviewQueue.map(sr => drillMap[sr.id]).filter(Boolean);
     if (!items.length) return;
     setDeck(items); setPos(0); setScore(0); setMissed([]);
-    setAnswered(null); setFlipped(false); setSrQuality(null);
+    setAnswered(null); setFlipped(false);
     setDrillMode("flashcard");
     setMode("flashcard");
   }
@@ -123,7 +122,6 @@ function VocabBuilder() {
   function flipCard() { setFlipped(f => !f); }
 
   function rateSR(quality) {
-    setSrQuality(quality);
     const word = deck[pos];
     const updated = srCards.map(sr => sr.id === word.id ? calculateNextReview(sr, quality) : sr);
     setSrCards(updated); saveSRData(updated);
@@ -146,7 +144,7 @@ function VocabBuilder() {
   function advanceCard(wasCorrect) {
     if (pos + 1 >= deck.length) { setMode("results"); return; }
     setPos(p => p + 1);
-    setAnswered(null); setFlipped(false); setSrQuality(null);
+    setAnswered(null); setFlipped(false);
     if (drillMode !== "flashcard" && !wasCorrect && wasCorrect !== undefined) {
       // already tracked in answerQuiz
     }

@@ -59,7 +59,6 @@ function UploadPanel({ activeSubj, state, dispatch, onClose }) {
   const [school, setSchool] = useState("");
   const [paperLabel, setPaperLabel] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [schoolInput, setSchoolInput] = useState("");
 
   async function handleUpload() {
     if (!file || !year || !school) return;
