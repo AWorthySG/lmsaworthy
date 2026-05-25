@@ -176,8 +176,18 @@ export function appReducer(state, action) {
     case "MERGE_FIREBASE_STATE": {
       const merged = { ...state };
       for (const [key, value] of Object.entries(action.payload)) {
-        if (value && typeof value === 'object' && !Array.isArray(value) &&
-            state[key] && typeof state[key] === 'object' && !Array.isArray(state[key])) {
+        // Firebase stores JS arrays as indexed objects {"0":…,"1":…}.
+        // If the current state field is an array and Firebase returned a plain
+        // object, reconstruct the array so callers can safely use .find/.filter.
+        const currentIsArray = Array.isArray(state[key]);
+        const valueIsPlainObject = value && typeof value === 'object' && !Array.isArray(value);
+        if (valueIsPlainObject && currentIsArray) {
+          const keys = Object.keys(value);
+          const allNumeric = keys.length > 0 && keys.every(k => /^\d+$/.test(k));
+          merged[key] = allNumeric
+            ? keys.sort((a, b) => Number(a) - Number(b)).map(k => value[k])
+            : Object.values(value);
+        } else if (valueIsPlainObject && state[key] && typeof state[key] === 'object' && !currentIsArray) {
           merged[key] = { ...state[key], ...value };
         } else {
           merged[key] = value;

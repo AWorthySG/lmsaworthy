@@ -131,17 +131,18 @@ function LMS({ authUser, userProfile }) {
   const notifications = useMemo(() => {
     const notifs = [];
     const today = new Date().toISOString().split("T")[0];
-    state.homework.filter(h => h.status === "active" && h.dueDate >= today).forEach(h => {
+    (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === "active" && h.dueDate >= today).forEach(h => {
       notifs.push({ type: "homework", msg: `"${h.title}" due ${h.dueDate}`, page: "homework" });
     });
-    const pendingGrades = state.submissions.filter(s => s.status === "submitted").length;
+    const pendingGrades = (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.status === "submitted").length;
     if (pendingGrades > 0) notifs.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
     return notifs;
   }, [state.homework, state.submissions]);
 
   // Subject filtering: match logged-in email to roster entry; null = show all
   const enrolledSubjects = useMemo(() => {
-    const match = state.students.find(s =>
+    const students = Array.isArray(state.students) ? state.students : [];
+    const match = students.find(s =>
       s.email && authUser?.email &&
       s.email.toLowerCase() === authUser.email.toLowerCase()
     );
@@ -195,14 +196,18 @@ function LMS({ authUser, userProfile }) {
     ].slice(0, 8);
   }, [searchQuery, state.resources, state.homework, state.videoLessons, state.posts]);
 
-  const hwBadge = useMemo(() => state.submissions.filter(s => s.status === "submitted").length, [state.submissions]);
-  const attendanceBadge = useMemo(() => state.sessions.filter(s => {
-    const rec = state.attendance[s.id] || {};
-    const sessionStudents = (s.subject && state.students.some(st => st.subjects))
-      ? state.students.filter(st => st.subjects?.includes(s.subject))
-      : state.students;
-    return Object.keys(rec).length < sessionStudents.length;
-  }).length, [state.sessions, state.attendance, state.students]);
+  const hwBadge = useMemo(() => (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.status === "submitted").length, [state.submissions]);
+  const attendanceBadge = useMemo(() => {
+    const students = Array.isArray(state.students) ? state.students : [];
+    const sessions = Array.isArray(state.sessions) ? state.sessions : [];
+    return sessions.filter(s => {
+      const rec = state.attendance[s.id] || {};
+      const sessionStudents = (s.subject && students.some(st => st.subjects))
+        ? students.filter(st => st.subjects?.includes(s.subject))
+        : students;
+      return Object.keys(rec).length < sessionStudents.length;
+    }).length;
+  }, [state.sessions, state.attendance, state.students]);
 
   const pageFallback = <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "40px 0" }}>{[1,2,3].map(i => <div key={i} className="shimmer" style={{ height: 14, borderRadius: 6, width: i === 3 ? "60%" : "100%" }} />)}</div>;
 
