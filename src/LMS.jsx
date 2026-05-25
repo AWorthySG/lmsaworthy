@@ -46,7 +46,6 @@ const FormulaCards = lazy(() => import("./pages/tools/FormulaCards.jsx"));
 const Certificates = lazy(() => import("./pages/Certificates.jsx"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
 
-const TUTOR_ONLY_PAGES = new Set(["aimarker", "attendance", "analytics", "parentview", "certificates"]);
 
 export default function LMSAuthWrapper() {
   const [authUser, setAuthUser] = useState(undefined); // undefined=loading, null=logged out, object=logged in
@@ -136,19 +135,18 @@ function LMS({ authUser, userProfile }) {
       notifs.push({ type: "homework", msg: `"${h.title}" due ${h.dueDate}`, page: "homework" });
     });
     const pendingGrades = state.submissions.filter(s => s.status === "submitted").length;
-    if (pendingGrades > 0 && state.role === "tutor") notifs.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
+    if (pendingGrades > 0) notifs.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
     return notifs;
-  }, [state.homework, state.submissions, state.role]);
+  }, [state.homework, state.submissions]);
 
-  // Subject filtering for students: match logged-in email to roster entry
+  // Subject filtering: match logged-in email to roster entry; null = show all
   const enrolledSubjects = useMemo(() => {
-    if (state.role !== "student") return null; // null = show all
     const match = state.students.find(s =>
       s.email && authUser?.email &&
       s.email.toLowerCase() === authUser.email.toLowerCase()
     );
-    return match?.subjects || null; // null = show all (no roster match)
-  }, [state.role, state.students, authUser?.email]);
+    return match?.subjects || null;
+  }, [state.students, authUser?.email]);
 
   const [showNotifs, setShowNotifs] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -197,21 +195,18 @@ function LMS({ authUser, userProfile }) {
     ].slice(0, 8);
   }, [searchQuery, state.resources, state.homework, state.videoLessons, state.posts]);
 
-  const hwBadge = useMemo(() => state.role === "tutor" ? state.submissions.filter(s => s.status === "submitted").length : state.homework.filter(h => h.status === "active").length, [state.role, state.submissions, state.homework]);
-  const attendanceBadge = useMemo(() => state.role === "tutor" ? state.sessions.filter(s => {
+  const hwBadge = useMemo(() => state.submissions.filter(s => s.status === "submitted").length, [state.submissions]);
+  const attendanceBadge = useMemo(() => state.sessions.filter(s => {
     const rec = state.attendance[s.id] || {};
     const sessionStudents = (s.subject && state.students.some(st => st.subjects))
       ? state.students.filter(st => st.subjects?.includes(s.subject))
       : state.students;
     return Object.keys(rec).length < sessionStudents.length;
-  }).length : 0, [state.role, state.sessions, state.attendance, state.students]);
+  }).length, [state.sessions, state.attendance, state.students]);
 
   const pageFallback = <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "40px 0" }}>{[1,2,3].map(i => <div key={i} className="shimmer" style={{ height: 14, borderRadius: 6, width: i === 3 ? "60%" : "100%" }} />)}</div>;
 
   const renderPage = () => {
-    if (TUTOR_ONLY_PAGES.has(page) && state.role !== "tutor") {
-      return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
-    }
     switch (page) {
       case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
       case "library": case "library-eng": case "library-h1econ": case "library-h2econ": case "library-omath": case "library-amath": case "library-ibmyp": return <ContentLibrary state={state} dispatch={dispatch} />;
@@ -285,7 +280,6 @@ function LMS({ authUser, userProfile }) {
         <div style={{ flex: "1 1 0%", position: "relative", minHeight: 0 }}>
           <nav style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, padding: sidebarOpen ? "4px 8px" : "4px 6px", overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
             {NAV.filter(g => {
-              if (g.tutorOnly && state.role !== "tutor") return false;
               if (g.subject && enrolledSubjects && !enrolledSubjects.includes(g.subject)) return false;
               return true;
             }).map((group, gi) => {
@@ -353,20 +347,12 @@ function LMS({ authUser, userProfile }) {
               }
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ color: T.text, fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userProfile?.name || authUser?.displayName || "User"}</div>
-                <div style={{ color: T.textTer, fontSize: 11 }}>{userProfile?.role === "tutor" ? "Creator" : "Student"}</div>
+                <div style={{ color: T.textTer, fontSize: 11 }}>{userProfile?.role === "tutor" ? "Creator" : userProfile?.role === "student" ? "Student" : "Member"}</div>
               </div>
             </div>
             <div style={{ display: "flex", gap: 6 }}>
-              {userProfile?.role === "tutor" && (
-                <button onClick={() => dispatch({ type: "SET_ROLE", payload: state.role === "tutor" ? "student" : "tutor" })}
-                  style={{ flex: 1, padding: "6px", borderRadius: T.r1, background: "transparent", border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 11, fontWeight: 500, color: T.textSec, transition: "all 0.12s" }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = T.accent}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = T.border}>
-                  {state.role === "tutor" ? "Student View" : "Tutor View"}
-                </button>
-              )}
               <button onClick={() => signOut(firebaseAuth)}
-                style={{ flex: userProfile?.role === "tutor" ? "none" : 1, padding: "6px 12px", borderRadius: T.r1, background: "transparent", border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 11, color: T.textTer, transition: "all 0.12s" }}
+                style={{ flex: 1, padding: "6px 12px", borderRadius: T.r1, background: "transparent", border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 11, color: T.textTer, transition: "all 0.12s" }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = T.danger; e.currentTarget.style.color = T.danger; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.textTer; }}>
                 Sign Out
@@ -417,7 +403,7 @@ function LMS({ authUser, userProfile }) {
           <div style={{ maxWidth: 1080, margin: "0 auto 8px", padding: "10px 16px", borderRadius: T.r2, background: "linear-gradient(135deg, #1C1B19, #2A2927)", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
             <Megaphone size={16} color="#fff" />
             <span style={{ flex: 1, fontWeight: 600 }}>{state.announcement}</span>
-            {state.role === "tutor" && <button onClick={() => dispatch({ type: "SET_ANNOUNCEMENT", payload: null })} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>Dismiss</button>}
+            <button onClick={() => dispatch({ type: "SET_ANNOUNCEMENT", payload: null })} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>Dismiss</button>
           </div>
         )}
 

@@ -150,7 +150,7 @@ function PastPapers({ state, dispatch, defaultSubject }) {
   const [expandedYears, setExpandedYears] = useState({});
   const [expandedSchools, setExpandedSchools] = useState({});
 
-  const isTutor = state.role === "tutor";
+  const isTutor = true;
   const allDocs = state.pastPaperDocs || [];
   const subjDocs = allDocs.filter(d => d.subject === activeSubj);
   const activeTheme = T[activeSubj] || T.eng;
