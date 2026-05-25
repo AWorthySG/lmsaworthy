@@ -136,8 +136,8 @@ function Attendance({ state, dispatch }) {
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
         <StatCard icon={CalendarCheck} value={totalSessions} label="Total Sessions" color={T.accent} />
-        <StatCard icon={CalendarBlank} value={todaySessions} label="Today's Sessions" color="#3F51EC" />
-        <StatCard icon={Users} value={attendanceRate + "%"} label="Attendance Rate" color="#00A85A" />
+        <StatCard icon={CalendarBlank} value={todaySessions} label="Today's Sessions" color={T.teal} />
+        <StatCard icon={Users} value={attendanceRate + "%"} label="Attendance Rate" color={T.success} />
       </div>
 
       {/* Add session form */}
@@ -240,7 +240,7 @@ function Attendance({ state, dispatch }) {
                       const status = rec[student.id];
                       return (
                         <div key={student.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", borderRadius: T.r2, background: status === "present" ? `${T.successBg}80` : status === "late" ? `${T.warningBg}80` : status === "absent" ? `${T.dangerBg}80` : T.bgMuted, transition: "background 0.2s", border: `1px solid ${status === "present" ? T.success + "30" : status === "late" ? T.warning + "30" : status === "absent" ? T.danger + "30" : T.border}` }}>
-                          <div style={{ width: 32, height: 32, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #3F51EC)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 12, flexShrink: 0 }}>
+                          <div style={{ width: 32, height: 32, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, ${T.accentMid})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 12, flexShrink: 0 }}>
                             {student.name.split(" ").map(n => n[0]).join("")}
                           </div>
                           <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: T.text }}>{student.name}</span>

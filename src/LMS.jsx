@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { T } from "./theme/theme.js";
-import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users } from "./icons/icons.jsx";
+import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
@@ -22,27 +22,21 @@ import { AvatarDisplay } from "./components/gamification/StudentAvatar.jsx";
 // Lazy-loaded page imports (code-split per route)
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
 const ContentLibrary = lazy(() => import("./pages/ContentLibrary.jsx"));
-const VideoLessons = lazy(() => import("./pages/VideoLessons.jsx"));
 const Attendance = lazy(() => import("./pages/Attendance.jsx"));
 const ProgressTracker = lazy(() => import("./pages/ProgressTracker.jsx"));
 const Community = lazy(() => import("./pages/Community.jsx"));
 const Classroom = lazy(() => import("./pages/Classroom.jsx"));
-const LiveInfographics = lazy(() => import("./pages/infographics/LiveInfographics.jsx"));
-const SubjectDrills = lazy(() => import("./pages/tools/SubjectDrills.jsx"));
 const VocabBuilder = lazy(() => import("./pages/tools/VocabBuilder.jsx"));
 const ExampleConnector = lazy(() => import("./pages/tools/ExampleConnector.jsx"));
-const EssayGrader = lazy(() => import("./pages/tools/EssayGrader.jsx"));
 const AIMarker = lazy(() => import("./pages/tools/AIMarker.jsx"));
 const Homework = lazy(() => import("./pages/homework/Homework.jsx"));
 const Events = lazy(() => import("./pages/Events.jsx"));
 const PastPapers = lazy(() => import("./pages/study/PastPapers.jsx"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard.jsx"));
 const ParentView = lazy(() => import("./pages/ParentView.jsx"));
-const NotesPage = lazy(() => import("./pages/study/NotesPage.jsx"));
 const ModelEssayBank = lazy(() => import("./pages/study/ModelEssayBank.jsx"));
 const MistakeJournal = lazy(() => import("./pages/study/MistakeJournal.jsx"));
 const RevisionChecklist = lazy(() => import("./pages/study/RevisionChecklist.jsx"));
-const FormulaCards = lazy(() => import("./pages/tools/FormulaCards.jsx"));
 const Certificates = lazy(() => import("./pages/Certificates.jsx"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
 
@@ -221,20 +215,12 @@ function LMS({ authUser, userProfile }) {
       case "library-omath": return <ContentLibrary key="library-omath" state={state} dispatch={dispatch} defaultSubject="omath" />;
       case "library-amath": return <ContentLibrary key="library-amath" state={state} dispatch={dispatch} defaultSubject="amath" />;
       case "library-ibmyp": return <ContentLibrary key="library-ibmyp" state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
-      case "videos": case "videos-eng": case "videos-h1econ": case "videos-h2econ": case "videos-omath": case "videos-amath": case "videos-ibmyp": return <VideoLessons state={state} dispatch={dispatch} />;
       case "attendance": return <Attendance state={state} dispatch={dispatch} />;
       case "progress": return <ProgressTracker state={state} dispatch={dispatch} />;
       case "community": return <Community state={state} dispatch={dispatch} />;
       case "classroom": return <Classroom state={state} dispatch={dispatch} userProfile={userProfile} />;
-      case "infographics": return <LiveInfographics state={state} dispatch={dispatch} />;
-      case "practice-eng": return <SubjectDrills subject="eng" />;
-      case "practice-h1econ": return <SubjectDrills subject="h1econ" />;
-      case "practice-omath": return <SubjectDrills subject="omath" />;
-      case "practice-amath": return <SubjectDrills subject="amath" />;
-      case "practice-ibmyp": return <SubjectDrills subject="ibmyp" />;
       case "vocab": return <VocabBuilder />;
       case "example-finder": return <ExampleConnector />;
-      case "essaygrader": return <EssayGrader />;
       case "aimarker": return <AIMarker />;
       case "homework": return <Homework state={state} dispatch={dispatch} userProfile={userProfile} />;
       case "events": return <Events state={state} dispatch={dispatch} />;
@@ -248,11 +234,9 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "analytics": return <AnalyticsDashboard state={state} />;
       case "parentview": return <ParentView state={state} />;
-      case "notes": return <NotesPage state={state} dispatch={dispatch} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
-      case "formulas": case "formulas-omath": case "formulas-amath": case "formulas-ibmyp": return <FormulaCards />;
       case "certificates": return <Certificates state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
@@ -504,7 +488,7 @@ function LMS({ authUser, userProfile }) {
             { id: "library", icon: Books, label: "Library" },
             { id: "homework", icon: ClipboardText, label: "Work", badge: hwBadge },
             { id: "community", icon: Handshake, label: "Social" },
-            { id: "events", icon: Users, label: "Events" },
+            { id: "events", icon: Confetti, label: "Events" },
           ].map(tab => {
             const active = page === tab.id;
             return (
