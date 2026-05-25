@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
 import { ArrowLeft, Plus, ClipboardText, Clock, Warning, Sparkle } from '../../icons/icons.jsx';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
@@ -44,7 +44,15 @@ function TutorHomework({ state, dispatch }) {
     setFRubric(getDefaultRubricForHomework(fSubj, fTopic));
   }, [fSubj, fTopic, view, fRubricEdited]);
 
-  const hw = state.homework.filter(h => h.status === "active");
+  const hideCompleted = useMemo(() => { try { return localStorage.getItem("aworthy-hide-completed-hw") === "true"; } catch { return false; } }, []);
+  const hw = state.homework.filter(h => {
+    if (h.status !== "active") return false;
+    if (hideCompleted) {
+      const subs = state.submissions.filter(s => s.homeworkId === h.id);
+      return subs.length === 0 || subs.some(s => s.status !== "graded");
+    }
+    return true;
+  });
   const filtered = filterSubj === "all" ? hw : hw.filter(h => h.subject === filterSubj);
   const today = new Date().toISOString().split("T")[0];
 

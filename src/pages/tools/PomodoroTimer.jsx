@@ -1,9 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { T } from '../../theme/theme.js';
 import { Target, Timer, Play, PauseCircle } from '../../icons/icons.jsx';
 
+function loadPomodoroPrefs() {
+  try { const s = localStorage.getItem("aworthy-pomodoro-prefs"); return s ? { workMin: 25, breakMin: 5, ...JSON.parse(s) } : { workMin: 25, breakMin: 5 }; } catch { return { workMin: 25, breakMin: 5 }; }
+}
+
 function PomodoroTimer({ dispatch }) {
-  const [minutes, setMinutes] = useState(25);
+  const prefs = useMemo(loadPomodoroPrefs, []);
+  const WORK_MIN = prefs.workMin;
+  const BREAK_MIN = prefs.breakMin;
+
+  const [minutes, setMinutes] = useState(WORK_MIN);
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [mode, setMode] = useState("focus"); // focus | break
@@ -21,12 +29,12 @@ function PomodoroTimer({ dispatch }) {
               setIsRunning(false);
               if (mode === "focus") {
                 setSessions(s => s + 1);
-                dispatch({ type: "LOG_STUDY_TIME", payload: { minutes: 25, activity: "pomodoro" } });
+                dispatch({ type: "LOG_STUDY_TIME", payload: { minutes: WORK_MIN, activity: "pomodoro" } });
                 dispatch({ type: "ADD_TOAST", payload: { message: "Focus session complete! Take a break.", variant: "success" } });
-                setMode("break"); setMinutes(5); setSeconds(0);
+                setMode("break"); setMinutes(BREAK_MIN); setSeconds(0);
               } else {
                 dispatch({ type: "ADD_TOAST", payload: { message: "Break over! Ready for another session?", variant: "info" } });
-                setMode("focus"); setMinutes(25); setSeconds(0);
+                setMode("focus"); setMinutes(WORK_MIN); setSeconds(0);
               }
               return 0;
             }
@@ -41,9 +49,10 @@ function PomodoroTimer({ dispatch }) {
   }, [isRunning, mode]);
 
   function toggle() { setIsRunning(r => !r); }
-  function reset() { clearInterval(intervalRef.current); setIsRunning(false); setMinutes(mode === "focus" ? 25 : 5); setSeconds(0); }
+  function reset() { clearInterval(intervalRef.current); setIsRunning(false); setMinutes(mode === "focus" ? WORK_MIN : BREAK_MIN); setSeconds(0); }
 
-  const pct = mode === "focus" ? ((25 * 60 - (minutes * 60 + seconds)) / (25 * 60)) * 100 : ((5 * 60 - (minutes * 60 + seconds)) / (5 * 60)) * 100;
+  const totalSecs = (mode === "focus" ? WORK_MIN : BREAK_MIN) * 60;
+  const pct = ((totalSecs - (minutes * 60 + seconds)) / totalSecs) * 100;
 
   return (
     <div style={{ background: mode === "focus" ? "linear-gradient(135deg, #1C1B19, #2A2927)" : "linear-gradient(135deg, #0F2A1A, #1E4A2A)", borderRadius: T.r3, padding: "24px", textAlign: "center", color: "#fff", position: "relative", overflow: "hidden" }}>

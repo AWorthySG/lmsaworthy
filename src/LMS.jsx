@@ -105,9 +105,14 @@ function LMS({ authUser, userProfile }) {
 
   const initializedRef = useRef(false);
   useEffect(() => {
-    const pageFromUrl = PATH_TO_PAGE[location.pathname] || "dashboard";
-    if (state.page !== pageFromUrl) {
-      dispatch({ type: "SET_PAGE", payload: pageFromUrl });
+    const pageFromUrl = PATH_TO_PAGE[location.pathname];
+    if (pageFromUrl) {
+      if (state.page !== pageFromUrl) dispatch({ type: "SET_PAGE", payload: pageFromUrl });
+    } else {
+      // Root URL: apply default page preference
+      const pref = localStorage.getItem("aworthy-default-page");
+      const defaultPage = pref || "dashboard";
+      if (state.page !== defaultPage) dispatch({ type: "SET_PAGE", payload: defaultPage });
     }
     initializedRef.current = true;
   }, [location.pathname]);
@@ -144,7 +149,7 @@ function LMS({ authUser, userProfile }) {
   }, [state.students, authUser]);
 
   const [showNotifs, setShowNotifs] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => localStorage.getItem("aworthy-sidebar-collapsed") !== "true");
   const [expandedSection, setExpandedSection] = useState(null);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("aworthy-dark") === "true");
   const [showSearch, setShowSearch] = useState(false);
