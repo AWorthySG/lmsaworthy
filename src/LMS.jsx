@@ -214,7 +214,13 @@ function LMS({ authUser, userProfile }) {
   const renderPage = () => {
     switch (page) {
       case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
-      case "library": case "library-eng": case "library-h1econ": case "library-h2econ": case "library-omath": case "library-amath": case "library-ibmyp": return <ContentLibrary state={state} dispatch={dispatch} />;
+      case "library": return <ContentLibrary key="library" state={state} dispatch={dispatch} />;
+      case "library-eng": return <ContentLibrary key="library-eng" state={state} dispatch={dispatch} defaultSubject="eng" />;
+      case "library-h1econ": return <ContentLibrary key="library-h1econ" state={state} dispatch={dispatch} defaultSubject="h1econ" />;
+      case "library-h2econ": return <ContentLibrary key="library-h2econ" state={state} dispatch={dispatch} defaultSubject="h2econ" />;
+      case "library-omath": return <ContentLibrary key="library-omath" state={state} dispatch={dispatch} defaultSubject="omath" />;
+      case "library-amath": return <ContentLibrary key="library-amath" state={state} dispatch={dispatch} defaultSubject="amath" />;
+      case "library-ibmyp": return <ContentLibrary key="library-ibmyp" state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "videos": case "videos-eng": case "videos-h1econ": case "videos-h2econ": case "videos-omath": case "videos-amath": case "videos-ibmyp": return <VideoLessons state={state} dispatch={dispatch} />;
       case "attendance": return <Attendance state={state} dispatch={dispatch} />;
       case "progress": return <ProgressTracker state={state} dispatch={dispatch} />;
