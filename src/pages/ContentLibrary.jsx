@@ -49,7 +49,7 @@ function ContentLibrary({ state, dispatch }) {
   const [sortBy, setSortBy] = useState("newest");
   const [typeFilter, setTypeFilter] = useState("all");
 
-  const isTutor = state.role === "tutor";
+  const isTutor = true;
 
   function toggleSubject(id) { setExpandedSubjects((prev) => ({ ...prev, [id]: !prev[id] })); }
 

@@ -47,7 +47,7 @@ export const NAV = [
     { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
     { id: "community", label: "Community", icon: Handshake },
   ]},
-  { group: "Manage", tutorOnly: true, items: [
+  { group: "Manage", items: [
     { id: "homework", label: "Homework", icon: ClipboardText },
     { id: "aimarker", label: "AI Marker", icon: GraduationCap, highlight: true },
     { id: "attendance", label: "Attendance", icon: CalendarCheck },

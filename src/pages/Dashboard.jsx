@@ -792,9 +792,6 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
 
 /* ━━━ ROOT EXPORT ━━━ */
 function Dashboard({ state, dispatch, authUser, userProfile }) {
-  if (state.role === 'student') {
-    return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
-  }
   return <TutorDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
 }
 
