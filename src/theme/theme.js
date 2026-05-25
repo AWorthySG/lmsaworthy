@@ -50,7 +50,7 @@ export const T = {
   sidebarMuted:        "rgba(28,27,25,0.03)",
 
   // ── Subject palette ───────────────────────────────────────────────────────
-  eng:    { bg: "#EEF2FF", text: "#2D3A8C", accent: "#4F5BD5" },
+  eng:    { bg: "#EEF2FF", text: "#3730A3", accent: "#4338CA" },
   omath:  { bg: "#E0F7FA", text: "#00695C", accent: "#00897B" },
   amath:  { bg: "#FFF3E0", text: "#BF360C", accent: "#E64A19" },
   h1econ: { bg: "#F3EEFE", text: "#5B21B6", accent: "#7C3AED" },
@@ -87,7 +87,7 @@ export const T = {
   fontSerif:   "'Nunito', sans-serif",
 
   // ── Grade colours ─────────────────────────────────────────────────────────
-  gradeS: "#B07D2A", gradeA: "#16A34A", gradeB: "#2D3A8C", gradeC: "#9A5C04", gradeD: "#C0392B",
+  gradeS: "#B07D2A", gradeA: "#16A34A", gradeB: "#3730A3", gradeC: "#9A5C04", gradeD: "#C0392B",
 };
 
 export const SUBJ_THEME = { eng: T.eng, omath: T.omath, amath: T.amath, h1econ: T.h1econ, h2econ: T.h2econ, gp: T.gp, ibmyp: T.ibmyp };

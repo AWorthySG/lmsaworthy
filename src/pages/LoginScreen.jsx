@@ -71,7 +71,7 @@ function LoginScreen() {
 
         .login-root {
           min-height: 100dvh;
-          background: #0B0F1A;
+          background: #1C1B19;
           position: relative;
         }
         .login-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
