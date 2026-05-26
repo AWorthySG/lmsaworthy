@@ -84,15 +84,9 @@ There is no test suite.
 
 ### Firebase
 - `src/config/firebase.js` initialises the `aworthy-lms` project (Auth, Realtime DB region `asia-southeast1`, Storage). **Config keys are hardcoded in source** — these are client SDK keys, not secrets, but treat them accordingly.
-- `LMSAuthWrapper` in `LMS.jsx` is the auth gate: `undefined` → loading splash, `null` → `<LoginScreen />`, object → `<LMS authUser userProfile />`. User profile is fetched from RTDB at `users/{uid}` and falls back to `{ name, email, role: "student" }`.
-- The `role` from RTDB (`"tutor"` | `"student"`) is stored in `state.role` on login (via `SET_ROLE`). It is used for display purposes only (e.g., sidebar label "Creator" vs "Student") and does **not** gate any UI. There is no role toggle button and no `tutorOnly` NAV filtering.
+- `LMSAuthWrapper` in `LMS.jsx` is the auth gate: `undefined` → loading splash, `null` → `<LoginScreen />`, object → `<LMS authUser userProfile />`. User profile is fetched from RTDB at `users/{uid}` and falls back to `{ name, email, role: "student" }`. On login, if `user.email === "jeremylimguanfong@gmail.com"` and the stored role is not already `"tutor"`, `LMSAuthWrapper` writes `role: "tutor"` to `users/{uid}/role` in RTDB (using the user's own authenticated session) — a one-time self-healing promotion for the owner account.
+- The `role` from RTDB (`"tutor"` | `"student"`) is stored in `state.role` on login (via `SET_ROLE`). It is used for display purposes only (e.g., sidebar label "Creator" vs "A-Worthling") and does **not** gate any UI. There is no role toggle button and no `tutorOnly` NAV filtering.
 - `src/hooks/useFirebaseSync.js` — debounced bidirectional sync of PERSIST_KEYS to `users/{uid}/state` in RTDB. Uses a `writingRef` guard to prevent write-read feedback loops.
-
-### Canva integration
-- `api/canva.js` is a single Vercel serverless function (used by Certificates feature) that proxies Canva Connect OAuth + autofill + export, switched by `?action=` query (`auth-url`, `token`, `refresh`, `templates`, `template-fields`, `autofill`, `autofill-status`, `export`, `export-status`).
-- OAuth flow uses HMAC-signed state tokens (signed with `CANVA_CLIENT_SECRET`) for CSRF protection. The state is verified server-side on token exchange.
-- Requires env vars `CANVA_CLIENT_ID`, `CANVA_CLIENT_SECRET`, `CANVA_REDIRECT_URI` in Vercel.
-- `src/config/canva.js` is the browser client — tokens are stored in `localStorage` under `canva_tokens` and auto-refreshed within 5 minutes of expiry. OAuth state is stored in `sessionStorage` during the redirect flow.
 
 ### AI Grading
 - `api/grade.js` and `api/grade-essay.js` — Vercel serverless functions that proxy Anthropic API calls for AI-powered essay/homework grading. Require `ANTHROPIC_API_KEY` env var. CORS is restricted to an allowlist of trusted origins.
