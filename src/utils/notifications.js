@@ -7,7 +7,7 @@ export async function requestPushPermission() {
 }
 
 export function sendLocalNotification(title, body) {
-  if (Notification.permission === "granted") {
+  if (typeof Notification !== "undefined" && Notification.permission === "granted") {
     new Notification(title, { body, icon: "/logo-aworthy.jpeg", badge: "/logo-aworthy.jpeg" });
   }
 }
@@ -53,7 +53,7 @@ export async function registerServiceWorker() {
  * @param {Array} homework — array of homework objects with title, dueDate, status
  */
 export function sendHomeworkReminders(homework) {
-  if (Notification.permission !== "granted") return;
+  if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
 
   homework
@@ -68,7 +68,7 @@ export function sendHomeworkReminders(homework) {
  * @param {string} lastClaim — ISO date of last claim
  */
 export function sendStreakReminder(lastClaim) {
-  if (Notification.permission !== "granted") return;
+  if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
   const today = new Date().toISOString().split("T")[0];
   if (lastClaim !== today) {
     sendLocalNotification("Don't Break Your Streak!", "Log in to claim your daily reward and keep your streak going.");
