@@ -95,25 +95,30 @@ function ExampleConnector() {
 
                   {isOpen && (
                     <div style={{ padding: "0 14px 14px", animation: "fadeSlideIn 0.15s ease" }}>
-                      <div style={{ fontSize: 12, color: T.text, lineHeight: 1.7, marginBottom: 10, background: "#F5F7FE", borderRadius: T.r1, padding: "10px 12px" }}>{m.example.detail}</div>
-                      {/* Parsed FOR/COUNTER */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
+                      {/* Context paragraph */}
+                      <div style={{ fontSize: 12, color: T.text, lineHeight: 1.75, marginBottom: 12, background: T.bgMuted, borderRadius: T.r1, padding: "10px 12px", borderLeft: `3px solid ${m.theme.color}` }}>{m.example.detail}</div>
+                      {/* Full FOR/COUNTER elaborations */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
                         {m.example.use.split(/(?=(?:FOR |COUNTER))/g).filter(s => s.trim()).map((chunk, ci) => {
                           const isFor = chunk.startsWith("FOR ");
                           const isCounter = chunk.startsWith("COUNTER");
                           const raw = isFor ? chunk.slice(4) : isCounter ? chunk.replace(/^COUNTER:?\s*/, "") : chunk;
                           const colonIdx = raw.indexOf(": ");
-                          const topic = isFor && colonIdx > 0 && colonIdx < 120 ? raw.slice(0, colonIdx).trim() : null;
-                          const tagColor = isFor ? "#006840" : isCounter ? "#FB424E" : m.theme.color;
+                          const topic = colonIdx > 0 && colonIdx < 120 ? raw.slice(0, colonIdx).trim() : null;
+                          const body = topic ? raw.slice(colonIdx + 2).trim() : raw.trim();
+                          const tagColor = isFor ? "#006840" : "#FB424E";
                           return (
-                            <div key={ci} style={{ display: "flex", gap: 6, alignItems: "flex-start" }}>
-                              <span style={{ fontSize: 8, fontWeight: 800, color: tagColor, background: isFor ? "#E2FBF0" : "#FFEBEC", padding: "1px 5px", borderRadius: 8, flexShrink: 0, marginTop: 2 }}>{isFor ? "FOR" : "CTR"}</span>
-                              <span style={{ fontSize: 11, color: T.text, lineHeight: 1.4 }}>{topic || raw.split(/[.—]/)[0]}</span>
+                            <div key={ci} style={{ background: isFor ? "#F0FBF5" : "#FFF5F5", borderRadius: T.r1, padding: "8px 10px", borderLeft: `3px solid ${tagColor}` }}>
+                              <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: body ? 3 : 0 }}>
+                                <span style={{ fontSize: 8, fontWeight: 800, color: tagColor, background: isFor ? "#E2FBF0" : "#FFEBEC", padding: "1px 5px", borderRadius: 8, flexShrink: 0 }}>{isFor ? "FOR" : "CTR"}</span>
+                                {topic && <span style={{ fontSize: 11, fontWeight: 700, color: T.text, lineHeight: 1.3 }}>{topic}</span>}
+                              </div>
+                              {body && <p style={{ margin: 0, fontSize: 11, color: T.textSec, lineHeight: 1.55 }}>{body}</p>}
                             </div>
                           );
                         })}
                       </div>
-                      {/* Versatility */}
+                      {/* Versatility tags */}
                       <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                         {m.example.versatility.map(v => (
                           <span key={v} style={{ fontSize: 9, fontWeight: 600, color: m.theme.color, background: m.theme.bg, padding: "1px 6px", borderRadius: 10 }}>{v}</span>
