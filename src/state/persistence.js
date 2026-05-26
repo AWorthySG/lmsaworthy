@@ -8,6 +8,7 @@ import {
   initialPosts,
   initialHomework,
   initialSubmissions,
+  initialPastPaperDocs,
 } from "../data/seedData.js";
 
 export const DEFAULT_STATE = {
@@ -16,7 +17,7 @@ export const DEFAULT_STATE = {
   role: "tutor",
   resources: initialResources,
   exams: initialExams,
-  pastPaperDocs: [],
+  pastPaperDocs: initialPastPaperDocs,
   students: initialStudents,
   sessions: initialSessions,
   attendance: initialAttendanceRecords,
@@ -51,6 +52,10 @@ export function loadPersistedState() {
     // Merge persisted fields into default state (so new fields are always present)
     const merged = { ...DEFAULT_STATE };
     PERSIST_KEYS.forEach(k => { if (parsed[k] !== undefined) merged[k] = parsed[k]; });
+    // Ensure seeded practice paper docs are always present (merge any missing by id).
+    const existingIds = new Set((merged.pastPaperDocs || []).map(d => d.id));
+    const missing = initialPastPaperDocs.filter(d => !existingIds.has(d.id));
+    if (missing.length > 0) merged.pastPaperDocs = [...missing, ...(merged.pastPaperDocs || [])];
     return merged;
   } catch { return DEFAULT_STATE; }
 }

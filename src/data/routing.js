@@ -14,32 +14,32 @@ export const NAV = [
   { group: "O-Level English", subject: "eng", items: [
     { id: "library-eng", label: "Resources", icon: Books },
     { id: "vocab", label: "Vocabulary", icon: Scroll },
-    { id: "pastpapers-eng", label: "Past Papers", icon: Notebook },
+    { id: "pastpapers-eng", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "O-Level Mathematics", subject: "omath", items: [
     { id: "library-omath", label: "Resources", icon: Books },
-    { id: "pastpapers-omath", label: "Past Papers", icon: Notebook },
+    { id: "pastpapers-omath", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "O-Level Add. Maths", subject: "amath", items: [
     { id: "library-amath", label: "Resources", icon: Books },
-    { id: "pastpapers-amath", label: "Past Papers", icon: Notebook },
+    { id: "pastpapers-amath", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "H1 General Paper", subject: "gp", items: [
     { id: "example-finder", label: "Example Finder", icon: Lightbulb },
     { id: "modelessays", label: "Model Essays", icon: GraduationCap },
-    { id: "pastpapers-gp", label: "Past Papers", icon: Notebook },
+    { id: "pastpapers-gp", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "H1 Economics", subject: "h1econ", items: [
     { id: "library-h1econ", label: "Resources", icon: Books },
-    { id: "pastpapers-h1econ", label: "Past Papers", icon: Notebook },
+    { id: "pastpapers-h1econ", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "H2 Economics", subject: "h2econ", items: [
     { id: "library-h2econ", label: "Resources", icon: Books },
-    { id: "pastpapers-h2econ", label: "Past Papers", icon: Notebook },
+    { id: "pastpapers-h2econ", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "IB MYP Mathematics", subject: "ibmyp", items: [
     { id: "library-ibmyp", label: "Resources", icon: Books },
-    { id: "pastpapers-ibmyp", label: "Past Papers", icon: Notebook },
+    { id: "pastpapers-ibmyp", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "My Work", items: [
     { id: "mistakes", label: "Mistake Journal", icon: BookOpen },

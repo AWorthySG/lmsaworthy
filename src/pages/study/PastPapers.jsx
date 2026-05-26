@@ -90,7 +90,7 @@ function UploadPanel({ activeSubj, state, dispatch, onClose }) {
   return (
     <div style={{ background: T.bgCard, borderRadius: T.r2, border: `1.5px solid ${T.accent}`, padding: 20, marginBottom: 16 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: T.text }}>Upload Past Paper</span>
+        <span style={{ fontSize: 14, fontWeight: 700, color: T.text }}>Upload Practice Paper</span>
         <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, padding: 4 }}><X size={16} /></button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
@@ -195,8 +195,8 @@ function PastPapers({ state, dispatch, defaultSubject }) {
   return (
     <div>
       <PageHeader
-        title="Past Papers"
-        subtitle="Exam papers organised by year and school"
+        title="Practice Papers"
+        subtitle="Practice and exam papers organised by year and school"
         action={isTutor ? (
           <button onClick={() => setShowUpload(s => !s)}
             style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: T.r2, border: `1px solid ${T.accent}`, background: T.accentLight, color: T.accent, fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
