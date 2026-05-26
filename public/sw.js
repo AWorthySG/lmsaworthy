@@ -1,7 +1,7 @@
 /* global clients */
 // Service Worker — enables offline caching, PWA install, and push notifications
-const CACHE_NAME = 'aworthy-lms-v7';
-const ASSETS_CACHE = 'aworthy-assets-v7'; // immutable hashed bundles
+const CACHE_NAME = 'aworthy-lms-v8';
+const ASSETS_CACHE = 'aworthy-assets-v8'; // immutable hashed bundles
 const FETCH_TIMEOUT_MS = 5000;
 const APP_SHELL = [
   '/',
@@ -46,10 +46,13 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Navigation — network-first, fall back to index.html for SPA routing
+  // Navigation — network-first with 4s timeout, fall back to cached index.html for SPA routing
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      fetch(e.request).catch(() => caches.match('/index.html'))
+      Promise.race([
+        fetch(e.request),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000)),
+      ]).catch(() => caches.match('/index.html'))
     );
     return;
   }
