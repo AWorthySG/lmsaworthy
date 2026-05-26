@@ -7,7 +7,7 @@ function loadPomodoroPrefs() {
 }
 
 function PomodoroTimer({ dispatch }) {
-  const prefs = useMemo(loadPomodoroPrefs, []);
+  const prefs = useMemo(() => loadPomodoroPrefs(), []);
   const WORK_MIN = prefs.workMin;
   const BREAK_MIN = prefs.breakMin;
 
@@ -46,7 +46,7 @@ function PomodoroTimer({ dispatch }) {
       });
     }, 1000);
     return () => clearInterval(intervalRef.current);
-  }, [isRunning, mode]);
+  }, [isRunning, mode, WORK_MIN, BREAK_MIN, dispatch]);
 
   function toggle() { setIsRunning(r => !r); }
   function reset() { clearInterval(intervalRef.current); setIsRunning(false); setMinutes(mode === "focus" ? WORK_MIN : BREAK_MIN); setSeconds(0); }

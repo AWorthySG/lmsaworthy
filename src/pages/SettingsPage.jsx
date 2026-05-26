@@ -106,12 +106,12 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile, state, dis
     if (userProfile?.name && !editingName) setNameValue(userProfile.name);
   }, [userProfile?.name]);
 
-  useEffect(() => { try { localStorage.setItem(FONT_SIZE_KEY, fontSize); } catch {} }, [fontSize]);
-  useEffect(() => { try { localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(notifPrefs)); } catch {} }, [notifPrefs]);
-  useEffect(() => { try { localStorage.setItem(SIDEBAR_KEY, sidebarDefault ? "true" : "false"); } catch {} }, [sidebarDefault]);
-  useEffect(() => { try { localStorage.setItem(POMODORO_KEY, JSON.stringify(pomodoroPrefs)); } catch {} }, [pomodoroPrefs]);
-  useEffect(() => { try { localStorage.setItem(HIDE_HW_KEY, hideCompletedHw ? "true" : "false"); } catch {} }, [hideCompletedHw]);
-  useEffect(() => { try { localStorage.setItem(DEFAULT_PAGE_KEY, defaultPage); } catch {} }, [defaultPage]);
+  useEffect(() => { try { localStorage.setItem(FONT_SIZE_KEY, fontSize); } catch { /* ignore */ } }, [fontSize]);
+  useEffect(() => { try { localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(notifPrefs)); } catch { /* ignore */ } }, [notifPrefs]);
+  useEffect(() => { try { localStorage.setItem(SIDEBAR_KEY, sidebarDefault ? "true" : "false"); } catch { /* ignore */ } }, [sidebarDefault]);
+  useEffect(() => { try { localStorage.setItem(POMODORO_KEY, JSON.stringify(pomodoroPrefs)); } catch { /* ignore */ } }, [pomodoroPrefs]);
+  useEffect(() => { try { localStorage.setItem(HIDE_HW_KEY, hideCompletedHw ? "true" : "false"); } catch { /* ignore */ } }, [hideCompletedHw]);
+  useEffect(() => { try { localStorage.setItem(DEFAULT_PAGE_KEY, defaultPage); } catch { /* ignore */ } }, [defaultPage]);
 
   function updateNotifPref(key, value) { setNotifPrefs(p => ({ ...p, [key]: value })); }
 
@@ -139,7 +139,7 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile, state, dis
     try {
       localStorage.removeItem("aworthy-lms-state");
       [FONT_SIZE_KEY, NOTIF_PREFS_KEY, SIDEBAR_KEY, POMODORO_KEY, HIDE_HW_KEY, DEFAULT_PAGE_KEY, "aworthy-dark"].forEach(k => localStorage.removeItem(k));
-    } catch {}
+    } catch { /* ignore */ }
     setShowClearConfirm(false);
     window.location.reload();
   }

@@ -770,7 +770,7 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
             </button>
           }>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-              {(state.posts || []).slice(0, 3).map((post, i) => (
+              {(state.posts || []).slice(0, 3).map((post) => (
                 <div key={post.id}
                   onClick={() => dispatch({ type: 'SET_PAGE', payload: 'community' })}
                   role="button" tabIndex={0}
