@@ -75,12 +75,13 @@ export const PAGE_TO_PATH = {
   mistakes: "/mistake-journal", checklist: "/revision-checklist",
   events: "/events",
   settings: "/settings",
-  // Subject-suffixed library IDs all map to the shared /library path
-  "library-eng": "/library", "library-h1econ": "/library", "library-h2econ": "/library",
-  "library-omath": "/library", "library-amath": "/library", "library-ibmyp": "/library",
+  // Library: base path + one unique path per subject. Each subject needs its
+  // own URL so the URL<->state round-trip preserves the subject (a shared
+  // /library collapsed every subject back to the base id and bounced to "/").
+  library: "/library",
+  "library-eng": "/library/eng", "library-h1econ": "/library/h1econ", "library-h2econ": "/library/h2econ",
+  "library-omath": "/library/omath", "library-amath": "/library/amath", "library-ibmyp": "/library/ibmyp",
 };
 
-// Auto-generate reverse mapping; /library resolves to unsuffixed base ID
-const _autoPath = Object.fromEntries(Object.entries(PAGE_TO_PATH).map(([k, v]) => [v, k]));
-_autoPath["/library"] = "library";
-export const PATH_TO_PAGE = _autoPath;
+// Auto-generate reverse mapping (paths are unique, so no manual override needed)
+export const PATH_TO_PAGE = Object.fromEntries(Object.entries(PAGE_TO_PATH).map(([k, v]) => [v, k]));
