@@ -648,6 +648,11 @@ export const initialPastPaperDocs = [
   { id: 101, name: "Editing Practice 49 — Answers", fileName: "Paper-49-A.pdf", url: "/resources/eng/finalised-2026/practice/Paper-49-A.pdf", subject: "eng", fileType: "pdf", year: 2026, school: "A Worthy Learning", uploadedAt: "2026-01-01", uploadedBy: "Tutor" },
   { id: 102, name: "Editing Practice 50 — Questions", fileName: "Paper-50-Q.pdf", url: "/resources/eng/finalised-2026/practice/Paper-50-Q.pdf", subject: "eng", fileType: "pdf", year: 2026, school: "A Worthy Learning", uploadedAt: "2026-01-01", uploadedBy: "Tutor" },
   { id: 103, name: "Editing Practice 50 — Answers", fileName: "Paper-50-A.pdf", url: "/resources/eng/finalised-2026/practice/Paper-50-A.pdf", subject: "eng", fileType: "pdf", year: 2026, school: "A Worthy Learning", uploadedAt: "2026-01-01", uploadedBy: "Tutor" },
+  { id: 104, name: "GP Paper 2 — Question Booklet", fileName: "GP_Paper2_Question_Booklet.docx", url: "/resources/gp/practice/GP_Paper2_Question_Booklet.docx", subject: "gp", fileType: "docx", year: 2026, school: "A Worthy Learning", uploadedAt: "2026-03-07", uploadedBy: "Tutor" },
+  { id: 105, name: "GP Paper 2 — Model Answers", fileName: "GP_Paper2_Model_Answers.docx", url: "/resources/gp/practice/GP_Paper2_Model_Answers.docx", subject: "gp", fileType: "docx", year: 2026, school: "A Worthy Learning", uploadedAt: "2026-03-07", uploadedBy: "Tutor" },
+  { id: 106, name: "GP Paper 2 — Practice with Answers (QR)", fileName: "GP_Paper2_Practice_With_Answers_QR.docx", url: "/resources/gp/practice/GP_Paper2_Practice_With_Answers_QR.docx", subject: "gp", fileType: "docx", year: 2026, school: "A Worthy Learning", uploadedAt: "2026-03-07", uploadedBy: "Tutor" },
+  { id: 107, name: "2018 Cambridge GP Paper 2 — Insert (Reading Passage)", fileName: "2018-Cambridge-GP-Paper2-Insert.pdf", url: "/resources/gp/practice/2018-Cambridge-GP-Paper2-Insert.pdf", subject: "gp", fileType: "pdf", year: 2018, school: "Cambridge A-Level", uploadedAt: "2026-05-26", uploadedBy: "Tutor" },
+  { id: 108, name: "2018 Cambridge GP Paper 2 — Answer Booklet", fileName: "2018-Cambridge-GP-Paper2-Answer-Booklet.pdf", url: "/resources/gp/practice/2018-Cambridge-GP-Paper2-Answer-Booklet.pdf", subject: "gp", fileType: "pdf", year: 2018, school: "Cambridge A-Level", uploadedAt: "2026-05-26", uploadedBy: "Tutor" },
 ];
 
 /* ━━━ REDUCER ━━━ */
