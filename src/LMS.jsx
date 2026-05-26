@@ -320,7 +320,7 @@ function LMS({ authUser, userProfile }) {
                           <button key={item.id} onClick={() => { dispatch({ type: "SET_PAGE", payload: item.id }); if (isMobileLayout) setSidebarOpen(false); }} title={item.label}
                             onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = T.sidebarHover; }}
                             onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = active ? T.bgCard : "transparent"; }}
-                            style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: sidebarOpen ? "7px 8px 7px 10px" : "9px 0", borderRadius: T.r2, border: "none", background: active ? T.bgCard : "transparent", color: active ? T.text : T.textSec, cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, marginBottom: 1, transition: "background 0.12s, color 0.12s", whiteSpace: "nowrap", justifyContent: sidebarOpen ? "flex-start" : "center", minHeight: 36, animation: isSubject ? `itemIn 0.15s ease ${itemIdx * 25}ms both` : "none", boxShadow: active ? T.shadow1 : "none" }}>
+                            style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: sidebarOpen ? "7px 8px 7px 10px" : "9px 0", borderRadius: T.r2, border: "none", background: active ? T.bgCard : "transparent", color: active ? T.text : T.textSec, cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, marginBottom: 1, transition: "background 0.12s, color 0.12s", whiteSpace: "nowrap", justifyContent: sidebarOpen ? "flex-start" : "center", minHeight: 40, animation: isSubject ? `itemIn 0.15s ease ${itemIdx * 25}ms both` : "none", boxShadow: active ? T.shadow1 : "none" }}>
                             <item.icon size={15} color={active ? T.accent : T.textTer} />
                             {sidebarOpen && <span style={{ flex: 1, textAlign: "left" }}>{item.label}</span>}
                             {sidebarOpen && item.id === "homework" && hwBadge > 0 && <span style={{ background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 10 }}>{hwBadge}</span>}
@@ -373,7 +373,7 @@ function LMS({ authUser, userProfile }) {
           )}
           {isMobileLayout && <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, objectFit: "contain" }} />}
           <div style={{ flex: 1 }} />
-          <button onClick={() => setShowSearch(true)} aria-label="Search" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 40, fontSize: 12, color: T.textTer }}>
+          <button onClick={() => setShowSearch(true)} aria-label="Search" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 44, fontSize: 12, color: T.textTer }}>
             <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: T.fontMono }}>⌘K</kbd>}
           </button>
           <div style={{ position: "relative" }}>
