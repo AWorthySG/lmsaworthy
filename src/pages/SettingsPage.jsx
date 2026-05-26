@@ -191,7 +191,13 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile, state, dis
         {showAvatarPicker && (
           <AvatarPicker
             value={state?.myAvatar}
-            onSave={(key) => { dispatch({ type: "SET_MY_AVATAR", payload: key }); setShowAvatarPicker(false); }}
+            onSave={(key) => {
+              dispatch({ type: "SET_MY_AVATAR", payload: key });
+              const matchedStudent = (Array.isArray(state?.students) ? state.students : [])
+                .find(s => s.email && authUser?.email && s.email.toLowerCase() === authUser.email.toLowerCase());
+              if (matchedStudent) dispatch({ type: "UPDATE_STUDENT_AVATAR", payload: { studentId: matchedStudent.id, avatar: key } });
+              setShowAvatarPicker(false);
+            }}
             onCancel={() => setShowAvatarPicker(false)}
           />
         )}
@@ -300,7 +306,7 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile, state, dis
         <div style={{ ...rowStyle, borderBottom: "none" }}>
           <div style={labelStyle}>Role</div>
           <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", padding: "4px 12px", borderRadius: T.r1, background: roleBadgeColor.bg, color: roleBadgeColor.text }}>
-            {userProfile?.role || "student"}
+            {userProfile?.role === "tutor" ? "Creator" : "A-Worthling"}
           </span>
         </div>
       </div>

@@ -1,8 +1,7 @@
 import React from 'react';
 import { T } from '../theme/theme.js';
-import { Users, ChartLineUp, CalendarCheck, Trophy, Star, CheckCircle, ArrowSquareOut, Flame, ClipboardText, CalendarBlank, PencilSimpleLine, Timer } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard } from '../components/ui';
-import { StudentAvatar } from '../components/gamification';
+import { ClipboardText, CalendarBlank, PencilSimpleLine, Timer } from '../icons/icons.jsx';
+import { AvatarDisplay } from '../components/gamification/StudentAvatar.jsx';
 import { getExamCountdowns } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 
@@ -15,12 +14,17 @@ function ParentView({ state }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ background: T.bgCard, borderRadius: T.r4, padding: "28px 24px", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-          <img src="/logo-aworthy.jpeg" alt="A Worthy Learning" style={{ height: 36, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8 }} />
-          <span style={{ fontSize: 10, fontWeight: 600, color: T.textTer, letterSpacing: 2, textTransform: "uppercase" }}>A Worthy · Parent Dashboard</span>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <img src="/logo-aworthy.jpeg" alt="A Worthy Learning" style={{ height: 36, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8 }} />
+              <span style={{ fontSize: 10, fontWeight: 600, color: T.textTer, letterSpacing: 2, textTransform: "uppercase" }}>A Worthy · Parent Dashboard</span>
+            </div>
+            <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px", fontFamily: T.fontDisplay, color: T.text }}>Progress Report</h1>
+            <p style={{ fontSize: 13, color: T.textSec, margin: 0 }}>Real-time overview of your child's learning journey</p>
+          </div>
+          {state.myAvatar && <AvatarDisplay avatarKey={state.myAvatar} size={56} radius={T.r2} />}
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px", fontFamily: T.fontDisplay, color: T.text }}>Progress Report</h1>
-        <p style={{ fontSize: 13, color: T.textSec, margin: 0 }}>Real-time overview of your child's learning journey</p>
       </div>
 
       {/* Key Stats */}
@@ -80,7 +84,5 @@ function ParentView({ state }) {
     </div>
   );
 }
-
-/* ━━━ PERSONAL NOTES SYSTEM ━━━ */
 
 export default ParentView;

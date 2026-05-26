@@ -1,6 +1,5 @@
 import {
   initialResources,
-  initialVideoLessons,
   initialExams,
   initialStudents,
   initialSessions,
@@ -9,6 +8,7 @@ import {
   initialPosts,
   initialHomework,
   initialSubmissions,
+  initialPastPaperDocs,
 } from "../data/seedData.js";
 
 export const DEFAULT_STATE = {
@@ -16,9 +16,8 @@ export const DEFAULT_STATE = {
   subPage: null,
   role: "tutor",
   resources: initialResources,
-  videoLessons: initialVideoLessons,
   exams: initialExams,
-  pastPaperDocs: [],
+  pastPaperDocs: initialPastPaperDocs,
   students: initialStudents,
   sessions: initialSessions,
   attendance: initialAttendanceRecords,
@@ -29,9 +28,7 @@ export const DEFAULT_STATE = {
   homework: initialHomework,
   submissions: initialSubmissions,
   studyLogs: [],
-  notes: [],
   announcement: null,
-  goals: [],
   mistakes: [],
   revisionChecklist: {},
   myAvatar: null,
@@ -41,10 +38,10 @@ export const DEFAULT_STATE = {
 // Persist key parts of state to localStorage
 export const PERSIST_KEYS = [
   "bookmarks", "attendance", "submissions", "homework",
-  "pastPaperDocs", "studyLogs", "notes",
-  "announcement", "goals", "mistakes", "revisionChecklist",
+  "pastPaperDocs", "studyLogs",
+  "announcement", "mistakes", "revisionChecklist",
   "posts", "reports", "myAvatar", "studentAvatars", "students",
-  "sessions", "videoLessons",
+  "sessions",
 ];
 
 export function loadPersistedState() {
@@ -55,6 +52,10 @@ export function loadPersistedState() {
     // Merge persisted fields into default state (so new fields are always present)
     const merged = { ...DEFAULT_STATE };
     PERSIST_KEYS.forEach(k => { if (parsed[k] !== undefined) merged[k] = parsed[k]; });
+    // Ensure seeded practice paper docs are always present (merge any missing by id).
+    const existingIds = new Set((merged.pastPaperDocs || []).map(d => d.id));
+    const missing = initialPastPaperDocs.filter(d => !existingIds.has(d.id));
+    if (missing.length > 0) merged.pastPaperDocs = [...missing, ...(merged.pastPaperDocs || [])];
     return merged;
   } catch { return DEFAULT_STATE; }
 }

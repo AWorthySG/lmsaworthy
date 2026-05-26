@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { T } from "./theme/theme.js";
-import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
-import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
+import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
+import { firebaseAuth, firebaseDb, ref, get, set, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
 import { NAV, PAGE_TO_PATH, PATH_TO_PAGE } from "./data/routing.js";
@@ -17,7 +17,7 @@ import ToastContainer from "./components/toast/ToastContainer.jsx";
 import BackToTop from "./components/ui/BackToTop.jsx";
 import InstallPrompt from "./components/ui/InstallPrompt.jsx";
 import LoginScreen from "./pages/LoginScreen.jsx";
-import { AvatarDisplay } from "./components/gamification/StudentAvatar.jsx";
+import { AvatarDisplay, AvatarPicker } from "./components/gamification/StudentAvatar.jsx";
 
 // Lazy-loaded page imports (code-split per route)
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
@@ -32,12 +32,10 @@ const AIMarker = lazy(() => import("./pages/tools/AIMarker.jsx"));
 const Homework = lazy(() => import("./pages/homework/Homework.jsx"));
 const Events = lazy(() => import("./pages/Events.jsx"));
 const PastPapers = lazy(() => import("./pages/study/PastPapers.jsx"));
-const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard.jsx"));
 const ParentView = lazy(() => import("./pages/ParentView.jsx"));
 const ModelEssayBank = lazy(() => import("./pages/study/ModelEssayBank.jsx"));
 const MistakeJournal = lazy(() => import("./pages/study/MistakeJournal.jsx"));
 const RevisionChecklist = lazy(() => import("./pages/study/RevisionChecklist.jsx"));
-const Certificates = lazy(() => import("./pages/Certificates.jsx"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
 
 
@@ -51,7 +49,13 @@ export default function LMSAuthWrapper() {
         try {
           const snap = await get(ref(firebaseDb, `users/${user.uid}`));
           const profile = snap.val();
-          setUserProfile(profile || { name: user.displayName || "User", email: user.email, role: "student" });
+          // Promote the owner account to tutor on first login if not already set
+          if (user.email === "jeremylimguanfong@gmail.com" && profile?.role !== "tutor") {
+            await set(ref(firebaseDb, `users/${user.uid}/role`), "tutor");
+            setUserProfile({ ...(profile || { name: user.displayName || "User", email: user.email }), role: "tutor" });
+          } else {
+            setUserProfile(profile || { name: user.displayName || "User", email: user.email, role: "student" });
+          }
         } catch {
           setUserProfile({ name: user.displayName || "User", email: user.email, role: "student" });
         }
@@ -154,6 +158,30 @@ function LMS({ authUser, userProfile }) {
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("aworthy-dark") === "true");
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAvatarPrompt, setShowAvatarPrompt] = useState(
+    () => !localStorage.getItem("aworthy-avatar-prompted")
+  );
+
+  // Login welcome animation — plays once each time the app shell mounts
+  const [showWelcome, setShowWelcome] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setShowWelcome(false), 2400);
+    return () => clearTimeout(t);
+  }, []);
+  const welcomeFirstName = (userProfile?.name || authUser?.displayName || "there").split(" ")[0];
+  const welcomeHour = new Date().getHours();
+  const welcomeGreeting = welcomeHour < 12 ? "Good morning" : welcomeHour < 18 ? "Good afternoon" : "Good evening";
+
+  function saveAvatarPromptChoice(key) {
+    if (key) {
+      dispatch({ type: "SET_MY_AVATAR", payload: key });
+      const matched = (Array.isArray(state.students) ? state.students : [])
+        .find(s => s.email && authUser?.email && s.email.toLowerCase() === authUser.email.toLowerCase());
+      if (matched) dispatch({ type: "UPDATE_STUDENT_AVATAR", payload: { studentId: matched.id, avatar: key } });
+    }
+    localStorage.setItem("aworthy-avatar-prompted", "true");
+    setShowAvatarPrompt(false);
+  }
   const searchRef = useRef(null);
   const windowWidth = useWindowWidth();
   const isMobileLayout = windowWidth < 768;
@@ -189,11 +217,10 @@ function LMS({ authUser, userProfile }) {
     return [
       ...state.resources.filter(r => r.title.toLowerCase().includes(q)).slice(0, 3).map(r => ({ type: "file", label: r.title, page: "library" })),
       ...(Array.isArray(state.homework) ? state.homework : []).filter(h => h.title.toLowerCase().includes(q)).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
-      ...(Array.isArray(state.videoLessons) ? state.videoLessons : []).filter(v => v.title.toLowerCase().includes(q)).slice(0, 2).map(v => ({ type: "video", label: v.title, page: "videos" })),
       ...(state.posts || []).filter(p => p.title.toLowerCase().includes(q)).slice(0, 2).map(p => ({ type: "chat", label: p.title, page: "community" })),
       ...NAV.flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(q)).map(i => ({ type: "link", label: i.label, page: i.id })),
     ].slice(0, 8);
-  }, [searchQuery, state.resources, state.homework, state.videoLessons, state.posts]);
+  }, [searchQuery, state.resources, state.homework, state.posts]);
 
   const hwBadge = useMemo(() => (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.status === "submitted").length, [state.submissions]);
   const attendanceBadge = useMemo(() => {
@@ -237,12 +264,10 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-omath": return <PastPapers state={state} dispatch={dispatch} defaultSubject="omath" />;
       case "pastpapers-amath": return <PastPapers state={state} dispatch={dispatch} defaultSubject="amath" />;
       case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
-      case "analytics": return <AnalyticsDashboard state={state} />;
       case "parentview": return <ParentView state={state} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
-      case "certificates": return <Certificates state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
     }
@@ -250,6 +275,44 @@ function LMS({ authUser, userProfile }) {
 
   return (
     <MotionConfig reducedMotion="user">
+    <AnimatePresence>
+      {showWelcome && (
+        <motion.div
+          key="welcome-overlay"
+          role="status"
+          aria-label={`${welcomeGreeting}, ${welcomeFirstName}`}
+          onClick={() => setShowWelcome(false)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          style={{ position: "fixed", inset: 0, zIndex: 300, background: "#1C1B19", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 22, cursor: "pointer", padding: 24 }}>
+          <div style={{ position: "absolute", top: "40%", left: "50%", transform: "translate(-50%,-50%)", width: 380, height: 380, borderRadius: "50%", background: `radial-gradient(circle, ${T.accent}26, transparent 70%)`, pointerEvents: "none" }} />
+          <motion.img
+            src="/logo-aworthy.jpeg" alt="A Worthy"
+            initial={{ opacity: 0, y: 12, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.12, duration: 0.5, ease: "easeOut" }}
+            style={{ height: 46, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8, position: "relative" }} />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.32, duration: 0.5, ease: "easeOut" }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, position: "relative" }}>
+            {state.myAvatar
+              ? <AvatarDisplay avatarKey={state.myAvatar} size={60} radius={T.r2} />
+              : <div style={{ width: 60, height: 60, borderRadius: T.r2, background: `linear-gradient(135deg, ${T.accent}, #B45309)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 22 }}>
+                  {welcomeFirstName.charAt(0).toUpperCase()}
+                </div>
+            }
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#FEFEFE", fontFamily: T.fontDisplay, letterSpacing: -0.3 }}>{welcomeGreeting}, {welcomeFirstName}</div>
+              <div style={{ fontSize: 11, color: "rgba(254,254,254,0.4)", fontWeight: 600, letterSpacing: 1.6, textTransform: "uppercase", marginTop: 7 }}>A Worthy Learning</div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
     <div style={{ display: "flex", minHeight: "100dvh", background: T.bg, color: T.text, fontSize: 14, lineHeight: 1.6 }}>
       {/* Mobile overlay backdrop */}
       {isMobileLayout && sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: T.bgOverlay, zIndex: 49, transition: "opacity 0.2s" }} />}
@@ -348,7 +411,7 @@ function LMS({ authUser, userProfile }) {
               }
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ color: T.text, fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userProfile?.name || authUser?.displayName || "User"}</div>
-                <div style={{ color: T.textTer, fontSize: 11 }}>{userProfile?.role === "tutor" ? "Creator" : userProfile?.role === "student" ? "Student" : "Member"}</div>
+                <div style={{ color: T.textTer, fontSize: 11 }}>{userProfile?.role === "tutor" ? "Creator" : userProfile?.role === "student" ? "A-Worthling" : "Member"}</div>
               </div>
             </div>
             <div style={{ display: "flex", gap: 6 }}>
@@ -450,7 +513,7 @@ function LMS({ authUser, userProfile }) {
                       onMouseEnter={e => { e.currentTarget.style.background = T.bgMuted; e.currentTarget.style.paddingLeft = "24px"; }}
                       onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.paddingLeft = "20px"; }}>
                       <span style={{ minWidth: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        {r.type === "file" ? <FilePdf size={18} color={T.textSec} /> : r.type === "clipboard" ? <ClipboardText size={18} color={T.textSec} /> : r.type === "video" ? <PlayCircle size={18} color={T.textSec} /> : r.type === "chat" ? <ChatCircle size={18} color={T.textSec} /> : <ArrowSquareOut size={18} color={T.textSec} />}
+                        {r.type === "file" ? <FilePdf size={18} color={T.textSec} /> : r.type === "clipboard" ? <ClipboardText size={18} color={T.textSec} /> : r.type === "chat" ? <ChatCircle size={18} color={T.textSec} /> : <ArrowSquareOut size={18} color={T.textSec} />}
                       </span>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</div>
@@ -470,7 +533,7 @@ function LMS({ authUser, userProfile }) {
                       { label: "Dashboard", page: "dashboard", icon: House },
                       { label: "Homework", page: "homework", icon: ClipboardText },
                       { label: "Community", page: "community", icon: Handshake },
-                      { label: "Students", page: "progress", icon: Users },
+                      { label: "A-Worthlings", page: "progress", icon: Users },
                     ].map(q => (
                       <button key={q.page} onClick={() => { dispatch({ type: "SET_PAGE", payload: q.page }); setShowSearch(false); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, cursor: "pointer", fontSize: 12, fontWeight: 600, color: T.text, transition: "all 0.15s" }}
                         onMouseEnter={e => { e.currentTarget.style.background = T.border; e.currentTarget.style.transform = "translateY(-1px)"; }}
@@ -487,6 +550,29 @@ function LMS({ authUser, userProfile }) {
       </AnimatePresence>
 
       {/* Mobile Bottom Nav */}
+      {showAvatarPrompt && state.myAvatar === null && (
+        <div
+          role="dialog" aria-modal="true" aria-label="Choose your avatar"
+          style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(28,27,25,0.55)", backdropFilter: "blur(4px)", padding: 16 }}
+          onClick={e => { if (e.target === e.currentTarget) saveAvatarPromptChoice(null); }}>
+          <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "28px 24px", maxWidth: 360, width: "100%", boxShadow: "0 24px 64px rgba(28,27,25,0.22)" }}>
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay, marginBottom: 4 }}>Choose your avatar</div>
+              <div style={{ fontSize: 13, color: T.textSec }}>Pick an icon and colour to represent you across the LMS.</div>
+            </div>
+            <AvatarPicker
+              value={null}
+              onSave={(key) => saveAvatarPromptChoice(key)}
+            />
+            <button
+              onClick={() => saveAvatarPromptChoice(null)}
+              style={{ marginTop: 12, width: "100%", padding: "8px 0", background: "none", border: "none", color: T.textTer, fontSize: 12, cursor: "pointer" }}>
+              Skip for now
+            </button>
+          </div>
+        </div>
+      )}
+
       {isMobileLayout && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: darkMode ? "rgba(28,27,25,0.97)" : "rgba(255,255,255,0.97)", borderTop: `1px solid ${T.border}`, display: "flex", zIndex: 60, paddingBottom: "env(safe-area-inset-bottom, 0px)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}>
           {[

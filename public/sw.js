@@ -1,7 +1,7 @@
 /* global clients */
 // Service Worker — enables offline caching, PWA install, and push notifications
-const CACHE_NAME = 'aworthy-lms-v8';
-const ASSETS_CACHE = 'aworthy-assets-v8'; // immutable hashed bundles
+const CACHE_NAME = 'aworthy-lms-v9';
+const ASSETS_CACHE = 'aworthy-assets-v9'; // immutable hashed bundles
 const FETCH_TIMEOUT_MS = 5000;
 const APP_SHELL = [
   '/',

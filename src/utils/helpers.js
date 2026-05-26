@@ -61,9 +61,8 @@ export function getWeeklyProgress(state) {
   const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
   const weekStr = weekAgo.toISOString().split("T")[0];
   const hwCompleted = (state.submissions || []).filter(s => s.submittedAt && s.submittedAt >= weekStr).length;
-  const quizzesTaken = 0;
-  const notesCreated = (state.notes || []).filter(n => n.createdAt >= weekStr).length;
-  return { hwCompleted, quizzesTaken, notesCreated };
+  const studyDays = new Set((state.studyLogs || []).map(l => new Date(l.timestamp).toISOString().split("T")[0]).filter(d => d >= weekStr)).size;
+  return { hwCompleted, studyDays };
 }
 
 /* ━━━ VOCAB WORD OF THE DAY ━━━ */

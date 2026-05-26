@@ -57,6 +57,4 @@ function RevisionChecklist({ state, dispatch }) {
   );
 }
 
-/* ━━━ GOAL SETTING PAGE ━━━ */
-
 export default RevisionChecklist;

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
 import { ArrowLeft, ArrowRight, ClipboardText, Clock, Warning, CheckCircle, Upload, X, FilePdf, FileDoc, FileVideo } from '../../icons/icons.jsx';
+import { AvatarDisplay } from '../../components/gamification/StudentAvatar.jsx';
 import { getSubject } from '../../utils/helpers.js';
 import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
 
@@ -237,9 +238,12 @@ function StudentHomework({ state, dispatch, userProfile }) {
       {/* Header */}
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-          <div style={{ width: 38, height: 38, borderRadius: T.r2, background: T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <ClipboardText size={20} weight="duotone" color={T.accent} />
-          </div>
+          {state.myAvatar
+            ? <AvatarDisplay avatarKey={state.myAvatar} size={38} radius={T.r2} />
+            : <div style={{ width: 38, height: 38, borderRadius: T.r2, background: T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <ClipboardText size={20} color={T.accent} />
+              </div>
+          }
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, color: T.text, margin: 0, fontFamily: T.fontDisplay }}>My Homework</h1>
             <p style={{ color: T.textSec, fontSize: 13, margin: 0 }}>View assignments and submit your work</p>

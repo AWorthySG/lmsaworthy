@@ -42,9 +42,9 @@ function LoginScreen() {
   }
 
   const FEATURES = [
-    { icon: <Target size={20} color="#D4A254" />, title: "Practice Drills", desc: "Structured question-type frameworks" },
-    { icon: <RocketLaunch size={20} color="#D4A254" />, title: "AI Essay Grader", desc: "Instant AI feedback on your essays" },
-    { icon: <ChartLineUp size={20} color="#D4A254" />, title: "Live Analytics", desc: "Track progress across all subjects" },
+    { icon: <Target size={20} color="#D4A254" />, title: "Past Papers", desc: "Exam papers organised by year & school" },
+    { icon: <RocketLaunch size={20} color="#D4A254" />, title: "AI Marker", desc: "Instant AI feedback on essays & homework" },
+    { icon: <ChartLineUp size={20} color="#D4A254" />, title: "Progress Tracking", desc: "Track performance across all subjects" },
     { icon: <Trophy size={20} color="#D4A254" />, title: "Live Classroom", desc: "Real-time whiteboard and collaboration" },
   ];
 
@@ -179,7 +179,7 @@ function LoginScreen() {
 
           {/* Stats */}
           <div className="login-stats">
-            {[{ n: "150+", l: "Resources" }, { n: "AI", l: "Essay Grader" }, { n: "4", l: "Subjects" }, { n: "100%", l: "Cambridge" }].map(s => (
+            {[{ n: "150+", l: "Resources" }, { n: "AI", l: "Marking" }, { n: "7", l: "Subjects" }, { n: "100%", l: "Exam-Aligned" }].map(s => (
               <div key={s.l}>
                 <div style={{ fontSize: 24, fontWeight: 800, color: "#D4A254", fontFamily: T.fontDisplay, letterSpacing: "-0.03em" }}>{s.n}</div>
                 <div style={{ fontSize: 9, fontWeight: 500, color: "rgba(254,254,254,0.3)", letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: T.fontDisplay, marginTop: 2 }}>{s.l}</div>

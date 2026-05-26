@@ -141,7 +141,7 @@ function AIMarker() {
 
           <Field label="Or paste text directly">
             <textarea value={pastedText} onChange={(e) => setPastedText(e.target.value)} rows={6}
-              placeholder="Paste the student's essay or answer here..."
+              placeholder="Paste the A-Worthling's essay or answer here..."
               style={{ ...inputStyle, resize: "vertical", lineHeight: 1.6 }} />
           </Field>
 

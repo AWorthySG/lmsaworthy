@@ -93,6 +93,8 @@ export const Scales = ic("ph:scales-bold");
 export const Exam = ic("ph:exam-bold");
 export const Student = ic("ph:student-bold");
 export const Chalkboard = ic("ph:chalkboard-bold");
+export const Leaf = ic("ph:leaf-bold");
+export const MusicNote = ic("ph:music-note-bold");
 
 // Gamification & Rewards
 export const Trophy = ic("ph:trophy-bold");

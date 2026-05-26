@@ -59,7 +59,7 @@ function Attendance({ state, dispatch }) {
 
     return (
       <div>
-        <PageHeader title="Attendance" subtitle="Student attendance overview"
+        <PageHeader title="Attendance" subtitle="A-Worthling attendance overview"
           action={<div style={{ display: "flex", gap: 8 }}>
             <Btn variant="secondary" onClick={() => setView("sessions")}><CalendarCheck size={15} weight="bold" /> Sessions</Btn>
             <Btn onClick={() => setShowAdd(true)}><Plus size={15} weight="bold" /> New Session</Btn>
@@ -129,7 +129,7 @@ function Attendance({ state, dispatch }) {
     <div>
       <PageHeader title="Attendance" subtitle={`${totalSessions} sessions · ${attendanceRate}% overall attendance`}
         action={<div style={{ display: "flex", gap: 8 }}>
-          <Btn variant="secondary" onClick={() => setView("students")}><Users size={15} weight="bold" /> By Student</Btn>
+          <Btn variant="secondary" onClick={() => setView("students")}><Users size={15} weight="bold" /> By A-Worthling</Btn>
           <Btn onClick={() => setShowAdd(!showAdd)}><Plus size={15} weight="bold" /> New Session</Btn>
         </div>} />
 

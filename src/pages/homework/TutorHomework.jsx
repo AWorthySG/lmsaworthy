@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
 import { ArrowLeft, Plus, ClipboardText, Clock, Warning, Sparkle } from '../../icons/icons.jsx';
+import { StudentAvatar } from '../../components/gamification';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
 import { getDefaultRubricForHomework } from '../tools/rubrics.js';
@@ -143,7 +144,7 @@ function TutorHomework({ state, dispatch }) {
               {view === "create" ? "Assign Homework" : view === "detail" ? selectedHw?.title : "Homework"}
             </h1>
             <p style={{ color: T.textSec, fontSize: 14, margin: "4px 0 0", fontWeight: 400 }}>
-              {view === "create" ? "Create and assign to students" : view === "detail" ? `${getSubject(selectedHw?.subject)?.name} · Due ${selectedHw?.dueDate}` : "Manage assignments and grade submissions"}
+              {view === "create" ? "Create and assign to A-Worthlings" : view === "detail" ? `${getSubject(selectedHw?.subject)?.name} · Due ${selectedHw?.dueDate}` : "Manage assignments and grade submissions"}
             </p>
           </div>
         </div>
@@ -280,8 +281,8 @@ function TutorHomework({ state, dispatch }) {
             <div>
               <label style={{ fontSize: 11, fontWeight: 700, color: T.text, display: "block", marginBottom: 6 }}>Assign To</label>
               <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-                <button onClick={() => setFAssignAll(true)} style={{ padding: "6px 14px", borderRadius: 20, border: `2px solid ${fAssignAll ? T.accent : T.border}`, background: fAssignAll ? T.accentLight : T.bgCard, color: fAssignAll ? T.accent : T.textSec, fontWeight: 600, fontSize: 12, cursor: "pointer" }}>All Students</button>
-                <button onClick={() => setFAssignAll(false)} style={{ padding: "6px 14px", borderRadius: 20, border: `2px solid ${!fAssignAll ? T.accent : T.border}`, background: !fAssignAll ? T.accentLight : T.bgCard, color: !fAssignAll ? T.accent : T.textSec, fontWeight: 600, fontSize: 12, cursor: "pointer" }}>Select Students</button>
+                <button onClick={() => setFAssignAll(true)} style={{ padding: "6px 14px", borderRadius: 20, border: `2px solid ${fAssignAll ? T.accent : T.border}`, background: fAssignAll ? T.accentLight : T.bgCard, color: fAssignAll ? T.accent : T.textSec, fontWeight: 600, fontSize: 12, cursor: "pointer" }}>All A-Worthlings</button>
+                <button onClick={() => setFAssignAll(false)} style={{ padding: "6px 14px", borderRadius: 20, border: `2px solid ${!fAssignAll ? T.accent : T.border}`, background: !fAssignAll ? T.accentLight : T.bgCard, color: !fAssignAll ? T.accent : T.textSec, fontWeight: 600, fontSize: 12, cursor: "pointer" }}>Select A-Worthlings</button>
               </div>
               {!fAssignAll && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -315,7 +316,7 @@ function TutorHomework({ state, dispatch }) {
                   <span style={{ fontSize: 10, fontWeight: 700, color: subTheme.accent, background: "#fff", padding: "2px 8px", borderRadius: 20 }}>{getSubject(selectedHw.subject)?.name} · {selectedHw.topic}</span>
                   <div style={{ fontSize: 12, color: T.textSec, marginTop: 8 }}>Due: <strong>{selectedHw.dueDate}</strong> · Created: {selectedHw.createdAt}</div>
                 </div>
-                <button onClick={() => { if (!window.confirm("Archive this homework? Students will no longer see it.")) return; dispatch({ type: "ARCHIVE_HOMEWORK", payload: selectedHw.id }); setView("list"); }} style={{ padding: "4px 10px", borderRadius: T.r1, background: T.dangerBg, border: `1px solid ${T.danger}33`, color: T.danger, fontWeight: 600, fontSize: 11, cursor: "pointer" }}>Archive</button>
+                <button onClick={() => { if (!window.confirm("Archive this homework? A-Worthlings will no longer see it.")) return; dispatch({ type: "ARCHIVE_HOMEWORK", payload: selectedHw.id }); setView("list"); }} style={{ padding: "4px 10px", borderRadius: T.r1, background: T.dangerBg, border: `1px solid ${T.danger}33`, color: T.danger, fontWeight: 600, fontSize: 11, cursor: "pointer" }}>Archive</button>
               </div>
               {selectedHw.instructions && (
                 <div style={{ marginTop: 10, fontSize: 13, color: T.text, lineHeight: 1.7, whiteSpace: "pre-line" }}>{selectedHw.instructions}</div>
@@ -388,7 +389,7 @@ function TutorHomework({ state, dispatch }) {
                 return (
                   <div key={sub.id} style={{ background: T.bgCard, borderRadius: T.r2, border: `1px solid ${isGrading ? T.accent : T.border}`, overflow: "hidden" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
-                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: subTheme.bg, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13, color: subTheme.accent, flexShrink: 0 }}>{st?.name?.charAt(0)}</div>
+                      <StudentAvatar student={st} avatarMap={state.studentAvatars} size={32} radius="50%" />
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{st?.name}</div>
                         {sub.submittedAt && <div style={{ fontSize: 10, color: T.textTer }}>Submitted {sub.submittedAt}</div>}
