@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- avatar constants/helpers are intentionally co-located with the components per the gamification module design */
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
 import { Star, Crown, Lightning, Brain, Flame, Trophy, Sparkle, Target } from '../../icons/icons.jsx';

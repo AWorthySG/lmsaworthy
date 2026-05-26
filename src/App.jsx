@@ -23,7 +23,7 @@ class RootErrorBoundary extends React.Component {
           justifyContent: 'center', background: '#FAFAF7', fontFamily: 'Nunito, sans-serif',
         }}>
           <div style={{ textAlign: 'center', maxWidth: 480, padding: 32 }}>
-            <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, borderRadius: 8, marginBottom: 20 }} />
+            <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8, marginBottom: 20 }} />
             <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1C1B19', margin: '0 0 10px' }}>
               Something went wrong
             </h2>

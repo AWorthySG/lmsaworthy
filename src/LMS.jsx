@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useRef, useEffect, useMemo, Suspense, lazy } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { T } from "./theme/theme.js";
 import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
@@ -68,7 +68,7 @@ export default function LMSAuthWrapper() {
     return (
       <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#1C1B19" }}>
         <div style={{ textAlign: "center", width: 240 }}>
-          <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, objectFit: "contain", marginBottom: 12, borderRadius: 8 }} />
+          <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, aspectRatio: "786 / 1280", objectFit: "contain", marginBottom: 12, borderRadius: 8 }} />
           <div style={{ fontSize: 12, color: "rgba(254,254,254,0.3)", fontWeight: 200, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: T.fontDisplay, marginBottom: 20 }}>Loading</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "100%" }} />
@@ -115,7 +115,7 @@ function LMS({ authUser, userProfile }) {
       if (state.page !== defaultPage) dispatch({ type: "SET_PAGE", payload: defaultPage });
     }
     initializedRef.current = true;
-  }, [location.pathname]);
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps -- URL→state sync must run on pathname change only; adding state.page would create a navigation loop
 
   const prevPageRef = useRef(state.page);
   useEffect(() => {
@@ -125,7 +125,7 @@ function LMS({ authUser, userProfile }) {
       if (location.pathname !== path) navigate(path);
       prevPageRef.current = state.page;
     }
-  }, [state.page]);
+  }, [state.page]); // eslint-disable-line react-hooks/exhaustive-deps -- state→URL sync must run on state.page change only; adding location/navigate would create a navigation loop
 
   const notifications = useMemo(() => {
     const notifs = [];
@@ -157,7 +157,7 @@ function LMS({ authUser, userProfile }) {
   const searchRef = useRef(null);
   const windowWidth = useWindowWidth();
   const isMobileLayout = windowWidth < 768;
-  useEffect(() => { if (isMobileLayout) setSidebarOpen(false); }, [isMobileLayout]);
+  useEffect(() => { if (isMobileLayout) setSidebarOpen(false); }, [isMobileLayout]); // eslint-disable-line react-hooks/set-state-in-effect -- intentionally collapse the sidebar when the viewport switches to a mobile layout
   const page = state.page;
 
   useEffect(() => { localStorage.setItem("aworthy-dark", darkMode); document.documentElement.classList.toggle("dark", darkMode); }, [darkMode]);
@@ -249,6 +249,7 @@ function LMS({ authUser, userProfile }) {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div style={{ display: "flex", minHeight: "100dvh", background: T.bg, color: T.text, fontSize: 14, lineHeight: 1.6 }}>
       {/* Mobile overlay backdrop */}
       {isMobileLayout && sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: T.bgOverlay, zIndex: 49, transition: "opacity 0.2s" }} />}
@@ -270,7 +271,7 @@ function LMS({ authUser, userProfile }) {
           </button>
           {sidebarOpen && (
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 56, objectFit: "contain", borderRadius: 8 }} />
+              <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 56, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8 }} />
               <span style={{ fontSize: 14, fontWeight: 600, color: T.text, letterSpacing: "-0.01em" }}>A Worthy</span>
             </div>
           )}
@@ -371,7 +372,7 @@ function LMS({ authUser, userProfile }) {
               <List size={20} color={T.textSec} />
             </button>
           )}
-          {isMobileLayout && <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, objectFit: "contain" }} />}
+          {isMobileLayout && <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, aspectRatio: "786 / 1280", objectFit: "contain" }} />}
           <div style={{ flex: 1 }} />
           <button onClick={() => setShowSearch(true)} aria-label="Search" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 44, fontSize: 12, color: T.textTer }}>
             <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: T.fontMono }}>⌘K</kbd>}
@@ -511,5 +512,6 @@ function LMS({ authUser, userProfile }) {
         </nav>
       )}
     </div>
+    </MotionConfig>
   );
 }

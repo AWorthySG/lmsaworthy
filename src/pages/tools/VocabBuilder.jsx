@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { T } from '../../theme/theme.js';
 import { Brain, Target, ArrowFatUp, Eye, CheckCircle, X, MagnifyingGlass, CaretLeft, CaretRight, ArrowLeft, BookOpen } from '../../icons/icons.jsx';
 import { VOCAB_DRILLS } from '../../data/vocabDrills.js';
@@ -76,15 +76,13 @@ function VocabBuilder() {
   const [missed, setMissed] = useState([]);
   const [drillMode, setDrillMode] = useState("quiz"); // "quiz" | "upgrade" | "flashcard"
 
-  // Spaced repetition
-  const [srCards, setSrCards] = useState(() => loadSRData());
-
-  useEffect(() => {
-    if (srCards.length === 0 && VOCAB_DRILLS.length > 0) {
-      const init = VOCAB_DRILLS.map(v => initSRCard({ id: v.id, word: v.word, def: v.def }));
-      setSrCards(init); saveSRData(init);
-    }
-  }, [srCards.length]);
+  // Spaced repetition — seed the deck on first load if storage is empty
+  // (the rating handler persists subsequent changes via saveSRData).
+  const [srCards, setSrCards] = useState(() => {
+    const existing = loadSRData();
+    if (existing.length > 0) return existing;
+    return VOCAB_DRILLS.map(v => initSRCard({ id: v.id, word: v.word, def: v.def }));
+  });
 
   const reviewQueue = useMemo(() => getReviewQueue(srCards), [srCards]);
   const dueCount = reviewQueue.length;

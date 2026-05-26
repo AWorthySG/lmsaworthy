@@ -24,7 +24,7 @@ export default function InstallPrompt() {
     window.addEventListener("appinstalled", installedHandler);
 
     if (window.matchMedia("(display-mode: standalone)").matches) {
-      setInstalled(true);
+      setInstalled(true); // eslint-disable-line react-hooks/set-state-in-effect -- one-time standalone-mode detection on mount
     }
 
     return () => {

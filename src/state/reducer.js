@@ -1,4 +1,21 @@
 /* ━━━ REDUCER ━━━ */
+const isPlainObject = (v) => v != null && typeof v === "object" && !Array.isArray(v);
+
+// Recursively merge Firebase objects into local state, descending into nested
+// plain objects so concurrent edits at different depths don't clobber each other
+// (e.g. attendance is keyed sessionId → studentId → status). Arrays and scalars
+// are replaced wholesale; objects merge key-by-key.
+function deepMerge(local, incoming) {
+  if (!isPlainObject(local) || !isPlainObject(incoming)) return incoming;
+  const out = { ...local };
+  for (const k of Object.keys(incoming)) {
+    out[k] = isPlainObject(local[k]) && isPlainObject(incoming[k])
+      ? deepMerge(local[k], incoming[k])
+      : incoming[k];
+  }
+  return out;
+}
+
 export function appReducer(state, action) {
   switch (action.type) {
     case "SET_PAGE": return { ...state, page: action.payload, subPage: null };
@@ -57,8 +74,9 @@ export function appReducer(state, action) {
       const { postId, comment } = action.payload;
       const posts = (state.posts || []).map(p => {
         if (p.id !== postId) return p;
-        const maxId = Math.max(...p.comments.map(c => c.id), 0) + 1;
-        return { ...p, comments: [...p.comments, { ...comment, id: maxId, createdAt: new Date().toISOString().split("T")[0] }] };
+        const comments = Array.isArray(p.comments) ? p.comments : [];
+        const maxId = Math.max(...comments.map(c => c.id), 0) + 1;
+        return { ...p, comments: [...comments, { ...comment, id: maxId, createdAt: new Date().toISOString().split("T")[0] }] };
       });
       return { ...state, posts };
     }
@@ -187,8 +205,8 @@ export function appReducer(state, action) {
           merged[key] = allNumeric
             ? keys.sort((a, b) => Number(a) - Number(b)).map(k => value[k])
             : Object.values(value);
-        } else if (valueIsPlainObject && state[key] && typeof state[key] === 'object' && !currentIsArray) {
-          merged[key] = { ...state[key], ...value };
+        } else if (valueIsPlainObject && isPlainObject(state[key]) && !currentIsArray) {
+          merged[key] = deepMerge(state[key], value);
         } else {
           merged[key] = value;
         }

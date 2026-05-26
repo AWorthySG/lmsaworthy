@@ -62,7 +62,7 @@ function ProgressTracker({ state, dispatch }) {
             </button>
             <div style={{ flex: 1 }}>
               <h1 style={{ color: T.text, fontSize: 22, fontWeight: 800, margin: "0 0 4px", letterSpacing: -0.3 }}>{student.name}</h1>
-              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{student.subjects.map((s) => <SubjectBadge key={s} subjectId={s} small />)}</div>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{(student.subjects || []).map((s) => <SubjectBadge key={s} subjectId={s} small />)}</div>
             </div>
           </div>
           {editingAvatar && (
@@ -166,7 +166,7 @@ function ProgressTracker({ state, dispatch }) {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
           <Card elevated>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Topic Completion</h3>
-            {Object.entries(student.topicCompletion).map(([subj, topics]) => {
+            {Object.entries(student.topicCompletion || {}).map(([subj, topics]) => {
               const theme = getSubjectTheme(subj);
               return (
                 <div key={subj} style={{ marginBottom: 18 }}>
@@ -198,7 +198,7 @@ function ProgressTracker({ state, dispatch }) {
             </div>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "20px 0 14px" }}>Materials Accessed</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {student.materialsAccessed.map((rId) => {
+              {(student.materialsAccessed || []).map((rId) => {
                 const resource = state.resources.find((r) => r.id === rId);
                 if (!resource) return null;
                 return <div key={rId} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", fontSize: 13, color: T.text }}><div style={{ width: 26, height: 26, borderRadius: T.r1, background: resource.type === "pdf" ? T.dangerBg : resource.type === "video" ? "#DBEAFE" : T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}><FileIcon type={resource.type} size={13} /></div>{resource.title}</div>;
@@ -347,8 +347,10 @@ function ProgressTracker({ state, dispatch }) {
     <div>
       <PageHeader title="Student Progress" subtitle="Track performance and completion" />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
-        {state.students.map((student) => {
-          const avg = student.quizResults.length > 0 ? Math.round(student.quizResults.reduce((sum, r) => sum + (r.score / r.total) * 100, 0) / student.quizResults.length) : 0;
+        {(Array.isArray(state.students) ? state.students : []).map((student) => {
+          const subs = (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.studentId === student.id);
+          const submittedCount = subs.filter(s => s.status === "submitted" || s.status === "graded").length;
+          const gradedCount = subs.filter(s => s.status === "graded").length;
           return (
             <Card key={student.id} onClick={() => setSel(student.id)} elevated>
               <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
@@ -356,13 +358,13 @@ function ProgressTracker({ state, dispatch }) {
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{student.name}</div>
                   <div style={{ display: "flex", gap: 4, marginTop: 5, flexWrap: "wrap" }}>
-                    {student.subjects.map((s) => <SubjectBadge key={s} subjectId={s} small />)}
+                    {(student.subjects || []).map((s) => <SubjectBadge key={s} subjectId={s} small />)}
                   </div>
                 </div>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, textAlign: "center" }}>
-                <div style={{ padding: 10, background: T.accentLight, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 700, color: T.accent }}>{student.quizResults.length}</div><div style={{ fontSize: 11, color: T.textTer }}>Quizzes</div></div>
-                <div style={{ padding: 10, background: avg >= 70 ? T.successBg : avg >= 50 ? T.warningBg : T.dangerBg, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 700, color: avg >= 70 ? T.success : avg >= 50 ? T.warning : T.danger }}>{avg}%</div><div style={{ fontSize: 11, color: T.textTer }}>Avg Score</div></div>
+                <div style={{ padding: 10, background: T.accentLight, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 700, color: T.accent }}>{submittedCount}</div><div style={{ fontSize: 11, color: T.textTer }}>Submitted</div></div>
+                <div style={{ padding: 10, background: T.successBg, borderRadius: T.r2 }}><div style={{ fontSize: 20, fontWeight: 700, color: T.success }}>{gradedCount}</div><div style={{ fontSize: 11, color: T.textTer }}>Graded</div></div>
               </div>
             </Card>
           );

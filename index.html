@@ -151,6 +151,21 @@
       /* Spin — loading spinner */
       @keyframes spin { to { transform: rotate(360deg); } }
 
+      /* ━━━ REDUCED MOTION — honour the OS/accessibility preference ━━━
+         Stable-UI principle: motion must be opt-out. Users who request reduced
+         motion get a near-instant, single-pass version of every animation and
+         transition (no looping pulses, floats, shimmer, or page-rise), keeping
+         the interface spatially still. Framer-motion is handled separately via
+         <MotionConfig reducedMotion="user">. */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+
       /* ━━━ GLOBAL TRANSITIONS ━━━ */
 
       /* Buttons — quick, no bounce */

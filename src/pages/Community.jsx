@@ -92,7 +92,7 @@ function Community({ state, dispatch }) {
         {[
           { label: "Total Posts", value: (state.posts || []).length },
           { label: "Announcements", value: (state.posts || []).filter(p => p.isAnnouncement).length },
-          { label: "Total Comments", value: (state.posts || []).reduce((sum, p) => sum + p.comments.length, 0) },
+          { label: "Total Comments", value: (state.posts || []).reduce((sum, p) => sum + (Array.isArray(p.comments) ? p.comments.length : 0), 0) },
         ].map(s => (
           <div key={s.label} style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, padding: "10px 18px", display: "flex", gap: 10, alignItems: "center" }}>
             <div style={{ fontWeight: 800, fontSize: 20, color: T.accent }}>{s.value}</div>
@@ -123,6 +123,7 @@ function Community({ state, dispatch }) {
         {filteredPosts.map(post => {
           const commentsOpen = expandedComments.has(post.id);
           const subjectTheme = post.subject ? getSubjectTheme(post.subject) : null;
+          const comments = Array.isArray(post.comments) ? post.comments : [];
           return (
             <Card key={post.id} elevated style={{ padding: 0, overflow: "hidden", borderLeft: post.pinned ? `3px solid ${T.accent}` : post.isAnnouncement ? `3px solid #E07800` : "none" }}>
               {/* Post header + body */}
@@ -130,7 +131,7 @@ function Community({ state, dispatch }) {
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     {post.authorType === "tutor"
-                      ? <div style={{ width: 38, height: 38, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #3F51EC)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 14, flexShrink: 0 }}>J</div>
+                      ? <div style={{ width: 38, height: 38, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #B45309)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 14, flexShrink: 0 }}>J</div>
                       : <StudentAvatar student={state.students.find(s => s.id === post.studentId)} avatarMap={state.studentAvatars} size={38} radius="50%" />
                     }
                     <div>
@@ -166,7 +167,7 @@ function Community({ state, dispatch }) {
                   );
                 })}
                 <button onClick={() => toggleComments(post.id)} style={{ marginLeft: "auto", background: "none", border: `1px solid ${T.border}`, borderRadius: 20, cursor: "pointer", fontSize: 12, color: T.textSec, display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", transition: "all 0.15s" }}>
-                  <ChatCircle size={14} weight="duotone" /> {post.comments.length} {post.comments.length === 1 ? "comment" : "comments"}
+                  <ChatCircle size={14} weight="duotone" /> {comments.length} {comments.length === 1 ? "comment" : "comments"}
                 </button>
               </div>
 
@@ -174,11 +175,11 @@ function Community({ state, dispatch }) {
               {commentsOpen && (
                 <div style={{ background: T.bgMuted, borderTop: `1px solid ${T.border}`, padding: "14px 20px 16px" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    {post.comments.map(comment => (
+                    {comments.map(comment => (
                       <div key={comment.id} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                         {comment.studentId
                           ? <StudentAvatar student={state.students.find(s => s.id === comment.studentId)} avatarMap={state.studentAvatars} size={30} radius="50%" />
-                          : <div style={{ width: 30, height: 30, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #3F51EC)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 11, flexShrink: 0 }}>J</div>
+                          : <div style={{ width: 30, height: 30, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #B45309)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 11, flexShrink: 0 }}>J</div>
                         }
                         <div style={{ flex: 1, background: T.bgCard, borderRadius: T.r2, padding: "10px 14px", border: `1px solid ${T.border}` }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
@@ -192,7 +193,7 @@ function Community({ state, dispatch }) {
                     ))}
                     {/* Add comment */}
                     <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 4 }}>
-                      <div style={{ width: 30, height: 30, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #3F51EC)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 11, flexShrink: 0 }}>J</div>
+                      <div style={{ width: 30, height: 30, borderRadius: "50%", background: `linear-gradient(135deg, ${T.accent}, #B45309)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 11, flexShrink: 0 }}>J</div>
                       <Input value={newComment[post.id] || ""} onChange={v => setNewComment(prev => ({ ...prev, [post.id]: v }))} placeholder="Write a reply…" style={{ flex: 1 }} />
                       <Btn size="sm" onClick={() => handleAddComment(post.id)} disabled={!(newComment[post.id] || "").trim()}>Post</Btn>
                     </div>

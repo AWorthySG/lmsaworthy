@@ -41,7 +41,7 @@ export default function Certificates({ state }) {
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
     if (code && !connected) {
-      setLoading("Connecting to Canva...");
+      setLoading("Connecting to Canva..."); // eslint-disable-line react-hooks/set-state-in-effect -- set loading state before kicking off the async OAuth code exchange
       exchangeCanvaCode(code)
         .then(() => {
           setConnected(true);
@@ -56,7 +56,7 @@ export default function Certificates({ state }) {
   // Load templates on connect
   useEffect(() => {
     if (connected && templates.length === 0) {
-      setLoading("Loading templates...");
+      setLoading("Loading templates..."); // eslint-disable-line react-hooks/set-state-in-effect -- set loading state before kicking off the async template fetch
       listTemplates()
         .then(data => {
           setTemplates(data.items || []);

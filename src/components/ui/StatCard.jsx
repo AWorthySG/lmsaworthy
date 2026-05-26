@@ -2,7 +2,6 @@ import React from 'react';
 import { T } from '../../theme/theme.js';
 import Card from './Card.jsx';
 
-// eslint-disable-next-line no-unused-vars
 export default function StatCard({ icon: Icon, value, label, color }) {
   return (
     <Card elevated style={{ padding: 20, textAlign: "center" }}>

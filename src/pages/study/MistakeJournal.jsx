@@ -1,16 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
-import { PushPin, CheckCircle, XCircle, Lightbulb } from '../../icons/icons.jsx';
-import { EmptyStateIllustration, PageHeader } from '../../components/ui';
+import { PushPin, CheckCircle, XCircle, Lightbulb, Plus } from '../../icons/icons.jsx';
+import { EmptyStateIllustration, PageHeader, Card, Btn, Input, Textarea, Select } from '../../components/ui';
+import { SUBJECTS } from '../../data/subjects.js';
+
+const EMPTY_FORM = { subject: "", topic: "", question: "", yourAnswer: "", correctAnswer: "" };
 
 function MistakeJournal({ state, dispatch }) {
-  const mistakes = state.mistakes || [];
+  const mistakes = Array.isArray(state.mistakes) ? state.mistakes : [];
   const unreviewed = mistakes.filter(m => !m.reviewed);
   const reviewed = mistakes.filter(m => m.reviewed);
 
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState(EMPTY_FORM);
+
+  const handleAdd = () => {
+    if (!form.question.trim()) return;
+    dispatch({ type: "ADD_MISTAKE", payload: { ...form, question: form.question.trim() } });
+    setForm(EMPTY_FORM);
+    setShowForm(false);
+    dispatch({ type: "ADD_TOAST", payload: { message: "Mistake logged — review it before your next session.", variant: "success" } });
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <PageHeader title="Mistake Journal" subtitle="Track errors from practice sessions and homework to prevent repeating them" />
+      <PageHeader title="Mistake Journal" subtitle="Track errors from practice sessions and homework to prevent repeating them"
+        action={<Btn onClick={() => setShowForm(v => !v)}><Plus size={15} weight="bold" /> Log Mistake</Btn>} />
+
+      {showForm && (
+        <Card elevated style={{ padding: 22 }}>
+          <h3 style={{ margin: "0 0 16px", fontWeight: 700, fontSize: 15 }}>Log a Mistake</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <Select value={form.subject} onChange={v => setForm(f => ({ ...f, subject: v }))} placeholder="Subject" options={SUBJECTS.map(s => ({ value: s.id, label: s.name }))} style={{ flex: 1, minWidth: 180 }} />
+              <Input value={form.topic} onChange={v => setForm(f => ({ ...f, topic: v }))} placeholder="Topic (e.g. Elasticity)" style={{ flex: 1, minWidth: 180 }} />
+            </div>
+            <Textarea value={form.question} onChange={v => setForm(f => ({ ...f, question: v }))} placeholder="What was the question or concept you got wrong?" rows={3} />
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <Input value={form.yourAnswer} onChange={v => setForm(f => ({ ...f, yourAnswer: v }))} placeholder="Your answer (optional)" style={{ flex: 1, minWidth: 180 }} />
+              <Input value={form.correctAnswer} onChange={v => setForm(f => ({ ...f, correctAnswer: v }))} placeholder="Correct answer (optional)" style={{ flex: 1, minWidth: 180 }} />
+            </div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <Btn variant="secondary" onClick={() => { setShowForm(false); setForm(EMPTY_FORM); }}>Cancel</Btn>
+              <Btn onClick={handleAdd} disabled={!form.question.trim()}><Plus size={14} weight="bold" /> Add to Journal</Btn>
+            </div>
+          </div>
+        </Card>
+      )}
 
       <div style={{ display: "flex", gap: 10 }}>
         <div style={{ flex: 1, background: T.dangerBg, borderRadius: T.r2, padding: "14px", textAlign: "center", border: `1px solid ${T.danger}22` }}>
@@ -27,7 +63,7 @@ function MistakeJournal({ state, dispatch }) {
         <div style={{ textAlign: "center", padding: "40px 20px" }}>
           <EmptyStateIllustration type="celebration" size={80} />
           <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginTop: 10 }}>No mistakes recorded yet</div>
-          <div style={{ fontSize: 12, color: T.textTer, marginTop: 4 }}>Log mistakes from homework and practice here to track and review them.</div>
+          <div style={{ fontSize: 12, color: T.textTer, marginTop: 4 }}>Tap “Log Mistake” to record errors from homework and practice, then review them here.</div>
         </div>
       ) : (
         <>

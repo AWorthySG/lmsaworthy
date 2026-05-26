@@ -16,7 +16,7 @@ function ParentView({ state }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ background: T.bgCard, borderRadius: T.r4, padding: "28px 24px", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-          <img src="/logo-aworthy.jpeg" alt="A Worthy Learning" style={{ height: 36, borderRadius: 8 }} />
+          <img src="/logo-aworthy.jpeg" alt="A Worthy Learning" style={{ height: 36, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8 }} />
           <span style={{ fontSize: 10, fontWeight: 600, color: T.textTer, letterSpacing: 2, textTransform: "uppercase" }}>A Worthy · Parent Dashboard</span>
         </div>
         <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px", fontFamily: T.fontDisplay, color: T.text }}>Progress Report</h1>
