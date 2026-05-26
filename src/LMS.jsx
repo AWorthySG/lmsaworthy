@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useRef, useEffect, useMemo, Suspense, lazy } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { T } from "./theme/theme.js";
 import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
@@ -249,6 +249,7 @@ function LMS({ authUser, userProfile }) {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div style={{ display: "flex", minHeight: "100dvh", background: T.bg, color: T.text, fontSize: 14, lineHeight: 1.6 }}>
       {/* Mobile overlay backdrop */}
       {isMobileLayout && sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: T.bgOverlay, zIndex: 49, transition: "opacity 0.2s" }} />}
@@ -511,5 +512,6 @@ function LMS({ authUser, userProfile }) {
         </nav>
       )}
     </div>
+    </MotionConfig>
   );
 }
