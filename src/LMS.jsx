@@ -68,7 +68,7 @@ export default function LMSAuthWrapper() {
     return (
       <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#1C1B19" }}>
         <div style={{ textAlign: "center", width: 240 }}>
-          <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, objectFit: "contain", marginBottom: 12, borderRadius: 8 }} />
+          <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 48, aspectRatio: "786 / 1280", objectFit: "contain", marginBottom: 12, borderRadius: 8 }} />
           <div style={{ fontSize: 12, color: "rgba(254,254,254,0.3)", fontWeight: 200, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: T.fontDisplay, marginBottom: 20 }}>Loading</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div className="shimmer" style={{ height: 12, borderRadius: 6, width: "100%" }} />
@@ -271,7 +271,7 @@ function LMS({ authUser, userProfile }) {
           </button>
           {sidebarOpen && (
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 56, objectFit: "contain", borderRadius: 8 }} />
+              <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 56, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8 }} />
               <span style={{ fontSize: 14, fontWeight: 600, color: T.text, letterSpacing: "-0.01em" }}>A Worthy</span>
             </div>
           )}
@@ -372,7 +372,7 @@ function LMS({ authUser, userProfile }) {
               <List size={20} color={T.textSec} />
             </button>
           )}
-          {isMobileLayout && <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, objectFit: "contain" }} />}
+          {isMobileLayout && <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 28, aspectRatio: "786 / 1280", objectFit: "contain" }} />}
           <div style={{ flex: 1 }} />
           <button onClick={() => setShowSearch(true)} aria-label="Search" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: "8px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, minHeight: 44, fontSize: 12, color: T.textTer }}>
             <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: T.fontMono }}>⌘K</kbd>}

@@ -161,7 +161,7 @@ function LoginScreen() {
         <div className="login-brand">
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
-            <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 44, objectFit: "contain", borderRadius: 10, boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }} />
+            <img src="/logo-aworthy.jpeg" alt="A Worthy" style={{ height: 44, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 10, boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }} />
             <div>
               <div style={{ fontSize: 15, fontWeight: 800, color: "#FEFEFE", fontFamily: T.fontDisplay, letterSpacing: "-0.02em" }}>A Worthy</div>
               <div style={{ fontSize: 9, fontWeight: 500, color: "rgba(254,254,254,0.35)", letterSpacing: "0.15em", textTransform: "uppercase" }}>Learning Platform</div>
