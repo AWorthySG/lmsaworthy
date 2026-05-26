@@ -3,7 +3,7 @@ import {
   Books, Scroll,
   GraduationCap, Lightbulb,
   Confetti, Handshake,
-  CalendarCheck, ChartLineUp, Eye, Medal, Gear,
+  CalendarCheck, ChartLineUp, Eye, Gear,
 } from '../icons/icons.jsx';
 
 export const NAV = [
@@ -51,9 +51,7 @@ export const NAV = [
     { id: "homework", label: "Homework", icon: ClipboardText },
     { id: "aimarker", label: "AI Marker", icon: GraduationCap, highlight: true },
     { id: "attendance", label: "Attendance", icon: CalendarCheck },
-    { id: "certificates", label: "Certificates", icon: Medal },
     { id: "progress", label: "Progress", icon: ChartLineUp },
-    { id: "analytics", label: "Analytics", icon: ChartLineUp },
     { id: "parentview", label: "Parent View", icon: Eye },
   ]},
   { group: "System", items: [
@@ -72,10 +70,9 @@ export const PAGE_TO_PATH = {
   "pastpapers-h1econ": "/past-papers/h1econ", "pastpapers-h2econ": "/past-papers/h2econ",
   "pastpapers-omath": "/past-papers/omath", "pastpapers-amath": "/past-papers/amath",
   "pastpapers-ibmyp": "/past-papers/ibmyp",
-  analytics: "/analytics", parentview: "/parent-view",
+  parentview: "/parent-view",
   modelessays: "/model-essays",
   mistakes: "/mistake-journal", checklist: "/revision-checklist",
-  certificates: "/certificates",
   events: "/events",
   settings: "/settings",
   // Subject-suffixed library IDs all map to the shared /library path

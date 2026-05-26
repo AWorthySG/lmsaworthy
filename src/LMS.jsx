@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { T } from "./theme/theme.js";
 import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
-import { firebaseAuth, firebaseDb, ref, get, signOut, onAuthStateChanged } from "./config/firebase.js";
+import { firebaseAuth, firebaseDb, ref, get, set, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
 import { NAV, PAGE_TO_PATH, PATH_TO_PAGE } from "./data/routing.js";
@@ -32,12 +32,10 @@ const AIMarker = lazy(() => import("./pages/tools/AIMarker.jsx"));
 const Homework = lazy(() => import("./pages/homework/Homework.jsx"));
 const Events = lazy(() => import("./pages/Events.jsx"));
 const PastPapers = lazy(() => import("./pages/study/PastPapers.jsx"));
-const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard.jsx"));
 const ParentView = lazy(() => import("./pages/ParentView.jsx"));
 const ModelEssayBank = lazy(() => import("./pages/study/ModelEssayBank.jsx"));
 const MistakeJournal = lazy(() => import("./pages/study/MistakeJournal.jsx"));
 const RevisionChecklist = lazy(() => import("./pages/study/RevisionChecklist.jsx"));
-const Certificates = lazy(() => import("./pages/Certificates.jsx"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
 
 
@@ -51,7 +49,13 @@ export default function LMSAuthWrapper() {
         try {
           const snap = await get(ref(firebaseDb, `users/${user.uid}`));
           const profile = snap.val();
-          setUserProfile(profile || { name: user.displayName || "User", email: user.email, role: "student" });
+          // Promote the owner account to tutor on first login if not already set
+          if (user.email === "jeremylimguanfong@gmail.com" && profile?.role !== "tutor") {
+            await set(ref(firebaseDb, `users/${user.uid}/role`), "tutor");
+            setUserProfile({ ...(profile || { name: user.displayName || "User", email: user.email }), role: "tutor" });
+          } else {
+            setUserProfile(profile || { name: user.displayName || "User", email: user.email, role: "student" });
+          }
         } catch {
           setUserProfile({ name: user.displayName || "User", email: user.email, role: "student" });
         }
@@ -251,12 +255,10 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-omath": return <PastPapers state={state} dispatch={dispatch} defaultSubject="omath" />;
       case "pastpapers-amath": return <PastPapers state={state} dispatch={dispatch} defaultSubject="amath" />;
       case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
-      case "analytics": return <AnalyticsDashboard state={state} />;
       case "parentview": return <ParentView state={state} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
-      case "certificates": return <Certificates state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
     }
