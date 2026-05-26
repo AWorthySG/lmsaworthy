@@ -30,7 +30,6 @@ export const DEFAULT_STATE = {
   submissions: initialSubmissions,
   studyLogs: [],
   notes: [],
-  ratings: {},
   announcement: null,
   goals: [],
   mistakes: [],
@@ -42,7 +41,7 @@ export const DEFAULT_STATE = {
 // Persist key parts of state to localStorage
 export const PERSIST_KEYS = [
   "bookmarks", "attendance", "submissions", "homework",
-  "pastPaperDocs", "studyLogs", "notes", "ratings",
+  "pastPaperDocs", "studyLogs", "notes",
   "announcement", "goals", "mistakes", "revisionChecklist",
   "posts", "reports", "myAvatar", "studentAvatars", "students",
   "sessions", "videoLessons",
