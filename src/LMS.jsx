@@ -17,7 +17,7 @@ import ToastContainer from "./components/toast/ToastContainer.jsx";
 import BackToTop from "./components/ui/BackToTop.jsx";
 import InstallPrompt from "./components/ui/InstallPrompt.jsx";
 import LoginScreen from "./pages/LoginScreen.jsx";
-import { AvatarDisplay } from "./components/gamification/StudentAvatar.jsx";
+import { AvatarDisplay, AvatarPicker } from "./components/gamification/StudentAvatar.jsx";
 
 // Lazy-loaded page imports (code-split per route)
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
@@ -154,6 +154,20 @@ function LMS({ authUser, userProfile }) {
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("aworthy-dark") === "true");
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAvatarPrompt, setShowAvatarPrompt] = useState(
+    () => !localStorage.getItem("aworthy-avatar-prompted")
+  );
+
+  function saveAvatarPromptChoice(key) {
+    if (key) {
+      dispatch({ type: "SET_MY_AVATAR", payload: key });
+      const matched = (Array.isArray(state.students) ? state.students : [])
+        .find(s => s.email && authUser?.email && s.email.toLowerCase() === authUser.email.toLowerCase());
+      if (matched) dispatch({ type: "UPDATE_STUDENT_AVATAR", payload: { studentId: matched.id, avatar: key } });
+    }
+    localStorage.setItem("aworthy-avatar-prompted", "true");
+    setShowAvatarPrompt(false);
+  }
   const searchRef = useRef(null);
   const windowWidth = useWindowWidth();
   const isMobileLayout = windowWidth < 768;
@@ -487,6 +501,29 @@ function LMS({ authUser, userProfile }) {
       </AnimatePresence>
 
       {/* Mobile Bottom Nav */}
+      {showAvatarPrompt && state.myAvatar === null && (
+        <div
+          role="dialog" aria-modal="true" aria-label="Choose your avatar"
+          style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(28,27,25,0.55)", backdropFilter: "blur(4px)", padding: 16 }}
+          onClick={e => { if (e.target === e.currentTarget) saveAvatarPromptChoice(null); }}>
+          <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "28px 24px", maxWidth: 360, width: "100%", boxShadow: "0 24px 64px rgba(28,27,25,0.22)" }}>
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay, marginBottom: 4 }}>Choose your avatar</div>
+              <div style={{ fontSize: 13, color: T.textSec }}>Pick an icon and colour to represent you across the LMS.</div>
+            </div>
+            <AvatarPicker
+              value={null}
+              onSave={(key) => saveAvatarPromptChoice(key)}
+            />
+            <button
+              onClick={() => saveAvatarPromptChoice(null)}
+              style={{ marginTop: 12, width: "100%", padding: "8px 0", background: "none", border: "none", color: T.textTer, fontSize: 12, cursor: "pointer" }}>
+              Skip for now
+            </button>
+          </div>
+        </div>
+      )}
+
       {isMobileLayout && (
         <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: darkMode ? "rgba(28,27,25,0.97)" : "rgba(255,255,255,0.97)", borderTop: `1px solid ${T.border}`, display: "flex", zIndex: 60, paddingBottom: "env(safe-area-inset-bottom, 0px)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}>
           {[

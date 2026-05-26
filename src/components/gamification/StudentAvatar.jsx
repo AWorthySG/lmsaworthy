@@ -1,18 +1,26 @@
 /* eslint-disable react-refresh/only-export-components -- avatar constants/helpers are intentionally co-located with the components per the gamification module design */
 import React, { useState } from 'react';
 import { T } from '../../theme/theme.js';
-import { Star, Crown, Lightning, Brain, Flame, Trophy, Sparkle, Target } from '../../icons/icons.jsx';
+import { Star, Crown, Lightning, Brain, Flame, Trophy, Sparkle, Target, RocketLaunch, GraduationCap, Heart, Palette, Atom, Compass, Leaf, MusicNote } from '../../icons/icons.jsx';
 
 /* ── Avatar catalogue ── */
 export const AVATAR_ICONS = [
-  { key: "star",      Icon: Star,      label: "Star" },
-  { key: "crown",     Icon: Crown,     label: "Crown" },
-  { key: "lightning", Icon: Lightning, label: "Lightning" },
-  { key: "brain",     Icon: Brain,     label: "Brain" },
-  { key: "flame",     Icon: Flame,     label: "Flame" },
-  { key: "trophy",    Icon: Trophy,    label: "Trophy" },
-  { key: "sparkle",   Icon: Sparkle,   label: "Sparkle" },
-  { key: "target",    Icon: Target,    label: "Target" },
+  { key: "star",      Icon: Star,          label: "Star" },
+  { key: "crown",     Icon: Crown,         label: "Crown" },
+  { key: "lightning", Icon: Lightning,     label: "Lightning" },
+  { key: "brain",     Icon: Brain,         label: "Brain" },
+  { key: "flame",     Icon: Flame,         label: "Flame" },
+  { key: "trophy",    Icon: Trophy,        label: "Trophy" },
+  { key: "sparkle",   Icon: Sparkle,       label: "Sparkle" },
+  { key: "target",    Icon: Target,        label: "Target" },
+  { key: "rocket",    Icon: RocketLaunch,  label: "Rocket" },
+  { key: "grad",      Icon: GraduationCap, label: "Graduation" },
+  { key: "heart",     Icon: Heart,         label: "Heart" },
+  { key: "palette",   Icon: Palette,       label: "Palette" },
+  { key: "atom",      Icon: Atom,          label: "Atom" },
+  { key: "compass",   Icon: Compass,       label: "Compass" },
+  { key: "leaf",      Icon: Leaf,          label: "Leaf" },
+  { key: "music",     Icon: MusicNote,     label: "Music" },
 ];
 
 export const AVATAR_COLORS = [
@@ -59,7 +67,7 @@ export function AvatarPicker({ value, onSave, onCancel }) {
   const activeColor = AVATAR_COLORS.find(c => c.key === selColor);
 
   return (
-    <div style={{ background: T.bgCard, borderRadius: T.r2, border: `1.5px solid ${T.border}`, padding: 20, display: "inline-block", minWidth: 280 }}>
+    <div style={{ background: T.bgCard, borderRadius: T.r2, border: `1.5px solid ${T.border}`, padding: 20, display: "inline-block", minWidth: 220 }}>
       {/* Preview */}
       <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
         <AvatarDisplay avatarKey={currentKey} size={64} radius={T.r2} />
@@ -72,7 +80,7 @@ export function AvatarPicker({ value, onSave, onCancel }) {
       {/* Icon grid */}
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Icon</div>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 40px)", gap: 6 }}>
           {AVATAR_ICONS.map(({ key, Icon, label }) => {
             const active = selIcon === key;
             return (

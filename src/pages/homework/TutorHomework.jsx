@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
 import { ArrowLeft, Plus, ClipboardText, Clock, Warning, Sparkle } from '../../icons/icons.jsx';
+import { StudentAvatar } from '../../components/gamification';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
 import { getDefaultRubricForHomework } from '../tools/rubrics.js';
@@ -388,7 +389,7 @@ function TutorHomework({ state, dispatch }) {
                 return (
                   <div key={sub.id} style={{ background: T.bgCard, borderRadius: T.r2, border: `1px solid ${isGrading ? T.accent : T.border}`, overflow: "hidden" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
-                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: subTheme.bg, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13, color: subTheme.accent, flexShrink: 0 }}>{st?.name?.charAt(0)}</div>
+                      <StudentAvatar student={st} avatarMap={state.studentAvatars} size={32} radius="50%" />
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{st?.name}</div>
                         {sub.submittedAt && <div style={{ fontSize: 10, color: T.textTer }}>Submitted {sub.submittedAt}</div>}

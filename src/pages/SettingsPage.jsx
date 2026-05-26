@@ -191,7 +191,13 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile, state, dis
         {showAvatarPicker && (
           <AvatarPicker
             value={state?.myAvatar}
-            onSave={(key) => { dispatch({ type: "SET_MY_AVATAR", payload: key }); setShowAvatarPicker(false); }}
+            onSave={(key) => {
+              dispatch({ type: "SET_MY_AVATAR", payload: key });
+              const matchedStudent = (Array.isArray(state?.students) ? state.students : [])
+                .find(s => s.email && authUser?.email && s.email.toLowerCase() === authUser.email.toLowerCase());
+              if (matchedStudent) dispatch({ type: "UPDATE_STUDENT_AVATAR", payload: { studentId: matchedStudent.id, avatar: key } });
+              setShowAvatarPicker(false);
+            }}
             onCancel={() => setShowAvatarPicker(false)}
           />
         )}
