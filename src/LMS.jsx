@@ -348,7 +348,7 @@ function LMS({ authUser, userProfile }) {
               }
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ color: T.text, fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userProfile?.name || authUser?.displayName || "User"}</div>
-                <div style={{ color: T.textTer, fontSize: 11 }}>{userProfile?.role === "tutor" ? "Creator" : userProfile?.role === "student" ? "Student" : "Member"}</div>
+                <div style={{ color: T.textTer, fontSize: 11 }}>{userProfile?.role === "tutor" ? "Creator" : userProfile?.role === "student" ? "A-Worthling" : "Member"}</div>
               </div>
             </div>
             <div style={{ display: "flex", gap: 6 }}>
@@ -470,7 +470,7 @@ function LMS({ authUser, userProfile }) {
                       { label: "Dashboard", page: "dashboard", icon: House },
                       { label: "Homework", page: "homework", icon: ClipboardText },
                       { label: "Community", page: "community", icon: Handshake },
-                      { label: "Students", page: "progress", icon: Users },
+                      { label: "A-Worthlings", page: "progress", icon: Users },
                     ].map(q => (
                       <button key={q.page} onClick={() => { dispatch({ type: "SET_PAGE", payload: q.page }); setShowSearch(false); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, cursor: "pointer", fontSize: 12, fontWeight: 600, color: T.text, transition: "all 0.15s" }}
                         onMouseEnter={e => { e.currentTarget.style.background = T.border; e.currentTarget.style.transform = "translateY(-1px)"; }}

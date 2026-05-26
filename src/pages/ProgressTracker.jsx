@@ -92,7 +92,7 @@ function ProgressTracker({ state, dispatch }) {
               <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 14 }}>
                 {/* Login email */}
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Student Login Email</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>A-Worthling Login Email</div>
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <input
                       type="email"
@@ -111,7 +111,7 @@ function ProgressTracker({ state, dispatch }) {
                       Save
                     </button>
                   </div>
-                  <div style={{ fontSize: 11, color: T.textTer, marginTop: 5 }}>Must match the email the student uses to log in. Controls which subjects they see in the sidebar.</div>
+                  <div style={{ fontSize: 11, color: T.textTer, marginTop: 5 }}>Must match the email the A-Worthling uses to log in. Controls which subjects they see in the sidebar.</div>
                 </div>
 
                 {/* Subject toggles */}
@@ -345,7 +345,7 @@ function ProgressTracker({ state, dispatch }) {
 
   return (
     <div>
-      <PageHeader title="Student Progress" subtitle="Track performance and completion" />
+      <PageHeader title="A-Worthling Progress" subtitle="Track performance and completion" />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 16 }}>
         {(Array.isArray(state.students) ? state.students : []).map((student) => {
           const subs = (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.studentId === student.id);

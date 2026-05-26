@@ -255,7 +255,7 @@ export default function Certificates({ state }) {
             </div>
 
             {/* Student */}
-            <label style={styles.label}>Student</label>
+            <label style={styles.label}>A-Worthling</label>
             <select
               value={selectedStudent}
               onChange={e => setSelectedStudent(e.target.value)}

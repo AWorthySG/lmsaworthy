@@ -600,7 +600,7 @@ function TutorGreeting({ authUser, userProfile, pendingSubmissions, activeHomewo
       </h1>
       <p style={{ margin: 0, fontSize: 15, color: T.textSec, lineHeight: 1.5 }}>
         {pendingSubmissions > 0
-          ? <><span style={{ color: T.danger, fontWeight: 600 }}>{pendingSubmissions} submission{pendingSubmissions > 1 ? 's' : ''} awaiting your review.</span> Your students are counting on you.</>
+          ? <><span style={{ color: T.danger, fontWeight: 600 }}>{pendingSubmissions} submission{pendingSubmissions > 1 ? 's' : ''} awaiting your review.</span> Your A-Worthlings are counting on you.</>
           : activeHomework > 0
             ? `${activeHomework} active assignment${activeHomework > 1 ? 's' : ''} running — all caught up on grading.`
             : "All caught up. A great time to set new assignments."}
@@ -697,7 +697,7 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
   const stats = [
     { icon: FolderSimpleStar, value: (state.resources || []).length,                            label: 'Resources',  color: T.accent,       bg: T.accentLight, page: 'library-eng', urgent: false },
     { icon: ClipboardText,    value: pendingSubmissions,                                         label: 'To Grade',   color: T.accent,       bg: T.accentLight, page: 'homework',    urgent: pendingSubmissions > 0 },
-    { icon: Users,            value: (state.students || []).length,                              label: 'Students',   color: T.omath.accent, bg: T.omath.bg,    page: 'progress',    urgent: false },
+    { icon: Users,            value: (state.students || []).length,                              label: 'A-Worthlings', color: T.omath.accent, bg: T.omath.bg,    page: 'progress',    urgent: false },
     { icon: CalendarCheck,    value: (state.sessions || []).length,                              label: 'Sessions',   color: T.gp.accent,    bg: T.gp.bg,       page: 'attendance',  urgent: false },
     { icon: ChatText,         value: (state.posts || []).length,                                 label: 'Community',  color: T.success,      bg: T.successBg,   page: 'community',   urgent: false },
   ];
@@ -796,7 +796,7 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
               {[
                 { label: 'Take Attendance',   icon: CalendarCheck, page: 'attendance',    color: T.omath.accent },
                 { label: 'Upload Resource',   icon: Upload,        page: 'library-eng',   color: T.amath.accent },
-                { label: 'Student Progress',  icon: ChartLineUp,   page: 'progress',      color: T.success      },
+                { label: 'A-Worthling Progress', icon: ChartLineUp, page: 'progress',      color: T.success      },
                 { label: 'Past Papers',       icon: BookOpen,      page: 'pastpapers-gp', color: T.gp.accent    },
               ].map(item => (
                 <button key={item.label} onClick={() => dispatch({ type: 'SET_PAGE', payload: item.page })}
