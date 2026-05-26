@@ -33,7 +33,7 @@ function ExampleConnector() {
     });
 
     scored.sort((a, b) => b.score - a.score);
-    setMatches(scored.slice(0, 8));
+    setMatches(scored.slice(0, 10));
     setExpandedMatch(null);
   }
 
