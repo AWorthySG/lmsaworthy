@@ -162,6 +162,16 @@ function LMS({ authUser, userProfile }) {
     () => !localStorage.getItem("aworthy-avatar-prompted")
   );
 
+  // Login welcome animation — plays once each time the app shell mounts
+  const [showWelcome, setShowWelcome] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setShowWelcome(false), 2400);
+    return () => clearTimeout(t);
+  }, []);
+  const welcomeFirstName = (userProfile?.name || authUser?.displayName || "there").split(" ")[0];
+  const welcomeHour = new Date().getHours();
+  const welcomeGreeting = welcomeHour < 12 ? "Good morning" : welcomeHour < 18 ? "Good afternoon" : "Good evening";
+
   function saveAvatarPromptChoice(key) {
     if (key) {
       dispatch({ type: "SET_MY_AVATAR", payload: key });
@@ -266,6 +276,44 @@ function LMS({ authUser, userProfile }) {
 
   return (
     <MotionConfig reducedMotion="user">
+    <AnimatePresence>
+      {showWelcome && (
+        <motion.div
+          key="welcome-overlay"
+          role="status"
+          aria-label={`${welcomeGreeting}, ${welcomeFirstName}`}
+          onClick={() => setShowWelcome(false)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          style={{ position: "fixed", inset: 0, zIndex: 300, background: "#1C1B19", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 22, cursor: "pointer", padding: 24 }}>
+          <div style={{ position: "absolute", top: "40%", left: "50%", transform: "translate(-50%,-50%)", width: 380, height: 380, borderRadius: "50%", background: `radial-gradient(circle, ${T.accent}26, transparent 70%)`, pointerEvents: "none" }} />
+          <motion.img
+            src="/logo-aworthy.jpeg" alt="A Worthy"
+            initial={{ opacity: 0, y: 12, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.12, duration: 0.5, ease: "easeOut" }}
+            style={{ height: 46, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8, position: "relative" }} />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.32, duration: 0.5, ease: "easeOut" }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, position: "relative" }}>
+            {state.myAvatar
+              ? <AvatarDisplay avatarKey={state.myAvatar} size={60} radius={T.r2} />
+              : <div style={{ width: 60, height: 60, borderRadius: T.r2, background: `linear-gradient(135deg, ${T.accent}, #B45309)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 22 }}>
+                  {welcomeFirstName.charAt(0).toUpperCase()}
+                </div>
+            }
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#FEFEFE", fontFamily: T.fontDisplay, letterSpacing: -0.3 }}>{welcomeGreeting}, {welcomeFirstName}</div>
+              <div style={{ fontSize: 11, color: "rgba(254,254,254,0.4)", fontWeight: 600, letterSpacing: 1.6, textTransform: "uppercase", marginTop: 7 }}>A Worthy Learning</div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
     <div style={{ display: "flex", minHeight: "100dvh", background: T.bg, color: T.text, fontSize: 14, lineHeight: 1.6 }}>
       {/* Mobile overlay backdrop */}
       {isMobileLayout && sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: T.bgOverlay, zIndex: 49, transition: "opacity 0.2s" }} />}
