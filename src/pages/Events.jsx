@@ -241,6 +241,4 @@ function Events({ state, dispatch }) {
   );
 }
 
-/* ━━━ ESSAY GRADER — Framework-based analysis ━━━ */
-
 export default Events;

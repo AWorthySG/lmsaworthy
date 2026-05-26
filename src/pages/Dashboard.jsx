@@ -214,7 +214,7 @@ function TodaysPlanCard({ state }) {
       )}
     >
       {tasks.length === 0 ? (
-        <div style={{ padding: '6px 0', fontSize: 13, color: T.textTer, fontStyle: 'italic' }}>No tasks for today — great time to practice!</div>
+        <div style={{ padding: '6px 0', fontSize: 13, color: T.textTer, fontStyle: 'italic' }}>No tasks for today — great time to practise!</div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {tasks.map((task, i) => {
@@ -536,7 +536,7 @@ function WordOfTheDayCard({ dispatch }) {
         </span>
         <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'vocab' })}
           style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: T.accent, fontSize: 12, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-          Practice all <ArrowRight size={12} />
+          Practise all <ArrowRight size={12} />
         </button>
       </div>
     </DCard>

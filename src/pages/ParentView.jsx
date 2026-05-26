@@ -85,6 +85,4 @@ function ParentView({ state }) {
   );
 }
 
-/* ━━━ PERSONAL NOTES SYSTEM ━━━ */
-
 export default ParentView;

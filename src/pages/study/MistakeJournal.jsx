@@ -104,7 +104,7 @@ function MistakeJournal({ state, dispatch }) {
       )}
 
       <div style={{ padding: "12px 16px", background: T.accentLight, borderRadius: T.r2, fontSize: 12, color: T.accentText, lineHeight: 1.6, display: "flex", alignItems: "flex-start", gap: 6 }}>
-        <Lightbulb size={14} color={T.accentText} style={{ flexShrink: 0, marginTop: 2 }} /> <span><strong>Study tip:</strong> Review your mistake journal before every practice session. A-Worthlings who actively review errors improve 30% faster than those who just practice new questions.</span>
+        <Lightbulb size={14} color={T.accentText} style={{ flexShrink: 0, marginTop: 2 }} /> <span><strong>Study tip:</strong> Review your mistake journal before every practice session. A-Worthlings who actively review errors improve 30% faster than those who just practise new questions.</span>
       </div>
     </div>
   );
