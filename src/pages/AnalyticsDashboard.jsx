@@ -43,7 +43,7 @@ function AnalyticsDashboard({ state }) {
   const attendanceRate = totalExpected > 0 ? Math.round((totalPresent / totalExpected) * 100) : 0;
 
   // Study time this week (from studyLogs)
-  const weekAgo = Date.now() - 7 * 86400000;
+  const weekAgo = Date.now() - 7 * 86400000; // eslint-disable-line react-hooks/purity -- intentional rolling 7-day window boundary
   const weekLogs = studyLogs.filter(l => l.timestamp > weekAgo);
   const totalMinsWeek = weekLogs.reduce((a, l) => a + (l.minutes || 0), 0);
 

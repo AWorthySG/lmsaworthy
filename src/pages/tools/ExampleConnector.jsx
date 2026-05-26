@@ -40,7 +40,7 @@ function ExampleConnector() {
   useEffect(() => {
     const timer = setTimeout(findExamples, 300);
     return () => clearTimeout(timer);
-  }, [questionText]);
+  }, [questionText]); // eslint-disable-line react-hooks/exhaustive-deps -- debounce findExamples on questionText changes only
 
   // Auto-detect question type
   const detected = detectQuestionType(questionText, GP1_QTYPES);

@@ -103,8 +103,8 @@ function SettingsPage({ darkMode, setDarkMode, authUser, userProfile, state, dis
 
   // Sync nameValue when userProfile loads
   useEffect(() => {
-    if (userProfile?.name && !editingName) setNameValue(userProfile.name);
-  }, [userProfile?.name]);
+    if (userProfile?.name && !editingName) setNameValue(userProfile.name); // eslint-disable-line react-hooks/set-state-in-effect -- sync the editable name field when the profile loads
+  }, [userProfile?.name]); // eslint-disable-line react-hooks/exhaustive-deps -- re-sync only when the profile name changes, not while the user is editing
 
   useEffect(() => { try { localStorage.setItem(FONT_SIZE_KEY, fontSize); } catch { /* ignore */ } }, [fontSize]);
   useEffect(() => { try { localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(notifPrefs)); } catch { /* ignore */ } }, [notifPrefs]);

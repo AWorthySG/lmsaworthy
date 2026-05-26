@@ -115,7 +115,7 @@ function LMS({ authUser, userProfile }) {
       if (state.page !== defaultPage) dispatch({ type: "SET_PAGE", payload: defaultPage });
     }
     initializedRef.current = true;
-  }, [location.pathname]);
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps -- URL→state sync must run on pathname change only; adding state.page would create a navigation loop
 
   const prevPageRef = useRef(state.page);
   useEffect(() => {
@@ -125,7 +125,7 @@ function LMS({ authUser, userProfile }) {
       if (location.pathname !== path) navigate(path);
       prevPageRef.current = state.page;
     }
-  }, [state.page]);
+  }, [state.page]); // eslint-disable-line react-hooks/exhaustive-deps -- state→URL sync must run on state.page change only; adding location/navigate would create a navigation loop
 
   const notifications = useMemo(() => {
     const notifs = [];
@@ -157,7 +157,7 @@ function LMS({ authUser, userProfile }) {
   const searchRef = useRef(null);
   const windowWidth = useWindowWidth();
   const isMobileLayout = windowWidth < 768;
-  useEffect(() => { if (isMobileLayout) setSidebarOpen(false); }, [isMobileLayout]);
+  useEffect(() => { if (isMobileLayout) setSidebarOpen(false); }, [isMobileLayout]); // eslint-disable-line react-hooks/set-state-in-effect -- intentionally collapse the sidebar when the viewport switches to a mobile layout
   const page = state.page;
 
   useEffect(() => { localStorage.setItem("aworthy-dark", darkMode); document.documentElement.classList.toggle("dark", darkMode); }, [darkMode]);
