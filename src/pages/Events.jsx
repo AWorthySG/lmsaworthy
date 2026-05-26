@@ -53,7 +53,7 @@ function Events({ state, dispatch }) {
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#D4A254", marginBottom: 6 }}>Earn Prizes · Compete · Level Up</div>
             <div style={{ fontSize: 20, fontWeight: 800, fontFamily: T.fontDisplay, marginBottom: 8 }}>Upcoming Events & Challenges</div>
             <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6 }}>
-              Participate in challenges using the LMS tools you already know — Timed Writer, Practice Drills, and Vocabulary. Top performers are recognised and celebrated.
+              Participate in challenges using the LMS tools you already know — Vocabulary, the Mistake Journal, and Past Papers. Top performers are recognised and celebrated.
             </div>
             <div style={{ display: "flex", gap: 12, marginTop: 14 }}>
               <div style={{ background: "rgba(0,0,0,0.04)", borderRadius: T.r2, padding: "8px 16px", textAlign: "center" }}>

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { T } from "./theme/theme.js";
-import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, PlayCircle, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
+import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, set, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
@@ -217,11 +217,10 @@ function LMS({ authUser, userProfile }) {
     return [
       ...state.resources.filter(r => r.title.toLowerCase().includes(q)).slice(0, 3).map(r => ({ type: "file", label: r.title, page: "library" })),
       ...(Array.isArray(state.homework) ? state.homework : []).filter(h => h.title.toLowerCase().includes(q)).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
-      ...(Array.isArray(state.videoLessons) ? state.videoLessons : []).filter(v => v.title.toLowerCase().includes(q)).slice(0, 2).map(v => ({ type: "video", label: v.title, page: "videos" })),
       ...(state.posts || []).filter(p => p.title.toLowerCase().includes(q)).slice(0, 2).map(p => ({ type: "chat", label: p.title, page: "community" })),
       ...NAV.flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(q)).map(i => ({ type: "link", label: i.label, page: i.id })),
     ].slice(0, 8);
-  }, [searchQuery, state.resources, state.homework, state.videoLessons, state.posts]);
+  }, [searchQuery, state.resources, state.homework, state.posts]);
 
   const hwBadge = useMemo(() => (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.status === "submitted").length, [state.submissions]);
   const attendanceBadge = useMemo(() => {
@@ -514,7 +513,7 @@ function LMS({ authUser, userProfile }) {
                       onMouseEnter={e => { e.currentTarget.style.background = T.bgMuted; e.currentTarget.style.paddingLeft = "24px"; }}
                       onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.paddingLeft = "20px"; }}>
                       <span style={{ minWidth: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        {r.type === "file" ? <FilePdf size={18} color={T.textSec} /> : r.type === "clipboard" ? <ClipboardText size={18} color={T.textSec} /> : r.type === "video" ? <PlayCircle size={18} color={T.textSec} /> : r.type === "chat" ? <ChatCircle size={18} color={T.textSec} /> : <ArrowSquareOut size={18} color={T.textSec} />}
+                        {r.type === "file" ? <FilePdf size={18} color={T.textSec} /> : r.type === "clipboard" ? <ClipboardText size={18} color={T.textSec} /> : r.type === "chat" ? <ChatCircle size={18} color={T.textSec} /> : <ArrowSquareOut size={18} color={T.textSec} />}
                       </span>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</div>

@@ -382,7 +382,6 @@ function WeekProgressCard({ state }) {
   const activeDates = new Set([
     ...(state.studyLogs || []).map(l => new Date(l.timestamp).toISOString().split('T')[0]),
     ...(state.submissions || []).filter(s => s.submittedAt).map(s => s.submittedAt),
-    ...(state.notes || []).map(n => n.createdAt),
   ]);
   const last7 = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(today); d.setDate(today.getDate() - (6 - i));
@@ -425,8 +424,8 @@ function WeekProgressCard({ state }) {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 12 }}>
         {[
-          { label: 'HW Done', value: wp.hwCompleted, color: T.accent },
-          { label: 'Notes',   value: wp.notesCreated, color: T.teal },
+          { label: 'HW Done',    value: wp.hwCompleted, color: T.accent },
+          { label: 'Study Days', value: wp.studyDays,   color: T.teal },
         ].map(s => (
           <div key={s.label} style={{ textAlign: 'center', padding: '8px 4px', borderRadius: T.r2, background: T.bgMuted }}>
             <div style={{ fontSize: 16, fontWeight: 700, color: s.color, fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>

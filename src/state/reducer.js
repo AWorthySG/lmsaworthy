@@ -22,10 +22,6 @@ export function appReducer(state, action) {
     case "SET_ROLE": return { ...state, role: action.payload };
     case "ADD_RESOURCE": return { ...state, resources: [...state.resources, { ...action.payload, id: Math.max(...state.resources.map(r => r.id), 0) + 1, date: new Date().toISOString().split("T")[0] }] };
     case "DELETE_RESOURCE": return { ...state, resources: state.resources.filter(r => r.id !== action.payload) };
-    case "TOGGLE_CHAPTER_COMPLETE": {
-      const lessons = state.videoLessons.map((l) => l.id === action.payload.lessonId ? { ...l, chapters: l.chapters.map((ch) => ch.id === action.payload.chapterId ? { ...ch, completed: !ch.completed } : ch) } : l);
-      return { ...state, videoLessons: lessons };
-    }
     case "ADD_PAST_PAPER_DOC": {
       const docs = state.pastPaperDocs || [];
       const id = Math.max(...docs.map(d => d.id), 0) + 1;
@@ -153,30 +149,8 @@ export function appReducer(state, action) {
       const logs = state.studyLogs || [];
       return { ...state, studyLogs: [...logs, { ...action.payload, timestamp: Date.now() }].slice(-200) };
     }
-    case "ADD_NOTE": {
-      const notes = state.notes || [];
-      const id = notes.length > 0 ? Math.max(...notes.map(n => n.id)) + 1 : 1;
-      return { ...state, notes: [{ ...action.payload, id, createdAt: new Date().toISOString().split("T")[0], updatedAt: new Date().toISOString().split("T")[0] }, ...notes] };
-    }
-    case "UPDATE_NOTE": {
-      return { ...state, notes: (state.notes || []).map(n => n.id === action.payload.id ? { ...n, ...action.payload, updatedAt: new Date().toISOString().split("T")[0] } : n) };
-    }
-    case "DELETE_NOTE": {
-      return { ...state, notes: (state.notes || []).filter(n => n.id !== action.payload) };
-    }
     case "SET_ANNOUNCEMENT": {
       return { ...state, announcement: action.payload };
-    }
-    case "ADD_GOAL": {
-      const goals = state.goals || [];
-      const id = goals.length > 0 ? Math.max(...goals.map(g => g.id)) + 1 : 1;
-      return { ...state, goals: [...goals, { ...action.payload, id, createdAt: new Date().toISOString().split("T")[0], completed: false }] };
-    }
-    case "TOGGLE_GOAL": {
-      return { ...state, goals: (state.goals || []).map(g => g.id === action.payload ? { ...g, completed: !g.completed } : g) };
-    }
-    case "DELETE_GOAL": {
-      return { ...state, goals: (state.goals || []).filter(g => g.id !== action.payload) };
     }
     case "ADD_MISTAKE": {
       const mistakes = state.mistakes || [];

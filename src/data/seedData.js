@@ -370,33 +370,6 @@ export const initialResources = [
   { id: 340, title: "Hyco H2 Econ Evaluation Guide v3 (2025)", subject: "h2econ", topic: "Evaluation", type: "pdf", date: "2026-05-21", fileUrl: "/resources/h2econ/syllabus-master/Hyco-H2-Econ-Evaluation-Guide-v3.pdf" },
 ];
 
-export const initialVideoLessons = [
-  { id: 1, title: "Narrative Writing Masterclass", subject: "eng", videoUrl: "https://www.youtube.com/embed/ych2v0uftIw", description: "Learn the art of narrative writing with techniques for vivid storytelling, character development, and plot structure.", chapters: [{ id: 1, title: "Introduction to Narrative Writing", duration: "8:30", completed: true },{ id: 2, title: "Building Characters", duration: "12:00", completed: true },{ id: 3, title: "Plot Structure & Pacing", duration: "10:15", completed: false },{ id: 4, title: "Descriptive Language", duration: "9:45", completed: false },{ id: 5, title: "Practice & Review", duration: "4:30", completed: false }] },
-  { id: 2, title: "Elasticity Explained", subject: "h2econ", videoUrl: "https://www.youtube.com/embed/nOlOf_KEnrw", description: "A comprehensive walkthrough of price, income, and cross elasticity of demand with real-world examples and calculations.", chapters: [{ id: 1, title: "What is Elasticity?", duration: "6:00", completed: true },{ id: 2, title: "Price Elasticity of Demand", duration: "10:30", completed: false },{ id: 3, title: "Income & Cross Elasticity", duration: "8:45", completed: false },{ id: 4, title: "Applications & Calculations", duration: "6:45", completed: false }] },
-  { id: 3, title: "Fiscal Policy Lecture", subject: "h1econ", videoUrl: "https://www.youtube.com/embed/otmgFQHbaDo", description: "Understanding fiscal policy tools, their mechanisms, and effectiveness in achieving macroeconomic stability.", chapters: [{ id: 1, title: "Overview of Fiscal Policy", duration: "7:00", completed: false },{ id: 2, title: "Government Spending", duration: "12:00", completed: false },{ id: 3, title: "Taxation", duration: "15:00", completed: false },{ id: 4, title: "Budget Deficits & Surpluses", duration: "10:00", completed: false },{ id: 5, title: "Effectiveness & Limitations", duration: "6:00", completed: false }] },
-  { id: 4, title: "Media Literacy Discussion", subject: "gp", videoUrl: "https://www.youtube.com/embed/AD7N-1Mj-DU", description: "Explore the impact of media on society, critical evaluation of sources, and the role of social media in shaping opinions.", chapters: [{ id: 1, title: "What is Media Literacy?", duration: "5:30", completed: true },{ id: 2, title: "Evaluating Sources", duration: "9:00", completed: true },{ id: 3, title: "Social Media & Society", duration: "8:30", completed: true },{ id: 4, title: "Case Studies", duration: "5:00", completed: false }] },
-];
-
-export const initialQuizzes = [
-  { id: 1, title: "Demand & Supply MCQ Quiz", subject: "h2econ", topic: "Demand & Supply", timeLimit: 15, questions: [
-    { id: 1, type: "mcq", text: "What happens to the demand curve when consumer income increases for a normal good?", options: ["Shifts left", "Shifts right", "Stays the same", "Rotates"], correct: 1, marks: 2 },
-    { id: 2, type: "mcq", text: "A price floor set above equilibrium will result in:", options: ["Shortage", "Surplus", "No change", "Equilibrium"], correct: 1, marks: 2 },
-    { id: 3, type: "mcq", text: "Which factor does NOT shift the supply curve?", options: ["Technology change", "Input costs", "Change in price of the good", "Government subsidies"], correct: 2, marks: 2 },
-    { id: 4, type: "short", text: "Explain why the demand curve slopes downward.", marks: 4, modelAnswer: "The demand curve slopes downward due to the law of diminishing marginal utility. As consumption increases, the additional satisfaction from each unit decreases, so consumers are only willing to pay less for additional units." },
-  ]},
-  { id: 2, title: "Comprehension Skills", subject: "eng", topic: "Comprehension", timeLimit: 20, questions: [
-    { id: 1, type: "mcq", text: "The purpose of skimming a text is to:", options: ["Memorise details", "Get a general overview", "Find specific facts", "Analyse tone"], correct: 1, marks: 1 },
-    { id: 2, type: "mcq", text: "An inference question requires the reader to:", options: ["Copy from the text", "Read between the lines", "Summarise the passage", "Identify vocabulary"], correct: 1, marks: 1 },
-    { id: 3, type: "short", text: "What is the difference between explicit and implicit information in a passage?", marks: 3, modelAnswer: "Explicit information is stated directly in the text, while implicit information is suggested or hinted at and requires the reader to make inferences based on contextual clues." },
-    { id: 4, type: "structured", text: "Read the following extract and explain how the author creates a sense of tension:\n\n'The corridor stretched endlessly before her. Each footstep echoed against the cold stone walls, and somewhere in the distance, a door creaked shut.'", marks: 6, modelAnswer: "The author creates tension through: (1) spatial imagery ('stretched endlessly') suggesting an inescapable environment, (2) auditory details ('echoed', 'creaked') that heighten sensory awareness, and (3) the passive, distant action ('somewhere...a door creaked shut') implying an unseen presence." },
-  ]},
-  { id: 3, title: "Market Failure Concepts", subject: "h1econ", topic: "Market Failure", timeLimit: 25, questions: [
-    { id: 1, type: "mcq", text: "Which is an example of a negative externality?", options: ["Vaccination", "Factory pollution", "Education", "Street lighting"], correct: 1, marks: 2 },
-    { id: 2, type: "mcq", text: "Public goods are characterised by:", options: ["Non-rivalry and non-excludability", "Rivalry and excludability", "Only non-rivalry", "Only non-excludability"], correct: 0, marks: 2 },
-    { id: 3, type: "structured", text: "Explain how the government can correct the market failure arising from negative externalities. Use a diagram in your explanation.", marks: 8, modelAnswer: "The government can impose a Pigouvian tax equal to the marginal external cost (MEC) to internalise the externality. This shifts the private cost curve (MPC) upward to align with the social cost curve (MSC), reducing output from the private equilibrium to the socially optimal level." },
-  ]},
-];
-
 export const initialExams = [
   { id: 1, title: "H2 Economics Mid-Year Paper 1", subject: "h2econ", timeLimit: 90, sections: [
     { id: 1, name: "Section A: Case Study", questions: [
