@@ -4,10 +4,12 @@ import { FileDoc, DownloadSimple, ArrowSquareOut, Warning, X } from '../../icons
 import Btn from './Btn.jsx';
 import FileIcon from './FileIcon.jsx';
 import { SubjectBadge } from './Badge.jsx';
+import useWindowWidth from '../../hooks/useWindowWidth.js';
 
 export default function DocumentViewer({ resource, onClose }) {
   const dialogRef = useRef(null);
   const closeBtnRef = useRef(null);
+  const isMobile = useWindowWidth() < 768;
 
   useEffect(() => {
     if (!resource) return;
@@ -62,8 +64,20 @@ export default function DocumentViewer({ resource, onClose }) {
         </div>
         <div style={{ flex: 1, overflow: "hidden" }}>
           {isVideo && resource.videoUrl ? <iframe src={resource.videoUrl} style={{ width: "100%", height: "100%", border: "none" }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={resource.title} /> :
-           isPdf && resource.fileUrl ? <iframe src={resource.fileUrl} style={{ width: "100%", height: "100%", border: "none" }} title={resource.title} onError={e => { e.target.style.display = "none"; e.target.parentElement.querySelector(".fallback")?.style && (e.target.parentElement.querySelector(".fallback").style.display = "flex"); }} /> :
-           null}
+           isPdf && resource.fileUrl && !isMobile ? <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(resource.fileUrl.startsWith('http') ? resource.fileUrl : window.location.origin + resource.fileUrl)}&embedded=true`} style={{ width: "100%", height: "100%", border: "none" }} title={resource.title} /> :
+           isPdf && resource.fileUrl && isMobile ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 20, padding: 32, textAlign: "center" }}>
+              <div style={{ width: 72, height: 72, borderRadius: T.r4, background: T.dangerBg, display: "flex", alignItems: "center", justifyContent: "center" }}><FileIcon type="pdf" size={32} /></div>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 6 }}>{resource.title}</div>
+                <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6, maxWidth: 280 }}>Open this PDF in a new tab for the best reading experience on mobile.</div>
+              </div>
+              <div style={{ display: "flex", gap: 10 }}>
+                <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn><ArrowSquareOut size={15} weight="bold" /> Open PDF</Btn></a>
+                <a href={resource.fileUrl} download style={{ textDecoration: "none" }}><Btn variant="secondary"><DownloadSimple size={15} weight="bold" /> Download</Btn></a>
+              </div>
+            </div>
+           ) : null}
           {/* Fallback for all non-video files (DOCX, or PDF that failed to load) */}
           {(!isVideo || !resource.videoUrl) && !isPdf && resource.fileUrl ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 16, padding: 40, textAlign: "center" }}>
@@ -72,7 +86,7 @@ export default function DocumentViewer({ resource, onClose }) {
               <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6, maxWidth: 400 }}>This document type can't be previewed directly in the browser. Download it to view in Microsoft Word, Google Docs, or your preferred application.</div>
               <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
                 <a href={resource.fileUrl} download style={{ textDecoration: "none" }}><Btn><DownloadSimple size={15} /> Download</Btn></a>
-                <a href={`https://docs.google.com/gview?url=${encodeURIComponent(window.location.origin + resource.fileUrl)}&embedded=true`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary"><ArrowSquareOut size={15} /> Open in Google Docs</Btn></a>
+                <a href={`https://docs.google.com/viewer?url=${encodeURIComponent(resource.fileUrl.startsWith('http') ? resource.fileUrl : window.location.origin + resource.fileUrl)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary"><ArrowSquareOut size={15} /> Open in Google Docs</Btn></a>
               </div>
             </div>
           ) : (!isVideo && !isPdf) ? <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 12, color: T.textSec, padding: 40, textAlign: "center" }}>

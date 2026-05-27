@@ -23,6 +23,8 @@ const SG_SCHOOLS = [
 
 /* ── PDF Viewer Modal ── */
 function DocViewer({ url, title, onClose }) {
+  const isMobile = window.innerWidth < 768;
+  const absoluteUrl = url.startsWith('http') ? url : window.location.origin + url;
   React.useEffect(() => {
     const h = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", h);
@@ -46,7 +48,19 @@ function DocViewer({ url, title, onClose }) {
             </button>
           </div>
         </div>
-        <div style={{ flex: 1 }}><iframe src={url} title={title} style={{ width: "100%", height: "100%", border: "none" }} /></div>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : "stretch" }}>
+          {isMobile ? (
+            <div style={{ textAlign: "center", padding: 32, color: T.textSec, fontSize: 13, lineHeight: 1.6 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>{title}</div>
+              Open this PDF in a new tab for the best reading experience on mobile.
+            </div>
+          ) : (
+            <iframe
+              src={`https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`}
+              title={title} style={{ width: "100%", height: "100%", border: "none" }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
