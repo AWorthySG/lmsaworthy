@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { T } from '../../theme/theme.js';
 import { SUBJECTS } from '../../data/subjects.js';
-import { FilePdf, FileDoc, Folder, FolderOpen, Upload, Trash, DownloadSimple, Eye, X, Plus, CaretRight } from '../../icons/icons.jsx';
+import { FilePdf, FileDoc, Folder, FolderOpen, Upload, Trash, DownloadSimple, Eye, X, Plus, CaretRight, Timer, CheckCircle } from '../../icons/icons.jsx';
 import { PageHeader, Input, Select } from '../../components/ui';
 import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
+import useTimer from '../../hooks/useTimer.js';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const YEARS = Array.from({ length: CURRENT_YEAR - 2014 }, (_, i) => CURRENT_YEAR - i);
@@ -21,15 +22,35 @@ const SG_SCHOOLS = [
   "Cambridge O-Level (10-Year Series)", "TYS Mixed Compilation", "Other",
 ];
 
-/* ── PDF Viewer Modal ── */
-function DocViewer({ url, title, onClose }) {
+const TIMER_DURATIONS = [30, 45, 60, 90, 120];
+
+/* ── PDF Viewer Modal with optional countdown timer ── */
+function DocViewer({ url, title, timedMinutes, onClose, onTimedComplete }) {
   const isMobile = window.innerWidth < 768;
   const absoluteUrl = url.startsWith('http') ? url : window.location.origin + url;
+  const [timerStarted, setTimerStarted] = useState(false);
+  const [timeUp, setTimeUp] = useState(false);
+
+  const handleEnd = useCallback(() => {
+    setTimeUp(true);
+    onTimedComplete?.();
+  }, [onTimedComplete]);
+
+  const { display, running, start, stop } = useTimer(timedMinutes || 60, handleEnd);
+
   React.useEffect(() => {
     const h = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, [onClose]);
+
+  // Auto-start timer when viewer opens in timed mode
+  React.useEffect(() => {
+    if (timedMinutes && !timerStarted) { start(); setTimerStarted(true); }
+  }, [timedMinutes, timerStarted, start]);
+
+  const timerColor = timeUp ? T.danger : display < "00:10" ? T.danger : display < "00:30" ? "#D4940A" : T.success;
+
   return (
     <div role="dialog" aria-modal="true" aria-label={`Viewing: ${title}`}
       style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
@@ -37,8 +58,21 @@ function DocViewer({ url, title, onClose }) {
       <div style={{ background: T.bgCard, borderRadius: T.r3, width: "100%", maxWidth: 920, height: "87vh", display: "flex", flexDirection: "column", overflow: "hidden", border: `1px solid ${T.border}` }}
         onClick={e => e.stopPropagation()}>
         <div style={{ padding: "12px 18px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: T.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "60%" }}>{title}</span>
-          <div style={{ display: "flex", gap: 8 }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: T.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "50%" }}>{title}</span>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {/* Countdown timer chip */}
+            {timedMinutes && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: T.r1, background: timeUp ? T.dangerBg : "#1C1B19", border: `1px solid ${timerColor}44` }}>
+                <Timer size={13} color={timeUp ? T.danger : "#fff"} />
+                <span style={{ fontSize: 14, fontWeight: 800, color: timeUp ? T.danger : "#fff", fontFamily: "monospace", letterSpacing: 1 }}>{timeUp ? "Time's up!" : display}</span>
+                {!timeUp && (
+                  <button onClick={e => { e.stopPropagation(); running ? stop() : start(); }}
+                    style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", background: "none", border: "none", cursor: "pointer", padding: "0 2px" }}>
+                    {running ? "Pause" : "Resume"}
+                  </button>
+                )}
+              </div>
+            )}
             <a href={url} target="_blank" rel="noopener noreferrer"
               style={{ padding: "5px 14px", borderRadius: T.r1, background: T.accent, color: "#fff", fontSize: 12, fontWeight: 600, textDecoration: "none" }}>
               Open in new tab
@@ -48,6 +82,18 @@ function DocViewer({ url, title, onClose }) {
             </button>
           </div>
         </div>
+        {/* Time's up banner */}
+        {timeUp && (
+          <div style={{ background: T.dangerBg, padding: "10px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Timer size={16} color={T.danger} />
+              <span style={{ fontSize: 13, fontWeight: 700, color: T.danger }}>Time's up! Close this viewer when you're ready.</span>
+            </div>
+            <button onClick={onClose} style={{ padding: "5px 14px", borderRadius: T.r1, background: T.danger, color: "#fff", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>
+              Finish
+            </button>
+          </div>
+        )}
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : "stretch" }}>
           {isMobile ? (
             <div style={{ textAlign: "center", padding: 32, color: T.textSec, fontSize: 13, lineHeight: 1.6 }}>
@@ -158,10 +204,11 @@ function UploadPanel({ activeSubj, state, dispatch, onClose }) {
 /* ── Past Papers ── */
 function PastPapers({ state, dispatch, defaultSubject }) {
   const [activeSubj, setActiveSubj] = useState(defaultSubject || SUBJECTS[0].id);
-  const [viewingDoc, setViewingDoc] = useState(null);
+  const [viewingDoc, setViewingDoc] = useState(null); // { url, title, timedMinutes? }
   const [showUpload, setShowUpload] = useState(false);
   const [expandedYears, setExpandedYears] = useState({});
   const [expandedSchools, setExpandedSchools] = useState({});
+  const [timerPickerDoc, setTimerPickerDoc] = useState(null); // doc being configured for timed practice
 
   const isTutor = true;
   const allDocs = state.pastPaperDocs || [];
@@ -171,6 +218,14 @@ function PastPapers({ state, dispatch, defaultSubject }) {
   function handleDelete(id) {
     if (!window.confirm("Remove this document from the folder?")) return;
     dispatch({ type: "DELETE_PAST_PAPER_DOC", payload: id });
+  }
+
+  function handleTimedComplete(doc, minutes) {
+    dispatch({
+      type: "LOG_STUDY_TIME",
+      payload: { type: "timedPractice", docId: doc.id, docName: doc.name, subject: doc.subject, durationMin: minutes },
+    });
+    dispatch({ type: "ADD_TOAST", payload: { message: `Timed session logged: ${minutes} min on "${doc.name}"`, variant: "success" } });
   }
 
   // Group by year desc, then by school asc
@@ -305,24 +360,49 @@ function PastPapers({ state, dispatch, defaultSubject }) {
                                       {doc.fileType?.toUpperCase()}{doc.uploadedAt ? ` · ${doc.uploadedAt}` : ""}{doc.uploadedBy ? ` · ${doc.uploadedBy}` : ""}
                                     </div>
                                   </div>
-                                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                                    {doc.fileType === "pdf" && (
-                                      <button onClick={() => setViewingDoc({ url: doc.url, title: doc.name })}
-                                        style={{ padding: "4px 10px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgMuted, color: T.textSec, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
-                                        <Eye size={11} /> View
-                                      </button>
-                                    )}
-                                    <a href={doc.url} download target="_blank" rel="noopener noreferrer"
-                                      style={{ padding: "4px 10px", borderRadius: T.r1, border: `1px solid ${T.accent}`, background: T.accentLight, color: T.accent, fontSize: 11, fontWeight: 700, textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
-                                      <DownloadSimple size={11} /> Download
-                                    </a>
-                                    {isTutor && (
-                                      <button onClick={() => handleDelete(doc.id)} aria-label="Delete document"
-                                        style={{ padding: "4px 8px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", color: T.textTer, cursor: "pointer", display: "flex", alignItems: "center" }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.background = T.dangerBg; e.currentTarget.style.color = T.danger; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = T.textTer; }}>
-                                        <Trash size={12} />
-                                      </button>
+                                  <div style={{ display: "flex", gap: 6, flexShrink: 0, alignItems: "center" }}>
+                                    {/* Duration picker inline when timed practice requested */}
+                                    {timerPickerDoc?.id === doc.id ? (
+                                      <div style={{ display: "flex", gap: 4, alignItems: "center", background: "#1C1B19", borderRadius: T.r2, padding: "4px 8px" }}>
+                                        <Timer size={12} color="#fff" />
+                                        {TIMER_DURATIONS.map(min => (
+                                          <button key={min} onClick={() => { setTimerPickerDoc(null); setViewingDoc({ url: doc.url, title: doc.name, timedMinutes: min, doc }); }}
+                                            style={{ padding: "3px 8px", borderRadius: T.r1, border: "none", background: "rgba(255,255,255,0.12)", color: "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                                            {min}m
+                                          </button>
+                                        ))}
+                                        <button onClick={() => setTimerPickerDoc(null)}
+                                          style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.5)", padding: "0 2px" }}>
+                                          <X size={11} />
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <>
+                                        {doc.fileType === "pdf" && (
+                                          <>
+                                            <button onClick={() => setViewingDoc({ url: doc.url, title: doc.name })}
+                                              style={{ padding: "4px 10px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgMuted, color: T.textSec, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                                              <Eye size={11} /> View
+                                            </button>
+                                            <button onClick={() => setTimerPickerDoc(doc)}
+                                              style={{ padding: "4px 10px", borderRadius: T.r1, border: `1px solid #1C1B19`, background: "#1C1B19", color: "#fff", fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                                              <Timer size={11} /> Timed
+                                            </button>
+                                          </>
+                                        )}
+                                        <a href={doc.url} download target="_blank" rel="noopener noreferrer"
+                                          style={{ padding: "4px 10px", borderRadius: T.r1, border: `1px solid ${T.accent}`, background: T.accentLight, color: T.accent, fontSize: 11, fontWeight: 700, textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
+                                          <DownloadSimple size={11} /> Download
+                                        </a>
+                                        {isTutor && (
+                                          <button onClick={() => handleDelete(doc.id)} aria-label="Delete document"
+                                            style={{ padding: "4px 8px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", color: T.textTer, cursor: "pointer", display: "flex", alignItems: "center" }}
+                                            onMouseEnter={(e) => { e.currentTarget.style.background = T.dangerBg; e.currentTarget.style.color = T.danger; }}
+                                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = T.textTer; }}>
+                                            <Trash size={12} />
+                                          </button>
+                                        )}
+                                      </>
                                     )}
                                   </div>
                                 </div>
@@ -340,7 +420,15 @@ function PastPapers({ state, dispatch, defaultSubject }) {
         </div>
       )}
 
-      {viewingDoc && <DocViewer url={viewingDoc.url} title={viewingDoc.title} onClose={() => setViewingDoc(null)} />}
+      {viewingDoc && (
+        <DocViewer
+          url={viewingDoc.url}
+          title={viewingDoc.title}
+          timedMinutes={viewingDoc.timedMinutes}
+          onClose={() => setViewingDoc(null)}
+          onTimedComplete={viewingDoc.doc ? () => handleTimedComplete(viewingDoc.doc, viewingDoc.timedMinutes) : undefined}
+        />
+      )}
     </div>
   );
 }

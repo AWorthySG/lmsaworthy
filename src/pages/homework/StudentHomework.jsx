@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
 import { ArrowLeft, ArrowRight, ClipboardText, Clock, Warning, CheckCircle, Upload, X, FilePdf, FileDoc, FileVideo } from '../../icons/icons.jsx';
 import { AvatarDisplay } from '../../components/gamification/StudentAvatar.jsx';
@@ -12,7 +12,7 @@ const HW_STATUS = {
   graded: { label: "Graded", color: "#2BAA6E", bg: "#E6F7F0" },
 };
 
-function StudentHomework({ state, dispatch, userProfile }) {
+function StudentHomework({ state, dispatch, userProfile, authUser }) {
   const [selectedHw, setSelectedHw] = useState(null);
   const [notes, setNotes] = useState("");
   const [files, setFiles] = useState([]); // { name, url, uploading }
@@ -22,8 +22,13 @@ function StudentHomework({ state, dispatch, userProfile }) {
   const today = new Date().toISOString().split("T")[0];
 
   const hw = state.homework.filter(h => h.status === "active");
-  // Filter submissions to only the logged-in student. Profile must include studentId.
-  const myStudentId = userProfile?.studentId;
+  // Match logged-in user to a student record by email to get their studentId.
+  const myStudentId = useMemo(() => {
+    const students = Array.isArray(state.students) ? state.students : [];
+    const email = authUser?.email || userProfile?.email;
+    if (!email) return null;
+    return students.find(s => s.email?.toLowerCase() === email.toLowerCase())?.id ?? null;
+  }, [state.students, authUser, userProfile]);
   const mySubs = myStudentId != null ? state.submissions.filter(s => s.studentId === myStudentId) : [];
 
   function getMySubmission(hwId) { return mySubs.find(s => s.homeworkId === hwId); }
