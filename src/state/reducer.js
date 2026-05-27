@@ -155,10 +155,15 @@ export function appReducer(state, action) {
     case "ADD_MISTAKE": {
       const mistakes = state.mistakes || [];
       const id = mistakes.length > 0 ? Math.max(...mistakes.map(m => m.id)) + 1 : 1;
-      return { ...state, mistakes: [...mistakes, { ...action.payload, id, date: new Date().toISOString().split("T")[0], reviewed: false }].slice(-100) };
+      const today = new Date().toISOString().split("T")[0];
+      return { ...state, mistakes: [...mistakes, { ...action.payload, id, date: today, reviewed: false, easeFactor: 2.5, interval: 0, repetitions: 0, nextReview: today }].slice(-100) };
     }
     case "TOGGLE_MISTAKE_REVIEWED": {
       return { ...state, mistakes: (state.mistakes || []).map(m => m.id === action.payload ? { ...m, reviewed: !m.reviewed } : m) };
+    }
+    case "UPDATE_MISTAKE_SR": {
+      // payload: { id, easeFactor, interval, repetitions, nextReview, reviewed }
+      return { ...state, mistakes: (state.mistakes || []).map(m => m.id === action.payload.id ? { ...m, ...action.payload } : m) };
     }
     case "TOGGLE_CHECKLIST_ITEM": {
       const checklist = state.revisionChecklist || {};

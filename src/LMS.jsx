@@ -254,7 +254,7 @@ function LMS({ authUser, userProfile }) {
       case "vocab": return <VocabBuilder />;
       case "example-finder": return <ExampleConnector />;
       case "aimarker": return <AIMarker />;
-      case "homework": return <Homework state={state} dispatch={dispatch} userProfile={userProfile} />;
+      case "homework": return <Homework state={state} dispatch={dispatch} userProfile={userProfile} authUser={authUser} />;
       case "events": return <Events state={state} dispatch={dispatch} />;
       case "pastpapers": return <PastPapers state={state} dispatch={dispatch} />;
       case "pastpapers-eng": return <PastPapers state={state} dispatch={dispatch} defaultSubject="eng" />;
