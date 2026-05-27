@@ -37,6 +37,7 @@ const ModelEssayBank = lazy(() => import("./pages/study/ModelEssayBank.jsx"));
 const MistakeJournal = lazy(() => import("./pages/study/MistakeJournal.jsx"));
 const RevisionChecklist = lazy(() => import("./pages/study/RevisionChecklist.jsx"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
+const Calendar = lazy(() => import("./pages/Calendar.jsx"));
 
 
 export default function LMSAuthWrapper() {
@@ -131,6 +132,27 @@ function LMS({ authUser, userProfile }) {
     }
   }, [state.page]); // eslint-disable-line react-hooks/exhaustive-deps -- state→URL sync must run on state.page change only; adding location/navigate would create a navigation loop
 
+  const [readAnnouncementIds, setReadAnnouncementIds] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem("aworthy-read-announcements") || "[]")); }
+    catch { return new Set(); }
+  });
+
+  function dismissAnnouncement(id) {
+    setReadAnnouncementIds(prev => {
+      const next = new Set(prev);
+      next.add(id);
+      try { localStorage.setItem("aworthy-read-announcements", JSON.stringify([...next])); } catch { /* quota */ }
+      return next;
+    });
+  }
+
+  const unreadAnnouncements = useMemo(() =>
+    (Array.isArray(state.posts) ? state.posts : [])
+      .filter(p => p.isAnnouncement && !readAnnouncementIds.has(p.id))
+      .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')),
+    [state.posts, readAnnouncementIds]
+  );
+
   const notifications = useMemo(() => {
     const notifs = [];
     const today = new Date().toISOString().split("T")[0];
@@ -165,7 +187,7 @@ function LMS({ authUser, userProfile }) {
   // Login welcome animation — plays once each time the app shell mounts
   const [showWelcome, setShowWelcome] = useState(true);
   useEffect(() => {
-    const t = setTimeout(() => setShowWelcome(false), 2400);
+    const t = setTimeout(() => setShowWelcome(false), 1400);
     return () => clearTimeout(t);
   }, []);
   const welcomeFirstName = (userProfile?.name || authUser?.displayName || "there").split(" ")[0];
@@ -266,6 +288,7 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "parentview": return <ParentView state={state} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
+      case "calendar": return <Calendar state={state} />;
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
@@ -290,14 +313,14 @@ function LMS({ authUser, userProfile }) {
           <div style={{ position: "absolute", top: "40%", left: "50%", transform: "translate(-50%,-50%)", width: 380, height: 380, borderRadius: "50%", background: `radial-gradient(circle, ${T.accent}26, transparent 70%)`, pointerEvents: "none" }} />
           <motion.img
             src="/logo-aworthy.jpeg" alt="A Worthy"
-            initial={{ opacity: 0, y: 12, scale: 0.92 }}
+            initial={{ opacity: 0, y: 8, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.12, duration: 0.5, ease: "easeOut" }}
+            transition={{ delay: 0.05, duration: 0.3, ease: "easeOut" }}
             style={{ height: 46, aspectRatio: "786 / 1280", objectFit: "contain", borderRadius: 8, position: "relative" }} />
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.32, duration: 0.5, ease: "easeOut" }}
+            transition={{ delay: 0.18, duration: 0.3, ease: "easeOut" }}
             style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, position: "relative" }}>
             {state.myAvatar
               ? <AvatarDisplay avatarKey={state.myAvatar} size={60} radius={T.r2} />
@@ -443,12 +466,23 @@ function LMS({ authUser, userProfile }) {
           <div style={{ position: "relative" }}>
             <button onClick={() => setShowNotifs(n => !n)} aria-label="Notifications" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", position: "relative", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
               <Bell size={20} color={T.textSec} />
-              {notifications.length > 0 && <div style={{ position: "absolute", top: -2, right: -2, width: 14, height: 14, borderRadius: "50%", background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{notifications.length}</div>}
+              {(notifications.length + unreadAnnouncements.length) > 0 && <div style={{ position: "absolute", top: -2, right: -2, width: 14, height: 14, borderRadius: "50%", background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{notifications.length + unreadAnnouncements.length}</div>}
             </button>
             {showNotifs && (
-              <div className="scale-pop" style={{ position: "absolute", top: "100%", right: 0, marginTop: 6, width: 280, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, boxShadow: T.shadow3, zIndex: 100, overflow: "hidden" }}>
+              <div className="scale-pop" style={{ position: "absolute", top: "100%", right: 0, marginTop: 6, width: 300, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, boxShadow: T.shadow3, zIndex: 100, overflow: "hidden" }}>
                 <div style={{ padding: "10px 14px", borderBottom: `1px solid ${T.border}`, fontSize: 12, fontWeight: 600, color: T.text }}>Notifications</div>
-                {notifications.length === 0 ? (
+                {unreadAnnouncements.map(post => (
+                  <div key={post.id} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", borderBottom: `1px solid ${T.border}`, background: "#FEF3C710" }}>
+                    <Megaphone size={15} color="#92400E" style={{ flexShrink: 0, marginTop: 1 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#92400E", marginBottom: 2 }}>Announcement</div>
+                      <div style={{ fontSize: 12, color: T.text, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{post.title}</div>
+                    </div>
+                    <button onClick={() => dismissAnnouncement(post.id)} aria-label="Dismiss announcement"
+                      style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, fontSize: 11, padding: "0 2px", flexShrink: 0 }}>✕</button>
+                  </div>
+                ))}
+                {notifications.length === 0 && unreadAnnouncements.length === 0 ? (
                   <div style={{ padding: "20px 14px", textAlign: "center", fontSize: 12, color: T.textTer }}><EmptyStateIllustration type="celebration" size={60} /><div style={{ marginTop: 6 }}>All caught up!</div></div>
                 ) : notifications.map((n, i) => (
                   <button key={i} onClick={() => { dispatch({ type: "SET_PAGE", payload: n.page }); setShowNotifs(false); }}
@@ -462,7 +496,7 @@ function LMS({ authUser, userProfile }) {
           </div>
         </div>
 
-        {/* Tutor Announcement Banner */}
+        {/* Announcement banners */}
         {state.announcement && (
           <div style={{ maxWidth: 1080, margin: "0 auto 8px", padding: "10px 16px", borderRadius: T.r2, background: "linear-gradient(135deg, #1C1B19, #2A2927)", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
             <Megaphone size={16} color="#fff" />
@@ -470,6 +504,19 @@ function LMS({ authUser, userProfile }) {
             <button onClick={() => dispatch({ type: "SET_ANNOUNCEMENT", payload: null })} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>Dismiss</button>
           </div>
         )}
+        {unreadAnnouncements.slice(0, 1).map(post => (
+          <div key={post.id} style={{ maxWidth: 1080, margin: "0 auto 8px", padding: "10px 16px", borderRadius: T.r2, background: "linear-gradient(135deg, #78350F, #92400E)", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
+            <Megaphone size={16} color="#FEF3C7" />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ fontWeight: 700 }}>{post.title}</span>
+              {post.content && <span style={{ marginLeft: 8, fontWeight: 400, opacity: 0.8 }}>{post.content.slice(0, 80)}{post.content.length > 80 ? "…" : ""}</span>}
+            </div>
+            <button onClick={() => { dispatch({ type: "SET_PAGE", payload: "community" }); setShowNotifs(false); }}
+              style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.8)", fontWeight: 600, flexShrink: 0 }}>View</button>
+            <button onClick={() => dismissAnnouncement(post.id)} aria-label="Dismiss"
+              style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 8px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>✕</button>
+          </div>
+        ))}
 
         <AnimatePresence mode="wait">
           <motion.div
