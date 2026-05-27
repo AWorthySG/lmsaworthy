@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
-import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, Tag, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending } from '../icons/icons.jsx';
+import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, Tag, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, EmptyState, FileIcon, Input, Select, DocumentViewer } from '../components/ui';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
+import { getAllSavedIds, saveResourceOffline, removeResourceOffline } from '../utils/offlineCache.js';
 import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
 
 const DIFFICULTY_CONFIG = {
@@ -21,7 +22,7 @@ function DifficultyBadge({ difficulty }) {
   );
 }
 
-function ResourceCard({ r, meta, isTutor, isBookmarked, onView, onBookmark, onDelete, onSetDifficulty }) {
+function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookmark, onDelete, onSetDifficulty, onToggleOffline }) {
   const bgByType = { pdf: T.dangerBg, video: "#DBEAFE", docx: T.accentLight };
   const difficulty = meta?.difficulty;
   return (
@@ -35,6 +36,11 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, onView, onBookmark, onDe
           <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
             <Badge color={T.textSec} bg={T.bgMuted} style={{ fontSize: 10 }}>{r.type.toUpperCase()}</Badge>
             {difficulty && <DifficultyBadge difficulty={difficulty} />}
+            {isSaved && (
+              <span style={{ fontSize: 10, fontWeight: 700, padding: "1px 7px", borderRadius: 999, background: T.success + "18", color: T.success, display: "inline-flex", alignItems: "center", gap: 3 }}>
+                <CheckCircle size={9} color={T.success} /> Offline
+              </span>
+            )}
             <span style={{ fontSize: 11, color: T.textTer }}>{formatDate(r.date)}</span>
           </div>
           {isTutor && (
@@ -53,6 +59,13 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, onView, onBookmark, onDe
           )}
         </div>
         <div style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+          {onToggleOffline && r.fileUrl && (
+            <button onClick={(e) => { e.stopPropagation(); onToggleOffline(r); }}
+              aria-label={isSaved ? "Remove from offline" : "Save for offline"}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: T.r1 }}>
+              <CheckCircle size={14} weight={isSaved ? "fill" : "regular"} color={isSaved ? T.success : T.textTer} />
+            </button>
+          )}
           <button onClick={(e) => { e.stopPropagation(); onBookmark(r.id); }}
             style={{ background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: T.r1 }}>
             <BookmarkSimple size={15} weight={isBookmarked ? "fill" : "regular"} color={isBookmarked ? T.accent : T.textTer} />
@@ -81,6 +94,8 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   const [sortBy, setSortBy] = useState("newest");
   const [typeFilter, setTypeFilter] = useState("all");
   const [difficultyFilter, setDifficultyFilter] = useState("all");
+  const [savedOfflineIds, setSavedOfflineIds] = useState(() => getAllSavedIds());
+  const [offlineFilter, setOfflineFilter] = useState(false);
 
   const isTutor = true;
 
@@ -109,6 +124,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
         if (difficultyFilter === "untagged" && d) return false;
         if (difficultyFilter !== "untagged" && d !== difficultyFilter) return false;
       }
+      if (offlineFilter && !savedOfflineIds.has(r.id)) return false;
       if (nav && typeof nav === "string" && r.subject !== nav) return false;
       if (nav && typeof nav === "object" && (r.subject !== nav.subject || r.topic !== nav.topic)) return false;
       return true;
@@ -116,7 +132,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
     if (sortBy === "newest") list = [...list].sort((a, b) => b.date.localeCompare(a.date));
     else list = [...list].sort((a, b) => a.title.localeCompare(b.title));
     return list;
-  }, [state.resources, state.resourceMeta, search, nav, sortBy, typeFilter, difficultyFilter]);
+  }, [state.resources, state.resourceMeta, search, nav, sortBy, typeFilter, difficultyFilter, offlineFilter, savedOfflineIds]);
 
   function handleUpload() {
     if (!newTitle || !newSubject || !newTopic) return;
@@ -133,6 +149,17 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
 
   function handleSetDifficulty(id, difficulty) {
     dispatch({ type: "SET_RESOURCE_DIFFICULTY", payload: { id, difficulty } });
+  }
+
+  async function handleToggleOffline(r) {
+    if (!r.fileUrl) return;
+    if (savedOfflineIds.has(r.id)) {
+      removeResourceOffline(r.id, r.fileUrl);
+      setSavedOfflineIds(prev => { const next = new Set(prev); next.delete(r.id); return next; });
+    } else {
+      await saveResourceOffline(r.id, r.fileUrl);
+      setSavedOfflineIds(prev => new Set([...prev, r.id]));
+    }
   }
 
   const isBookmarked = (id) => state.bookmarks.includes(id);
@@ -324,6 +351,12 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                 );
               })}
             </div>
+            {/* Saved offline filter */}
+            <button onClick={() => setOfflineFilter(f => !f)}
+              style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 20, border: `1px solid ${offlineFilter ? T.success : T.border}`, background: offlineFilter ? T.success + "15" : T.bg, color: offlineFilter ? T.success : T.textSec, fontSize: 12, fontWeight: offlineFilter ? 650 : 500, cursor: "pointer", transition: "all 0.15s" }}>
+              <CheckCircle size={12} weight={offlineFilter ? "fill" : "regular"} color={offlineFilter ? T.success : T.textSec} />
+              Saved offline
+            </button>
             {/* Sort toggle */}
             <button onClick={() => setSortBy(s => s === "newest" ? "alpha" : "newest")}
               style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 20, border: `1px solid ${T.border}`, background: T.bg, color: T.textSec, fontSize: 12, fontWeight: 500, cursor: "pointer" }}>
@@ -405,10 +438,10 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 10 }}>
                         {topicResources.map((r) => (
                           <ResourceCard key={r.id} r={r} meta={(state.resourceMeta || {})[r.id]} isTutor={isTutor}
-                            isBookmarked={isBookmarked(r.id)}
+                            isBookmarked={isBookmarked(r.id)} isSaved={savedOfflineIds.has(r.id)}
                             onView={setViewingResource}
                             onBookmark={(id) => dispatch({ type: "TOGGLE_BOOKMARK", payload: id })}
-                            onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} />
+                            onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} onToggleOffline={handleToggleOffline} />
                         ))}
                       </div>
                     </div>
@@ -419,7 +452,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
           })()}
 
           {/* Topic view or filtered/searched results */}
-          {(nav && typeof nav === "object") || search || typeFilter !== "all" || difficultyFilter !== "all" ? (
+          {(nav && typeof nav === "object") || search || typeFilter !== "all" || difficultyFilter !== "all" || offlineFilter ? (
             <div>
               {filtered.length === 0
                 ? <EmptyState icon={Books} message="No resources match your filters" />
@@ -429,10 +462,10 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                       <div key={r.id}>
                         {search && <div style={{ marginBottom: 4 }}><SubjectBadge subjectId={r.subject} small /></div>}
                         <ResourceCard r={r} meta={(state.resourceMeta || {})[r.id]} isTutor={isTutor}
-                          isBookmarked={isBookmarked(r.id)}
+                          isBookmarked={isBookmarked(r.id)} isSaved={savedOfflineIds.has(r.id)}
                           onView={setViewingResource}
                           onBookmark={(id) => dispatch({ type: "TOGGLE_BOOKMARK", payload: id })}
-                          onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} />
+                          onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} onToggleOffline={handleToggleOffline} />
                       </div>
                     ))}
                   </div>

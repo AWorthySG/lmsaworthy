@@ -1,7 +1,8 @@
 /* global clients */
 // Service Worker — enables offline caching, PWA install, and push notifications
-const CACHE_NAME = 'aworthy-lms-v9';
-const ASSETS_CACHE = 'aworthy-assets-v9'; // immutable hashed bundles
+const CACHE_NAME = 'aworthy-lms-v10';
+const ASSETS_CACHE = 'aworthy-assets-v10'; // immutable hashed bundles
+const RESOURCES_CACHE = 'aworthy-resources-v1'; // explicitly saved Firebase Storage documents
 const FETCH_TIMEOUT_MS = 5000;
 const APP_SHELL = [
   '/',
@@ -22,13 +23,43 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME && k !== ASSETS_CACHE).map(k => caches.delete(k)))
+      Promise.all(keys.filter(k => k !== CACHE_NAME && k !== ASSETS_CACHE && k !== RESOURCES_CACHE).map(k => caches.delete(k)))
     ).then(() => clients.claim())
   );
 });
 
+// Handle explicit "save for offline" requests from the app
+self.addEventListener('message', e => {
+  if (e.data?.type === 'CACHE_RESOURCE') {
+    const { url } = e.data;
+    if (!url) return;
+    e.waitUntil(
+      caches.open(RESOURCES_CACHE).then(cache =>
+        fetch(url, { mode: 'cors' })
+          .then(res => { if (res.ok) cache.put(url, res); })
+          .catch(() => { /* network unavailable — silently ignore */ })
+      )
+    );
+  }
+  if (e.data?.type === 'UNCACHE_RESOURCE') {
+    const { url } = e.data;
+    if (!url) return;
+    e.waitUntil(caches.open(RESOURCES_CACHE).then(cache => cache.delete(url)));
+  }
+});
+
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
+
+  // Firebase Storage documents — resource-cache-first, then network
+  if (url.hostname.includes('firebasestorage.googleapis.com')) {
+    e.respondWith(
+      caches.open(RESOURCES_CACHE).then(cache =>
+        cache.match(e.request.url).then(cached => cached || fetch(e.request))
+      )
+    );
+    return;
+  }
 
   // Hashed JS/CSS bundles — cache-first, immutable (content hash guarantees freshness)
   if (url.pathname.startsWith('/assets/')) {
