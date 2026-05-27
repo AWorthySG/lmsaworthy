@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { T } from '../theme/theme.js';
 import { firebaseDb, ref, get } from '../config/firebase.js';
 import { AvatarDisplay } from '../components/gamification/StudentAvatar.jsx';
-import { ClipboardText, CalendarBlank, PencilSimpleLine, Timer, Printer, Warning } from '../icons/icons.jsx';
+import { ClipboardText, CalendarBlank, PencilSimpleLine, Timer, Printer, Warning, Notebook } from '../icons/icons.jsx';
 
 function GradeTag({ grade }) {
   const pct = parseFloat(grade);
@@ -64,6 +64,7 @@ export default function PublicReport({ token }) {
 
   const grades = Array.isArray(report.grades) ? report.grades : [];
   const exams = Array.isArray(report.exams) ? report.exams : [];
+  const recentSessions = Array.isArray(report.recentSessions) ? report.recentSessions : [];
   const generatedDate = report.generatedAt
     ? new Date(report.generatedAt).toLocaleDateString("en-SG", { day: "numeric", month: "long", year: "numeric" })
     : "—";
@@ -121,6 +122,25 @@ export default function PublicReport({ token }) {
                     {g.comment && <div style={{ fontSize: 11, color: T.textTer, lineHeight: 1.4 }}>{g.comment}</div>}
                   </div>
                   {g.gradedAt && <div style={{ fontSize: 10, color: T.textTer, flexShrink: 0, marginTop: 2 }}>{g.gradedAt}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Session notes */}
+        {recentSessions.length > 0 && (
+          <div style={{ background: "#fff", borderRadius: 12, padding: "20px 20px", border: `1px solid ${T.border}`, marginBottom: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 700, fontSize: 13, marginBottom: 14, color: T.text }}>
+              <Notebook size={15} color={T.accent} /> Recent Session Notes
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              {recentSessions.map((s, i) => (
+                <div key={i} style={{ padding: "10px 0", borderBottom: i < recentSessions.length - 1 ? `1px solid ${T.border}` : "none" }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: T.textTer, marginBottom: 4, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                    {s.date}{s.subject ? ` · ${s.subject.toUpperCase()}` : ""}
+                  </div>
+                  <div style={{ fontSize: 13, color: T.text, lineHeight: 1.6 }}>{s.notes}</div>
                 </div>
               ))}
             </div>

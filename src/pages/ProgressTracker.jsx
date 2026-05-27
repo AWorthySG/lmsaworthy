@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, LineChart, Line, Legend } from 'recharts';
 import { T } from '../theme/theme.js';
-import { ChartLineUp, ChartBar, Trophy, Star, CheckCircle, ArrowSquareOut, Users, CalendarCheck, PencilSimpleLine, Notebook, CaretRight, X } from '../icons/icons.jsx';
+import { ChartLineUp, ChartBar, Trophy, Star, CheckCircle, ArrowSquareOut, Users, CalendarCheck, PencilSimpleLine, Notebook, CaretRight, X, CalendarBlank, Trash, Plus } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard, BackBtn, FileIcon, Input, Textarea } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
 import { AvatarPicker } from '../components/gamification/StudentAvatar.jsx';
-import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
+import { getSubject, getSubjectTheme, formatDate, getExamCountdowns } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 
 const CHART_TABS = ["Grade Trend", "Submission Trend", "By Subject"];
@@ -110,6 +110,11 @@ function ProgressTracker({ state, dispatch }) {
   const [editingAvatar, setEditingAvatar] = useState(false);
   const [editingEnrollment, setEditingEnrollment] = useState(false);
   const [enrollEmail, setEnrollEmail] = useState("");
+  const [showExamManager, setShowExamManager] = useState(false);
+  const [examName, setExamName] = useState("");
+  const [examSubject, setExamSubject] = useState("eng");
+  const [examDate, setExamDate] = useState("");
+  const [examPaper, setExamPaper] = useState("");
 
   if (sel) {
     const student = state.students.find((s) => s.id === sel);
@@ -447,6 +452,8 @@ function ProgressTracker({ state, dispatch }) {
     );
   }
 
+  const allCountdowns = getExamCountdowns(state.customExams || []);
+
   return (
     <div>
       <PageHeader title="A-Worthling Progress" subtitle="Track performance and completion" />
@@ -473,6 +480,114 @@ function ProgressTracker({ state, dispatch }) {
             </Card>
           );
         })}
+      </div>
+
+      {/* ━━━ CUSTOM EXAM DATES ━━━ */}
+      <div style={{ marginTop: 32 }}>
+        <button
+          onClick={() => setShowExamManager(v => !v)}
+          style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", padding: 0, marginBottom: showExamManager ? 16 : 0 }}
+        >
+          <div style={{ width: 32, height: 32, borderRadius: T.r2, background: T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <CalendarBlank size={16} color={T.accent} />
+          </div>
+          <span style={{ fontSize: 15, fontWeight: 700, color: T.text }}>Manage Exam Dates</span>
+          <span style={{ fontSize: 12, color: T.textTer, marginLeft: 4 }}>({allCountdowns.length} upcoming)</span>
+          <CaretRight size={14} color={T.textTer} style={{ transform: showExamManager ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
+        </button>
+
+        {showExamManager && (
+          <Card elevated style={{ borderLeft: `3px solid ${T.accent}` }}>
+            {/* Add form */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>Add Custom Exam</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+                <div>
+                  <div style={{ fontSize: 11, color: T.textTer, marginBottom: 4 }}>Exam Name *</div>
+                  <input
+                    value={examName}
+                    onChange={e => setExamName(e.target.value)}
+                    placeholder="e.g. O-Level English Paper 1"
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, fontSize: 13, color: T.text, fontFamily: T.fontBody, outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, color: T.textTer, marginBottom: 4 }}>Date *</div>
+                  <input
+                    type="date"
+                    value={examDate}
+                    onChange={e => setExamDate(e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, fontSize: 13, color: T.text, fontFamily: T.fontBody, outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, color: T.textTer, marginBottom: 4 }}>Subject</div>
+                  <Select value={examSubject} onChange={setExamSubject} options={SUBJECTS.map(s => ({ value: s.id, label: s.name }))} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 11, color: T.textTer, marginBottom: 4 }}>Paper label (optional)</div>
+                  <input
+                    value={examPaper}
+                    onChange={e => setExamPaper(e.target.value)}
+                    placeholder="e.g. Paper 1"
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: T.r2, border: `1px solid ${T.border}`, background: T.bgMuted, fontSize: 13, color: T.text, fontFamily: T.fontBody, outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+              </div>
+              <Btn
+                disabled={!examName.trim() || !examDate}
+                onClick={() => {
+                  dispatch({ type: "ADD_CUSTOM_EXAM", payload: { name: examName.trim(), date: examDate, subject: examSubject, paper: examPaper.trim() || "Paper 1" } });
+                  dispatch({ type: "ADD_TOAST", payload: { message: "Custom exam added", variant: "success" } });
+                  setExamName(""); setExamDate(""); setExamPaper("");
+                }}
+              >
+                <Plus size={14} weight="bold" /> Add Exam
+              </Btn>
+            </div>
+
+            {/* Countdown list */}
+            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>All Upcoming Exams</div>
+              {allCountdowns.length === 0 ? (
+                <div style={{ fontSize: 13, color: T.textTer, fontStyle: "italic" }}>No upcoming exams.</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                  {allCountdowns.map((e, i) => {
+                    const theme = T[e.subject] || T.eng;
+                    const urgent = e.daysLeft <= 30;
+                    return (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 0", borderTop: i === 0 ? "none" : `1px solid ${T.border}` }}>
+                        <span style={{ width: 7, height: 7, borderRadius: "50%", background: urgent ? T.danger : theme.accent, flexShrink: 0 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: T.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {e.name}
+                            {e.isCustom && <span style={{ marginLeft: 7, fontSize: 9, fontWeight: 700, color: T.textTer, background: T.bgMuted, border: `1px solid ${T.border}`, padding: "1px 5px", borderRadius: 8 }}>Custom</span>}
+                          </div>
+                          <div style={{ fontSize: 11, color: T.textTer }}>{e.date} · {e.paper}</div>
+                        </div>
+                        <span style={{ fontVariantNumeric: "tabular-nums", fontWeight: 800, fontSize: 14, color: urgent ? T.danger : T.text, flexShrink: 0 }}>{e.daysLeft}d</span>
+                        {e.isCustom && (
+                          <button
+                            onClick={() => {
+                              if (!window.confirm(`Delete "${e.name}"?`)) return;
+                              dispatch({ type: "DELETE_CUSTOM_EXAM", payload: e.id });
+                              dispatch({ type: "ADD_TOAST", payload: { message: "Exam removed", variant: "info" } });
+                            }}
+                            aria-label={`Delete ${e.name}`}
+                            style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: T.danger, display: "flex", alignItems: "center", flexShrink: 0 }}
+                          >
+                            <Trash size={14} />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </Card>
+        )}
       </div>
     </div>
   );
