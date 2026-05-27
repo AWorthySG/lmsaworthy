@@ -5,8 +5,25 @@ import { Card, Btn, Badge, SubjectBadge, PageHeader, EmptyState, FileIcon, Input
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
 
-function ResourceCard({ r, isTutor, isBookmarked, onView, onBookmark, onDelete }) {
+const DIFFICULTY_CONFIG = {
+  easy:   { label: "Easy",   color: "#16a34a", bg: "#dcfce7" },
+  medium: { label: "Medium", color: "#d97706", bg: "#fef3c7" },
+  hard:   { label: "Hard",   color: "#dc2626", bg: "#fee2e2" },
+};
+
+function DifficultyBadge({ difficulty }) {
+  const cfg = DIFFICULTY_CONFIG[difficulty];
+  if (!cfg) return null;
+  return (
+    <span style={{ fontSize: 10, fontWeight: 700, padding: "1px 7px", borderRadius: 999, background: cfg.bg, color: cfg.color, letterSpacing: 0.3 }}>
+      {cfg.label}
+    </span>
+  );
+}
+
+function ResourceCard({ r, meta, isTutor, isBookmarked, onView, onBookmark, onDelete, onSetDifficulty }) {
   const bgByType = { pdf: T.dangerBg, video: "#DBEAFE", docx: T.accentLight };
+  const difficulty = meta?.difficulty;
   return (
     <Card onClick={() => onView(r)} elevated style={{ padding: 16, cursor: "pointer" }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
@@ -17,8 +34,23 @@ function ResourceCard({ r, isTutor, isBookmarked, onView, onBookmark, onDelete }
           <div style={{ fontSize: 13, fontWeight: 650, color: T.text, lineHeight: 1.4, marginBottom: 6, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.title}</div>
           <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
             <Badge color={T.textSec} bg={T.bgMuted} style={{ fontSize: 10 }}>{r.type.toUpperCase()}</Badge>
+            {difficulty && <DifficultyBadge difficulty={difficulty} />}
             <span style={{ fontSize: 11, color: T.textTer }}>{formatDate(r.date)}</span>
           </div>
+          {isTutor && (
+            <div onClick={(e) => e.stopPropagation()} style={{ display: "flex", gap: 4, marginTop: 8, flexWrap: "wrap" }}>
+              {["easy", "medium", "hard"].map(d => {
+                const cfg = DIFFICULTY_CONFIG[d];
+                const active = difficulty === d;
+                return (
+                  <button key={d} onClick={() => onSetDifficulty(r.id, active ? null : d)}
+                    style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 999, cursor: "pointer", border: `1px solid ${active ? cfg.color : T.border}`, background: active ? cfg.bg : "transparent", color: active ? cfg.color : T.textTer, transition: "all 0.12s" }}>
+                    {cfg.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
         <div style={{ display: "flex", gap: 2, flexShrink: 0 }}>
           <button onClick={(e) => { e.stopPropagation(); onBookmark(r.id); }}
@@ -48,6 +80,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   const [expandedSubjects, setExpandedSubjects] = useState(defaultSubject ? { [defaultSubject]: true } : {});
   const [sortBy, setSortBy] = useState("newest");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [difficultyFilter, setDifficultyFilter] = useState("all");
 
   const isTutor = true;
 
@@ -67,9 +100,15 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   function countByTopic(subjectId, topic) { return resourceCounts.byTopic[`${subjectId}:${topic}`] || 0; }
 
   const filtered = useMemo(() => {
+    const meta = state.resourceMeta || {};
     let list = state.resources.filter((r) => {
       if (search && !r.title.toLowerCase().includes(search.toLowerCase())) return false;
       if (typeFilter !== "all" && r.type !== typeFilter) return false;
+      if (difficultyFilter !== "all") {
+        const d = meta[r.id]?.difficulty;
+        if (difficultyFilter === "untagged" && d) return false;
+        if (difficultyFilter !== "untagged" && d !== difficultyFilter) return false;
+      }
       if (nav && typeof nav === "string" && r.subject !== nav) return false;
       if (nav && typeof nav === "object" && (r.subject !== nav.subject || r.topic !== nav.topic)) return false;
       return true;
@@ -77,7 +116,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
     if (sortBy === "newest") list = [...list].sort((a, b) => b.date.localeCompare(a.date));
     else list = [...list].sort((a, b) => a.title.localeCompare(b.title));
     return list;
-  }, [state.resources, search, nav, sortBy, typeFilter]);
+  }, [state.resources, state.resourceMeta, search, nav, sortBy, typeFilter, difficultyFilter]);
 
   function handleUpload() {
     if (!newTitle || !newSubject || !newTopic) return;
@@ -90,6 +129,10 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
     if (!window.confirm(`Delete "${r.title}"? This cannot be undone.`)) return;
     dispatch({ type: "DELETE_RESOURCE", payload: r.id });
     dispatch({ type: "ADD_TOAST", payload: { message: `"${r.title}" deleted`, variant: "error" } });
+  }
+
+  function handleSetDifficulty(id, difficulty) {
+    dispatch({ type: "SET_RESOURCE_DIFFICULTY", payload: { id, difficulty } });
   }
 
   const isBookmarked = (id) => state.bookmarks.includes(id);
@@ -123,6 +166,14 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
     { value: "pdf", label: "PDF" },
     { value: "video", label: "Video" },
     { value: "docx", label: "DOCX" },
+  ];
+
+  const DIFFICULTY_FILTERS = [
+    { value: "all",      label: "All levels" },
+    { value: "easy",     label: "Easy",     color: "#16a34a" },
+    { value: "medium",   label: "Medium",   color: "#d97706" },
+    { value: "hard",     label: "Hard",     color: "#dc2626" },
+    { value: "untagged", label: "Untagged", color: T.textSec },
   ];
 
   return (
@@ -252,13 +303,26 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
             </div>
             {search && <Btn variant="ghost" onClick={() => setSearch("")}><X size={13} weight="bold" /> Clear</Btn>}
             {/* Type filter pills */}
-            <div style={{ display: "flex", gap: 4 }}>
+            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
               {TYPE_FILTERS.map(f => (
                 <button key={f.value} onClick={() => setTypeFilter(f.value)}
                   style={{ padding: "6px 12px", borderRadius: 20, border: `1px solid ${typeFilter === f.value ? T.accent : T.border}`, background: typeFilter === f.value ? T.accentLight : T.bg, color: typeFilter === f.value ? T.accentText : T.textSec, fontSize: 12, fontWeight: typeFilter === f.value ? 650 : 500, cursor: "pointer", transition: "all 0.15s" }}>
                   {f.label}
                 </button>
               ))}
+            </div>
+            {/* Difficulty filter pills */}
+            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+              {DIFFICULTY_FILTERS.map(f => {
+                const active = difficultyFilter === f.value;
+                const col = f.color || T.accent;
+                return (
+                  <button key={f.value} onClick={() => setDifficultyFilter(f.value)}
+                    style={{ padding: "6px 12px", borderRadius: 20, border: `1px solid ${active ? col : T.border}`, background: active ? col + "20" : T.bg, color: active ? col : T.textSec, fontSize: 12, fontWeight: active ? 650 : 500, cursor: "pointer", transition: "all 0.15s" }}>
+                    {f.label}
+                  </button>
+                );
+              })}
             </div>
             {/* Sort toggle */}
             <button onClick={() => setSortBy(s => s === "newest" ? "alpha" : "newest")}
@@ -340,11 +404,11 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 10 }}>
                         {topicResources.map((r) => (
-                          <ResourceCard key={r.id} r={r} isTutor={isTutor}
+                          <ResourceCard key={r.id} r={r} meta={(state.resourceMeta || {})[r.id]} isTutor={isTutor}
                             isBookmarked={isBookmarked(r.id)}
                             onView={setViewingResource}
                             onBookmark={(id) => dispatch({ type: "TOGGLE_BOOKMARK", payload: id })}
-                            onDelete={handleDelete} />
+                            onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} />
                         ))}
                       </div>
                     </div>
@@ -355,7 +419,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
           })()}
 
           {/* Topic view or filtered/searched results */}
-          {(nav && typeof nav === "object") || search || typeFilter !== "all" ? (
+          {(nav && typeof nav === "object") || search || typeFilter !== "all" || difficultyFilter !== "all" ? (
             <div>
               {filtered.length === 0
                 ? <EmptyState icon={Books} message="No resources match your filters" />
@@ -364,11 +428,11 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                     {filtered.map((r) => (
                       <div key={r.id}>
                         {search && <div style={{ marginBottom: 4 }}><SubjectBadge subjectId={r.subject} small /></div>}
-                        <ResourceCard r={r} isTutor={isTutor}
+                        <ResourceCard r={r} meta={(state.resourceMeta || {})[r.id]} isTutor={isTutor}
                           isBookmarked={isBookmarked(r.id)}
                           onView={setViewingResource}
                           onBookmark={(id) => dispatch({ type: "TOGGLE_BOOKMARK", payload: id })}
-                          onDelete={handleDelete} />
+                          onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} />
                       </div>
                     ))}
                   </div>

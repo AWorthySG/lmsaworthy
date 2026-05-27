@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, LineChart, Line, Legend } from 'recharts';
 import { T } from '../theme/theme.js';
 import { ChartLineUp, ChartBar, Trophy, Star, CheckCircle, ArrowSquareOut, Users, CalendarCheck, PencilSimpleLine, Notebook, CaretRight, X } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, Progress, PageHeader, Select, StatCard, BackBtn, FileIcon, Input, Textarea } from '../components/ui';
@@ -7,6 +7,98 @@ import { StudentAvatar } from '../components/gamification';
 import { AvatarPicker } from '../components/gamification/StudentAvatar.jsx';
 import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
+
+const CHART_TABS = ["Grade Trend", "Submission Trend", "By Subject"];
+const SUBJECT_LINE_COLORS = ["#C0392B", "#0D9488", "#D97706", "#6D28D9", "#2563EB", "#B45309", "#16A34A"];
+
+function ChartPanel({ monthlyData, subjectData, trendData, gradedSubjects, hasGradeTrend }) {
+  const [tab, setTab] = useState(hasGradeTrend ? 0 : 1);
+  const tooltipStyle = { background: "#1C1B19", border: "none", borderRadius: 8, color: "#fff", fontSize: 12, boxShadow: "0 4px 24px rgba(0,0,0,0.22)" };
+  return (
+    <Card elevated style={{ marginBottom: 20 }}>
+      {/* Tab bar */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 18, borderBottom: `1px solid ${T.border}`, paddingBottom: 12 }}>
+        {CHART_TABS.map((label, i) => {
+          const disabled = i === 0 && !hasGradeTrend;
+          return (
+            <button key={label} onClick={() => !disabled && setTab(i)}
+              disabled={disabled}
+              style={{ padding: "5px 14px", borderRadius: T.r5, fontSize: 12, fontWeight: 700, border: "none", cursor: disabled ? "not-allowed" : "pointer", transition: "all 0.15s",
+                background: tab === i ? T.accent : "transparent",
+                color: tab === i ? "#fff" : disabled ? T.textTer : T.textSec,
+              }}>
+              {label}{i === 0 && !hasGradeTrend ? " (no data)" : ""}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Grade Trend */}
+      {tab === 0 && (
+        <div>
+          <div style={{ fontSize: 11, color: T.textTer, marginBottom: 12 }}>Grade scores over time (all subjects, last 20 submissions)</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={trendData} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: T.textTer }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: T.textTer }} tickFormatter={v => `${v}%`} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v, name) => [`${Math.round(v)}%`, name]} />
+              <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
+              {gradedSubjects.map((subj, i) => {
+                const label = getSubject(subj)?.name?.split(" ").slice(-1)[0] || subj;
+                return <Line key={subj} type="monotone" dataKey={label} stroke={SUBJECT_LINE_COLORS[i % SUBJECT_LINE_COLORS.length]} strokeWidth={2} dot={{ r: 4, fill: SUBJECT_LINE_COLORS[i % SUBJECT_LINE_COLORS.length] }} activeDot={{ r: 6 }} connectNulls />;
+              })}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* Submission Trend */}
+      {tab === 1 && (
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={monthlyData}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: T.textTer }} />
+            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: T.textTer }} />
+            <Tooltip contentStyle={tooltipStyle} formatter={(v) => [v, "Submissions"]} />
+            <Bar dataKey="count" fill={T.accent} radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      )}
+
+      {/* By Subject */}
+      {tab === 2 && (
+        subjectData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={subjectData}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textTer }} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: T.textTer }} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v) => [v, "Submissions"]} />
+              <Bar dataKey="value" radius={[6, 6, 0, 0]}>{subjectData.map((e, i) => <Cell key={i} fill={e.color} />)}</Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div style={{ textAlign: "center", padding: "40px 0", color: T.textTer, fontSize: 13 }}>No submissions by subject yet.</div>
+        )
+      )}
+    </Card>
+  );
+}
+
+// Convert a grade string (e.g. "85%", "40/50", "A+", "B", "72") to 0-100.
+function parseGrade(g) {
+  if (!g) return null;
+  const s = String(g).trim();
+  const pct = s.match(/^(\d+(\.\d+)?)%$/);
+  if (pct) return Math.min(100, parseFloat(pct[1]));
+  const frac = s.match(/^(\d+(\.\d+)?)\s*\/\s*(\d+(\.\d+)?)$/);
+  if (frac) return Math.min(100, (parseFloat(frac[1]) / parseFloat(frac[3])) * 100);
+  const num = s.match(/^(\d+(\.\d+)?)$/);
+  if (num) { const n = parseFloat(num[1]); return n <= 100 ? n : null; }
+  const letter = { 'A+': 97, 'A': 93, 'A-': 90, 'B+': 87, 'B': 83, 'B-': 80, 'C+': 77, 'C': 73, 'C-': 70, 'D+': 67, 'D': 63, 'D-': 60, 'E': 45, 'F': 30 };
+  return letter[s.toUpperCase()] ?? null;
+}
 
 function ProgressTracker({ state, dispatch }) {
   const [sel, setSel] = useState(null);
@@ -44,6 +136,27 @@ function ProgressTracker({ state, dispatch }) {
       value: count,
       color: getSubjectTheme(subj).accent,
     }));
+
+    // Grade trend: graded subs sorted by gradedAt, one point per submission
+    const gradedSubs = studentSubs
+      .filter(s => s.status === "graded" && s.grade && s.gradedAt)
+      .map(s => {
+        const hw = state.homework.find(h => h.id === s.homeworkId);
+        return { ...s, subject: hw?.subject || "other", numeric: parseGrade(s.grade) };
+      })
+      .filter(s => s.numeric !== null)
+      .sort((a, b) => a.gradedAt.localeCompare(b.gradedAt));
+
+    // Build a timeline where each row is a gradedAt date and columns are subjects
+    const gradedSubjects = [...new Set(gradedSubs.map(s => s.subject))];
+    const trendByDate = {};
+    gradedSubs.forEach(s => {
+      if (!trendByDate[s.gradedAt]) trendByDate[s.gradedAt] = { date: s.gradedAt.slice(5) };
+      const key = getSubject(s.subject)?.name?.split(" ").slice(-1)[0] || s.subject;
+      trendByDate[s.gradedAt][key] = s.numeric;
+    });
+    const trendData = Object.values(trendByDate).slice(-20);
+    const hasGradeTrend = trendData.length >= 2;
 
     return (
       <div>
@@ -149,20 +262,11 @@ function ProgressTracker({ state, dispatch }) {
             )}
           </div>
         </Card>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
-          <Card elevated>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Submission Trend</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={monthlyData}><CartesianGrid strokeDasharray="3 3" stroke={T.border} /><XAxis dataKey="date" tick={{ fontSize: 11, fill: T.textTer }} /><YAxis allowDecimals={false} tick={{ fontSize: 11, fill: T.textTer }} /><Tooltip contentStyle={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, color: T.text, fontSize: 12, boxShadow: T.shadow2 }} formatter={(v) => [v, "Submissions"]} /><Bar dataKey="count" fill={T.accent} radius={[6, 6, 0, 0]} /></BarChart>
-            </ResponsiveContainer>
-          </Card>
-          <Card elevated>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Submissions by Subject</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={subjectData}><CartesianGrid strokeDasharray="3 3" stroke={T.border} /><XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textTer }} /><YAxis allowDecimals={false} tick={{ fontSize: 11, fill: T.textTer }} /><Tooltip contentStyle={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, color: T.text, fontSize: 12, boxShadow: T.shadow2 }} formatter={(v) => [v, "Submissions"]} /><Bar dataKey="value" radius={[6, 6, 0, 0]}>{subjectData.map((e, i) => <Cell key={i} fill={e.color} />)}</Bar></BarChart>
-            </ResponsiveContainer>
-          </Card>
-        </div>
+        <ChartPanel
+          monthlyData={monthlyData} subjectData={subjectData}
+          trendData={trendData} gradedSubjects={gradedSubjects}
+          hasGradeTrend={hasGradeTrend}
+        />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
           <Card elevated>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Topic Completion</h3>

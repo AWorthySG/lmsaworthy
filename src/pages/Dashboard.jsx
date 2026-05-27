@@ -4,9 +4,9 @@ import {
   CheckCircle, ArrowRight, BookOpen, ClipboardText,
   Bell, CalendarCheck, ChartLineUp, Handshake, FolderSimpleStar,
   Users, Upload, CaretRight, ChatText, Sparkle,
-  Megaphone, Scroll, GraduationCap, Notebook,
+  Megaphone, Scroll, GraduationCap, Notebook, BookmarkSimple, FilePdf, FileDoc, FileVideo,
 } from '../icons/icons.jsx';
-import { SubjectIllustration } from '../components/ui';
+import { SubjectIllustration, DocumentViewer } from '../components/ui';
 import { getSubject, getSubjectTheme, getExamCountdowns, getWeeklyProgress, generateStudyPlan } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 import { VOCAB_DRILLS } from '../data/vocabDrills.js';
@@ -543,6 +543,60 @@ function WordOfTheDayCard({ dispatch }) {
   );
 }
 
+/* ━━━ BOOKMARKS ━━━ */
+function BookmarksCard({ state, dispatch }) {
+  const [viewing, setViewing] = useState(null);
+
+  const bookmarked = useMemo(() => {
+    const ids = new Set(state.bookmarks || []);
+    return (state.resources || []).filter(r => ids.has(r.id)).slice(0, 4);
+  }, [state.bookmarks, state.resources]);
+
+  if (!bookmarked.length) return null;
+
+  const fileIcon = (type) => {
+    if (type === 'pdf') return <FilePdf size={12} color="#dc2626" />;
+    if (type === 'docx') return <FileDoc size={12} color={T.accentText} />;
+    return <FileVideo size={12} color="#2563EB" />;
+  };
+
+  return (
+    <>
+      {viewing && <DocumentViewer resource={viewing} onClose={() => setViewing(null)} />}
+      <DCard title="Your bookmarks" action={
+        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'library' })}
+          style={{ fontSize: 12, color: T.accent, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+          <BookmarkSimple size={12} /> All →
+        </button>
+      }>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {bookmarked.map((r, i) => {
+            const theme = getSubjectTheme(r.subject) || T.eng;
+            return (
+              <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
+                <div style={{ width: 30, height: 30, borderRadius: T.r1, background: theme.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {fileIcon(r.type)}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.title}</div>
+                  <div style={{ fontSize: 10, color: T.textTer, marginTop: 2 }}>
+                    <span style={{ color: theme.accent, fontWeight: 700 }}>{(getSubject(r.subject)?.name || r.subject).split(' ').slice(-1)[0]}</span>
+                    {r.topic && <> · {r.topic}</>}
+                  </div>
+                </div>
+                <button onClick={() => setViewing(r)}
+                  style={{ padding: '4px 10px', borderRadius: T.r1, background: T.bgMuted, border: `1px solid ${T.border}`, fontSize: 11, fontWeight: 600, color: T.textSec, cursor: 'pointer', flexShrink: 0 }}>
+                  View
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </DCard>
+    </>
+  );
+}
+
 /* ━━━ STUDENT DASHBOARD ━━━ */
 function StudentDashboard({ state, dispatch, authUser, userProfile }) {
   const winW = useWindowWidth();
@@ -573,6 +627,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <WeekProgressCard state={state} />
+          <BookmarksCard state={state} dispatch={dispatch} />
           <ExamCountdownCard />
           <RecentlyReturnedCard state={state} dispatch={dispatch} />
           <WordOfTheDayCard dispatch={dispatch} />
