@@ -6,6 +6,7 @@ import {
   Users, Upload, CaretRight, ChatText, Sparkle,
   Megaphone, Scroll, GraduationCap, Notebook, BookmarkSimple, FilePdf, FileDoc, FileVideo,
 } from '../icons/icons.jsx';
+import { SubjectBadge } from '../components/ui/Badge.jsx';
 import { SubjectIllustration, DocumentViewer } from '../components/ui';
 import { getSubject, getSubjectTheme, getExamCountdowns, getWeeklyProgress, generateStudyPlan } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
@@ -438,8 +439,8 @@ function WeekProgressCard({ state }) {
 }
 
 /* ━━━ EXAM COUNTDOWN ━━━ */
-function ExamCountdownCard() {
-  const exams = getExamCountdowns().slice(0, 4);
+function ExamCountdownCard({ state }) {
+  const exams = getExamCountdowns(state?.customExams).slice(0, 4);
   if (!exams.length) return null;
   return (
     <DCard title="Exam countdown">
@@ -451,6 +452,7 @@ function ExamCountdownCard() {
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: urgent ? T.danger : theme.accent, flexShrink: 0 }} />
               <span style={{ fontSize: 13, color: T.text, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.name}</span>
+              {e.isCustom && <span style={{ fontSize: 9, fontWeight: 700, color: T.textTer, background: T.bgMuted, border: `1px solid ${T.border}`, padding: '1px 5px', borderRadius: 8, flexShrink: 0 }}>Custom</span>}
               <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 800, fontSize: 14, color: urgent ? T.danger : T.text, flexShrink: 0 }}>{e.daysLeft}</span>
               <span style={{ fontSize: 11, color: T.textTer, flexShrink: 0 }}>days</span>
             </div>
@@ -543,6 +545,38 @@ function WordOfTheDayCard({ dispatch }) {
   );
 }
 
+/* ━━━ RECENT SESSIONS ━━━ */
+function RecentSessionsCard({ state, dispatch }) {
+  const sessions = useMemo(() =>
+    (state.sessions || [])
+      .filter(s => s.notes)
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, 3),
+    [state.sessions]
+  );
+  if (!sessions.length) return null;
+  return (
+    <DCard title="Recent sessions" action={
+      <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'attendance' })}
+        style={{ fontSize: 12, color: T.accent, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>View all →</button>
+    }>
+      {sessions.map((s, i) => {
+        const theme = T[s.subject] || T.eng;
+        return (
+          <div key={s.id} style={{ padding: '9px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: theme.accent, flexShrink: 0 }} />
+              <span style={{ fontSize: 11, fontWeight: 600, color: T.textSec, fontFamily: T.fontMono }}>{s.date}</span>
+              <SubjectBadge subjectId={s.subject} small />
+            </div>
+            <p style={{ margin: 0, fontSize: 12, color: T.text, lineHeight: 1.55, paddingLeft: 14 }}>{s.notes}</p>
+          </div>
+        );
+      })}
+    </DCard>
+  );
+}
+
 /* ━━━ BOOKMARKS ━━━ */
 function BookmarksCard({ state, dispatch }) {
   const [viewing, setViewing] = useState(null);
@@ -627,8 +661,9 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <WeekProgressCard state={state} />
+          <RecentSessionsCard state={state} dispatch={dispatch} />
           <BookmarksCard state={state} dispatch={dispatch} />
-          <ExamCountdownCard />
+          <ExamCountdownCard state={state} />
           <RecentlyReturnedCard state={state} dispatch={dispatch} />
           <WordOfTheDayCard dispatch={dispatch} />
         </div>

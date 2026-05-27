@@ -34,6 +34,13 @@ export function appReducer(state, action) {
     }
     case "DELETE_PAST_PAPER_DOC":
       return { ...state, pastPaperDocs: (state.pastPaperDocs || []).filter(d => d.id !== action.payload) };
+    case "ADD_CUSTOM_EXAM": {
+      const exams = state.customExams || [];
+      const id = Math.max(...exams.map(e => e.id), 0) + 1;
+      return { ...state, customExams: [...exams, { ...action.payload, id }] };
+    }
+    case "DELETE_CUSTOM_EXAM":
+      return { ...state, customExams: (state.customExams || []).filter(e => e.id !== action.payload) };
     case "MARK_ATTENDANCE": {
       const { sessionId, studentId, status } = action.payload;
       const prev = { ...(state.attendance[sessionId] || {}) };

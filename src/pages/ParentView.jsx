@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { T } from '../theme/theme.js';
-import { ClipboardText, CalendarBlank, PencilSimpleLine, Timer, Printer, Link, CopySimple, CheckCircle } from '../icons/icons.jsx';
+import { ClipboardText, CalendarBlank, PencilSimpleLine, Timer, Printer, Link, CopySimple, CheckCircle, Notebook } from '../icons/icons.jsx';
 import { AvatarDisplay } from '../components/gamification/StudentAvatar.jsx';
 import { getExamCountdowns } from '../utils/helpers.js';
 import { firebaseDb, ref, set } from '../config/firebase.js';
@@ -10,7 +10,11 @@ function ParentView({ state, dispatch, authUser }) {
   const [sharing, setSharing] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const exams = getExamCountdowns().slice(0, 3);
+  const exams = getExamCountdowns(state.customExams || []).slice(0, 3);
+  const recentSessions = (state.sessions || [])
+    .filter(s => s.notes)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3);
   const gradedSubs = (state.submissions || []).filter(s => s.status === "graded");
   let attended = 0;
   Object.values(state.attendance).forEach(rec => {
@@ -36,6 +40,7 @@ function ParentView({ state, dispatch, authUser }) {
         }),
         attendanceCount: attended,
         exams: exams.map(e => ({ name: e.name, date: e.date, daysLeft: e.daysLeft })),
+        recentSessions: recentSessions.map(s => ({ date: s.date, subject: s.subject, notes: s.notes })),
         generatedAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       };
@@ -129,6 +134,19 @@ function ParentView({ state, dispatch, authUser }) {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Recent Session Notes */}
+      {recentSessions.length > 0 && (
+        <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "16px 18px", border: `1px solid ${T.border}` }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 10, fontFamily: T.fontDisplay, display: "flex", alignItems: "center", gap: 6 }}><Notebook size={15} color={T.accent} /> Recent Session Notes</div>
+          {recentSessions.map((s, i) => (
+            <div key={i} style={{ padding: "9px 0", borderBottom: i < recentSessions.length - 1 ? `1px solid ${T.border}` : "none" }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: T.textSec, marginBottom: 3, fontFamily: T.fontMono }}>{s.date} · {(s.subject || "").toUpperCase()}</div>
+              <div style={{ fontSize: 13, color: T.text, lineHeight: 1.55 }}>{s.notes}</div>
+            </div>
+          ))}
         </div>
       )}
 

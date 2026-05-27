@@ -30,9 +30,13 @@ const EXAM_DATES = [
   { name: "A-Level H2 Econ Paper 2", date: "2026-11-18", subject: "h2econ", paper: "Paper 2" },
 ];
 
-export function getExamCountdowns() {
+export function getExamCountdowns(customExams = []) {
   const now = new Date();
-  return EXAM_DATES.map(e => {
+  const all = [
+    ...EXAM_DATES,
+    ...(customExams || []).map(e => ({ ...e, isCustom: true })),
+  ];
+  return all.map(e => {
     const diff = Math.ceil((new Date(e.date) - now) / 86400000);
     return { ...e, daysLeft: diff };
   }).filter(e => e.daysLeft > 0).sort((a, b) => a.daysLeft - b.daysLeft);
