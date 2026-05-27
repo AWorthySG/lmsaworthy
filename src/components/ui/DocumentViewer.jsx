@@ -1,15 +1,31 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { T } from '../../theme/theme.js';
-import { FileDoc, DownloadSimple, ArrowSquareOut, Warning, X } from '../../icons/icons.jsx';
+import { FileDoc, DownloadSimple, ArrowSquareOut, Warning, X, CheckCircle } from '../../icons/icons.jsx';
 import Btn from './Btn.jsx';
 import FileIcon from './FileIcon.jsx';
 import { SubjectBadge } from './Badge.jsx';
 import useWindowWidth from '../../hooks/useWindowWidth.js';
+import { isSavedOffline, saveResourceOffline, removeResourceOffline } from '../../utils/offlineCache.js';
 
 export default function DocumentViewer({ resource, onClose }) {
   const dialogRef = useRef(null);
   const closeBtnRef = useRef(null);
   const isMobile = useWindowWidth() < 768;
+  const [savedOffline, setSavedOffline] = useState(() => resource ? isSavedOffline(resource.id) : false);
+  const [saving, setSaving] = useState(false);
+
+  async function toggleOffline() {
+    if (!resource?.fileUrl) return;
+    setSaving(true);
+    if (savedOffline) {
+      removeResourceOffline(resource.id, resource.fileUrl);
+      setSavedOffline(false);
+    } else {
+      await saveResourceOffline(resource.id, resource.fileUrl);
+      setSavedOffline(true);
+    }
+    setSaving(false);
+  }
 
   useEffect(() => {
     if (!resource) return;
@@ -57,6 +73,13 @@ export default function DocumentViewer({ resource, onClose }) {
             </div>
           </div>
           <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+            {resource.fileUrl && (
+              <button onClick={toggleOffline} disabled={saving} aria-label={savedOffline ? "Remove from offline" : "Save for offline"}
+                style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: T.r2, border: `1px solid ${savedOffline ? T.success : T.border}`, background: savedOffline ? T.success + "15" : T.bgMuted, color: savedOffline ? T.success : T.textSec, fontSize: 12, fontWeight: 600, cursor: saving ? "wait" : "pointer", transition: "all 0.15s" }}>
+                {savedOffline ? <CheckCircle size={13} color={T.success} /> : <DownloadSimple size={13} />}
+                {savedOffline ? "Saved" : "Save offline"}
+              </button>
+            )}
             {resource.fileUrl && <a href={resource.fileUrl} download style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><DownloadSimple size={14} weight="bold" /> Download</Btn></a>}
             {resource.fileUrl && isPdf && <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><ArrowSquareOut size={14} weight="bold" /> Open</Btn></a>}
             <button ref={closeBtnRef} onClick={onClose} aria-label="Close document viewer" style={{ background: T.bgMuted, border: `1px solid ${T.border}`, borderRadius: T.r2, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><X size={16} weight="bold" color={T.textSec} /></button>
