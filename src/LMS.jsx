@@ -42,6 +42,7 @@ const RevisionChecklist = lazy(() => import("./pages/study/RevisionChecklist.jsx
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
 const Calendar = lazy(() => import("./pages/Calendar.jsx"));
 const AIFeedback = lazy(() => import("./pages/tools/AIFeedback.jsx"));
+const Collections = lazy(() => import("./pages/Collections.jsx"));
 
 
 export default function LMSAuthWrapper() {
@@ -304,6 +305,7 @@ function LMS({ authUser, userProfile }) {
       case "aifeedback": return <AIFeedback />;
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
+      case "collections": return <Collections state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
     }
