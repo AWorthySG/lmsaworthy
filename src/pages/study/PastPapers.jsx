@@ -46,7 +46,10 @@ function DocViewer({ url, title, onClose }) {
             </button>
           </div>
         </div>
-        <div style={{ flex: 1 }}><iframe src={url} title={title} style={{ width: "100%", height: "100%", border: "none" }} /></div>
+        <div style={{ flex: 1 }}><iframe
+          src={`https://docs.google.com/viewer?url=${encodeURIComponent(url.startsWith('http') ? url : window.location.origin + url)}&embedded=true`}
+          title={title} style={{ width: "100%", height: "100%", border: "none" }}
+        /></div>
       </div>
     </div>
   );
