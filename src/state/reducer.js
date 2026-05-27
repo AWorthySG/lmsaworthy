@@ -22,6 +22,11 @@ export function appReducer(state, action) {
     case "SET_ROLE": return { ...state, role: action.payload };
     case "ADD_RESOURCE": return { ...state, resources: [...state.resources, { ...action.payload, id: Math.max(...state.resources.map(r => r.id), 0) + 1, date: new Date().toISOString().split("T")[0] }] };
     case "DELETE_RESOURCE": return { ...state, resources: state.resources.filter(r => r.id !== action.payload) };
+    case "SET_RESOURCE_DIFFICULTY": {
+      const { id, difficulty } = action.payload;
+      const meta = { ...(state.resourceMeta || {}), [id]: { ...(state.resourceMeta?.[id] || {}), difficulty } };
+      return { ...state, resourceMeta: meta };
+    }
     case "ADD_PAST_PAPER_DOC": {
       const docs = state.pastPaperDocs || [];
       const id = Math.max(...docs.map(d => d.id), 0) + 1;

@@ -33,6 +33,7 @@ export const DEFAULT_STATE = {
   revisionChecklist: {},
   myAvatar: null,
   studentAvatars: {},
+  resourceMeta: {},
 };
 
 // Persist key parts of state to localStorage
@@ -40,7 +41,7 @@ export const PERSIST_KEYS = [
   "bookmarks", "attendance", "submissions", "homework",
   "pastPaperDocs", "studyLogs",
   "announcement", "mistakes", "revisionChecklist",
-  "posts", "reports", "myAvatar", "studentAvatars", "students",
+  "posts", "reports", "myAvatar", "studentAvatars", "students", "resourceMeta",
   "sessions",
 ];
 
