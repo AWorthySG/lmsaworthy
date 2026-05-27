@@ -3,7 +3,7 @@ import {
   Books, Scroll,
   GraduationCap, Lightbulb,
   Confetti, Handshake,
-  CalendarCheck, ChartLineUp, Eye, Gear,
+  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear,
 } from '../icons/icons.jsx';
 
 export const NAV = [
@@ -42,6 +42,7 @@ export const NAV = [
     { id: "pastpapers-ibmyp", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "My Work", items: [
+    { id: "calendar", label: "Calendar", icon: CalendarBlank },
     { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
     { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
     { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
@@ -72,6 +73,7 @@ export const PAGE_TO_PATH = {
   "pastpapers-ibmyp": "/past-papers/ibmyp",
   parentview: "/parent-view",
   modelessays: "/model-essays",
+  calendar: "/calendar",
   mistakes: "/mistake-journal", checklist: "/revision-checklist",
   events: "/events",
   settings: "/settings",
