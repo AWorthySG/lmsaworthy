@@ -3,7 +3,7 @@ import {
   Books, Scroll,
   GraduationCap, Lightbulb,
   Confetti, Handshake,
-  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle,
+  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle, FolderSimpleStar,
 } from '../icons/icons.jsx';
 
 export const NAV = [
@@ -46,6 +46,7 @@ export const NAV = [
     { id: "aifeedback", label: "AI Feedback", icon: Sparkle, highlight: true },
     { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
     { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
+    { id: "collections", label: "Collections", icon: FolderSimpleStar },
     { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
     { id: "community", label: "Community", icon: Handshake },
   ]},
@@ -77,6 +78,7 @@ export const PAGE_TO_PATH = {
   calendar: "/calendar",
   aifeedback: "/ai-feedback",
   mistakes: "/mistake-journal", checklist: "/revision-checklist",
+  collections: "/collections",
   events: "/events",
   settings: "/settings",
   // Library: base path + one unique path per subject. Each subject needs its

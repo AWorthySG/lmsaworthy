@@ -35,6 +35,9 @@ function TutorHomework({ state, dispatch }) {
   const [fAssignIds, setFAssignIds] = useState([]);
   // AI grading state
   const [aiBusyId, setAiBusyId] = useState(null);
+  const [bulkGrading, setBulkGrading] = useState(false);
+  const [bulkDone, setBulkDone] = useState(0);
+  const [bulkTotal, setBulkTotal] = useState(0);
   // Detail-view rubric editor
   const [rubricEditing, setRubricEditing] = useState(false);
   const [rubricDraft, setRubricDraft] = useState("");
@@ -127,6 +130,34 @@ function TutorHomework({ state, dispatch }) {
     } finally {
       setAiBusyId(null);
     }
+  }
+
+  async function runBulkAiGrade() {
+    if (!selectedHw || bulkGrading) return;
+    const ungraded = getSubs(selectedHw.id).filter(s => s.status === "submitted" && !s.aiGrade);
+    if (ungraded.length === 0) return;
+    setBulkGrading(true); setBulkDone(0); setBulkTotal(ungraded.length);
+    let done = 0;
+    for (const sub of ungraded) {
+      try {
+        const extractions = await Promise.all(
+          (sub.fileUrls || []).map(f => extractFromUrl(f.url, f.name).catch(() => ({})))
+        );
+        const merged = mergeExtractions(extractions);
+        const combinedText = [merged.text, sub.studentNotes ? `\n\n[Student note: ${sub.studentNotes}]` : ""].filter(Boolean).join("");
+        const result = await gradeSubmissionAPI({
+          subject: selectedHw.subject, topic: selectedHw.topic,
+          question: selectedHw.title, rubric: selectedHw.rubric || "",
+          instructions: selectedHw.instructions || "",
+          text: combinedText, images: merged.images,
+        });
+        dispatch({ type: "SAVE_AI_GRADE", payload: { submissionId: sub.id, aiGrade: result } });
+      } catch { /* skip this submission silently */ }
+      done++;
+      setBulkDone(done);
+    }
+    setBulkGrading(false);
+    dispatch({ type: "ADD_TOAST", payload: { message: `AI marking ready for ${done} submission${done !== 1 ? "s" : ""} — review and adjust.`, variant: "success" } });
   }
 
   return (
@@ -380,7 +411,22 @@ function TutorHomework({ state, dispatch }) {
             </details>
 
             {/* Submissions table */}
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginTop: 4 }}>Submissions ({subs.length})</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>Submissions ({subs.length})</div>
+              {(() => {
+                const ungradedCount = subs.filter(s => s.status === "submitted" && !s.aiGrade).length;
+                if (ungradedCount === 0) return null;
+                return (
+                  <button
+                    onClick={runBulkAiGrade}
+                    disabled={bulkGrading || aiBusyId !== null}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 12px", borderRadius: T.r1, background: bulkGrading ? T.bgMuted : "#7C3AED", color: bulkGrading ? T.textTer : "#fff", border: "none", cursor: bulkGrading ? "wait" : "pointer", fontSize: 11, fontWeight: 700 }}>
+                    <Sparkle size={11} />
+                    {bulkGrading ? `Grading ${bulkDone}/${bulkTotal}…` : `Grade all submitted (${ungradedCount})`}
+                  </button>
+                );
+              })()}
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {subs.map(sub => {
                 const st = getStudent(sub.studentId);

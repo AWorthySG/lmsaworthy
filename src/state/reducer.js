@@ -34,6 +34,17 @@ export function appReducer(state, action) {
     }
     case "DELETE_PAST_PAPER_DOC":
       return { ...state, pastPaperDocs: (state.pastPaperDocs || []).filter(d => d.id !== action.payload) };
+    case "ADD_COLLECTION": {
+      const cols = state.collections || [];
+      const id = Math.max(...cols.map(c => c.id), 0) + 1;
+      return { ...state, collections: [...cols, { ...action.payload, id, resourceIds: [], createdAt: new Date().toISOString().split("T")[0] }] };
+    }
+    case "DELETE_COLLECTION":
+      return { ...state, collections: (state.collections || []).filter(c => c.id !== action.payload) };
+    case "UPDATE_COLLECTION": {
+      const { id, ...updates } = action.payload;
+      return { ...state, collections: (state.collections || []).map(c => c.id === id ? { ...c, ...updates } : c) };
+    }
     case "ADD_CUSTOM_EXAM": {
       const exams = state.customExams || [];
       const id = Math.max(...exams.map(e => e.id), 0) + 1;
