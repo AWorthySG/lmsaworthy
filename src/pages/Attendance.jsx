@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import QRCode from 'qrcode';
 import { T } from '../theme/theme.js';
-import { CalendarCheck, CalendarBlank, Plus, X, CheckCircle, Warning, Clock, Users, XCircle, CaretRight, Notebook } from '../icons/icons.jsx';
+import { CalendarCheck, CalendarBlank, Plus, X, CheckCircle, Warning, Clock, Users, XCircle, CaretRight, Notebook, QrCode } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, Select, Input, Textarea, StatCard, Progress, EmptyState } from '../components/ui';
 import { StudentAvatar } from '../components/gamification';
 import { formatDate, getSubjectTheme } from '../utils/helpers.js';
@@ -13,6 +14,14 @@ function Attendance({ state, dispatch }) {
   const [expanded, setExpanded] = useState(null);
   const [nDate, setNDate] = useState(""); const [nSubj, setNSubj] = useState(""); const [nTime, setNTime] = useState(""); const [nNotes, setNNotes] = useState("");
   const [editingNotes, setEditingNotes] = useState(null);
+  const [qrSessionId, setQrSessionId] = useState(null);
+  const [qrDataUrl, setQrDataUrl] = useState(null);
+
+  useEffect(() => {
+    if (!qrSessionId) { setQrDataUrl(null); return; }
+    QRCode.toDataURL(`https://lms.a-worthy.com/checkin/${qrSessionId}`, { width: 280, margin: 2, color: { dark: T.text, light: "#ffffff" } })
+      .then(setQrDataUrl).catch(() => setQrDataUrl(null));
+  }, [qrSessionId]);
 
   const TODAY = new Date().toISOString().split("T")[0];
   const getStudentsForSubject = (subjectId) => state.students.filter(st => st.subjects.includes(subjectId));
@@ -206,6 +215,11 @@ function Attendance({ state, dispatch }) {
                   {presentCount > 0 && <Badge color={T.success} bg={T.successBg} style={{ fontSize: 10 }}><CheckCircle size={12} weight="fill" /> {presentCount}</Badge>}
                   {lateCount > 0 && <Badge color={T.warning} bg={T.warningBg} style={{ fontSize: 10 }}><Clock size={12} weight="fill" /> {lateCount}</Badge>}
                   {absentCount > 0 && <Badge color={T.danger} bg={T.dangerBg} style={{ fontSize: 10 }}><XCircle size={12} weight="fill" /> {absentCount}</Badge>}
+                  <button onClick={e => { e.stopPropagation(); setQrSessionId(session.id); }}
+                    aria-label="Show QR check-in code"
+                    style={{ width: 32, height: 32, borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgMuted, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                    <QrCode size={15} color={T.textSec} />
+                  </button>
                   <CaretRight size={16} weight="bold" color={T.textTer} style={{ transform: isExpanded ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
                 </div>
               </div>
@@ -277,10 +291,46 @@ function Attendance({ state, dispatch }) {
           );
         })}
       </div>
+
+      {/* QR Check-in modal */}
+      {qrSessionId !== null && (() => {
+        const qrSession = state.sessions.find(s => s.id === qrSessionId);
+        return (
+          <div role="dialog" aria-modal="true" aria-label="QR check-in code"
+            onClick={() => setQrSessionId(null)}
+            style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(28,27,25,0.55)", backdropFilter: "blur(4px)", padding: 16 }}>
+            <div onClick={e => e.stopPropagation()}
+              style={{ background: T.bgCard, borderRadius: T.r3, padding: 28, maxWidth: 360, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.25)", textAlign: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <div style={{ textAlign: "left" }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: T.text }}>QR Check-in</div>
+                  {qrSession && <div style={{ fontSize: 12, color: T.textTer, marginTop: 2 }}>{qrSession.date} · {qrSession.time}</div>}
+                </div>
+                <button onClick={() => setQrSessionId(null)} aria-label="Close"
+                  style={{ width: 32, height: 32, borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgMuted, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <X size={14} color={T.textSec} />
+                </button>
+              </div>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+                {qrDataUrl
+                  ? <img src={qrDataUrl} alt="QR check-in code" style={{ width: 240, height: 240, borderRadius: T.r2 }} />
+                  : <div style={{ width: 240, height: 240, borderRadius: T.r2, background: T.bgMuted, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <QrCode size={48} color={T.textTer} />
+                    </div>
+                }
+              </div>
+              <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5 }}>
+                A-Worthlings scan this code to mark themselves present.
+              </div>
+              <div style={{ marginTop: 6, fontSize: 11, color: T.textTer, fontFamily: T.fontMono }}>
+                lms.a-worthy.com/checkin/{qrSessionId}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
-
-/* ━━━ LEADERBOARD PAGE ━━━ */
 
 export default Attendance;

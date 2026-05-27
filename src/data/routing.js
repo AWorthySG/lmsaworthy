@@ -3,7 +3,7 @@ import {
   Books, Scroll,
   GraduationCap, Lightbulb,
   Confetti, Handshake,
-  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle, FolderSimpleStar,
+  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle, FolderSimpleStar, Table,
 } from '../icons/icons.jsx';
 
 export const NAV = [
@@ -43,6 +43,7 @@ export const NAV = [
   ]},
   { group: "My Work", items: [
     { id: "calendar", label: "Calendar", icon: CalendarBlank },
+    { id: "revisiontimetable", label: "Revision Timetable", icon: Table },
     { id: "aifeedback", label: "AI Feedback", icon: Sparkle, highlight: true },
     { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
     { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
@@ -77,6 +78,7 @@ export const PAGE_TO_PATH = {
   modelessays: "/model-essays",
   calendar: "/calendar",
   aifeedback: "/ai-feedback",
+  revisiontimetable: "/revision-timetable",
   mistakes: "/mistake-journal", checklist: "/revision-checklist",
   collections: "/collections",
   events: "/events",

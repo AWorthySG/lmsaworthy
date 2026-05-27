@@ -43,6 +43,7 @@ const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
 const Calendar = lazy(() => import("./pages/Calendar.jsx"));
 const AIFeedback = lazy(() => import("./pages/tools/AIFeedback.jsx"));
 const Collections = lazy(() => import("./pages/Collections.jsx"));
+const RevisionTimetable = lazy(() => import("./pages/study/RevisionTimetable.jsx"));
 
 
 export default function LMSAuthWrapper() {
@@ -123,6 +124,23 @@ function LMS({ authUser, userProfile }) {
 
   const initializedRef = useRef(false);
   useEffect(() => {
+    // Handle QR attendance check-in links (/checkin/:sessionId)
+    if (location.pathname.startsWith('/checkin/')) {
+      const sessionId = parseInt(location.pathname.slice('/checkin/'.length), 10);
+      if (!isNaN(sessionId)) {
+        const student = (state.students || []).find(s => s.email === authUser?.email);
+        if (student) {
+          dispatch({ type: "MARK_ATTENDANCE", payload: { sessionId, studentId: student.id, status: "present" } });
+          dispatch({ type: "ADD_TOAST", payload: { message: "Checked in! You've been marked present.", variant: "success" } });
+        } else {
+          dispatch({ type: "ADD_TOAST", payload: { message: "Check-in link received — your tutor will mark your attendance.", variant: "info" } });
+        }
+      }
+      navigate("/");
+      initializedRef.current = true;
+      return;
+    }
+
     const pageFromUrl = PATH_TO_PAGE[location.pathname];
     if (pageFromUrl) {
       if (state.page !== pageFromUrl) dispatch({ type: "SET_PAGE", payload: pageFromUrl });
@@ -133,7 +151,7 @@ function LMS({ authUser, userProfile }) {
       if (state.page !== defaultPage) dispatch({ type: "SET_PAGE", payload: defaultPage });
     }
     initializedRef.current = true;
-  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps -- URL→state sync must run on pathname change only; adding state.page would create a navigation loop
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps -- URL→state sync must run on pathname change only; state.students/authUser read via closure (stable within pathname change)
 
   const prevPageRef = useRef(state.page);
   useEffect(() => {
@@ -306,6 +324,7 @@ function LMS({ authUser, userProfile }) {
       case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
       case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
       case "collections": return <Collections state={state} dispatch={dispatch} />;
+      case "revisiontimetable": return <RevisionTimetable state={state} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
     }
