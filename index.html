@@ -277,6 +277,15 @@
           transition-duration: 0.01ms !important;
         }
       }
+
+      /* ━━━ PRINT / SAVE AS PDF ━━━ */
+      @media print {
+        @page { margin: 15mm; }
+        #lms-sidebar, #lms-topbar, #lms-bottom-nav, .no-print { display: none !important; }
+        main { padding: 0 !important; max-height: none !important; overflow: visible !important; }
+        body { background: #fff !important; }
+        * { box-shadow: none !important; }
+      }
     </style>
   </head>
   <body>
