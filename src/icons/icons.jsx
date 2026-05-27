@@ -167,3 +167,6 @@ export const Dot = ic("ph:circle-fill");
 export const Waveform = ic("ph:waveform-bold");
 export const ListChecks = ic("ph:list-checks-bold");
 export const Gear = ic("ph:gear-bold");
+export const Printer = ic("ph:printer-bold");
+export const Link = ic("ph:link-bold");
+export const CopySimple = ic("ph:copy-simple-bold");

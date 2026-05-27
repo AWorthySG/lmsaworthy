@@ -6,6 +6,12 @@
         ".write": "auth != null && auth.uid === $uid"
       }
     },
+    "publicReports": {
+      "$token": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    },
     "sessions": {
       "$sessionId": {
         ".read": "auth != null",

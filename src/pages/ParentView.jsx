@@ -1,18 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { T } from '../theme/theme.js';
-import { ClipboardText, CalendarBlank, PencilSimpleLine, Timer } from '../icons/icons.jsx';
+import { ClipboardText, CalendarBlank, PencilSimpleLine, Timer, Printer, Link, CopySimple, CheckCircle } from '../icons/icons.jsx';
 import { AvatarDisplay } from '../components/gamification/StudentAvatar.jsx';
 import { getExamCountdowns } from '../utils/helpers.js';
-import { SUBJECTS } from '../data/subjects.js';
+import { firebaseDb, ref, set } from '../config/firebase.js';
 
-function ParentView({ state }) {
+function ParentView({ state, dispatch, authUser }) {
+  const [shareUrl, setShareUrl] = useState(null);
+  const [sharing, setSharing] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   const exams = getExamCountdowns().slice(0, 3);
   const gradedSubs = (state.submissions || []).filter(s => s.status === "graded");
   let attended = 0;
-  Object.values(state.attendance).forEach(rec => { attended += Object.values(rec).filter(v => v === "present" || v === "late").length; });
+  Object.values(state.attendance).forEach(rec => {
+    attended += Object.values(rec).filter(v => v === "present" || v === "late").length;
+  });
+
+  async function handleShare() {
+    setSharing(true);
+    try {
+      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+      const token = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+      const report = {
+        studentName: authUser?.displayName || "Student",
+        avatarKey: state.myAvatar || null,
+        grades: gradedSubs.slice(0, 10).map(sub => {
+          const hw = (state.homework || []).find(h => h.id === sub.homeworkId);
+          return {
+            grade: sub.grade || "",
+            hwTitle: hw?.title || "Homework",
+            comment: (sub.gradeComment || "").slice(0, 120),
+            gradedAt: sub.gradedAt || "",
+          };
+        }),
+        attendanceCount: attended,
+        exams: exams.map(e => ({ name: e.name, date: e.date, daysLeft: e.daysLeft })),
+        generatedAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      };
+      await set(ref(firebaseDb, `publicReports/${token}`), report);
+      const url = `https://lms.a-worthy.com/report/${token}`;
+      setShareUrl(url);
+      await navigator.clipboard.writeText(url).catch(() => {});
+      dispatch({ type: "ADD_TOAST", payload: { message: "Share link copied to clipboard!", variant: "success" } });
+    } catch {
+      dispatch({ type: "ADD_TOAST", payload: { message: "Could not generate share link. Please try again.", variant: "error" } });
+    }
+    setSharing(false);
+  }
+
+  async function copyUrl() {
+    if (!shareUrl) return;
+    await navigator.clipboard.writeText(shareUrl).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Header card */}
       <div style={{ background: T.bgCard, borderRadius: T.r4, padding: "28px 24px", border: `1px solid ${T.border}`, position: "relative", overflow: "hidden" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
           <div>
@@ -25,6 +72,31 @@ function ParentView({ state }) {
           </div>
           {state.myAvatar && <AvatarDisplay avatarKey={state.myAvatar} size={56} radius={T.r2} />}
         </div>
+
+        {/* Actions */}
+        <div className="no-print" style={{ display: "flex", gap: 8, marginTop: 20, flexWrap: "wrap" }}>
+          <button onClick={handleShare} disabled={sharing}
+            style={{ display: "inline-flex", alignItems: "center", gap: 7, background: T.accent, color: "#fff", border: "none", borderRadius: T.r2, padding: "9px 16px", fontSize: 13, fontWeight: 700, cursor: sharing ? "wait" : "pointer", opacity: sharing ? 0.7 : 1, transition: "opacity 0.15s" }}>
+            <Link size={14} /> {sharing ? "Generating…" : "Share with Parent"}
+          </button>
+          <button onClick={() => window.print()}
+            style={{ display: "inline-flex", alignItems: "center", gap: 7, background: T.bgMuted, color: T.textSec, border: `1px solid ${T.border}`, borderRadius: T.r2, padding: "9px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+            <Printer size={14} /> Print / Save PDF
+          </button>
+        </div>
+
+        {/* Inline share link */}
+        {shareUrl && (
+          <div className="no-print" style={{ marginTop: 14, padding: "12px 14px", background: T.accentLight, borderRadius: T.r2, border: `1px solid ${T.accent}30`, display: "flex", alignItems: "center", gap: 10 }}>
+            <Link size={14} color={T.accent} style={{ flexShrink: 0 }} />
+            <span style={{ flex: 1, fontSize: 12, color: T.accent, fontFamily: T.fontMono, wordBreak: "break-all", lineHeight: 1.4 }}>{shareUrl}</span>
+            <button onClick={copyUrl}
+              style={{ display: "flex", alignItems: "center", gap: 5, background: T.accent, color: "#fff", border: "none", borderRadius: T.r1, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", flexShrink: 0, whiteSpace: "nowrap" }}>
+              {copied ? <CheckCircle size={12} /> : <CopySimple size={12} />}
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Key Stats */}
@@ -76,10 +148,9 @@ function ParentView({ state }) {
         </div>
       )}
 
-
-      <div style={{ textAlign: "center", fontSize: 11, color: T.textTer, padding: "12px 0" }}>
-        <button onClick={() => window.print()} style={{ background: T.accent, color: "#fff", border: "none", borderRadius: T.r2, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>Print Report</button>
-        <br />Generated by A Worthy Learning Platform · <a href="https://lms.a-worthy.com" style={{ color: T.accent }}>lms.a-worthy.com</a>
+      <div style={{ textAlign: "center", fontSize: 11, color: T.textTer, padding: "4px 0 8px" }}>
+        Generated by A Worthy Learning Platform ·{" "}
+        <a href="https://lms.a-worthy.com" style={{ color: T.accent }}>lms.a-worthy.com</a>
       </div>
     </div>
   );

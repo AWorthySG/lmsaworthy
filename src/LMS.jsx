@@ -19,6 +19,9 @@ import InstallPrompt from "./components/ui/InstallPrompt.jsx";
 import LoginScreen from "./pages/LoginScreen.jsx";
 import { AvatarDisplay, AvatarPicker } from "./components/gamification/StudentAvatar.jsx";
 
+// Public route — rendered before auth, no lazy-loading to avoid flash
+import PublicReport from "./pages/PublicReport.jsx";
+
 // Lazy-loaded page imports (code-split per route)
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
 const ContentLibrary = lazy(() => import("./pages/ContentLibrary.jsx"));
@@ -42,10 +45,13 @@ const AIFeedback = lazy(() => import("./pages/tools/AIFeedback.jsx"));
 
 
 export default function LMSAuthWrapper() {
+  const location = useLocation();
+  const isPublicReport = location.pathname.startsWith('/report/');
   const [authUser, setAuthUser] = useState(undefined); // undefined=loading, null=logged out, object=logged in
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
+    if (isPublicReport) return; // no auth subscription needed for public report pages
     const unsub = onAuthStateChanged(firebaseAuth, async (user) => {
       if (user) {
         try {
@@ -68,7 +74,12 @@ export default function LMSAuthWrapper() {
       }
     });
     return unsub;
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- auth subscription runs once; public-route guard uses mount-time value
+
+  if (isPublicReport) {
+    const token = location.pathname.slice('/report/'.length);
+    return <PublicReport token={token} />;
+  }
 
   if (authUser === undefined) {
     return (
@@ -287,7 +298,7 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-omath": return <PastPapers state={state} dispatch={dispatch} defaultSubject="omath" />;
       case "pastpapers-amath": return <PastPapers state={state} dispatch={dispatch} defaultSubject="amath" />;
       case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
-      case "parentview": return <ParentView state={state} />;
+      case "parentview": return <ParentView state={state} dispatch={dispatch} authUser={authUser} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
       case "calendar": return <Calendar state={state} />;
       case "aifeedback": return <AIFeedback />;
@@ -343,7 +354,7 @@ function LMS({ authUser, userProfile }) {
       {isMobileLayout && sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, background: T.bgOverlay, zIndex: 49, transition: "opacity 0.2s" }} />}
 
       {/* Sidebar */}
-      <aside style={{
+      <aside id="lms-sidebar" style={{
         width: sidebarOpen ? 232 : (isMobileLayout ? 0 : 56),
         background: T.bgSidebar, borderRight: `1px solid ${T.border}`,
         display: "flex", flexDirection: "column", transition: "width 0.25s ease", flexShrink: 0,
@@ -454,7 +465,7 @@ function LMS({ authUser, userProfile }) {
       {/* Main */}
       <main style={{ flex: 1, padding: isMobileLayout ? "0 16px 80px" : "0 40px 28px", overflowY: "auto", maxHeight: "100dvh", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain" }}>
         {/* Top bar */}
-        <div className="glass-header" style={{ display: "flex", alignItems: "center", gap: 10, padding: isMobileLayout ? "12px 0" : "14px 0 8px", position: "sticky", top: 0, zIndex: 10, maxWidth: 1080, margin: "0 auto" }}>
+        <div id="lms-topbar" className="glass-header" style={{ display: "flex", alignItems: "center", gap: 10, padding: isMobileLayout ? "12px 0" : "14px 0 8px", position: "sticky", top: 0, zIndex: 10, maxWidth: 1080, margin: "0 auto" }}>
           {isMobileLayout && (
             <button onClick={() => setSidebarOpen(true)} aria-label="Open menu" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
               <List size={20} color={T.textSec} />
@@ -623,7 +634,7 @@ function LMS({ authUser, userProfile }) {
       )}
 
       {isMobileLayout && (
-        <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: darkMode ? "rgba(28,27,25,0.97)" : "rgba(255,255,255,0.97)", borderTop: `1px solid ${T.border}`, display: "flex", zIndex: 60, paddingBottom: "env(safe-area-inset-bottom, 0px)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}>
+        <nav id="lms-bottom-nav" style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: darkMode ? "rgba(28,27,25,0.97)" : "rgba(255,255,255,0.97)", borderTop: `1px solid ${T.border}`, display: "flex", zIndex: 60, paddingBottom: "env(safe-area-inset-bottom, 0px)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}>
           {[
             { id: "dashboard", icon: House, label: "Home" },
             { id: "library", icon: Books, label: "Library" },
