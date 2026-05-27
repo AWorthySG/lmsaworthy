@@ -3,7 +3,7 @@ import {
   Books, Scroll,
   GraduationCap, Lightbulb,
   Confetti, Handshake,
-  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear,
+  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle,
 } from '../icons/icons.jsx';
 
 export const NAV = [
@@ -43,6 +43,7 @@ export const NAV = [
   ]},
   { group: "My Work", items: [
     { id: "calendar", label: "Calendar", icon: CalendarBlank },
+    { id: "aifeedback", label: "AI Feedback", icon: Sparkle, highlight: true },
     { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
     { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
     { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
@@ -74,6 +75,7 @@ export const PAGE_TO_PATH = {
   parentview: "/parent-view",
   modelessays: "/model-essays",
   calendar: "/calendar",
+  aifeedback: "/ai-feedback",
   mistakes: "/mistake-journal", checklist: "/revision-checklist",
   events: "/events",
   settings: "/settings",
