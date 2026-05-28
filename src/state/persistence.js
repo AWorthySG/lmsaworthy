@@ -36,6 +36,7 @@ export const DEFAULT_STATE = {
   resourceMeta: {},
   customExams: [],
   collections: [],
+  homeworkTemplates: [],
 };
 
 // Persist key parts of state to localStorage
@@ -44,7 +45,7 @@ export const PERSIST_KEYS = [
   "pastPaperDocs", "studyLogs",
   "announcement", "mistakes", "revisionChecklist",
   "posts", "reports", "myAvatar", "studentAvatars", "students", "resourceMeta",
-  "sessions", "customExams", "collections",
+  "sessions", "customExams", "collections", "homeworkTemplates",
 ];
 
 export function loadPersistedState() {
