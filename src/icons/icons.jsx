@@ -171,3 +171,5 @@ export const Gear = ic("ph:gear-bold");
 export const Printer = ic("ph:printer-bold");
 export const Link = ic("ph:link-bold");
 export const CopySimple = ic("ph:copy-simple-bold");
+export const QrCode = ic("ph:qr-code-bold");
+export const Table = ic("ph:table-bold");
