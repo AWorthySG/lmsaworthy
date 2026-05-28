@@ -144,7 +144,7 @@ export function appReducer(state, action) {
         createdAt: new Date().toISOString().split("T")[0],
         status: "active",
       };
-      const assignees = hw.assignedTo === "all" ? state.students.map(s => s.id) : hw.assignedTo;
+      const assignees = hw.assignedTo === "all" ? state.students.map(s => s.id) : (Array.isArray(hw.assignedTo) ? hw.assignedTo : []);
       const subId = Math.max(...state.submissions.map(s => s.id), 0) + 1;
       const newSubs = assignees.map((sid, i) => ({ id: subId + i, homeworkId: id, studentId: sid, status: "not_started", submittedAt: null, studentNotes: "", grade: null, gradeComment: null, gradedAt: null, aiGrade: null }));
       return { ...state, homework: [...state.homework, newHw], submissions: [...state.submissions, ...newSubs] };
