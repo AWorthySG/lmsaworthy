@@ -109,6 +109,8 @@ function DocViewer({ url, title, timedMinutes, onClose, onTimedComplete }) {
               <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>{title}</div>
               Open this PDF in a new tab for the best reading experience on mobile.
             </div>
+          ) : url.startsWith('/resources/') ? (
+            <iframe src={absoluteUrl} title={title} style={{ width: "100%", height: "100%", border: "none" }} />
           ) : (
             <iframe
               src={`https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`}

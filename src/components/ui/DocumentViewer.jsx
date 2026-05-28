@@ -94,7 +94,7 @@ export default function DocumentViewer({ resource, onClose }) {
         </div>
         <div style={{ flex: 1, overflow: "hidden" }}>
           {isVideo && resource.videoUrl ? <iframe src={resource.videoUrl} style={{ width: "100%", height: "100%", border: "none" }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={resource.title} /> :
-           isPdf && absFileUrl && !isMobile ? <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(absFileUrl)}&embedded=true`} style={{ width: "100%", height: "100%", border: "none" }} title={resource.title} /> :
+           isPdf && absFileUrl && !isMobile ? <iframe src={resource.fileUrl?.startsWith('/') ? absFileUrl : `https://docs.google.com/viewer?url=${encodeURIComponent(absFileUrl)}&embedded=true`} style={{ width: "100%", height: "100%", border: "none" }} title={resource.title} /> :
            isPdf && resource.fileUrl && isMobile ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 20, padding: 32, textAlign: "center" }}>
               <div style={{ width: 72, height: 72, borderRadius: T.r4, background: T.dangerBg, display: "flex", alignItems: "center", justifyContent: "center" }}><FileIcon type="pdf" size={32} /></div>
