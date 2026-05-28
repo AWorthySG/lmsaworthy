@@ -27,7 +27,8 @@ const TIMER_DURATIONS = [30, 45, 60, 90, 120];
 /* ── PDF Viewer Modal with optional countdown timer ── */
 function DocViewer({ url, title, timedMinutes, onClose, onTimedComplete }) {
   const isMobile = window.innerWidth < 768;
-  const absoluteUrl = url.startsWith('http') ? url : window.location.origin + url;
+  const isUrlValid = typeof url === 'string' && url.startsWith('http');
+  const absoluteUrl = isUrlValid ? url : '';
   const [timerStarted, setTimerStarted] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
 
@@ -73,10 +74,12 @@ function DocViewer({ url, title, timedMinutes, onClose, onTimedComplete }) {
                 )}
               </div>
             )}
-            <a href={url} target="_blank" rel="noopener noreferrer"
-              style={{ padding: "5px 14px", borderRadius: T.r1, background: T.accent, color: "#fff", fontSize: 12, fontWeight: 600, textDecoration: "none" }}>
-              Open in new tab
-            </a>
+            {isUrlValid && (
+              <a href={absoluteUrl} target="_blank" rel="noopener noreferrer"
+                style={{ padding: "5px 14px", borderRadius: T.r1, background: T.accent, color: "#fff", fontSize: 12, fontWeight: 600, textDecoration: "none" }}>
+                Open in new tab
+              </a>
+            )}
             <button onClick={onClose} style={{ padding: "5px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", color: T.textSec, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
               Close
             </button>
@@ -94,8 +97,14 @@ function DocViewer({ url, title, timedMinutes, onClose, onTimedComplete }) {
             </button>
           </div>
         )}
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : "stretch" }}>
-          {isMobile ? (
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {!isUrlValid ? (
+            <div style={{ textAlign: "center", padding: 32, color: T.textSec, fontSize: 13, lineHeight: 1.6 }}>
+              <Warning size={32} color={T.warning} style={{ marginBottom: 12 }} />
+              <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>Document URL unavailable</div>
+              This document has no valid URL. Please delete it and re-upload the file.
+            </div>
+          ) : isMobile ? (
             <div style={{ textAlign: "center", padding: 32, color: T.textSec, fontSize: 13, lineHeight: 1.6 }}>
               <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>{title}</div>
               Open this PDF in a new tab for the best reading experience on mobile.
