@@ -14,14 +14,18 @@ export default function DocumentViewer({ resource, onClose }) {
   const [savedOffline, setSavedOffline] = useState(() => resource ? isSavedOffline(resource.id) : false);
   const [saving, setSaving] = useState(false);
 
+  const absFileUrlForOffline = resource?.fileUrl
+    ? (resource.fileUrl.startsWith('http') ? resource.fileUrl : window.location.origin + resource.fileUrl)
+    : '';
+
   async function toggleOffline() {
-    if (!resource?.fileUrl) return;
+    if (!absFileUrlForOffline) return;
     setSaving(true);
     if (savedOffline) {
-      removeResourceOffline(resource.id, resource.fileUrl);
+      removeResourceOffline(resource.id, absFileUrlForOffline);
       setSavedOffline(false);
     } else {
-      await saveResourceOffline(resource.id, resource.fileUrl);
+      await saveResourceOffline(resource.id, absFileUrlForOffline);
       setSavedOffline(true);
     }
     setSaving(false);
@@ -56,6 +60,9 @@ export default function DocumentViewer({ resource, onClose }) {
   if (!resource) return null;
   const isPdf = resource.type === "pdf" || (resource.fileUrl && resource.fileUrl.endsWith(".pdf"));
   const isVideo = resource.type === "video";
+  const absFileUrl = resource.fileUrl
+    ? (resource.fileUrl.startsWith('http') ? resource.fileUrl : window.location.origin + resource.fileUrl)
+    : '';
   return (
     <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={`Document viewer: ${resource.title}`}
       onKeyDown={handleKeyDown}
@@ -73,21 +80,21 @@ export default function DocumentViewer({ resource, onClose }) {
             </div>
           </div>
           <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-            {resource.fileUrl && (
+            {absFileUrl && (
               <button onClick={toggleOffline} disabled={saving} aria-label={savedOffline ? "Remove from offline" : "Save for offline"}
                 style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: T.r2, border: `1px solid ${savedOffline ? T.success : T.border}`, background: savedOffline ? T.success + "15" : T.bgMuted, color: savedOffline ? T.success : T.textSec, fontSize: 12, fontWeight: 600, cursor: saving ? "wait" : "pointer", transition: "all 0.15s" }}>
                 {savedOffline ? <CheckCircle size={13} color={T.success} /> : <DownloadSimple size={13} />}
                 {savedOffline ? "Saved" : "Save offline"}
               </button>
             )}
-            {resource.fileUrl && <a href={resource.fileUrl} download style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><DownloadSimple size={14} weight="bold" /> Download</Btn></a>}
-            {resource.fileUrl && isPdf && <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><ArrowSquareOut size={14} weight="bold" /> Open</Btn></a>}
+            {absFileUrl && <a href={absFileUrl} download style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><DownloadSimple size={14} weight="bold" /> Download</Btn></a>}
+            {absFileUrl && isPdf && <a href={absFileUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><ArrowSquareOut size={14} weight="bold" /> Open</Btn></a>}
             <button ref={closeBtnRef} onClick={onClose} aria-label="Close document viewer" style={{ background: T.bgMuted, border: `1px solid ${T.border}`, borderRadius: T.r2, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><X size={16} weight="bold" color={T.textSec} /></button>
           </div>
         </div>
         <div style={{ flex: 1, overflow: "hidden" }}>
           {isVideo && resource.videoUrl ? <iframe src={resource.videoUrl} style={{ width: "100%", height: "100%", border: "none" }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={resource.title} /> :
-           isPdf && resource.fileUrl && resource.fileUrl.startsWith('http') && !isMobile ? <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(resource.fileUrl)}&embedded=true`} style={{ width: "100%", height: "100%", border: "none" }} title={resource.title} /> :
+           isPdf && absFileUrl && !isMobile ? <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(absFileUrl)}&embedded=true`} style={{ width: "100%", height: "100%", border: "none" }} title={resource.title} /> :
            isPdf && resource.fileUrl && isMobile ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 20, padding: 32, textAlign: "center" }}>
               <div style={{ width: 72, height: 72, borderRadius: T.r4, background: T.dangerBg, display: "flex", alignItems: "center", justifyContent: "center" }}><FileIcon type="pdf" size={32} /></div>
