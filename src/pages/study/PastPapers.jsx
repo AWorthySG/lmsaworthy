@@ -27,8 +27,8 @@ const TIMER_DURATIONS = [30, 45, 60, 90, 120];
 /* ── PDF Viewer Modal with optional countdown timer ── */
 function DocViewer({ url, title, timedMinutes, onClose, onTimedComplete }) {
   const isMobile = window.innerWidth < 768;
-  const isUrlValid = typeof url === 'string' && url.startsWith('http');
-  const absoluteUrl = isUrlValid ? url : '';
+  const isUrlValid = typeof url === 'string' && (url.startsWith('http') || url.startsWith('/resources/'));
+  const absoluteUrl = isUrlValid ? (url.startsWith('http') ? url : window.location.origin + url) : '';
   const [timerStarted, setTimerStarted] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
 
