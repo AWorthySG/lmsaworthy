@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
-import { ArrowLeft, Plus, ClipboardText, Clock, Warning, Sparkle } from '../../icons/icons.jsx';
+import { ArrowLeft, Plus, ClipboardText, Clock, Warning, Sparkle, FolderSimpleStar, Trash, CaretDown, CaretUp } from '../../icons/icons.jsx';
 import { StudentAvatar } from '../../components/gamification';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 import { getSubject } from '../../utils/helpers.js';
@@ -41,6 +41,10 @@ function TutorHomework({ state, dispatch }) {
   // Detail-view rubric editor
   const [rubricEditing, setRubricEditing] = useState(false);
   const [rubricDraft, setRubricDraft] = useState("");
+  // Template library
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+  const [saveTemplateName, setSaveTemplateName] = useState("");
 
   // Auto-fill rubric when subject or topic changes (unless tutor has manually edited it)
   useEffect(() => {
@@ -82,11 +86,27 @@ function TutorHomework({ state, dispatch }) {
     setGradingId(null); setGradeVal(""); setGradeComment("");
   }
 
-  function openCreate() {
-    setFTitle(""); setFSubj("eng"); setFTopic(""); setFDue(""); setFInstructions("");
-    setFRubric(getDefaultRubricForHomework("eng", "")); setFRubricEdited(false);
+  function openCreate(template = null) {
+    const dueDefault = template?.dueOffset > 0
+      ? new Date(Date.now() + template.dueOffset * 86400000).toISOString().split("T")[0]
+      : "";
+    setFTitle(template?.title || "");
+    setFSubj(template?.subject || "eng");
+    setFTopic(template?.topic || "");
+    setFDue(dueDefault);
+    setFInstructions(template?.instructions || "");
+    setFRubric(template?.rubric || getDefaultRubricForHomework(template?.subject || "eng", template?.topic || ""));
+    setFRubricEdited(!!template?.rubric);
     setFAssignAll(true); setFAssignIds([]);
+    setSaveTemplateOpen(false); setSaveTemplateName("");
     setView("create");
+  }
+
+  function saveAsTemplate() {
+    if (!saveTemplateName.trim()) return;
+    dispatch({ type: "ADD_HOMEWORK_TEMPLATE", payload: { name: saveTemplateName.trim(), subject: fSubj, topic: fTopic, title: fTitle, instructions: fInstructions, rubric: fRubric, dueOffset: 7 } });
+    dispatch({ type: "ADD_TOAST", payload: { message: `Template "${saveTemplateName.trim()}" saved`, variant: "success" } });
+    setSaveTemplateOpen(false); setSaveTemplateName("");
   }
 
   function saveHomework() {
@@ -211,6 +231,54 @@ function TutorHomework({ state, dispatch }) {
             ))}
           </div>
 
+          {/* Templates panel */}
+          {(() => {
+            const templates = state.homeworkTemplates || [];
+            return (
+              <div style={{ background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}` }}>
+                <button onClick={() => setShowTemplates(o => !o)}
+                  style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+                  <FolderSimpleStar size={15} color={T.accent} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: T.text, flex: 1 }}>Templates</span>
+                  <span style={{ fontSize: 11, color: T.textTer }}>{templates.length} saved</span>
+                  {showTemplates ? <CaretUp size={13} color={T.textTer} /> : <CaretDown size={13} color={T.textTer} />}
+                </button>
+                {showTemplates && (
+                  <div style={{ borderTop: `1px solid ${T.border}`, padding: "10px 14px", display: "flex", flexDirection: "column", gap: 8 }}>
+                    {templates.length === 0 && (
+                      <div style={{ fontSize: 12, color: T.textTer, textAlign: "center", padding: "8px 0" }}>
+                        No templates yet. Use "Save as template" when creating homework.
+                      </div>
+                    )}
+                    {templates.map(tmpl => {
+                      const subTheme = SUBJ_THEME[tmpl.subject] || {};
+                      return (
+                        <div key={tmpl.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", borderRadius: T.r1, background: T.bgMuted, border: `1px solid ${T.border}` }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 650, color: T.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tmpl.name}</div>
+                            <div style={{ display: "flex", gap: 6, marginTop: 3, alignItems: "center" }}>
+                              <span style={{ fontSize: 10, fontWeight: 700, color: subTheme.accent, background: subTheme.bg, padding: "1px 7px", borderRadius: 10 }}>{getSubject(tmpl.subject)?.name}</span>
+                              {tmpl.topic && <span style={{ fontSize: 10, color: T.textTer }}>{tmpl.topic}</span>}
+                            </div>
+                          </div>
+                          <button onClick={() => openCreate(tmpl)}
+                            style={{ padding: "5px 14px", borderRadius: T.r1, background: T.accentLight, color: T.accent, border: `1px solid ${T.accent}33`, fontWeight: 700, fontSize: 11, cursor: "pointer" }}>
+                            Use
+                          </button>
+                          <button onClick={() => { if (!window.confirm(`Delete template "${tmpl.name}"?`)) return; dispatch({ type: "DELETE_HOMEWORK_TEMPLATE", payload: tmpl.id }); }}
+                            aria-label="Delete template"
+                            style={{ width: 30, height: 30, borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <Trash size={13} color={T.danger} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Homework cards */}
           {filtered.length === 0 && <div style={{ textAlign: "center", padding: 40, color: T.textTer }}>No active homework. Click "Assign Homework" to create one.</div>}
           {filtered.map(h => {
@@ -261,6 +329,22 @@ function TutorHomework({ state, dispatch }) {
       {view === "create" && (
         <div style={{ flex: 1, minHeight: 0, overflowY: "auto", maxWidth: 640 }}>
           <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "20px", border: `1px solid ${T.border}`, display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* Template loader */}
+            {(state.homeworkTemplates || []).length > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: T.bgMuted, borderRadius: T.r1 }}>
+                <FolderSimpleStar size={14} color={T.accent} />
+                <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec, flexShrink: 0 }}>Load template:</label>
+                <select
+                  onChange={e => { if (e.target.value) openCreate((state.homeworkTemplates || []).find(t => t.id === Number(e.target.value))); }}
+                  defaultValue=""
+                  style={{ flex: 1, padding: "4px 8px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 12, background: T.bgCard }}>
+                  <option value="">— select a template —</option>
+                  {(state.homeworkTemplates || []).map(t => (
+                    <option key={t.id} value={t.id}>{t.name} ({getSubject(t.subject)?.name})</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div>
                 <label style={{ fontSize: 11, fontWeight: 700, color: T.text, display: "block", marginBottom: 4 }}>Title *</label>
@@ -327,6 +411,34 @@ function TutorHomework({ state, dispatch }) {
                 </div>
               )}
             </div>
+            {/* Save as template */}
+            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
+              {!saveTemplateOpen ? (
+                <button type="button" onClick={() => setSaveTemplateOpen(true)}
+                  style={{ background: "none", border: "none", color: T.accent, fontSize: 12, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, padding: 0 }}>
+                  <FolderSimpleStar size={13} /> Save as template
+                </button>
+              ) : (
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <input
+                    value={saveTemplateName}
+                    onChange={e => setSaveTemplateName(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") saveAsTemplate(); if (e.key === "Escape") setSaveTemplateOpen(false); }}
+                    placeholder="Template name (e.g. GP Essay — 40/40)"
+                    autoFocus
+                    style={{ flex: 1, padding: "7px 10px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 12 }} />
+                  <button onClick={saveAsTemplate} disabled={!saveTemplateName.trim()}
+                    style={{ padding: "7px 14px", borderRadius: T.r1, background: saveTemplateName.trim() ? T.accentLight : T.bgMuted, color: saveTemplateName.trim() ? T.accent : T.textTer, border: `1px solid ${saveTemplateName.trim() ? T.accent + "44" : T.border}`, fontWeight: 700, fontSize: 12, cursor: saveTemplateName.trim() ? "pointer" : "not-allowed" }}>
+                    Save
+                  </button>
+                  <button onClick={() => setSaveTemplateOpen(false)}
+                    style={{ padding: "7px 10px", borderRadius: T.r1, background: "none", border: `1px solid ${T.border}`, cursor: "pointer", fontSize: 12, color: T.textSec }}>
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button onClick={saveHomework} disabled={!fTitle.trim() || !fDue} style={{ padding: "10px 24px", borderRadius: T.r2, background: fTitle.trim() && fDue ? T.gradPrimary : T.bgMuted, color: fTitle.trim() && fDue ? "#fff" : T.textTer, fontWeight: 700, fontSize: 13, border: "none", cursor: fTitle.trim() && fDue ? "pointer" : "not-allowed", alignSelf: "flex-start", boxShadow: fTitle.trim() && fDue ? T.shadowAccent : "none" }}>
               Assign Homework
             </button>
