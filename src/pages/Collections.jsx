@@ -24,6 +24,8 @@ export default function Collections({ state, dispatch }) {
 
   const collections = useMemo(() => Array.isArray(state.collections) ? state.collections : [], [state.collections]);
   const resources = useMemo(() => Array.isArray(state.resources) ? state.resources : [], [state.resources]);
+  const bookmarkIds = useMemo(() => new Set(Array.isArray(state.bookmarks) ? state.bookmarks : []), [state.bookmarks]);
+  const bookmarkedResources = useMemo(() => resources.filter(r => bookmarkIds.has(r.id)), [resources, bookmarkIds]);
 
   const selected = sel != null ? collections.find(c => c.id === sel) : null;
 
@@ -201,9 +203,10 @@ export default function Collections({ state, dispatch }) {
   /* ━━━ BROWSE VIEW ━━━ */
   return (
     <div>
+      {viewing && <DocumentViewer resource={viewing} onClose={() => setViewing(null)} />}
       <PageHeader
-        title="Resource Collections"
-        subtitle="Curated playlists of resources for any topic or goal"
+        title="Collections"
+        subtitle="Bookmarked resources and curated study sets"
         action={
           <button onClick={() => setShowCreate(v => !v)}
             style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: T.r2, background: T.accent, color: "#fff", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700 }}>
@@ -211,6 +214,39 @@ export default function Collections({ state, dispatch }) {
           </button>
         }
       />
+
+      {/* Bookmarked resources — quick-access row */}
+      {bookmarkedResources.length > 0 && (
+        <div style={{ marginBottom: 28 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <BookmarkSimple size={15} color={T.accent} weight="fill" />
+            <span style={{ fontSize: 13, fontWeight: 700, color: T.text }}>Bookmarked</span>
+            <span style={{ fontSize: 11, color: T.textTer }}>{bookmarkedResources.length} saved</span>
+          </div>
+          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6 }}>
+            {bookmarkedResources.map(r => {
+              const theme = getSubjectTheme(r.subject) || T.eng;
+              return (
+                <div key={r.id} style={{ flexShrink: 0, width: 200, background: T.bgCard, borderRadius: T.r2, border: `1px solid ${T.border}`, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: T.r1, background: theme.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      {fileIcon(r.type)}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: T.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title}</div>
+                      <div style={{ fontSize: 10, color: T.textTer, marginTop: 1 }}>{getSubject(r.subject)?.name}</div>
+                    </div>
+                  </div>
+                  <button onClick={() => setViewing(r)}
+                    style={{ padding: "5px 0", borderRadius: T.r1, background: theme.bg, border: `1px solid ${theme.accent}33`, fontSize: 11, fontWeight: 600, color: theme.accent, cursor: "pointer", width: "100%", textAlign: "center" }}>
+                    View
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Create form */}
       {showCreate && (

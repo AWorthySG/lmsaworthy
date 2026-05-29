@@ -255,8 +255,9 @@ function TodaysPlanCard({ state }) {
 function AssignmentsCard({ state, dispatch }) {
   const [tab, setTab] = useState('due');
   const today = new Date().toISOString().split('T')[0];
-  const activeHw = state.homework.filter(h => h.status === 'active');
-  const subs = state.submissions || [];
+  const allHw = Array.isArray(state.homework) ? state.homework : [];
+  const activeHw = allHw.filter(h => h.status === 'active');
+  const subs = Array.isArray(state.submissions) ? state.submissions : [];
 
   const dueItems = activeHw
     .map(h => ({ hw: h, sub: subs.find(s => s.homeworkId === h.id) }))
@@ -265,14 +266,14 @@ function AssignmentsCard({ state, dispatch }) {
 
   const submittedItems = subs
     .filter(s => s.status === 'submitted')
-    .map(s => ({ sub: s, hw: state.homework.find(h => h.id === s.homeworkId) }))
+    .map(s => ({ sub: s, hw: allHw.find(h => h.id === s.homeworkId) }))
     .filter(({ hw }) => hw);
 
   const returnedItems = subs
     .filter(s => s.status === 'graded')
     .sort((a, b) => (b.gradedAt || '').localeCompare(a.gradedAt || ''))
     .slice(0, 5)
-    .map(s => ({ sub: s, hw: state.homework.find(h => h.id === s.homeworkId) }))
+    .map(s => ({ sub: s, hw: allHw.find(h => h.id === s.homeworkId) }))
     .filter(({ hw }) => hw);
 
   const tabs = [
@@ -350,14 +351,14 @@ function JumpInCard({ dispatch }) {
   const tiles = [
     { label: 'Vocabulary',   meta: 'Flashcards & quizzes', icon: Scroll,        color: T.eng.accent,    page: 'vocab'        },
     { label: 'Model Essays', meta: 'GP examples',           icon: GraduationCap, color: T.gp.accent,     page: 'modelessays'  },
-    { label: 'Mistake Log',  meta: 'Track your errors',     icon: Notebook,      color: T.accent,        page: 'mistakes'     },
+    { label: 'Mistake Log',  meta: 'Track your errors',     icon: Notebook,      color: T.accent,        page: 'checklist'    },
     { label: 'Community',    meta: 'Chat & share',          icon: Handshake,     color: T.success,       page: 'community'    },
   ];
   return (
     <DCard title="Jump in" action={
-      <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'library-eng' })}
+      <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'subjects' })}
         style={{ fontSize: 12, color: T.accent, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
-        Browse library →
+        My subjects →
       </button>
     }>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
@@ -469,11 +470,12 @@ function ExamCountdownCard({ state }) {
 
 /* ━━━ RECENTLY RETURNED ━━━ */
 function RecentlyReturnedCard({ state, dispatch }) {
-  const returned = (state.submissions || [])
+  const allHwRC = Array.isArray(state.homework) ? state.homework : [];
+  const returned = (Array.isArray(state.submissions) ? state.submissions : [])
     .filter(s => s.status === 'graded')
     .sort((a, b) => (b.gradedAt || '').localeCompare(a.gradedAt || ''))
     .slice(0, 3)
-    .map(s => ({ sub: s, hw: state.homework.find(h => h.id === s.homeworkId) }))
+    .map(s => ({ sub: s, hw: allHwRC.find(h => h.id === s.homeworkId) }))
     .filter(({ hw }) => hw);
 
   if (!returned.length) return null;
@@ -640,8 +642,8 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
   const winW = useWindowWidth();
   const isMobile = winW < 768;
   const today = new Date().toISOString().split('T')[0];
-  const activeHw = state.homework.filter(h => h.status === 'active');
-  const subs = state.submissions || [];
+  const activeHw = (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === 'active');
+  const subs = Array.isArray(state.submissions) ? state.submissions : [];
 
   const overdueCount = activeHw.filter(h => {
     const sub = subs.find(s => s.homeworkId === h.id);

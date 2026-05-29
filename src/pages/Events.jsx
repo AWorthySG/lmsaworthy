@@ -9,7 +9,7 @@ function Events({ state, dispatch }) {
   const [view, setView] = useState("list"); // list | detail
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  function getStudent(id) { return state.students.find(s => s.id === id); }
+  function getStudent(id) { return (Array.isArray(state.students) ? state.students : []).find(s => s.id === id); }
 
   const activeEvents = initialEvents.filter(e => e.status === "active");
   const upcomingEvents = initialEvents.filter(e => e.status === "upcoming");

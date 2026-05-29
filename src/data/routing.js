@@ -3,7 +3,7 @@ import {
   Books, Scroll,
   GraduationCap, Lightbulb,
   Confetti, Handshake,
-  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle, FolderSimpleStar, Table, Compass,
+  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle, FolderSimpleStar, Compass,
 } from '../icons/icons.jsx';
 
 export const NAV = [
@@ -44,13 +44,11 @@ export const NAV = [
   ]},
   { group: "My Work", items: [
     { id: "homework", label: "Homework", icon: ClipboardText },
-    { id: "calendar", label: "Calendar", icon: CalendarBlank },
+    { id: "calendar", label: "Schedule", icon: CalendarBlank },
     { id: "aifeedback", label: "AI Feedback", icon: Sparkle, highlight: true },
   ]},
   { group: "Revision", items: [
-    { id: "revisiontimetable", label: "Revision Timetable", icon: Table },
-    { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
-    { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
+    { id: "checklist", label: "Learning Progress", icon: BookOpen },
     { id: "collections", label: "Collections", icon: FolderSimpleStar },
   ]},
   { group: "Community", items: [
