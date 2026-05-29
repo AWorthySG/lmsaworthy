@@ -234,6 +234,20 @@ function LMS({ authUser, userProfile }) {
     localStorage.setItem("aworthy-avatar-prompted", "true");
     setShowAvatarPrompt(false);
   }
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  useEffect(() => {
+    if (state.role === "student" && !localStorage.getItem("aworthy-onboarding-done")) {
+      setShowOnboarding(true); // eslint-disable-line react-hooks/set-state-in-effect -- sets onboarding flag once when Firebase confirms student role
+    }
+  }, [state.role]);
+
+  function dismissOnboarding() {
+    localStorage.setItem("aworthy-onboarding-done", "true");
+    setShowOnboarding(false);
+    setOnboardingStep(0);
+  }
+
   const searchRef = useRef(null);
   const windowWidth = useWindowWidth();
   const isMobileLayout = windowWidth < 768;
@@ -319,11 +333,11 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "parentview": return <ParentView state={state} dispatch={dispatch} authUser={authUser} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
-      case "calendar": return <Schedule state={state} dispatch={dispatch} />;
-      case "revisiontimetable": return <Schedule state={state} dispatch={dispatch} />;
+      case "calendar": return <Schedule state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />;
+      case "revisiontimetable": return <Schedule state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />;
       case "aifeedback": return <AIFeedback />;
-      case "mistakes": return <LearningProgress state={state} dispatch={dispatch} />;
-      case "checklist": return <LearningProgress state={state} dispatch={dispatch} />;
+      case "mistakes": return <LearningProgress state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />;
+      case "checklist": return <LearningProgress state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />;
       case "collections": return <Collections state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
@@ -651,6 +665,107 @@ function LMS({ authUser, userProfile }) {
               style={{ marginTop: 12, width: "100%", padding: "8px 0", background: "none", border: "none", color: T.textTer, fontSize: 12, cursor: "pointer" }}>
               Skip for now
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* First-login student onboarding overlay */}
+      {showOnboarding && !showWelcome && !showAvatarPrompt && (
+        <div role="dialog" aria-modal="true" aria-label="Getting started with A Worthy"
+          style={{ position: "fixed", inset: 0, zIndex: 190, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(28,27,25,0.65)", backdropFilter: "blur(4px)", padding: 16 }}>
+          <div style={{ background: T.bgCard, borderRadius: T.r3, padding: "28px 26px", maxWidth: 400, width: "100%", boxShadow: "0 24px 64px rgba(28,27,25,0.22)", display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* Step dots */}
+            <div style={{ display: "flex", justifyContent: "center", gap: 6 }}>
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{ width: i === onboardingStep ? 20 : 8, height: 8, borderRadius: 4, background: i === onboardingStep ? T.accent : T.bgMuted, transition: "all 0.2s" }} />
+              ))}
+            </div>
+
+            {onboardingStep === 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay, lineHeight: 1.2 }}>
+                  Welcome to A Worthy{welcomeFirstName !== "there" ? `, ${welcomeFirstName}` : ""}!
+                </div>
+                <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6 }}>
+                  This is your personal learning hub. Everything you need to prepare for your exams is here.
+                </div>
+                {enrolledSubjects && (
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Your subjects</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      {enrolledSubjects.map(id => {
+                        const theme = T[id] || T.eng;
+                        return (
+                          <span key={id} style={{ padding: "4px 12px", borderRadius: 20, background: theme.bg, color: theme.accent, fontSize: 12, fontWeight: 700, border: `1px solid ${theme.accent}30` }}>
+                            {id.toUpperCase()}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {onboardingStep === 1 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ fontSize: 19, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay }}>Your learning toolkit</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {[
+                    { icon: ClipboardText, title: "Homework (My Work)", desc: "Your tutor sets assignments here. Submit your work and receive graded feedback.", page: "homework" },
+                    { icon: Books, title: "Resources (Library)", desc: "Access notes, worksheets, and practice papers sorted by subject.", page: "library" },
+                    { icon: Handshake, title: "Community", desc: "Ask questions, share ideas, and see announcements from your tutor.", page: "community" },
+                  ].map(item => (
+                    <div key={item.title} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 14px", borderRadius: T.r2, background: T.bgMuted, border: `1px solid ${T.border}` }}>
+                      <div style={{ width: 34, height: 34, borderRadius: T.r1, background: T.accentLight, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <item.icon size={16} color={T.accent} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>{item.title}</div>
+                        <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5 }}>{item.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {onboardingStep === 2 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center", textAlign: "center" }}>
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <House size={28} color={T.accent} weight="fill" />
+                </div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: T.text, fontFamily: T.fontDisplay }}>You&apos;re all set!</div>
+                <div style={{ fontSize: 13, color: T.textSec, lineHeight: 1.6 }}>
+                  Head to your dashboard to see what&apos;s on. Your tutor will set homework and session notes there.
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <button onClick={dismissOnboarding}
+                style={{ background: "none", border: "none", color: T.textTer, fontSize: 12, cursor: "pointer", padding: "4px 0" }}>
+                Skip
+              </button>
+              <div style={{ display: "flex", gap: 8 }}>
+                {onboardingStep > 0 && (
+                  <button onClick={() => setOnboardingStep(s => s - 1)}
+                    style={{ padding: "8px 16px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", color: T.textSec, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                    Back
+                  </button>
+                )}
+                {onboardingStep < 2
+                  ? <button onClick={() => setOnboardingStep(s => s + 1)}
+                      style={{ padding: "8px 20px", borderRadius: T.r1, border: "none", background: T.accent, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                      Next
+                    </button>
+                  : <button onClick={() => { dismissOnboarding(); dispatch({ type: "SET_PAGE", payload: "dashboard" }); }}
+                      style={{ padding: "8px 20px", borderRadius: T.r1, border: "none", background: T.accent, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                      Go to Dashboard
+                    </button>
+                }
+              </div>
+            </div>
           </div>
         </div>
       )}

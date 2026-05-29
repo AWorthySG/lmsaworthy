@@ -10,6 +10,7 @@ import {
   initialSubmissions,
   initialPastPaperDocs,
 } from "../data/seedData.js";
+import { initialEvents } from "../data/seedEvents.js";
 
 export const DEFAULT_STATE = {
   page: "dashboard",
@@ -37,6 +38,7 @@ export const DEFAULT_STATE = {
   customExams: [],
   collections: [],
   homeworkTemplates: [],
+  events: initialEvents,
 };
 
 // Persist key parts of state to localStorage
@@ -45,7 +47,7 @@ export const PERSIST_KEYS = [
   "pastPaperDocs", "studyLogs",
   "announcement", "mistakes", "revisionChecklist",
   "posts", "reports", "myAvatar", "studentAvatars", "students", "resourceMeta",
-  "sessions", "customExams", "collections", "homeworkTemplates", "resources",
+  "sessions", "customExams", "collections", "homeworkTemplates", "resources", "events",
 ];
 
 export function loadPersistedState() {
@@ -64,6 +66,10 @@ export function loadPersistedState() {
     const existingResourceIds = new Set((merged.resources || []).map(r => r.id));
     const missingResources = initialResources.filter(r => !existingResourceIds.has(r.id));
     if (missingResources.length > 0) merged.resources = [...missingResources, ...(merged.resources || [])];
+    // Ensure seeded events are always present (merge any missing by id).
+    const existingEventIds = new Set((merged.events || []).map(e => e.id));
+    const missingEvents = initialEvents.filter(e => !existingEventIds.has(e.id));
+    if (missingEvents.length > 0) merged.events = [...(merged.events || []), ...missingEvents];
     return merged;
   } catch { return DEFAULT_STATE; }
 }

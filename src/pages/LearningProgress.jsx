@@ -9,7 +9,7 @@ const TABS = [
   { id: 'mistakes', label: 'Mistake Journal', icon: BookOpen, page: 'mistakes' },
 ];
 
-export default function LearningProgress({ state, dispatch }) {
+export default function LearningProgress({ state, dispatch, enrolledSubjects }) {
   const activeTab = state.page === 'mistakes' ? 'mistakes' : 'checklist';
 
   function switchTab(tabPage) {
@@ -46,7 +46,7 @@ export default function LearningProgress({ state, dispatch }) {
       </div>
 
       {activeTab === 'checklist'
-        ? <ChecklistContent state={state} dispatch={dispatch} />
+        ? <ChecklistContent state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />
         : <MistakesContent state={state} dispatch={dispatch} />
       }
     </div>

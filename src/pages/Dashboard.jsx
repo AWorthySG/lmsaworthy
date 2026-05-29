@@ -469,6 +469,68 @@ function ExamCountdownCard({ state }) {
 }
 
 /* ━━━ RECENTLY RETURNED ━━━ */
+function GradeHistoryCard({ state, dispatch }) {
+  const allHwGH = Array.isArray(state.homework) ? state.homework : [];
+  const graded = (Array.isArray(state.submissions) ? state.submissions : [])
+    .filter(s => s.status === 'graded' && s.grade)
+    .sort((a, b) => (b.gradedAt || '').localeCompare(a.gradedAt || ''))
+    .slice(0, 6)
+    .map(s => ({ sub: s, hw: allHwGH.find(h => h.id === s.homeworkId) }))
+    .filter(({ hw }) => hw);
+
+  if (!graded.length) return null;
+
+  const gradeColor = g => {
+    if (!g) return T.textSec;
+    const u = g.toUpperCase();
+    if (u.startsWith('A')) return T.success;
+    if (u.startsWith('B')) return T.accent;
+    return T.warning;
+  };
+
+  // Subject averages (count graded per subject)
+  const bySub = {};
+  graded.forEach(({ hw }) => {
+    if (hw?.subject) bySub[hw.subject] = (bySub[hw.subject] || 0) + 1;
+  });
+
+  return (
+    <DCard title="Grade history" action={
+      <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
+        style={{ fontSize: 12, color: T.accent, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
+        See all →
+      </button>
+    }>
+      {/* Recent grade strip */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+        {graded.map(({ sub, hw }, i) => {
+          const theme = T[hw?.subject] || T.eng;
+          return (
+            <div key={i} title={`${hw?.title} · ${sub.gradedAt || ''}`}
+              style={{ width: 36, height: 36, borderRadius: T.r1, background: gradeColor(sub.grade) + '15', border: `1px solid ${gradeColor(sub.grade)}40`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, cursor: 'default' }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: gradeColor(sub.grade), lineHeight: 1 }}>{sub.grade}</span>
+              <span style={{ fontSize: 8, color: theme.accent, fontWeight: 700, letterSpacing: 0.3 }}>{hw?.subject?.toUpperCase().slice(0, 3)}</span>
+            </div>
+          );
+        })}
+      </div>
+      {/* Subject breakdown */}
+      {Object.keys(bySub).length > 0 && (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {Object.entries(bySub).map(([subj, count]) => {
+            const theme = T[subj] || T.eng;
+            return (
+              <span key={subj} style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20, background: theme.bg, color: theme.accent, border: `1px solid ${theme.accent}30` }}>
+                {subj.toUpperCase()} · {count} graded
+              </span>
+            );
+          })}
+        </div>
+      )}
+    </DCard>
+  );
+}
+
 function RecentlyReturnedCard({ state, dispatch }) {
   const allHwRC = Array.isArray(state.homework) ? state.homework : [];
   const returned = (Array.isArray(state.submissions) ? state.submissions : [])
@@ -670,6 +732,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
           <RecentSessionsCard state={state} dispatch={dispatch} />
           <BookmarksCard state={state} dispatch={dispatch} />
           <ExamCountdownCard state={state} />
+          <GradeHistoryCard state={state} dispatch={dispatch} />
           <RecentlyReturnedCard state={state} dispatch={dispatch} />
           <WordOfTheDayCard dispatch={dispatch} />
         </div>

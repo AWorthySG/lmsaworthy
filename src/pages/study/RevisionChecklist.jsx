@@ -4,9 +4,10 @@ import { Check } from '../../icons/icons.jsx';
 import { PageHeader } from '../../components/ui';
 import { SUBJECTS, TOPICS } from '../../data/subjects.js';
 
-function RevisionChecklist({ state, dispatch }) {
+function RevisionChecklist({ state, dispatch, enrolledSubjects }) {
   const checklist = state.revisionChecklist || {};
-  const allTopics = SUBJECTS.flatMap(s => (TOPICS[s.id] || []).map(t => ({ subject: s.id, topic: t, key: `${s.id}:${t}` })));
+  const visibleSubjects = enrolledSubjects ? SUBJECTS.filter(s => enrolledSubjects.includes(s.id)) : SUBJECTS;
+  const allTopics = visibleSubjects.flatMap(s => (TOPICS[s.id] || []).map(t => ({ subject: s.id, topic: t, key: `${s.id}:${t}` })));
   const completed = allTopics.filter(t => checklist[t.key]).length;
   const total = allTopics.length;
 
@@ -24,7 +25,7 @@ function RevisionChecklist({ state, dispatch }) {
         </div>
       </div>
       {/* Per subject */}
-      {SUBJECTS.map(subj => {
+      {visibleSubjects.map(subj => {
         const topics = (TOPICS[subj.id] || []);
         if (topics.length === 0) return null;
         const theme = T[subj.id] || T.eng;

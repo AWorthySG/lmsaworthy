@@ -45,6 +45,17 @@ export function appReducer(state, action) {
       const { id, ...updates } = action.payload;
       return { ...state, collections: (state.collections || []).map(c => c.id === id ? { ...c, ...updates } : c) };
     }
+    case "TOGGLE_COLLECTION_RESOURCE": {
+      const { collectionId, resourceId } = action.payload;
+      return {
+        ...state,
+        collections: (state.collections || []).map(c => {
+          if (c.id !== collectionId) return c;
+          const ids = Array.isArray(c.resourceIds) ? c.resourceIds : [];
+          return { ...c, resourceIds: ids.includes(resourceId) ? ids.filter(id => id !== resourceId) : [...ids, resourceId] };
+        }),
+      };
+    }
     case "ADD_CUSTOM_EXAM": {
       const exams = state.customExams || [];
       const id = Math.max(...exams.map(e => e.id), 0) + 1;
@@ -52,6 +63,13 @@ export function appReducer(state, action) {
     }
     case "DELETE_CUSTOM_EXAM":
       return { ...state, customExams: (state.customExams || []).filter(e => e.id !== action.payload) };
+    case "ADD_EVENT": {
+      const evts = state.events || [];
+      const id = Math.max(...evts.map(e => e.id), 0) + 1;
+      return { ...state, events: [...evts, { ...action.payload, id, participants: [], prizes: [], criteria: [] }] };
+    }
+    case "DELETE_EVENT":
+      return { ...state, events: (state.events || []).filter(e => e.id !== action.payload) };
     case "ADD_HOMEWORK_TEMPLATE": {
       const tmpls = state.homeworkTemplates || [];
       const id = Math.max(...tmpls.map(t => t.id), 0) + 1;
