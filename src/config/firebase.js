@@ -19,4 +19,4 @@ export const firebaseStorage = getStorage(firebaseApp);
 
 export { ref, push, onChildAdded, set, onValue, get } from "firebase/database";
 export { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
-export { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+export { ref as storageRef, uploadBytes, uploadBytesResumable, getDownloadURL } from "firebase/storage";

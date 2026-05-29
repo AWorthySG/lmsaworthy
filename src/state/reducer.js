@@ -45,13 +45,6 @@ export function appReducer(state, action) {
       const { id, ...updates } = action.payload;
       return { ...state, collections: (state.collections || []).map(c => c.id === id ? { ...c, ...updates } : c) };
     }
-    case "ADD_HOMEWORK_TEMPLATE": {
-      const tmpls = state.homeworkTemplates || [];
-      const id = Math.max(...tmpls.map(t => t.id), 0) + 1;
-      return { ...state, homeworkTemplates: [...tmpls, { ...action.payload, id }] };
-    }
-    case "DELETE_HOMEWORK_TEMPLATE":
-      return { ...state, homeworkTemplates: (state.homeworkTemplates || []).filter(t => t.id !== action.payload) };
     case "ADD_CUSTOM_EXAM": {
       const exams = state.customExams || [];
       const id = Math.max(...exams.map(e => e.id), 0) + 1;
@@ -59,6 +52,13 @@ export function appReducer(state, action) {
     }
     case "DELETE_CUSTOM_EXAM":
       return { ...state, customExams: (state.customExams || []).filter(e => e.id !== action.payload) };
+    case "ADD_HOMEWORK_TEMPLATE": {
+      const tmpls = state.homeworkTemplates || [];
+      const id = Math.max(...tmpls.map(t => t.id), 0) + 1;
+      return { ...state, homeworkTemplates: [...tmpls, { ...action.payload, id }] };
+    }
+    case "DELETE_HOMEWORK_TEMPLATE":
+      return { ...state, homeworkTemplates: (state.homeworkTemplates || []).filter(t => t.id !== action.payload) };
     case "MARK_ATTENDANCE": {
       const { sessionId, studentId, status } = action.payload;
       const prev = { ...(state.attendance[sessionId] || {}) };
