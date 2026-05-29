@@ -42,17 +42,24 @@ export const NAV = [
     { id: "pastpapers-ibmyp", label: "Practice Papers", icon: Notebook },
   ]},
   { group: "My Work", items: [
-    { id: "calendar", label: "Calendar", icon: CalendarBlank },
-    { id: "revisiontimetable", label: "Revision Timetable", icon: Table },
-    { id: "aifeedback", label: "AI Feedback", icon: Sparkle, highlight: true },
-    { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
-    { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
-    { id: "collections", label: "Collections", icon: FolderSimpleStar },
-    { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
-    { id: "community", label: "Community", icon: Handshake },
-  ]},
-  { group: "Manage", items: [
     { id: "homework", label: "Homework", icon: ClipboardText },
+    { id: "calendar", label: "Calendar", icon: CalendarBlank },
+    { id: "aifeedback", label: "AI Feedback", icon: Sparkle, highlight: true },
+  ]},
+  { group: "Revision", items: [
+    { id: "revisiontimetable", label: "Revision Timetable", icon: Table },
+    { id: "checklist", label: "Revision Checklist", icon: ClipboardText },
+    { id: "mistakes", label: "Mistake Journal", icon: BookOpen },
+    { id: "collections", label: "Collections", icon: FolderSimpleStar },
+  ]},
+  { group: "Community", items: [
+    { id: "community", label: "Community", icon: Handshake },
+    { id: "events", label: "Events & Prizes", icon: Confetti, highlight: true },
+  ]},
+  // Tutor-only admin tools. `tutorOnly` hides the whole group from A-Worthlings
+  // (students) in the sidebar and global search; routes still render if reached
+  // directly (soft gate, not a hard block).
+  { group: "Manage", tutorOnly: true, items: [
     { id: "aimarker", label: "AI Marker", icon: GraduationCap, highlight: true },
     { id: "attendance", label: "Attendance", icon: CalendarCheck },
     { id: "progress", label: "Progress", icon: ChartLineUp },

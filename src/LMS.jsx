@@ -271,9 +271,9 @@ function LMS({ authUser, userProfile }) {
       ...state.resources.filter(r => r.title.toLowerCase().includes(q)).slice(0, 3).map(r => ({ type: "file", label: r.title, page: "library" })),
       ...(Array.isArray(state.homework) ? state.homework : []).filter(h => h.title.toLowerCase().includes(q)).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
       ...(state.posts || []).filter(p => p.title.toLowerCase().includes(q)).slice(0, 2).map(p => ({ type: "chat", label: p.title, page: "community" })),
-      ...NAV.flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(q)).map(i => ({ type: "link", label: i.label, page: i.id })),
+      ...NAV.filter(g => !(g.tutorOnly && state.role !== "tutor")).flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(q)).map(i => ({ type: "link", label: i.label, page: i.id })),
     ].slice(0, 8);
-  }, [searchQuery, state.resources, state.homework, state.posts]);
+  }, [searchQuery, state.resources, state.homework, state.posts, state.role]);
 
   const hwBadge = useMemo(() => (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.status === "submitted").length, [state.submissions]);
   const attendanceBadge = useMemo(() => {
@@ -293,13 +293,13 @@ function LMS({ authUser, userProfile }) {
   const renderPage = () => {
     switch (page) {
       case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
-      case "library": return <ContentLibrary key="library" state={state} dispatch={dispatch} />;
-      case "library-eng": return <ContentLibrary key="library-eng" state={state} dispatch={dispatch} defaultSubject="eng" />;
-      case "library-h1econ": return <ContentLibrary key="library-h1econ" state={state} dispatch={dispatch} defaultSubject="h1econ" />;
-      case "library-h2econ": return <ContentLibrary key="library-h2econ" state={state} dispatch={dispatch} defaultSubject="h2econ" />;
-      case "library-omath": return <ContentLibrary key="library-omath" state={state} dispatch={dispatch} defaultSubject="omath" />;
-      case "library-amath": return <ContentLibrary key="library-amath" state={state} dispatch={dispatch} defaultSubject="amath" />;
-      case "library-ibmyp": return <ContentLibrary key="library-ibmyp" state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
+      case "library": return <ContentLibrary key="library" state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />;
+      case "library-eng": return <ContentLibrary key="library-eng" state={state} dispatch={dispatch} defaultSubject="eng" enrolledSubjects={enrolledSubjects} />;
+      case "library-h1econ": return <ContentLibrary key="library-h1econ" state={state} dispatch={dispatch} defaultSubject="h1econ" enrolledSubjects={enrolledSubjects} />;
+      case "library-h2econ": return <ContentLibrary key="library-h2econ" state={state} dispatch={dispatch} defaultSubject="h2econ" enrolledSubjects={enrolledSubjects} />;
+      case "library-omath": return <ContentLibrary key="library-omath" state={state} dispatch={dispatch} defaultSubject="omath" enrolledSubjects={enrolledSubjects} />;
+      case "library-amath": return <ContentLibrary key="library-amath" state={state} dispatch={dispatch} defaultSubject="amath" enrolledSubjects={enrolledSubjects} />;
+      case "library-ibmyp": return <ContentLibrary key="library-ibmyp" state={state} dispatch={dispatch} defaultSubject="ibmyp" enrolledSubjects={enrolledSubjects} />;
       case "attendance": return <Attendance state={state} dispatch={dispatch} />;
       case "progress": return <ProgressTracker state={state} dispatch={dispatch} />;
       case "community": return <Community state={state} dispatch={dispatch} />;
@@ -401,6 +401,7 @@ function LMS({ authUser, userProfile }) {
         <div style={{ flex: "1 1 0%", position: "relative", minHeight: 0 }}>
           <nav style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, padding: sidebarOpen ? "4px 8px" : "4px 6px", overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
             {NAV.filter(g => {
+              if (g.tutorOnly && state.role !== "tutor") return false;
               if (g.subject && enrolledSubjects && !enrolledSubjects.includes(g.subject)) return false;
               return true;
             }).map((group, gi) => {
