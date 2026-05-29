@@ -20,7 +20,7 @@ export function detectQuestionType(text, GP1_QTYPES) {
 }
 
 /* ━━━ EXAM COUNTDOWN & DAILY CHALLENGES ━━━ */
-const EXAM_DATES = [
+export const EXAM_DATES = [
   { name: "O-Level English Paper 1", date: "2026-10-19", subject: "eng", paper: "Paper 1" },
   { name: "O-Level English Paper 2", date: "2026-10-20", subject: "eng", paper: "Paper 2" },
   { name: "A-Level GP Paper 1", date: "2026-11-09", subject: "gp", paper: "Paper 1" },

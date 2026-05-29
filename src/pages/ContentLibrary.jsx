@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { T } from '../theme/theme.js';
-import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle } from '../icons/icons.jsx';
+import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle, FolderSimpleStar } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, EmptyState, FileIcon, Input, Select, DocumentViewer } from '../components/ui';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import { getAllSavedIds, saveResourceOffline, removeResourceOffline } from '../utils/offlineCache.js';
@@ -193,9 +193,12 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
   );
 }
 
-function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookmark, onDelete, onSetDifficulty, onToggleOffline }) {
+function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookmark, onDelete, onSetDifficulty, onToggleOffline, collections, onToggleCollection }) {
   const bgByType = { pdf: T.dangerBg, video: "#DBEAFE", docx: T.accentLight };
   const difficulty = meta?.difficulty;
+  const [showCollPicker, setShowCollPicker] = useState(false);
+  const allCols = Array.isArray(collections) ? collections : [];
+  const inCollections = allCols.filter(c => (Array.isArray(c.resourceIds) ? c.resourceIds : []).includes(r.id));
   return (
     <Card onClick={() => onView(r)} elevated style={{ padding: 16, cursor: "pointer" }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
@@ -210,6 +213,11 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookm
             {isSaved && (
               <span style={{ fontSize: 10, fontWeight: 700, padding: "1px 7px", borderRadius: 999, background: T.success + "18", color: T.success, display: "inline-flex", alignItems: "center", gap: 3 }}>
                 <CheckCircle size={9} color={T.success} /> Offline
+              </span>
+            )}
+            {inCollections.length > 0 && (
+              <span style={{ fontSize: 10, fontWeight: 700, padding: "1px 7px", borderRadius: 999, background: "#D4940A18", color: "#8B5C00", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                <FolderSimpleStar size={9} color="#8B5C00" /> {inCollections.length === 1 ? inCollections[0].name : `${inCollections.length} collections`}
               </span>
             )}
             <span style={{ fontSize: 11, color: T.textTer }}>{formatDate(r.date)}</span>
@@ -229,11 +237,17 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookm
             </div>
           )}
         </div>
-        <div style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+        <div style={{ display: "flex", gap: 2, flexShrink: 0, position: "relative" }}>
           {onToggleOffline && r.fileUrl && (
             <button onClick={(e) => { e.stopPropagation(); onToggleOffline(r); }} aria-label={isSaved ? "Remove from offline" : "Save for offline"}
               style={{ background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: T.r1 }}>
               <CheckCircle size={14} weight={isSaved ? "fill" : "regular"} color={isSaved ? T.success : T.textTer} />
+            </button>
+          )}
+          {allCols.length > 0 && onToggleCollection && (
+            <button onClick={(e) => { e.stopPropagation(); setShowCollPicker(v => !v); }} aria-label="Save to collection"
+              style={{ background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: T.r1 }}>
+              <FolderSimpleStar size={15} weight={inCollections.length > 0 ? "fill" : "regular"} color={inCollections.length > 0 ? "#D4940A" : T.textTer} />
             </button>
           )}
           <button onClick={(e) => { e.stopPropagation(); onBookmark(r.id); }} aria-label={isBookmarked ? "Remove bookmark" : "Bookmark"}
@@ -247,6 +261,22 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookm
               onMouseLeave={(e) => e.currentTarget.style.background = "none"}>
               <Trash size={14} weight="bold" color={T.textTer} />
             </button>
+          )}
+          {showCollPicker && allCols.length > 0 && (
+            <div onClick={e => e.stopPropagation()} style={{ position: "absolute", right: 0, top: "100%", zIndex: 30, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", padding: "8px 0", minWidth: 180 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: T.textTer, letterSpacing: "0.08em", textTransform: "uppercase", padding: "0 12px 6px" }}>Save to Collection</div>
+              {allCols.map(c => {
+                const inCol = (Array.isArray(c.resourceIds) ? c.resourceIds : []).includes(r.id);
+                return (
+                  <button key={c.id} onClick={() => { onToggleCollection(c.id, r.id); setShowCollPicker(false); }}
+                    style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "7px 12px", background: inCol ? "#D4940A12" : "transparent", border: "none", cursor: "pointer", fontSize: 12, fontWeight: inCol ? 700 : 500, color: inCol ? "#8B5C00" : T.text, textAlign: "left" }}>
+                    <FolderSimpleStar size={13} weight={inCol ? "fill" : "regular"} color={inCol ? "#D4940A" : T.textTer} />
+                    {c.name}
+                    {inCol && <span style={{ marginLeft: "auto", fontSize: 10, color: "#D4940A" }}>Added</span>}
+                  </button>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
@@ -574,7 +604,8 @@ function ContentLibrary({ state, dispatch, defaultSubject, enrolledSubjects }) {
                             isBookmarked={isBookmarked(r.id)} isSaved={savedOfflineIds.has(r.id)}
                             onView={setViewingResource}
                             onBookmark={(id) => dispatch({ type: "TOGGLE_BOOKMARK", payload: id })}
-                            onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} onToggleOffline={handleToggleOffline} />
+                            onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} onToggleOffline={handleToggleOffline}
+                            collections={state.collections} onToggleCollection={(cId, rId) => dispatch({ type: "TOGGLE_COLLECTION_RESOURCE", payload: { collectionId: cId, resourceId: rId } })} />
                         ))}
                       </div>
                     </div>
@@ -597,7 +628,8 @@ function ContentLibrary({ state, dispatch, defaultSubject, enrolledSubjects }) {
                           isBookmarked={isBookmarked(r.id)} isSaved={savedOfflineIds.has(r.id)}
                           onView={setViewingResource}
                           onBookmark={(id) => dispatch({ type: "TOGGLE_BOOKMARK", payload: id })}
-                          onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} onToggleOffline={handleToggleOffline} />
+                          onDelete={handleDelete} onSetDifficulty={handleSetDifficulty} onToggleOffline={handleToggleOffline}
+                          collections={state.collections} onToggleCollection={(cId, rId) => dispatch({ type: "TOGGLE_COLLECTION_RESOURCE", payload: { collectionId: cId, resourceId: rId } })} />
                       </div>
                     ))}
                   </div>

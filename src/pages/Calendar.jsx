@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
 import { CaretLeft, CaretRight, CalendarBlank, ClipboardText, CalendarCheck } from '../icons/icons.jsx';
 import { PageHeader } from '../components/ui';
-import { getSubject, getSubjectTheme } from '../utils/helpers.js';
+import { getSubject, getSubjectTheme, getExamCountdowns } from '../utils/helpers.js';
+import useWindowWidth from '../hooks/useWindowWidth.js';
 
 function getMonday(date) {
   const d = new Date(date);
@@ -76,7 +77,28 @@ function HwChip({ hw, compact }) {
   );
 }
 
-function WeekView({ weekStart, events }) {
+function ExamChip({ exam, compact }) {
+  const label = compact ? exam.name.replace('O-Level ', '').replace('A-Level ', '').slice(0, 14) : exam.name;
+  return (
+    <div style={{
+      padding: compact ? '2px 6px' : '5px 8px',
+      borderRadius: T.r1,
+      background: '#FFF8E8',
+      border: '1px solid #D4940A40',
+      fontSize: compact ? 10 : 11,
+      fontWeight: 700,
+      color: '#8B5C00',
+      display: 'flex', alignItems: 'center', gap: 4,
+      overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+      lineHeight: 1.3,
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#D4940A', flexShrink: 0 }} />
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</span>
+    </div>
+  );
+}
+
+function WeekView({ weekStart, events, isMobile }) {
   const today = toYMD(new Date());
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = addDays(weekStart, i);
@@ -89,8 +111,43 @@ function WeekView({ weekStart, events }) {
       isToday: ds === today,
       sessions: events.sessions.filter(s => s.date === ds),
       homework: events.homework.filter(h => h.dueDate === ds),
+      exams: events.exams.filter(e => e.date === ds),
     };
   });
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {days.map((day) => {
+          const hasContent = day.sessions.length > 0 || day.homework.length > 0 || day.exams.length > 0;
+          return (
+            <div key={day.ds} style={{
+              background: day.isToday ? T.accentLight : T.bgCard,
+              border: `1px solid ${day.isToday ? T.accent + '50' : T.border}`,
+              borderRadius: T.r2, padding: '10px 12px',
+              display: 'flex', gap: 12, alignItems: 'flex-start',
+            }}>
+              <div style={{ flexShrink: 0, width: 44, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: day.isToday ? T.accent : T.textTer, letterSpacing: 0.5, textTransform: 'uppercase' }}>{day.label}</span>
+                <span style={{
+                  width: 30, height: 30, borderRadius: '50%',
+                  background: day.isToday ? T.accent : 'transparent',
+                  color: day.isToday ? '#fff' : T.text,
+                  fontSize: 15, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 2,
+                }}>{day.dayNum}</span>
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, paddingTop: 2 }}>
+                {!hasContent && <span style={{ fontSize: 11, color: T.textTer, paddingTop: 6 }}>No events</span>}
+                {day.exams.map((e, i) => <ExamChip key={i} exam={e} compact={false} />)}
+                {day.sessions.map(s => <SessionChip key={s.id} session={s} compact={false} />)}
+                {day.homework.map(h => <HwChip key={h.id} hw={h} compact={false} />)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8 }}>
@@ -111,6 +168,7 @@ function WeekView({ weekStart, events }) {
             }}>{day.dayNum}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {day.exams.map((e, i) => <ExamChip key={i} exam={e} compact />)}
             {day.sessions.map(s => <SessionChip key={s.id} session={s} compact />)}
             {day.homework.map(h => <HwChip key={h.id} hw={h} compact />)}
           </div>
@@ -143,6 +201,7 @@ function MonthView({ monthStart, events }) {
       isToday: ds === today,
       sessions: events.sessions.filter(s => s.date === ds),
       homework: events.homework.filter(h => h.dueDate === ds),
+      exams: events.exams.filter(e => e.date === ds),
     };
   });
 
@@ -156,7 +215,8 @@ function MonthView({ monthStart, events }) {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
         {cells.map((cell) => {
-          const hasEvents = cell.sessions.length > 0 || cell.homework.length > 0;
+          const total = cell.sessions.length + cell.homework.length + cell.exams.length;
+          const hasEvents = total > 0;
           return (
             <div key={cell.ds} style={{
               minHeight: 80,
@@ -174,10 +234,11 @@ function MonthView({ monthStart, events }) {
                 marginBottom: hasEvents ? 4 : 0,
               }}>{cell.dayNum}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {cell.sessions.slice(0, 2).map(s => <SessionChip key={s.id} session={s} compact />)}
-                {cell.homework.slice(0, 2).map(h => <HwChip key={h.id} hw={h} compact />)}
-                {(cell.sessions.length + cell.homework.length > 2) && (
-                  <span style={{ fontSize: 10, color: T.textTer, fontWeight: 600 }}>+{cell.sessions.length + cell.homework.length - 2} more</span>
+                {cell.exams.slice(0, 1).map((e, i) => <ExamChip key={i} exam={e} compact />)}
+                {cell.sessions.slice(0, 1).map(s => <SessionChip key={s.id} session={s} compact />)}
+                {cell.homework.slice(0, 1).map(h => <HwChip key={h.id} hw={h} compact />)}
+                {total > 3 && (
+                  <span style={{ fontSize: 10, color: T.textTer, fontWeight: 600 }}>+{total - 3} more</span>
                 )}
               </div>
             </div>
@@ -231,6 +292,7 @@ export default function Calendar({ state }) {
     d.setHours(0, 0, 0, 0);
     return d;
   });
+  const isMobile = useWindowWidth() < 768;
 
   const weekStart = useMemo(() => getMonday(cursor), [cursor]);
   const monthStart = useMemo(() => {
@@ -242,11 +304,13 @@ export default function Calendar({ state }) {
 
   const activeSessions = useMemo(() => Array.isArray(state.sessions) ? state.sessions.filter(s => s.date) : [], [state.sessions]);
   const activeHomework = useMemo(() => Array.isArray(state.homework) ? state.homework.filter(h => h.status === 'active' && h.dueDate) : [], [state.homework]);
+  const examDates = useMemo(() => getExamCountdowns(state.customExams), [state.customExams]);
 
   const events = useMemo(() => ({
     sessions: activeSessions,
     homework: activeHomework,
-  }), [activeSessions, activeHomework]);
+    exams: examDates,
+  }), [activeSessions, activeHomework, examDates]);
 
   // Upcoming sessions and homework in the visible window
   const upcomingSessions = useMemo(() => {
@@ -313,6 +377,7 @@ export default function Calendar({ state }) {
         {[
           { color: T.omath.accent, bg: T.omath.bg, label: 'Session' },
           { color: T.textSec, bg: T.bgMuted, label: 'Homework due' },
+          { color: '#D4940A', bg: '#FFF8E8', label: 'Exam date' },
         ].map(l => (
           <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: T.textSec }}>
             <span style={{ width: 10, height: 10, borderRadius: 2, background: l.bg, border: `1px solid ${l.color}40` }} />
@@ -322,7 +387,7 @@ export default function Calendar({ state }) {
       </div>
 
       {view === 'week'
-        ? <WeekView weekStart={weekStart} events={events} />
+        ? <WeekView weekStart={weekStart} events={events} isMobile={isMobile} />
         : <MonthView monthStart={monthStart} events={events} />
       }
 

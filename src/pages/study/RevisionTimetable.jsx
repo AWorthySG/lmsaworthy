@@ -61,8 +61,8 @@ function generateTimetable({ subjects, selectedDays, hoursPerDay, weeksAhead, cu
   return result;
 }
 
-export default function RevisionTimetable({ state }) {
-  const [subjects, setSubjects] = useState(SUBJECTS.map(s => s.id));
+export default function RevisionTimetable({ state, enrolledSubjects }) {
+  const [subjects, setSubjects] = useState(() => enrolledSubjects ? SUBJECTS.filter(s => enrolledSubjects.includes(s.id)).map(s => s.id) : SUBJECTS.map(s => s.id));
   const [selectedDays, setSelectedDays] = useState(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]);
   const [hoursPerDay, setHoursPerDay] = useState(2);
   const [weeksAhead, setWeeksAhead] = useState(2);

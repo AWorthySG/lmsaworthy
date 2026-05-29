@@ -1,18 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
-import { Confetti, Trophy, Crown, Medal, Star, Gift, CalendarBlank, Users, ArrowLeft, CheckCircle, Flame, CaretRight, RocketLaunch } from '../icons/icons.jsx';
-import { Card, Btn, Badge, SubjectBadge, PageHeader, BackBtn, Progress, StatCard } from '../components/ui';
-import { StudentAvatar } from '../components/gamification';
-import { initialEvents } from '../data/seedEvents.js';
+import { Confetti, Trophy, Crown, Medal, CalendarBlank, ArrowLeft, CheckCircle, CaretRight, RocketLaunch, Plus, Trash } from '../icons/icons.jsx';
+import { PageHeader } from '../components/ui';
+
+const EVENT_COLORS = ["#EF8354", "#D4940A", "#024F94", "#16a34a", "#7C3AED", "#C0392B"];
+const EVENT_EMOJIS = ["🏆","✍️","📚","⚡","🎯","🔥","💡","🌟","🎓","🚀"];
+const EMPTY_FORM = { title: "", description: "", emoji: "🏆", color: "#EF8354", startDate: "", endDate: "", status: "upcoming", howToParticipate: "" };
 
 function Events({ state, dispatch }) {
-  const [view, setView] = useState("list"); // list | detail
+  const [view, setView] = useState("list"); // list | detail | create
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [showCreate, setShowCreate] = useState(false);
+
+  const isTutor = state.role === "tutor";
 
   function getStudent(id) { return (Array.isArray(state.students) ? state.students : []).find(s => s.id === id); }
 
-  const activeEvents = initialEvents.filter(e => e.status === "active");
-  const upcomingEvents = initialEvents.filter(e => e.status === "upcoming");
+  const allEvents = useMemo(() => Array.isArray(state.events) ? state.events : [], [state.events]);
+  const activeEvents = allEvents.filter(e => e.status === "active");
+  const upcomingEvents = allEvents.filter(e => e.status === "upcoming");
+
+  function handleCreate() {
+    if (!form.title.trim() || !form.startDate || !form.endDate) return;
+    dispatch({ type: "ADD_EVENT", payload: { ...form, title: form.title.trim(), description: form.description.trim(), howToParticipate: form.howToParticipate.trim() } });
+    dispatch({ type: "ADD_TOAST", payload: { message: `Event "${form.title.trim()}" created`, variant: "success" } });
+    setForm(EMPTY_FORM);
+    setShowCreate(false);
+  }
+
+  function handleDelete(ev) {
+    if (!window.confirm(`Delete "${ev.title}"? This cannot be undone.`)) return;
+    dispatch({ type: "DELETE_EVENT", payload: ev.id });
+    if (selectedEvent?.id === ev.id) { setSelectedEvent(null); setView("list"); }
+    dispatch({ type: "ADD_TOAST", payload: { message: "Event deleted", variant: "info" } });
+  }
 
   function daysLeft(endDate) {
     const diff = Math.ceil((new Date(endDate) - new Date()) / 86400000);
@@ -42,7 +64,88 @@ function Events({ state, dispatch }) {
             </p>
           </div>
         </div>
+        {isTutor && view === "list" && (
+          <button onClick={() => setShowCreate(v => !v)}
+            style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: T.r2, background: showCreate ? T.bgMuted : T.accent, color: showCreate ? T.text : "#fff", fontWeight: 700, fontSize: 13, border: `1px solid ${showCreate ? T.border : T.accent}`, cursor: "pointer" }}>
+            <Plus size={15} weight="bold" /> {showCreate ? "Cancel" : "Create Event"}
+          </button>
+        )}
+        {isTutor && view === "detail" && selectedEvent && (
+          <button onClick={() => handleDelete(selectedEvent)}
+            aria-label="Delete event"
+            style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: T.r2, background: "transparent", color: T.textSec, fontWeight: 600, fontSize: 13, border: `1px solid ${T.border}`, cursor: "pointer" }}>
+            <Trash size={15} /> Delete
+          </button>
+        )}
       </div>
+
+      {/* ═══ CREATE FORM ═══ */}
+      {isTutor && showCreate && view === "list" && (
+        <div style={{ background: T.bgCard, borderRadius: T.r2, padding: "20px 22px", border: `1px solid ${T.border}`, display: "flex", flexDirection: "column", gap: 14, flexShrink: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>New Event</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, gridColumn: "1 / -1" }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec }}>Title</label>
+              <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. May Vocab Sprint"
+                style={{ padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 13, fontFamily: T.fontBody, background: T.bg, color: T.text, outline: "none" }} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec }}>Start Date</label>
+              <input type="date" value={form.startDate} onChange={e => setForm(f => ({ ...f, startDate: e.target.value }))}
+                style={{ padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 13, fontFamily: T.fontBody, background: T.bg, color: T.text, outline: "none" }} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec }}>End Date</label>
+              <input type="date" value={form.endDate} onChange={e => setForm(f => ({ ...f, endDate: e.target.value }))}
+                style={{ padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 13, fontFamily: T.fontBody, background: T.bg, color: T.text, outline: "none" }} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec }}>Status</label>
+              <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
+                style={{ padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 13, fontFamily: T.fontBody, background: T.bg, color: T.text, outline: "none" }}>
+                <option value="upcoming">Upcoming</option>
+                <option value="active">Active (Live)</option>
+              </select>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec }}>Emoji</label>
+              <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                {EVENT_EMOJIS.map(e => (
+                  <button key={e} onClick={() => setForm(f => ({ ...f, emoji: e }))}
+                    style={{ width: 32, height: 32, borderRadius: T.r1, border: `2px solid ${form.emoji === e ? T.accent : T.border}`, background: form.emoji === e ? T.accent + "15" : "transparent", cursor: "pointer", fontSize: 16 }}>{e}</button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec }}>Colour</label>
+              <div style={{ display: "flex", gap: 6 }}>
+                {EVENT_COLORS.map(c => (
+                  <button key={c} onClick={() => setForm(f => ({ ...f, color: c }))}
+                    style={{ width: 24, height: 24, borderRadius: "50%", background: c, border: `3px solid ${form.color === c ? T.text : "transparent"}`, cursor: "pointer" }} />
+                ))}
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, gridColumn: "1 / -1" }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec }}>Description</label>
+              <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2} placeholder="Brief overview of the event…"
+                style={{ padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 13, fontFamily: T.fontBody, background: T.bg, color: T.text, resize: "vertical", outline: "none" }} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, gridColumn: "1 / -1" }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: T.textSec }}>How to Participate</label>
+              <textarea value={form.howToParticipate} onChange={e => setForm(f => ({ ...f, howToParticipate: e.target.value }))} rows={2} placeholder="Instructions for students…"
+                style={{ padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, fontSize: 13, fontFamily: T.fontBody, background: T.bg, color: T.text, resize: "vertical", outline: "none" }} />
+            </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+            <button onClick={() => { setShowCreate(false); setForm(EMPTY_FORM); }}
+              style={{ padding: "8px 16px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", color: T.textSec, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+            <button onClick={handleCreate} disabled={!form.title.trim() || !form.startDate || !form.endDate}
+              style={{ padding: "8px 18px", borderRadius: T.r1, border: "none", background: (!form.title.trim() || !form.startDate || !form.endDate) ? T.bgMuted : T.accent, color: (!form.title.trim() || !form.startDate || !form.endDate) ? T.textTer : "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+              Create Event
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ═══ LIST VIEW ═══ */}
       {view === "list" && (
@@ -65,7 +168,7 @@ function Events({ state, dispatch }) {
                 <div style={{ fontSize: 10, color: T.textTer }}>Coming Soon</div>
               </div>
               <div style={{ background: "rgba(0,0,0,0.04)", borderRadius: T.r2, padding: "8px 16px", textAlign: "center" }}>
-                <div style={{ fontSize: 20, fontWeight: 800 }}>{initialEvents.reduce((s, e) => s + e.prizes.length, 0)}</div>
+                <div style={{ fontSize: 20, fontWeight: 800 }}>{allEvents.reduce((s, e) => s + e.prizes.length, 0)}</div>
                 <div style={{ fontSize: 10, color: T.textTer }}>Prizes</div>
               </div>
             </div>
@@ -99,7 +202,16 @@ function Events({ state, dispatch }) {
                         <span style={{ fontSize: 10, fontWeight: 600, color: T.textTer }}>{ev.participants.length} participant{ev.participants.length !== 1 ? "s" : ""}</span>
                       </div>
                     </div>
-                    <CaretRight size={16} color={T.textTer} style={{ flexShrink: 0, alignSelf: "center" }} />
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                      <CaretRight size={16} color={T.textTer} />
+                      {isTutor && (
+                        <button onClick={e => { e.stopPropagation(); handleDelete(ev); }}
+                          aria-label={`Delete ${ev.title}`}
+                          style={{ width: 26, height: 26, borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Trash size={13} color={T.textSec} />
+                        </button>
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -129,7 +241,16 @@ function Events({ state, dispatch }) {
                         ))}
                       </div>
                     </div>
-                    <CaretRight size={14} color={T.textTer} style={{ flexShrink: 0, alignSelf: "center" }} />
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                      <CaretRight size={14} color={T.textTer} />
+                      {isTutor && (
+                        <button onClick={e => { e.stopPropagation(); handleDelete(ev); }}
+                          aria-label={`Delete ${ev.title}`}
+                          style={{ width: 26, height: 26, borderRadius: T.r1, border: `1px solid ${T.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Trash size={13} color={T.textSec} />
+                        </button>
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>

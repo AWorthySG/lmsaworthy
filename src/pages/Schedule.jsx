@@ -9,7 +9,7 @@ const TABS = [
   { id: 'timetable', label: 'Revision Timetable', icon: Table, page: 'revisiontimetable' },
 ];
 
-export default function Schedule({ state, dispatch }) {
+export default function Schedule({ state, dispatch, enrolledSubjects }) {
   const activeTab = state.page === 'revisiontimetable' ? 'timetable' : 'calendar';
 
   function switchTab(tabPage) {
@@ -47,7 +47,7 @@ export default function Schedule({ state, dispatch }) {
 
       {activeTab === 'calendar'
         ? <CalendarContent state={state} />
-        : <TimetableContent state={state} />
+        : <TimetableContent state={state} enrolledSubjects={enrolledSubjects} />
       }
     </div>
   );
