@@ -45,7 +45,7 @@ export const PERSIST_KEYS = [
   "pastPaperDocs", "studyLogs",
   "announcement", "mistakes", "revisionChecklist",
   "posts", "reports", "myAvatar", "studentAvatars", "students", "resourceMeta",
-  "sessions", "customExams", "collections", "homeworkTemplates",
+  "sessions", "customExams", "collections", "homeworkTemplates", "resources",
 ];
 
 export function loadPersistedState() {
@@ -60,6 +60,10 @@ export function loadPersistedState() {
     const existingIds = new Set((merged.pastPaperDocs || []).map(d => d.id));
     const missing = initialPastPaperDocs.filter(d => !existingIds.has(d.id));
     if (missing.length > 0) merged.pastPaperDocs = [...missing, ...(merged.pastPaperDocs || [])];
+    // Ensure seeded resources are always present (merge any missing by id).
+    const existingResourceIds = new Set((merged.resources || []).map(r => r.id));
+    const missingResources = initialResources.filter(r => !existingResourceIds.has(r.id));
+    if (missingResources.length > 0) merged.resources = [...missingResources, ...(merged.resources || [])];
     return merged;
   } catch { return DEFAULT_STATE; }
 }

@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { T } from '../theme/theme.js';
-import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, Tag, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle } from '../icons/icons.jsx';
+import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, EmptyState, FileIcon, Input, Select, DocumentViewer } from '../components/ui';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import { getAllSavedIds, saveResourceOffline, removeResourceOffline } from '../utils/offlineCache.js';
 import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
+import { firebaseStorage, storageRef, uploadBytesResumable, getDownloadURL } from '../config/firebase.js';
 
 const DIFFICULTY_CONFIG = {
   easy:   { label: "Easy",   color: "#16a34a", bg: "#dcfce7" },
@@ -19,6 +20,176 @@ function DifficultyBadge({ difficulty }) {
     <span style={{ fontSize: 10, fontWeight: 700, padding: "1px 7px", borderRadius: 999, background: cfg.bg, color: cfg.color, letterSpacing: 0.3 }}>
       {cfg.label}
     </span>
+  );
+}
+
+function detectType(file) {
+  if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) return 'pdf';
+  if (file.name.toLowerCase().endsWith('.docx') || file.type.includes('wordprocessingml')) return 'docx';
+  if (file.type.startsWith('video/') || /\.(mp4|mov|avi|mkv|webm)$/i.test(file.name)) return 'video';
+  return 'pdf';
+}
+
+function titleFromFilename(name) {
+  return name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
+}
+
+function UploadPanel({ onClose, defaultSubject, dispatch }) {
+  const [uploadSubject, setUploadSubject] = useState(defaultSubject || '');
+  const [uploadTopic, setUploadTopic] = useState('');
+  const [queue, setQueue] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const topicSuggestions = TOPICS[uploadSubject] || [];
+
+  function addFiles(files) {
+    const items = Array.from(files).map(f => ({
+      uid: Math.random().toString(36).slice(2),
+      file: f,
+      title: titleFromFilename(f.name),
+      type: detectType(f),
+      progress: 0,
+      status: 'pending',
+    }));
+    setQueue(prev => [...prev, ...items]);
+  }
+
+  function removeFromQueue(uid) { setQueue(prev => prev.filter(q => q.uid !== uid)); }
+
+  function updateQueueItem(uid, updates) {
+    setQueue(prev => prev.map(q => q.uid === uid ? { ...q, ...updates } : q));
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    setDragging(false);
+    addFiles(e.dataTransfer.files);
+  }
+
+  async function handleUpload() {
+    if (!uploadSubject || !uploadTopic || queue.filter(q => q.status === 'pending').length === 0) return;
+    setIsUploading(true);
+    const pending = queue.filter(q => q.status === 'pending');
+    let successCount = 0;
+    for (const item of pending) {
+      const path = `resources/${uploadSubject}/${uploadTopic}/${Date.now()}_${item.file.name}`;
+      const sRef = storageRef(firebaseStorage, path);
+      await new Promise((resolve) => {
+        const task = uploadBytesResumable(sRef, item.file);
+        task.on('state_changed',
+          (snap) => {
+            const p = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+            updateQueueItem(item.uid, { progress: p, status: 'uploading' });
+          },
+          () => { updateQueueItem(item.uid, { status: 'error' }); resolve(); },
+          async () => {
+            const url = await getDownloadURL(task.snapshot.ref);
+            dispatch({ type: "ADD_RESOURCE", payload: { title: item.title, subject: uploadSubject, topic: uploadTopic, type: item.type, fileUrl: url } });
+            updateQueueItem(item.uid, { status: 'done', progress: 100 });
+            successCount++;
+            resolve();
+          }
+        );
+      });
+    }
+    setIsUploading(false);
+    if (successCount > 0) {
+      dispatch({ type: "ADD_TOAST", payload: { message: `${successCount} file${successCount > 1 ? 's' : ''} uploaded successfully.`, variant: "success" } });
+      setTimeout(onClose, 700);
+    }
+  }
+
+  const pendingCount = queue.filter(q => q.status === 'pending').length;
+  const uploadedCount = queue.filter(q => q.status === 'done').length;
+
+  return (
+    <Card elevated style={{ marginBottom: 20, borderLeft: `3px solid ${T.accent}` }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: 0 }}>Upload Resources</h3>
+        <button onClick={onClose} aria-label="Close upload panel" style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, padding: 4 }}>
+          <X size={16} weight="bold" />
+        </button>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>Subject *</label>
+          <Select value={uploadSubject} onChange={setUploadSubject} options={SUBJECTS.map(s => ({ value: s.id, label: s.name }))} placeholder="Select subject" />
+        </div>
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>
+            Topic / Folder *
+            <span style={{ fontWeight: 400, textTransform: "none", marginLeft: 4, fontSize: 10 }}>— type a new name to create a folder</span>
+          </label>
+          <input list="topic-suggestions" value={uploadTopic} onChange={e => setUploadTopic(e.target.value)}
+            placeholder={uploadSubject ? "Choose or type a topic…" : "Select subject first"} disabled={!uploadSubject}
+            style={{ width: "100%", padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: uploadSubject ? T.bgCard : T.bgMuted, fontSize: 13, color: T.text, outline: "none", boxSizing: "border-box", fontFamily: T.fontBody }} />
+          <datalist id="topic-suggestions">
+            {topicSuggestions.map(t => <option key={t} value={t} />)}
+          </datalist>
+        </div>
+      </div>
+      <div
+        onDragOver={e => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+        onClick={() => fileInputRef.current?.click()}
+        style={{ border: `2px dashed ${dragging ? T.accent : T.border}`, borderRadius: T.r2, background: dragging ? T.accentLight : T.bgMuted, padding: "28px 20px", textAlign: "center", cursor: "pointer", marginBottom: 14, transition: "all 0.15s" }}>
+        <Upload size={24} color={dragging ? T.accent : T.textTer} style={{ display: "block", margin: "0 auto 8px" }} />
+        <div style={{ fontSize: 13, fontWeight: 600, color: dragging ? T.accent : T.textSec, marginBottom: 4 }}>Drop files here or click to browse</div>
+        <div style={{ fontSize: 11, color: T.textTer }}>PDF, DOCX, or video files · multiple files supported</div>
+        <input ref={fileInputRef} type="file" multiple accept=".pdf,.docx,.mp4,.mov,.avi,.mkv,.webm" style={{ display: "none" }}
+          onChange={e => { addFiles(e.target.files); e.target.value = ''; }} />
+      </div>
+      {queue.length > 0 && (
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 8 }}>
+            {queue.length} file{queue.length !== 1 ? 's' : ''} queued{uploadedCount > 0 ? ` · ${uploadedCount} uploaded` : ''}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 280, overflowY: "auto" }}>
+            {queue.map(item => (
+              <div key={item.uid} style={{ background: T.bgMuted, borderRadius: T.r1, padding: "10px 12px", border: `1px solid ${item.status === 'error' ? T.danger : item.status === 'done' ? T.success + '60' : T.border}` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: item.status === 'uploading' ? 6 : 0 }}>
+                  <FileIcon type={item.type} size={14} />
+                  <input value={item.title} onChange={e => updateQueueItem(item.uid, { title: e.target.value })}
+                    disabled={item.status !== 'pending'} aria-label="File title"
+                    style={{ flex: 1, background: "transparent", border: "none", outline: "none", fontSize: 12, fontWeight: 600, color: T.text, fontFamily: T.fontBody, minWidth: 0 }} />
+                  <select value={item.type} onChange={e => updateQueueItem(item.uid, { type: e.target.value })}
+                    disabled={item.status !== 'pending'} aria-label="File type"
+                    style={{ fontSize: 10, border: `1px solid ${T.border}`, borderRadius: 4, padding: "2px 4px", background: T.bgCard, color: T.textSec, fontFamily: T.fontBody, flexShrink: 0 }}>
+                    <option value="pdf">PDF</option>
+                    <option value="docx">DOCX</option>
+                    <option value="video">Video</option>
+                  </select>
+                  {item.status === 'done' && <CheckCircle size={14} color={T.success} weight="fill" />}
+                  {item.status === 'error' && <span style={{ fontSize: 11, color: T.danger, fontWeight: 600, flexShrink: 0 }}>Error</span>}
+                  {item.status === 'pending' && (
+                    <button onClick={() => removeFromQueue(item.uid)} aria-label="Remove file"
+                      style={{ background: "none", border: "none", cursor: "pointer", padding: 2, color: T.textTer, flexShrink: 0 }}>
+                      <X size={12} weight="bold" />
+                    </button>
+                  )}
+                </div>
+                {item.status === 'uploading' && (
+                  <div style={{ background: T.border, borderRadius: 4, height: 3, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${item.progress}%`, background: T.accent, borderRadius: 4, transition: "width 0.3s" }} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <Btn onClick={handleUpload} disabled={!uploadSubject || !uploadTopic || pendingCount === 0 || isUploading}>
+          <Upload size={14} weight="bold" />
+          {isUploading ? "Uploading…" : `Upload ${pendingCount > 0 ? pendingCount + ' file' + (pendingCount !== 1 ? 's' : '') : ''}`}
+        </Btn>
+        <Btn onClick={onClose} variant="secondary"><X size={14} weight="bold" /> Cancel</Btn>
+        {isUploading && <span style={{ fontSize: 12, color: T.textSec }}>{uploadedCount} / {queue.length} complete</span>}
+      </div>
+    </Card>
   );
 }
 
@@ -60,18 +231,17 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookm
         </div>
         <div style={{ display: "flex", gap: 2, flexShrink: 0 }}>
           {onToggleOffline && r.fileUrl && (
-            <button onClick={(e) => { e.stopPropagation(); onToggleOffline(r); }}
-              aria-label={isSaved ? "Remove from offline" : "Save for offline"}
+            <button onClick={(e) => { e.stopPropagation(); onToggleOffline(r); }} aria-label={isSaved ? "Remove from offline" : "Save for offline"}
               style={{ background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: T.r1 }}>
               <CheckCircle size={14} weight={isSaved ? "fill" : "regular"} color={isSaved ? T.success : T.textTer} />
             </button>
           )}
-          <button onClick={(e) => { e.stopPropagation(); onBookmark(r.id); }}
+          <button onClick={(e) => { e.stopPropagation(); onBookmark(r.id); }} aria-label={isBookmarked ? "Remove bookmark" : "Bookmark"}
             style={{ background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: T.r1 }}>
             <BookmarkSimple size={15} weight={isBookmarked ? "fill" : "regular"} color={isBookmarked ? T.accent : T.textTer} />
           </button>
           {isTutor && (
-            <button onClick={(e) => { e.stopPropagation(); onDelete(r); }}
+            <button onClick={(e) => { e.stopPropagation(); onDelete(r); }} aria-label="Delete resource"
               style={{ background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: T.r1 }}
               onMouseEnter={(e) => e.currentTarget.style.background = T.dangerBg}
               onMouseLeave={(e) => e.currentTarget.style.background = "none"}>
@@ -88,7 +258,6 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   const [search, setSearch] = useState("");
   const [showUpload, setShowUpload] = useState(false);
   const [viewingResource, setViewingResource] = useState(null);
-  const [newTitle, setNewTitle] = useState(""); const [newSubject, setNewSubject] = useState(""); const [newTopic, setNewTopic] = useState(""); const [newType, setNewType] = useState("pdf");
   const [nav, setNav] = useState(defaultSubject || null);
   const [expandedSubjects, setExpandedSubjects] = useState(defaultSubject ? { [defaultSubject]: true } : {});
   const [sortBy, setSortBy] = useState("newest");
@@ -98,25 +267,35 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   const [offlineFilter, setOfflineFilter] = useState(false);
 
   const isTutor = true;
+  const resources = useMemo(() => Array.isArray(state.resources) ? state.resources : [], [state.resources]);
 
   function toggleSubject(id) { setExpandedSubjects((prev) => ({ ...prev, [id]: !prev[id] })); }
 
+  const allTopics = useMemo(() => {
+    const bySubject = {};
+    resources.forEach(r => {
+      if (!bySubject[r.subject]) bySubject[r.subject] = new Set();
+      if (r.topic) bySubject[r.subject].add(r.topic);
+    });
+    return bySubject;
+  }, [resources]);
+
   const resourceCounts = useMemo(() => {
     const bySubject = {}; const byTopic = {};
-    state.resources.forEach(r => {
+    resources.forEach(r => {
       bySubject[r.subject] = (bySubject[r.subject] || 0) + 1;
       const key = `${r.subject}:${r.topic}`;
       byTopic[key] = (byTopic[key] || 0) + 1;
     });
     return { bySubject, byTopic };
-  }, [state.resources]);
+  }, [resources]);
 
   function countBySubject(id) { return resourceCounts.bySubject[id] || 0; }
   function countByTopic(subjectId, topic) { return resourceCounts.byTopic[`${subjectId}:${topic}`] || 0; }
 
   const filtered = useMemo(() => {
     const meta = state.resourceMeta || {};
-    let list = state.resources.filter((r) => {
+    let list = resources.filter((r) => {
       if (search && !r.title.toLowerCase().includes(search.toLowerCase())) return false;
       if (typeFilter !== "all" && r.type !== typeFilter) return false;
       if (difficultyFilter !== "all") {
@@ -132,14 +311,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
     if (sortBy === "newest") list = [...list].sort((a, b) => b.date.localeCompare(a.date));
     else list = [...list].sort((a, b) => a.title.localeCompare(b.title));
     return list;
-  }, [state.resources, state.resourceMeta, search, nav, sortBy, typeFilter, difficultyFilter, offlineFilter, savedOfflineIds]);
-
-  function handleUpload() {
-    if (!newTitle || !newSubject || !newTopic) return;
-    dispatch({ type: "ADD_RESOURCE", payload: { title: newTitle, subject: newSubject, topic: newTopic, type: newType } });
-    dispatch({ type: "ADD_TOAST", payload: { message: `"${newTitle}" added`, variant: "success" } });
-    setNewTitle(""); setNewSubject(""); setNewTopic(""); setNewType("pdf"); setShowUpload(false);
-  }
+  }, [resources, state.resourceMeta, search, nav, sortBy, typeFilter, difficultyFilter, offlineFilter, savedOfflineIds]);
 
   function handleDelete(r) {
     if (!window.confirm(`Delete "${r.title}"? This cannot be undone.`)) return;
@@ -147,9 +319,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
     dispatch({ type: "ADD_TOAST", payload: { message: `"${r.title}" deleted`, variant: "error" } });
   }
 
-  function handleSetDifficulty(id, difficulty) {
-    dispatch({ type: "SET_RESOURCE_DIFFICULTY", payload: { id, difficulty } });
-  }
+  function handleSetDifficulty(id, difficulty) { dispatch({ type: "SET_RESOURCE_DIFFICULTY", payload: { id, difficulty } }); }
 
   async function handleToggleOffline(r) {
     if (!r.fileUrl) return;
@@ -162,9 +332,8 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
     }
   }
 
-  const isBookmarked = (id) => state.bookmarks.includes(id);
+  const isBookmarked = (id) => (state.bookmarks || []).includes(id);
 
-  // Breadcrumb
   const breadcrumbs = [{ label: "All Subjects", onClick: () => setNav(null) }];
   if (nav) {
     const subjId = typeof nav === "string" ? nav : nav.subject;
@@ -174,12 +343,13 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   }
 
   let pageTitle = "Content Library";
-  let pageSubtitle = `${state.resources.length} resources across ${SUBJECTS.length} subjects`;
+  let pageSubtitle = `${resources.length} resources across ${SUBJECTS.length} subjects`;
   if (nav && typeof nav === "string") {
     const subj = getSubject(nav);
     const count = countBySubject(nav);
+    const topicCount = allTopics[nav]?.size || 0;
     pageTitle = subj?.name || nav;
-    pageSubtitle = `${count} resource${count !== 1 ? "s" : ""} · ${(TOPICS[nav] || []).length} topics`;
+    pageSubtitle = `${count} resource${count !== 1 ? "s" : ""} · ${topicCount} topic${topicCount !== 1 ? "s" : ""}`;
   }
   if (nav && typeof nav === "object") {
     const count = countByTopic(nav.subject, nav.topic);
@@ -189,28 +359,24 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   }
 
   const TYPE_FILTERS = [
-    { value: "all", label: "All" },
-    { value: "pdf", label: "PDF" },
-    { value: "video", label: "Video" },
-    { value: "docx", label: "DOCX" },
+    { value: "all", label: "All" }, { value: "pdf", label: "PDF" },
+    { value: "video", label: "Video" }, { value: "docx", label: "DOCX" },
   ];
-
   const DIFFICULTY_FILTERS = [
-    { value: "all",      label: "All levels" },
-    { value: "easy",     label: "Easy",     color: "#16a34a" },
-    { value: "medium",   label: "Medium",   color: "#d97706" },
-    { value: "hard",     label: "Hard",     color: "#dc2626" },
+    { value: "all", label: "All levels" }, { value: "easy", label: "Easy", color: "#16a34a" },
+    { value: "medium", label: "Medium", color: "#d97706" }, { value: "hard", label: "Hard", color: "#dc2626" },
     { value: "untagged", label: "Untagged", color: T.textSec },
   ];
+  const uploadDefaultSubject = nav && typeof nav === "string" ? nav : (nav?.subject || '');
 
   return (
     <div>
       {viewingResource && <DocumentViewer resource={viewingResource} onClose={() => setViewingResource(null)} />}
-
       <PageHeader title={pageTitle} subtitle={pageSubtitle}
-        action={isTutor && <Btn onClick={() => setShowUpload(!showUpload)}><Plus size={15} weight="bold" /> Add Resource</Btn>} />
-
-      {/* Breadcrumb */}
+        action={isTutor && <Btn onClick={() => setShowUpload(v => !v)}><Plus size={15} weight="bold" /> Upload Resource</Btn>} />
+      {isTutor && showUpload && (
+        <UploadPanel defaultSubject={uploadDefaultSubject} dispatch={dispatch} onClose={() => setShowUpload(false)} />
+      )}
       {nav && (
         <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 16, flexWrap: "wrap" }}>
           {breadcrumbs.map((bc, i) => (
@@ -230,53 +396,32 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
           ))}
         </div>
       )}
-
-      {isTutor && showUpload && (
-        <Card elevated style={{ marginBottom: 20, borderLeft: `3px solid ${T.accent}` }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: "0 0 14px" }}>Add New Resource</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
-            <Input value={newTitle} onChange={setNewTitle} placeholder="Resource title" />
-            <Select value={newType} onChange={setNewType} options={[{ value: "pdf", label: "PDF" }, { value: "docx", label: "DOCX" }, { value: "video", label: "Video" }]} />
-            <Select value={newSubject} onChange={setNewSubject} options={SUBJECTS.map((s) => ({ value: s.id, label: s.name }))} placeholder="Select subject" />
-            <Select value={newTopic} onChange={setNewTopic} options={(TOPICS[newSubject] || []).map((t) => ({ value: t, label: t }))} placeholder="Select topic" />
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <Btn onClick={handleUpload}><Upload size={14} weight="bold" /> Add</Btn>
-            <Btn onClick={() => setShowUpload(false)} variant="secondary"><X size={14} weight="bold" /> Cancel</Btn>
-          </div>
-        </Card>
-      )}
-
       <div style={{ display: "flex", gap: 20 }}>
-        {/* Sidebar */}
         <div style={{ width: 230, flexShrink: 0 }}>
           <Card elevated style={{ padding: 0, overflow: "hidden" }}>
             <div style={{ padding: "12px 14px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 8 }}>
               <FolderSimple size={15} weight="duotone" color={T.accent} />
               <span style={{ fontSize: 11, fontWeight: 700, color: T.text, letterSpacing: 0.3, textTransform: "uppercase" }}>Folders</span>
             </div>
-
             <button onClick={() => setNav(null)}
               onMouseEnter={(e) => { if (nav !== null) e.currentTarget.style.background = T.bgHover; }}
               onMouseLeave={(e) => { if (nav !== null) e.currentTarget.style.background = "transparent"; }}
               style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", border: "none", cursor: "pointer", background: nav === null ? T.accentLight : "transparent", color: nav === null ? T.accentText : T.text, fontSize: 13, fontWeight: nav === null ? 650 : 500, transition: "background 0.15s", boxShadow: nav === null ? `inset 3px 0 0 ${T.accent}` : "none" }}>
               <Books size={15} weight={nav === null ? "duotone" : "regular"} />
               All Subjects
-              <span style={{ marginLeft: "auto", fontSize: 11, color: T.textTer, fontWeight: 600 }}>{state.resources.length}</span>
+              <span style={{ marginLeft: "auto", fontSize: 11, color: T.textTer, fontWeight: 600 }}>{resources.length}</span>
             </button>
-
             <div style={{ height: 1, background: T.border, margin: "4px 10px" }} />
-
             {SUBJECTS.map((subj) => {
               const theme = getSubjectTheme(subj.id);
               const isExpanded = expandedSubjects[subj.id];
               const isActiveSubject = nav === subj.id || (typeof nav === "object" && nav?.subject === subj.id);
-              const topics = (TOPICS[subj.id] || []).filter(t => countByTopic(subj.id, t) > 0);
+              const topics = [...(allTopics[subj.id] || new Set())].filter(t => countByTopic(subj.id, t) > 0);
               const subjCount = countBySubject(subj.id);
               return (
                 <div key={subj.id}>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <button onClick={() => toggleSubject(subj.id)}
+                    <button onClick={() => toggleSubject(subj.id)} aria-label={isExpanded ? `Collapse ${subj.name}` : `Expand ${subj.name}`}
                       style={{ background: "none", border: "none", cursor: "pointer", padding: "0 4px 0 10px", display: "flex", alignItems: "center" }}>
                       <CaretRight size={11} weight="bold" color={T.textTer}
                         style={{ transform: isExpanded ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
@@ -285,15 +430,11 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                       onMouseEnter={(e) => { if (!isActiveSubject || typeof nav === "object") e.currentTarget.style.background = T.bgHover; }}
                       onMouseLeave={(e) => { if (nav !== subj.id) e.currentTarget.style.background = "transparent"; }}
                       style={{ display: "flex", alignItems: "center", gap: 7, flex: 1, padding: "8px 10px 8px 4px", border: "none", cursor: "pointer", background: nav === subj.id ? T.accentLight : "transparent", color: nav === subj.id ? T.accentText : T.text, fontSize: 12, fontWeight: isActiveSubject ? 650 : 500, transition: "background 0.15s", borderRadius: 0, boxShadow: nav === subj.id ? `inset 3px 0 0 ${T.accent}` : "none" }}>
-                      {isExpanded
-                        ? <FolderOpen size={14} weight="duotone" color={theme.accent} />
-                        : <Folder size={14} weight="duotone" color={theme.accent} />
-                      }
+                      {isExpanded ? <FolderOpen size={14} weight="duotone" color={theme.accent} /> : <Folder size={14} weight="duotone" color={theme.accent} />}
                       <span style={{ flex: 1, textAlign: "left" }}>{subj.name}</span>
                       <span style={{ fontSize: 10, color: theme.text, background: theme.bg, padding: "1px 6px", borderRadius: 8, fontWeight: 700 }}>{subjCount}</span>
                     </button>
                   </div>
-
                   {isExpanded && topics.length > 0 && (
                     <div style={{ background: T.bgMuted }}>
                       {topics.map((topic) => {
@@ -317,10 +458,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
             })}
           </Card>
         </div>
-
-        {/* Main content */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Search + filter bar */}
           <div style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "center", flexWrap: "wrap" }}>
             <div style={{ position: "relative", flex: 1, minWidth: 180 }}>
               <MagnifyingGlass size={15} weight="bold" color={T.textTer} style={{ position: "absolute", left: 11, top: 11 }} />
@@ -329,7 +467,6 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                 style={{ paddingLeft: 34 }} />
             </div>
             {search && <Btn variant="ghost" onClick={() => setSearch("")}><X size={13} weight="bold" /> Clear</Btn>}
-            {/* Type filter pills */}
             <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
               {TYPE_FILTERS.map(f => (
                 <button key={f.value} onClick={() => setTypeFilter(f.value)}
@@ -338,7 +475,6 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                 </button>
               ))}
             </div>
-            {/* Difficulty filter pills */}
             <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
               {DIFFICULTY_FILTERS.map(f => {
                 const active = difficultyFilter === f.value;
@@ -351,13 +487,11 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                 );
               })}
             </div>
-            {/* Saved offline filter */}
             <button onClick={() => setOfflineFilter(f => !f)}
               style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 20, border: `1px solid ${offlineFilter ? T.success : T.border}`, background: offlineFilter ? T.success + "15" : T.bg, color: offlineFilter ? T.success : T.textSec, fontSize: 12, fontWeight: offlineFilter ? 650 : 500, cursor: "pointer", transition: "all 0.15s" }}>
               <CheckCircle size={12} weight={offlineFilter ? "fill" : "regular"} color={offlineFilter ? T.success : T.textSec} />
               Saved offline
             </button>
-            {/* Sort toggle */}
             <button onClick={() => setSortBy(s => s === "newest" ? "alpha" : "newest")}
               style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 20, border: `1px solid ${T.border}`, background: T.bg, color: T.textSec, fontSize: 12, fontWeight: 500, cursor: "pointer" }}>
               <SortAscending size={13} weight="bold" />
@@ -365,13 +499,12 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
             </button>
           </div>
 
-          {/* Root: subject folder cards */}
           {nav === null && !search && typeFilter === "all" && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14 }}>
               {SUBJECTS.map((subj) => {
                 const theme = getSubjectTheme(subj.id);
-                const subjResources = state.resources.filter((r) => r.subject === subj.id);
-                const topics = TOPICS[subj.id] || [];
+                const subjResources = resources.filter((r) => r.subject === subj.id);
+                const topics = [...(allTopics[subj.id] || new Set())];
                 const pdfCount = subjResources.filter((r) => r.type === "pdf").length;
                 const videoCount = subjResources.filter((r) => r.type === "video").length;
                 const docxCount = subjResources.filter((r) => r.type === "docx").length;
@@ -383,9 +516,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                       </div>
                       <div>
                         <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{subj.name}</div>
-                        <div style={{ fontSize: 12, color: T.textTer, marginTop: 2 }}>
-                          {topics.length} topics · {subjResources.length} resources
-                        </div>
+                        <div style={{ fontSize: 12, color: T.textTer, marginTop: 2 }}>{topics.length} topic{topics.length !== 1 ? "s" : ""} · {subjResources.length} resource{subjResources.length !== 1 ? "s" : ""}</div>
                       </div>
                     </div>
                     <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
@@ -395,9 +526,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
                       {subjResources.length === 0 && <span style={{ fontSize: 11, color: T.textTer }}>No resources yet</span>}
                     </div>
                     <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-                      {topics.slice(0, 4).map((t) => (
-                        <span key={t} style={{ fontSize: 10, color: T.textSec, background: T.bgMuted, padding: "3px 8px", borderRadius: 8, fontWeight: 500 }}>{t}</span>
-                      ))}
+                      {topics.slice(0, 4).map((t) => (<span key={t} style={{ fontSize: 10, color: T.textSec, background: T.bgMuted, padding: "3px 8px", borderRadius: 8, fontWeight: 500 }}>{t}</span>))}
                       {topics.length > 4 && <span style={{ fontSize: 10, color: T.textTer, padding: "3px 4px" }}>+{topics.length - 4} more</span>}
                     </div>
                   </Card>
@@ -406,19 +535,18 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
             </div>
           )}
 
-          {/* Subject view: grouped by topic, only topics with resources */}
           {nav && typeof nav === "string" && !search && typeFilter === "all" && (() => {
-            const allSubjResources = state.resources.filter(r => r.subject === nav);
+            const allSubjResources = resources.filter(r => r.subject === nav);
             if (allSubjResources.length === 0) return (
               <EmptyState icon={Books}
                 message={`No resources yet for ${getSubject(nav)?.name || nav}`}
-                action={isTutor ? <Btn onClick={() => { setNewSubject(nav); setShowUpload(true); }}><Plus size={14} weight="bold" /> Add First Resource</Btn> : null} />
+                action={isTutor ? <Btn onClick={() => setShowUpload(true)}><Plus size={14} weight="bold" /> Upload First Resource</Btn> : null} />
             );
-            const populatedTopics = (TOPICS[nav] || []).filter(t => countByTopic(nav, t) > 0);
+            const populatedTopics = [...(allTopics[nav] || new Set())].filter(t => countByTopic(nav, t) > 0);
             return (
               <div>
                 {populatedTopics.map((topic) => {
-                  const topicResources = state.resources.filter((r) => r.subject === nav && r.topic === topic);
+                  const topicResources = resources.filter((r) => r.subject === nav && r.topic === topic);
                   const theme = getSubjectTheme(nav);
                   return (
                     <div key={topic} style={{ marginBottom: 24 }}>
@@ -451,7 +579,6 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
             );
           })()}
 
-          {/* Topic view or filtered/searched results */}
           {(nav && typeof nav === "object") || search || typeFilter !== "all" || difficultyFilter !== "all" || offlineFilter ? (
             <div>
               {filtered.length === 0

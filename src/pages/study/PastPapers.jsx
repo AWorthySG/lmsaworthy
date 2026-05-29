@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { T } from '../../theme/theme.js';
 import { SUBJECTS } from '../../data/subjects.js';
 import { FilePdf, FileDoc, Folder, FolderOpen, Upload, Trash, DownloadSimple, Eye, X, Plus, CaretRight, Timer, CheckCircle, Warning } from '../../icons/icons.jsx';
 import { PageHeader, Input, Select } from '../../components/ui';
-import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
+import { firebaseStorage, storageRef, uploadBytesResumable, getDownloadURL } from '../../config/firebase.js';
 import useTimer from '../../hooks/useTimer.js';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -125,88 +125,158 @@ function DocViewer({ url, title, timedMinutes, onClose, onTimedComplete }) {
 
 /* ── Upload Panel ── */
 function UploadPanel({ activeSubj, state, dispatch, onClose }) {
-  const [file, setFile] = useState(null);
   const [year, setYear] = useState(String(CURRENT_YEAR));
   const [school, setSchool] = useState("");
-  const [paperLabel, setPaperLabel] = useState("");
-  const [uploading, setUploading] = useState(false);
+  const [queue, setQueue] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const fileInputRef = useRef(null);
+
+  function addFiles(files) {
+    const valid = Array.from(files).filter(f => {
+      const isPdf = f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf");
+      const isDocx = f.name.toLowerCase().endsWith(".docx") || f.type.includes("wordprocessingml");
+      return isPdf || isDocx;
+    });
+    if (valid.length < files.length) {
+      dispatch({ type: "ADD_TOAST", payload: { message: "Only PDF and DOCX files are supported.", variant: "error" } });
+    }
+    setQueue(prev => [...prev, ...valid.map(f => ({
+      uid: Math.random().toString(36).slice(2),
+      file: f,
+      label: f.name.replace(/\.[^/.]+$/, ''),
+      fileType: (f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")) ? "pdf" : "docx",
+      progress: 0,
+      status: 'pending',
+    }))]);
+  }
+
+  function removeFromQueue(uid) { setQueue(prev => prev.filter(q => q.uid !== uid)); }
+
+  function updateQueueItem(uid, updates) {
+    setQueue(prev => prev.map(q => q.uid === uid ? { ...q, ...updates } : q));
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    setDragging(false);
+    addFiles(e.dataTransfer.files);
+  }
 
   async function handleUpload() {
-    if (!file || !year || !school) return;
-    const isPdf = file.type === "application/pdf";
-    const isDocx = file.name.toLowerCase().endsWith(".docx") || file.type.includes("wordprocessingml");
-    if (!isPdf && !isDocx) {
-      dispatch({ type: "ADD_TOAST", payload: { message: "Only PDF and DOCX files are supported.", variant: "error" } });
-      return;
-    }
-    setUploading(true);
-    try {
-      const path = `past-papers/${activeSubj}/${year}/${school}/${Date.now()}_${file.name}`;
+    if (!year || !school || queue.filter(q => q.status === 'pending').length === 0) return;
+    setIsUploading(true);
+    const pending = queue.filter(q => q.status === 'pending');
+    let successCount = 0;
+    for (const item of pending) {
+      const path = `past-papers/${activeSubj}/${year}/${school}/${Date.now()}_${item.file.name}`;
       const sRef = storageRef(firebaseStorage, path);
-      await uploadBytes(sRef, file);
-      const url = await getDownloadURL(sRef);
-      const displayName = paperLabel || file.name;
-      dispatch({
-        type: "ADD_PAST_PAPER_DOC",
-        payload: { name: displayName, fileName: file.name, url, subject: activeSubj, fileType: isPdf ? "pdf" : "docx", year: Number(year), school, uploadedAt: new Date().toISOString().split("T")[0], uploadedBy: state.userProfile?.name || "Tutor" },
+      await new Promise((resolve) => {
+        const task = uploadBytesResumable(sRef, item.file);
+        task.on('state_changed',
+          (snap) => {
+            const p = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+            updateQueueItem(item.uid, { progress: p, status: 'uploading' });
+          },
+          () => { updateQueueItem(item.uid, { status: 'error' }); resolve(); },
+          async () => {
+            const url = await getDownloadURL(task.snapshot.ref);
+            dispatch({
+              type: "ADD_PAST_PAPER_DOC",
+              payload: { name: item.label || item.file.name, fileName: item.file.name, url, subject: activeSubj, fileType: item.fileType, year: Number(year), school, uploadedAt: new Date().toISOString().split("T")[0], uploadedBy: state.userProfile?.name || "Tutor" },
+            });
+            updateQueueItem(item.uid, { status: 'done', progress: 100 });
+            successCount++;
+            resolve();
+          }
+        );
       });
-      dispatch({ type: "ADD_TOAST", payload: { message: `"${displayName}" uploaded.`, variant: "success" } });
-      onClose();
-    } catch {
-      dispatch({ type: "ADD_TOAST", payload: { message: "Upload failed. Please try again.", variant: "error" } });
     }
-    setUploading(false);
+    setIsUploading(false);
+    if (successCount > 0) {
+      dispatch({ type: "ADD_TOAST", payload: { message: `${successCount} paper${successCount > 1 ? 's' : ''} uploaded.`, variant: "success" } });
+      setTimeout(onClose, 700);
+    }
   }
+
+  const pendingCount = queue.filter(q => q.status === 'pending').length;
+  const uploadedCount = queue.filter(q => q.status === 'done').length;
 
   return (
     <div style={{ background: T.bgCard, borderRadius: T.r2, border: `1.5px solid ${T.accent}`, padding: 20, marginBottom: 16 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: T.text }}>Upload Practice Paper</span>
-        <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, padding: 4 }}><X size={16} /></button>
+        <span style={{ fontSize: 14, fontWeight: 700, color: T.text }}>Upload Practice Papers</span>
+        <button onClick={onClose} aria-label="Close upload panel" style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, padding: 4 }}><X size={16} /></button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-        {/* Year */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
         <div>
           <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>Year *</label>
           <Select value={year} onChange={setYear} options={YEARS.map(y => ({ value: String(y), label: String(y) }))} />
         </div>
-        {/* School */}
         <div>
-          <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>School *</label>
-          <input
-            list="school-list"
-            value={school}
-            onChange={e => setSchool(e.target.value)}
+          <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>School / Source *</label>
+          <input list="school-list" value={school} onChange={e => setSchool(e.target.value)}
             placeholder="e.g. Raffles Institution"
-            style={{ width: "100%", padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgCard, fontSize: 13, color: T.text, outline: "none", boxSizing: "border-box" }}
-          />
+            style={{ width: "100%", padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgCard, fontSize: 13, color: T.text, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
           <datalist id="school-list">
             {SG_SCHOOLS.map(s => <option key={s} value={s} />)}
           </datalist>
         </div>
-        {/* Paper label */}
-        <div style={{ gridColumn: "1 / -1" }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>Paper Label <span style={{ fontWeight: 400, textTransform: "none" }}>(optional — defaults to filename)</span></label>
-          <Input value={paperLabel} onChange={setPaperLabel} placeholder="e.g. 2024 RI Paper 1 + Answers" />
-        </div>
-        {/* File */}
-        <div style={{ gridColumn: "1 / -1" }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>File (PDF or DOCX) *</label>
-          <label style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: T.r1, border: `1px dashed ${file ? T.success : T.border}`, background: file ? T.successBg : T.bgMuted, color: file ? T.success : T.textSec, cursor: "pointer", fontSize: 13, fontWeight: 500 }}>
-            <Upload size={15} color={file ? T.success : T.textTer} />
-            {file ? file.name : "Choose file…"}
-            <input type="file" accept=".pdf,.docx" style={{ display: "none" }} onChange={e => setFile(e.target.files?.[0] || null)} />
-          </label>
-        </div>
       </div>
-      <div style={{ display: "flex", gap: 8 }}>
-        <button onClick={handleUpload} disabled={!file || !year || !school || uploading}
-          style={{ padding: "8px 20px", borderRadius: T.r5, background: (!file || !year || !school || uploading) ? T.bgMuted : T.accent, color: (!file || !year || !school || uploading) ? T.textTer : "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: (!file || !year || !school || uploading) ? "default" : "pointer" }}>
-          {uploading ? "Uploading…" : "Upload"}
+      {/* Drag-and-drop zone */}
+      <div
+        onDragOver={e => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+        onClick={() => fileInputRef.current?.click()}
+        style={{ border: `2px dashed ${dragging ? T.accent : T.border}`, borderRadius: T.r2, background: dragging ? T.accentLight : T.bgMuted, padding: "24px 20px", textAlign: "center", cursor: "pointer", marginBottom: 14, transition: "all 0.15s" }}>
+        <Upload size={22} color={dragging ? T.accent : T.textTer} style={{ display: "block", margin: "0 auto 8px" }} />
+        <div style={{ fontSize: 13, fontWeight: 600, color: dragging ? T.accent : T.textSec, marginBottom: 4 }}>Drop PDFs or DOCX files here, or click to browse</div>
+        <div style={{ fontSize: 11, color: T.textTer }}>Multiple files supported</div>
+        <input ref={fileInputRef} type="file" multiple accept=".pdf,.docx" style={{ display: "none" }}
+          onChange={e => { addFiles(e.target.files); e.target.value = ''; }} />
+      </div>
+      {/* File queue */}
+      {queue.length > 0 && (
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 8 }}>
+            {queue.length} file{queue.length !== 1 ? 's' : ''}{uploadedCount > 0 ? ` · ${uploadedCount} uploaded` : ''}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 5, maxHeight: 240, overflowY: "auto" }}>
+            {queue.map(item => (
+              <div key={item.uid} style={{ background: T.bgMuted, borderRadius: T.r1, padding: "9px 12px", border: `1px solid ${item.status === 'error' ? T.danger : item.status === 'done' ? T.success + '60' : T.border}` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: item.status === 'uploading' ? 6 : 0 }}>
+                  {item.fileType === 'pdf' ? <FilePdf size={14} color="#DC2626" style={{ flexShrink: 0 }} /> : <FileDoc size={14} color={T.accent} style={{ flexShrink: 0 }} />}
+                  <input value={item.label} onChange={e => updateQueueItem(item.uid, { label: e.target.value })}
+                    disabled={item.status !== 'pending'} aria-label="Paper label"
+                    style={{ flex: 1, background: "transparent", border: "none", outline: "none", fontSize: 12, fontWeight: 600, color: T.text, fontFamily: "inherit", minWidth: 0 }} />
+                  {item.status === 'done' && <CheckCircle size={13} color={T.success} weight="fill" />}
+                  {item.status === 'error' && <Warning size={13} color={T.danger} />}
+                  {item.status === 'pending' && (
+                    <button onClick={() => removeFromQueue(item.uid)} aria-label="Remove"
+                      style={{ background: "none", border: "none", cursor: "pointer", padding: 2, color: T.textTer, flexShrink: 0 }}>
+                      <X size={11} weight="bold" />
+                    </button>
+                  )}
+                </div>
+                {item.status === 'uploading' && (
+                  <div style={{ background: T.border, borderRadius: 4, height: 3, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${item.progress}%`, background: T.accent, borderRadius: 4, transition: "width 0.3s" }} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <button onClick={handleUpload} disabled={!year || !school || pendingCount === 0 || isUploading}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: T.r5, background: (!year || !school || pendingCount === 0 || isUploading) ? T.bgMuted : T.accent, color: (!year || !school || pendingCount === 0 || isUploading) ? T.textTer : "#fff", fontWeight: 700, fontSize: 13, border: "none", cursor: (!year || !school || pendingCount === 0 || isUploading) ? "default" : "pointer" }}>
+          <Upload size={13} />
+          {isUploading ? "Uploading…" : `Upload ${pendingCount > 0 ? pendingCount + ' file' + (pendingCount !== 1 ? 's' : '') : ''}`}
         </button>
-        <button onClick={onClose} style={{ padding: "8px 16px", borderRadius: T.r5, background: T.bgMuted, color: T.textSec, fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>
-          Cancel
-        </button>
+        <button onClick={onClose} style={{ padding: "8px 16px", borderRadius: T.r5, background: T.bgMuted, color: T.textSec, fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Cancel</button>
+        {isUploading && <span style={{ fontSize: 12, color: T.textSec }}>{uploadedCount} / {queue.length} complete</span>}
       </div>
     </div>
   );
