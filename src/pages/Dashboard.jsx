@@ -5,6 +5,7 @@ import {
   Bell, CalendarCheck, ChartLineUp, Handshake, FolderSimpleStar,
   Users, Upload, CaretRight, ChatText, Sparkle,
   Megaphone, Scroll, GraduationCap, Notebook, BookmarkSimple, FilePdf, FileDoc, FileVideo,
+  Compass,
 } from '../icons/icons.jsx';
 import { SubjectBadge } from '../components/ui/Badge.jsx';
 import { SubjectIllustration, DocumentViewer } from '../components/ui';
@@ -72,108 +73,111 @@ function Greeting({ authUser, userProfile, overdueCount, pendingCount, gradedCou
   );
 }
 
-/* ━━━ SUBJECT CHIP ━━━ */
-function SubjectChip({ subject }) {
-  const theme = getSubjectTheme(subject) || T.eng;
-  const subj = getSubject(subject);
-  const label = subj ? subj.name.split(' ').slice(0, 2).join(' ') : (subject || 'General').toUpperCase();
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
-      fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: 'uppercase',
-      color: T.text, background: '#fff', border: `1px solid ${theme.accent}40`,
-      borderRadius: T.r1, padding: '2px 8px',
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: theme.accent }} />
-      {label}
-    </span>
-  );
-}
-
-/* ━━━ RESUME CARD ━━━ */
-function ResumeCard({ state, dispatch }) {
+/* ━━━ FOCUS CARD — "Start here": up to 3 prioritised next steps ━━━ */
+function FocusCard({ state, dispatch }) {
   const today = new Date().toISOString().split('T')[0];
-  const activeHw = state.homework.filter(h => h.status === 'active');
+  const activeHw = (state.homework || []).filter(h => h.status === 'active');
   const subs = state.submissions || [];
 
+  const steps = [];
+
+  // 1) Resume / start a homework task (in-progress → overdue → any not-started)
   let resumeSub = subs.find(s => s.status === 'in_progress');
-  if (!resumeSub) {
-    resumeSub = subs.find(s => {
-      const hw = activeHw.find(h => h.id === s.homeworkId);
-      return hw && hw.dueDate < today && s.status === 'not_started';
+  if (!resumeSub) resumeSub = subs.find(s => {
+    const hw = activeHw.find(h => h.id === s.homeworkId);
+    return hw && hw.dueDate < today && s.status === 'not_started';
+  });
+  if (!resumeSub) resumeSub = subs.find(s => {
+    const hw = activeHw.find(h => h.id === s.homeworkId);
+    return hw && s.status === 'not_started';
+  });
+  const resumeHw = resumeSub ? state.homework.find(h => h.id === resumeSub.homeworkId) : null;
+  if (resumeHw) {
+    const overdue = resumeHw.dueDate < today;
+    const verb = resumeSub.status === 'in_progress' ? 'Finish' : overdue ? 'Catch up on' : 'Start';
+    steps.push({
+      key: 'hw',
+      icon: ClipboardText,
+      color: overdue ? T.danger : (getSubjectTheme(resumeHw.subject)?.accent || T.accent),
+      label: `${verb} “${resumeHw.title}”`,
+      meta: overdue ? `Overdue · was due ${resumeHw.dueDate}` : `Due ${resumeHw.dueDate}`,
+      page: 'homework',
     });
   }
-  if (!resumeSub) resumeSub = subs.find(s => s.status === 'not_started');
-  const resumeHw = resumeSub ? state.homework.find(h => h.id === resumeSub.homeworkId) : null;
 
-  if (!resumeHw) {
-    return (
-      <div style={{
-        background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3,
-        padding: '20px 22px', display: 'flex', alignItems: 'center', gap: 20,
-        boxShadow: '0 1px 3px rgba(28,27,25,0.04)', marginBottom: 20,
-      }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: T.textSec, marginBottom: 6 }}>
-            Nothing overdue — great work!
-          </div>
-          <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.3, color: T.text }}>Build your vocabulary</div>
-          <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>Practise high-value words with flashcards and quizzes</div>
-        </div>
-        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'vocab' })}
-          style={{ padding: '11px 20px', borderRadius: T.r2, background: T.accent, color: '#fff', fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          Vocab Builder <ArrowRight size={14} />
-        </button>
-      </div>
-    );
+  // 2) Mistakes due for spaced-repetition review
+  const mistakes = Array.isArray(state.mistakes) ? state.mistakes : [];
+  const dueMistakes = mistakes.filter(m => !m.reviewed || !m.nextReview || m.nextReview <= today);
+  if (dueMistakes.length > 0) {
+    steps.push({
+      key: 'mistakes',
+      icon: Notebook,
+      color: T.amath.accent,
+      label: `Review ${dueMistakes.length} item${dueMistakes.length > 1 ? 's' : ''} in your Mistake Journal`,
+      meta: 'Spaced repetition keeps it stuck',
+      page: 'mistakes',
+    });
   }
 
-  const subjectTheme = getSubjectTheme(resumeHw.subject) || T.eng;
-  const isOverdue = resumeHw.dueDate < today;
-  const statusLabel = resumeSub.status === 'in_progress' ? 'In Progress' : isOverdue ? 'Overdue' : 'Not Started';
+  // 3) Nearest exam → nudge to plan revision
+  const exams = getExamCountdowns(state?.customExams) || [];
+  if (exams.length > 0) {
+    const e = exams[0];
+    steps.push({
+      key: 'exam',
+      icon: CalendarCheck,
+      color: T.gp.accent,
+      label: `${e.daysLeft} day${e.daysLeft !== 1 ? 's' : ''} to ${e.name}`,
+      meta: 'Plan your revision timetable',
+      page: 'revisiontimetable',
+    });
+  }
+
+  // Friendly starters fill any remaining slots (and cover brand-new students)
+  const starters = [
+    { key: 'subjects', icon: Compass, color: T.eng.accent, label: 'Explore your subjects', meta: 'Resources & practice papers', page: 'subjects' },
+    { key: 'vocab', icon: Scroll, color: T.h1econ.accent, label: 'Build your vocabulary', meta: 'Flashcards & quick quizzes', page: 'vocab' },
+    { key: 'community', icon: Handshake, color: T.success, label: 'Say hello in the Community', meta: 'Chat, ask & share', page: 'community' },
+  ];
+  for (const s of starters) {
+    if (steps.length >= 3) break;
+    if (!steps.some(x => x.key === s.key)) steps.push(s);
+  }
+
+  const top = steps.slice(0, 3);
+  const allClear = !resumeHw && dueMistakes.length === 0;
 
   return (
     <div style={{
       background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r3,
-      padding: 20, display: 'flex', alignItems: 'stretch', gap: 18,
       boxShadow: '0 1px 3px rgba(28,27,25,0.04)', marginBottom: 20, overflow: 'hidden',
+      borderLeft: `3px solid ${T.accent}`,
     }}>
-      <div style={{
-        width: 90, flexShrink: 0, borderRadius: T.r2, background: subjectTheme.bg,
-        border: `1px solid ${T.border}`, padding: '10px 8px',
-        display: 'flex', flexDirection: 'column', gap: 4, position: 'relative',
-      }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: subjectTheme.accent, letterSpacing: 0.5, textTransform: 'uppercase' }}>
-          {resumeHw.subject?.toUpperCase()}
-        </div>
-        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {[90, 70, 85, 45, 60].map((w, i) => (
-            <div key={i} style={{ height: 3, background: subjectTheme.accent + '30', borderRadius: 2, width: `${w}%` }} />
-          ))}
-        </div>
-        {isOverdue && <div style={{ position: 'absolute', top: 7, right: 7, width: 6, height: 6, borderRadius: '50%', background: T.danger }} />}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px 10px', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 13, fontWeight: 800, letterSpacing: -0.2, color: T.text }}>Start here</span>
+        <span style={{ fontSize: 11, color: T.textTer }}>
+          {allClear ? "You're all caught up — here's what's worth a look" : 'Your next steps'}
+        </span>
       </div>
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: isOverdue ? T.danger : T.accent, display: 'flex', alignItems: 'center', gap: 5 }}>
-          <ArrowRight size={11} />
-          {isOverdue ? 'Overdue assignment' : 'Pick up where you left off'}
-        </div>
-        <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: -0.3, lineHeight: 1.2, color: T.text }}>{resumeHw.title}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <SubjectChip subject={resumeHw.subject} />
-          <span style={{ fontSize: 11, color: T.textSec }}>{isOverdue ? `Was due ${resumeHw.dueDate}` : `Due ${resumeHw.dueDate}`}</span>
-          <span style={{ width: 3, height: 3, borderRadius: '50%', background: T.textTer }} />
-          <span style={{ fontSize: 11, color: statusLabel === 'In Progress' ? T.accent : T.textSec, fontWeight: 600 }}>{statusLabel}</span>
-        </div>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 8, flexShrink: 0 }}>
-        <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
-          style={{ padding: '10px 18px', borderRadius: T.r2, background: isOverdue ? T.danger : T.accent, color: '#fff', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-          Open assignment <ArrowRight size={13} />
-        </button>
-        <button style={{ background: 'transparent', border: 'none', color: T.textSec, fontSize: 12, fontFamily: T.fontBody, cursor: 'pointer', padding: '2px 0', textAlign: 'center' }}>
-          Show something else
-        </button>
+      <div style={{ padding: '0 8px 8px' }}>
+        {top.map((step) => (
+          <button
+            key={step.key}
+            onClick={() => dispatch({ type: 'SET_PAGE', payload: step.page })}
+            style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '11px 10px', background: 'transparent', border: 'none', borderRadius: T.r2, cursor: 'pointer', textAlign: 'left', fontFamily: T.fontBody, transition: 'background 0.12s' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = T.bgHover; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
+            <div style={{ width: 34, height: 34, borderRadius: T.r2, background: step.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <step.icon size={16} color={step.color} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{step.label}</div>
+              <div style={{ fontSize: 11.5, color: T.textSec, marginTop: 1 }}>{step.meta}</div>
+            </div>
+            <ArrowRight size={14} color={T.textTer} style={{ flexShrink: 0 }} />
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -652,7 +656,7 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
   return (
     <div>
       <Greeting authUser={authUser} userProfile={userProfile} overdueCount={overdueCount} pendingCount={pendingCount} gradedCount={gradedCount} />
-      <ResumeCard state={state} dispatch={dispatch} />
+      <FocusCard state={state} dispatch={dispatch} />
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.55fr 1fr', gap: 18 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <TodaysPlanCard state={state} />
@@ -909,7 +913,12 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
 
 /* ━━━ ROOT EXPORT ━━━ */
 function Dashboard({ state, dispatch, authUser, userProfile }) {
-  return <TutorDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
+  // Role-aware landing: A-Worthlings (students) get the calm, learning-focused
+  // StudentDashboard; tutors get the admin-oriented TutorDashboard.
+  if (state.role === 'tutor') {
+    return <TutorDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
+  }
+  return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
 }
 
 export { StudentDashboard };

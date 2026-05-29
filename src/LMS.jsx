@@ -24,6 +24,7 @@ import PublicReport from "./pages/PublicReport.jsx";
 
 // Lazy-loaded page imports (code-split per route)
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
+const Subjects = lazy(() => import("./pages/Subjects.jsx"));
 const ContentLibrary = lazy(() => import("./pages/ContentLibrary.jsx"));
 const Attendance = lazy(() => import("./pages/Attendance.jsx"));
 const ProgressTracker = lazy(() => import("./pages/ProgressTracker.jsx"));
@@ -292,7 +293,8 @@ function LMS({ authUser, userProfile }) {
 
   const renderPage = () => {
     switch (page) {
-      case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
+      case "dashboard": return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} enrolledSubjects={enrolledSubjects} />;
+      case "subjects": return <Subjects state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />;
       case "library": return <ContentLibrary key="library" state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />;
       case "library-eng": return <ContentLibrary key="library-eng" state={state} dispatch={dispatch} defaultSubject="eng" enrolledSubjects={enrolledSubjects} />;
       case "library-h1econ": return <ContentLibrary key="library-h1econ" state={state} dispatch={dispatch} defaultSubject="h1econ" enrolledSubjects={enrolledSubjects} />;

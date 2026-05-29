@@ -1,7 +1,7 @@
 /* global clients */
 // Service Worker — enables offline caching, PWA install, and push notifications
-const CACHE_NAME = 'aworthy-lms-v11';
-const ASSETS_CACHE = 'aworthy-assets-v11'; // immutable hashed bundles
+const CACHE_NAME = 'aworthy-lms-v12';
+const ASSETS_CACHE = 'aworthy-assets-v12'; // immutable hashed bundles
 const RESOURCES_CACHE = 'aworthy-resources-v1'; // explicitly saved Firebase Storage documents
 const FETCH_TIMEOUT_MS = 5000;
 const APP_SHELL = [

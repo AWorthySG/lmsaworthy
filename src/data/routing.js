@@ -3,12 +3,13 @@ import {
   Books, Scroll,
   GraduationCap, Lightbulb,
   Confetti, Handshake,
-  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle, FolderSimpleStar, Table,
+  CalendarCheck, CalendarBlank, ChartLineUp, Eye, Gear, Sparkle, FolderSimpleStar, Table, Compass,
 } from '../icons/icons.jsx';
 
 export const NAV = [
   { group: "Overview", items: [
     { id: "dashboard", label: "Dashboard", icon: House },
+    { id: "subjects", label: "My Subjects", icon: Compass },
     { id: "classroom", label: "Live Classroom Whiteboard", icon: Broadcast, highlight: true },
   ]},
   { group: "O-Level English", subject: "eng", items: [
@@ -72,6 +73,7 @@ export const NAV = [
 
 export const PAGE_TO_PATH = {
   dashboard: "/",
+  subjects: "/subjects",
   attendance: "/attendance", progress: "/progress",
   community: "/community", classroom: "/classroom",
   vocab: "/vocab", "example-finder": "/example-finder",
