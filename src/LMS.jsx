@@ -38,13 +38,11 @@ const Events = lazy(() => import("./pages/Events.jsx"));
 const PastPapers = lazy(() => import("./pages/study/PastPapers.jsx"));
 const ParentView = lazy(() => import("./pages/ParentView.jsx"));
 const ModelEssayBank = lazy(() => import("./pages/study/ModelEssayBank.jsx"));
-const MistakeJournal = lazy(() => import("./pages/study/MistakeJournal.jsx"));
-const RevisionChecklist = lazy(() => import("./pages/study/RevisionChecklist.jsx"));
+const Schedule = lazy(() => import("./pages/Schedule.jsx"));
+const LearningProgress = lazy(() => import("./pages/LearningProgress.jsx"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
-const Calendar = lazy(() => import("./pages/Calendar.jsx"));
 const AIFeedback = lazy(() => import("./pages/tools/AIFeedback.jsx"));
 const Collections = lazy(() => import("./pages/Collections.jsx"));
-const RevisionTimetable = lazy(() => import("./pages/study/RevisionTimetable.jsx"));
 
 
 export default function LMSAuthWrapper() {
@@ -321,12 +319,12 @@ function LMS({ authUser, userProfile }) {
       case "pastpapers-ibmyp": return <PastPapers state={state} dispatch={dispatch} defaultSubject="ibmyp" />;
       case "parentview": return <ParentView state={state} dispatch={dispatch} authUser={authUser} />;
       case "modelessays": return <ModelEssayBank state={state} dispatch={dispatch} />;
-      case "calendar": return <Calendar state={state} />;
+      case "calendar": return <Schedule state={state} dispatch={dispatch} />;
+      case "revisiontimetable": return <Schedule state={state} dispatch={dispatch} />;
       case "aifeedback": return <AIFeedback />;
-      case "mistakes": return <MistakeJournal state={state} dispatch={dispatch} />;
-      case "checklist": return <RevisionChecklist state={state} dispatch={dispatch} />;
+      case "mistakes": return <LearningProgress state={state} dispatch={dispatch} />;
+      case "checklist": return <LearningProgress state={state} dispatch={dispatch} />;
       case "collections": return <Collections state={state} dispatch={dispatch} />;
-      case "revisiontimetable": return <RevisionTimetable state={state} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
       default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
     }

@@ -21,7 +21,7 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
   const fileInputRef = useRef(null);
   const today = new Date().toISOString().split("T")[0];
 
-  const hw = state.homework.filter(h => h.status === "active");
+  const hw = (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === "active");
   // Match logged-in user to a student record by email to get their studentId.
   const myStudentId = useMemo(() => {
     const students = Array.isArray(state.students) ? state.students : [];
@@ -29,7 +29,8 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
     if (!email) return null;
     return students.find(s => s.email?.toLowerCase() === email.toLowerCase())?.id ?? null;
   }, [state.students, authUser, userProfile]);
-  const mySubs = myStudentId != null ? state.submissions.filter(s => s.studentId === myStudentId) : [];
+  const allSubs = Array.isArray(state.submissions) ? state.submissions : [];
+  const mySubs = myStudentId != null ? allSubs.filter(s => s.studentId === myStudentId) : [];
 
   function getMySubmission(hwId) { return mySubs.find(s => s.homeworkId === hwId); }
 
