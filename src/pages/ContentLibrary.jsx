@@ -254,7 +254,7 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookm
   );
 }
 
-function ContentLibrary({ state, dispatch, defaultSubject }) {
+function ContentLibrary({ state, dispatch, defaultSubject, enrolledSubjects }) {
   const [search, setSearch] = useState("");
   const [showUpload, setShowUpload] = useState(false);
   const [viewingResource, setViewingResource] = useState(null);
@@ -266,7 +266,12 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   const [savedOfflineIds, setSavedOfflineIds] = useState(() => getAllSavedIds());
   const [offlineFilter, setOfflineFilter] = useState(false);
 
-  const isTutor = true;
+  const isTutor = state.role === "tutor";
+  // Students only browse their enrolled subjects; tutors (enrolledSubjects null) see all.
+  const visibleSubjects = useMemo(
+    () => (Array.isArray(enrolledSubjects) ? SUBJECTS.filter(s => enrolledSubjects.includes(s.id)) : SUBJECTS),
+    [enrolledSubjects]
+  );
   const resources = useMemo(() => Array.isArray(state.resources) ? state.resources : [], [state.resources]);
 
   function toggleSubject(id) { setExpandedSubjects((prev) => ({ ...prev, [id]: !prev[id] })); }
@@ -343,7 +348,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
   }
 
   let pageTitle = "Content Library";
-  let pageSubtitle = `${resources.length} resources across ${SUBJECTS.length} subjects`;
+  let pageSubtitle = `${resources.length} resources across ${visibleSubjects.length} subject${visibleSubjects.length !== 1 ? "s" : ""}`;
   if (nav && typeof nav === "string") {
     const subj = getSubject(nav);
     const count = countBySubject(nav);
@@ -412,7 +417,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
               <span style={{ marginLeft: "auto", fontSize: 11, color: T.textTer, fontWeight: 600 }}>{resources.length}</span>
             </button>
             <div style={{ height: 1, background: T.border, margin: "4px 10px" }} />
-            {SUBJECTS.map((subj) => {
+            {visibleSubjects.map((subj) => {
               const theme = getSubjectTheme(subj.id);
               const isExpanded = expandedSubjects[subj.id];
               const isActiveSubject = nav === subj.id || (typeof nav === "object" && nav?.subject === subj.id);
@@ -501,7 +506,7 @@ function ContentLibrary({ state, dispatch, defaultSubject }) {
 
           {nav === null && !search && typeFilter === "all" && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14 }}>
-              {SUBJECTS.map((subj) => {
+              {visibleSubjects.map((subj) => {
                 const theme = getSubjectTheme(subj.id);
                 const subjResources = resources.filter((r) => r.subject === subj.id);
                 const topics = [...(allTopics[subj.id] || new Set())];

@@ -291,7 +291,7 @@ function PastPapers({ state, dispatch, defaultSubject }) {
   const [expandedSchools, setExpandedSchools] = useState({});
   const [timerPickerDoc, setTimerPickerDoc] = useState(null); // doc being configured for timed practice
 
-  const isTutor = true;
+  const isTutor = state.role === "tutor";
   const allDocs = state.pastPaperDocs || [];
   const subjDocs = allDocs.filter(d => d.subject === activeSubj);
   const activeTheme = T[activeSubj] || T.eng;
