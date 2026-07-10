@@ -1,6 +1,6 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
-import { ArrowLeft, ArrowRight, ClipboardText, Clock, Warning, CheckCircle, Upload, X, FilePdf, FileDoc, FileVideo } from '../../icons/icons.jsx';
+import { ArrowLeft, ArrowRight, ClipboardText, Clock, Warning, CheckCircle, Upload, X, FilePdf, FileDoc, FileVideo, Camera } from '../../icons/icons.jsx';
 import { AvatarDisplay } from '../../components/gamification/StudentAvatar.jsx';
 import { getSubject } from '../../utils/helpers.js';
 import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
@@ -19,6 +19,7 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
   const today = new Date().toISOString().split("T")[0];
 
   const hw = (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === "active");
@@ -142,6 +143,13 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
               {/* File upload area */}
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: T.text, marginBottom: 8 }}>Upload Your Work</div>
+                {/* Take Photo — one-tap camera capture; the fastest way to submit handwritten work on a phone */}
+                <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" style={{ display: "none" }}
+                  onChange={e => { handleFileUpload(e.target.files); e.target.value = ""; }} />
+                <button onClick={() => cameraInputRef.current?.click()}
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px", borderRadius: T.r2, background: T.gradPrimary, border: "none", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: T.shadowAccent, marginBottom: 10 }}>
+                  <Camera size={20} weight="fill" color="#fff" /> Take a Photo of Your Work
+                </button>
                 <div
                   onDragOver={e => { e.preventDefault(); setDragOver(true); }}
                   onDragLeave={() => setDragOver(false)}
@@ -150,7 +158,7 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
                   style={{
                     border: `2px dashed ${dragOver ? T.accent : T.border}`,
                     borderRadius: T.r2,
-                    padding: "28px 20px",
+                    padding: "22px 20px",
                     textAlign: "center",
                     cursor: "pointer",
                     background: dragOver ? T.accentLight : T.bgMuted,
@@ -158,9 +166,9 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
                   }}>
                   <input ref={fileInputRef} type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.heic,.txt" style={{ display: "none" }}
                     onChange={e => { handleFileUpload(e.target.files); e.target.value = ""; }} />
-                  <Upload size={28} style={{ marginBottom: 8, opacity: 0.6 }} />
+                  <Upload size={24} style={{ marginBottom: 8, opacity: 0.6 }} />
                   <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>
-                    {dragOver ? "Drop files here" : "Click or drag files to upload"}
+                    {dragOver ? "Drop files here" : "Or choose a file to upload"}
                   </div>
                   <div style={{ fontSize: 11, color: T.textTer, marginTop: 4 }}>PDF, Word, images — max 10 MB each</div>
                 </div>

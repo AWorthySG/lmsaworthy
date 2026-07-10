@@ -3,13 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { T } from "./theme/theme.js";
-import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, ChatCircle, ArrowSquareOut, Users, Confetti } from "./icons/icons.jsx";
+import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, ChatCircle, ArrowSquareOut, Users, Confetti, CheckCircle } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, set, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
 import { NAV, PAGE_TO_PATH, PATH_TO_PAGE } from "./data/routing.js";
 import useWindowWidth from "./hooks/useWindowWidth.js";
-import { requestPushPermission, sendHomeworkReminders } from "./utils/notifications.js";
+import { requestPushPermission, sendHomeworkReminders, sendLocalNotification } from "./utils/notifications.js";
 import useFirebaseSync from "./hooks/useFirebaseSync.js";
 import { PageErrorBoundary } from "./components/ui";
 import { EmptyStateIllustration } from "./components/ui/EmptyState.jsx";
@@ -183,16 +183,7 @@ function LMS({ authUser, userProfile }) {
     [state.posts, readAnnouncementIds]
   );
 
-  const notifications = useMemo(() => {
-    const notifs = [];
-    const today = new Date().toISOString().split("T")[0];
-    (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === "active" && h.dueDate >= today).forEach(h => {
-      notifs.push({ type: "homework", msg: `"${h.title}" due ${h.dueDate}`, page: "homework" });
-    });
-    const pendingGrades = (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.status === "submitted").length;
-    if (pendingGrades > 0) notifs.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
-    return notifs;
-  }, [state.homework, state.submissions]);
+  const isTutor = state.role === "tutor";
 
   // Subject filtering: match logged-in email to roster entry; null = show all
   const enrolledSubjects = useMemo(() => {
@@ -203,6 +194,94 @@ function LMS({ authUser, userProfile }) {
     );
     return match?.subjects || null;
   }, [state.students, authUser]);
+
+  // The logged-in student's roster ID (null for tutors / unmatched accounts)
+  const myStudentId = useMemo(() => {
+    const students = Array.isArray(state.students) ? state.students : [];
+    const match = students.find(s =>
+      s.email && authUser?.email && s.email.toLowerCase() === authUser.email.toLowerCase()
+    );
+    return match?.id ?? null;
+  }, [state.students, authUser]);
+
+  // Returned grades the student hasn't acknowledged yet — drives the feedback-loop notification
+  const [seenGradeIds, setSeenGradeIds] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem("aworthy-seen-grades") || "[]")); }
+    catch { return new Set(); }
+  });
+
+  function dismissGrade(subId) {
+    setSeenGradeIds(prev => {
+      const next = new Set(prev);
+      next.add(subId);
+      try { localStorage.setItem("aworthy-seen-grades", JSON.stringify([...next])); } catch { /* quota */ }
+      return next;
+    });
+  }
+
+  // One-time backfill: mark all grades that already exist when this feature first loads as "seen",
+  // so existing students only get notified about grades returned from now on (no historical flood).
+  useEffect(() => {
+    if (myStudentId == null || localStorage.getItem("aworthy-grades-initialised")) return;
+    const subs = Array.isArray(state.submissions) ? state.submissions : [];
+    const existing = subs.filter(s => s.studentId === myStudentId && s.status === "graded").map(s => s.id);
+    if (existing.length) {
+      setSeenGradeIds(prev => { // eslint-disable-line react-hooks/set-state-in-effect -- one-time historical backfill guarded by the localStorage flag below
+        const next = new Set(prev);
+        existing.forEach(id => next.add(id));
+        try { localStorage.setItem("aworthy-seen-grades", JSON.stringify([...next])); } catch { /* quota */ }
+        return next;
+      });
+      try {
+        const notified = new Set(JSON.parse(localStorage.getItem("aworthy-notified-grades") || "[]"));
+        existing.forEach(id => notified.add(id));
+        localStorage.setItem("aworthy-notified-grades", JSON.stringify([...notified]));
+      } catch { /* quota */ }
+    }
+    localStorage.setItem("aworthy-grades-initialised", "true");
+  }, [myStudentId, state.submissions]);
+
+  const returnedGrades = useMemo(() => {
+    if (isTutor || myStudentId == null) return [];
+    const subs = Array.isArray(state.submissions) ? state.submissions : [];
+    const hw = Array.isArray(state.homework) ? state.homework : [];
+    return subs
+      .filter(s => s.studentId === myStudentId && s.status === "graded" && !seenGradeIds.has(s.id))
+      .map(s => ({ sub: s, hw: hw.find(h => h.id === s.homeworkId) }))
+      .filter(x => x.hw)
+      .sort((a, b) => (b.sub.gradedAt || '').localeCompare(a.sub.gradedAt || ''));
+  }, [isTutor, myStudentId, state.submissions, state.homework, seenGradeIds]);
+
+  // Fire a one-time system notification per newly-returned grade (persisted so it never re-fires)
+  useEffect(() => {
+    if (!returnedGrades.length) return;
+    let notified;
+    try { notified = new Set(JSON.parse(localStorage.getItem("aworthy-notified-grades") || "[]")); }
+    catch { notified = new Set(); }
+    let changed = false;
+    returnedGrades.forEach(({ sub, hw }) => {
+      if (!notified.has(sub.id)) {
+        notified.add(sub.id);
+        changed = true;
+        sendLocalNotification("Homework graded", `"${hw.title}" — you got ${sub.grade}`);
+      }
+    });
+    if (changed) { try { localStorage.setItem("aworthy-notified-grades", JSON.stringify([...notified])); } catch { /* quota */ } }
+  }, [returnedGrades]);
+
+  const notifications = useMemo(() => {
+    const notifs = [];
+    const today = new Date().toISOString().split("T")[0];
+    (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === "active" && h.dueDate >= today).forEach(h => {
+      notifs.push({ type: "homework", msg: `"${h.title}" due ${h.dueDate}`, page: "homework" });
+    });
+    // Pending-grading count is a tutor concern only
+    if (isTutor) {
+      const pendingGrades = (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.status === "submitted").length;
+      if (pendingGrades > 0) notifs.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
+    }
+    return notifs;
+  }, [state.homework, state.submissions, isTutor]);
 
   const [showNotifs, setShowNotifs] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(() => localStorage.getItem("aworthy-sidebar-collapsed") !== "true");
@@ -264,7 +343,8 @@ function LMS({ authUser, userProfile }) {
     return () => { window.removeEventListener("offline", handleOffline); window.removeEventListener("online", handleOnline); };
   }, [dispatch]);
 
-  useEffect(() => { requestPushPermission(); }, []);
+  // Notification permission is requested on first bell open (a user gesture) rather than at mount,
+  // which browsers increasingly require before showing the prompt.
   useEffect(() => { sendHomeworkReminders(Array.isArray(state.homework) ? state.homework : []); }, [state.homework]);
 
   useEffect(() => {
@@ -513,13 +593,25 @@ function LMS({ authUser, userProfile }) {
             <MagnifyingGlass size={14} /> {!isMobileLayout && <span>Search</span>} {!isMobileLayout && <kbd style={{ fontSize: 10, padding: "1px 5px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: T.fontMono }}>⌘K</kbd>}
           </button>
           <div style={{ position: "relative" }}>
-            <button onClick={() => setShowNotifs(n => !n)} aria-label="Notifications" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", position: "relative", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
+            <button onClick={() => { requestPushPermission(); setShowNotifs(n => !n); }} aria-label="Notifications" style={{ background: "none", border: `1px solid ${T.border}`, borderRadius: T.r1, padding: 10, cursor: "pointer", display: "flex", position: "relative", minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
               <Bell size={20} color={T.textSec} />
-              {(notifications.length + unreadAnnouncements.length) > 0 && <div style={{ position: "absolute", top: -2, right: -2, width: 14, height: 14, borderRadius: "50%", background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{notifications.length + unreadAnnouncements.length}</div>}
+              {(notifications.length + unreadAnnouncements.length + returnedGrades.length) > 0 && <div style={{ position: "absolute", top: -2, right: -2, width: 14, height: 14, borderRadius: "50%", background: T.accent, color: "#fff", fontSize: 9, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{notifications.length + unreadAnnouncements.length + returnedGrades.length}</div>}
             </button>
             {showNotifs && (
               <div className="scale-pop" style={{ position: "absolute", top: "100%", right: 0, marginTop: 6, width: 300, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: T.r2, boxShadow: T.shadow3, zIndex: 100, overflow: "hidden" }}>
                 <div style={{ padding: "10px 14px", borderBottom: `1px solid ${T.border}`, fontSize: 12, fontWeight: 600, color: T.text }}>Notifications</div>
+                {returnedGrades.map(({ sub, hw }) => (
+                  <button key={`grade-${sub.id}`} onClick={() => { dismissGrade(sub.id); dispatch({ type: "SET_PAGE", payload: "homework" }); setShowNotifs(false); }}
+                    style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", borderBottom: `1px solid ${T.border}`, background: T.successBg, border: "none", cursor: "pointer", width: "100%", textAlign: "left" }}>
+                    <CheckCircle size={15} weight="fill" color={T.success} style={{ flexShrink: 0, marginTop: 1 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: T.success, marginBottom: 2 }}>Grade returned · {sub.grade}</div>
+                      <div style={{ fontSize: 12, color: T.text, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{hw.title}</div>
+                    </div>
+                    <span onClick={e => { e.stopPropagation(); dismissGrade(sub.id); }} aria-label="Dismiss"
+                      style={{ color: T.textTer, fontSize: 11, padding: "0 2px", flexShrink: 0 }}>✕</span>
+                  </button>
+                ))}
                 {unreadAnnouncements.map(post => (
                   <div key={post.id} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", borderBottom: `1px solid ${T.border}`, background: "#FEF3C710" }}>
                     <Megaphone size={15} color="#92400E" style={{ flexShrink: 0, marginTop: 1 }} />
@@ -531,7 +623,7 @@ function LMS({ authUser, userProfile }) {
                       style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, fontSize: 11, padding: "0 2px", flexShrink: 0 }}>✕</button>
                   </div>
                 ))}
-                {notifications.length === 0 && unreadAnnouncements.length === 0 ? (
+                {notifications.length === 0 && unreadAnnouncements.length === 0 && returnedGrades.length === 0 ? (
                   <div style={{ padding: "20px 14px", textAlign: "center", fontSize: 12, color: T.textTer }}><EmptyStateIllustration type="celebration" size={60} /><div style={{ marginTop: 6 }}>All caught up!</div></div>
                 ) : notifications.map((n, i) => (
                   <button key={i} onClick={() => { dispatch({ type: "SET_PAGE", payload: n.page }); setShowNotifs(false); }}
@@ -563,6 +655,19 @@ function LMS({ authUser, userProfile }) {
             <button onClick={() => { dispatch({ type: "SET_PAGE", payload: "community" }); setShowNotifs(false); }}
               style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.8)", fontWeight: 600, flexShrink: 0 }}>View</button>
             <button onClick={() => dismissAnnouncement(post.id)} aria-label="Dismiss"
+              style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 8px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>✕</button>
+          </div>
+        ))}
+        {returnedGrades.slice(0, 1).map(({ sub, hw }) => (
+          <div key={`grade-banner-${sub.id}`} style={{ maxWidth: 1080, margin: "0 auto 8px", padding: "10px 16px", borderRadius: T.r2, background: "linear-gradient(135deg, #14532D, #166534)", color: "#fff", display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
+            <CheckCircle size={16} weight="fill" color="#BBF7D0" />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ fontWeight: 700 }}>Homework graded — {sub.grade}</span>
+              <span style={{ marginLeft: 8, fontWeight: 400, opacity: 0.85 }}>{hw.title}</span>
+            </div>
+            <button onClick={() => { dismissGrade(sub.id); dispatch({ type: "SET_PAGE", payload: "homework" }); }}
+              style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 600, flexShrink: 0 }}>View feedback</button>
+            <button onClick={() => dismissGrade(sub.id)} aria-label="Dismiss"
               style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 8px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>✕</button>
           </div>
         ))}
