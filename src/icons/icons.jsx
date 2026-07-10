@@ -41,6 +41,7 @@ export const Scroll = ic("ph:scroll-bold");
 export const ClipboardText = ic("ph:clipboard-text-bold");
 
 // Media & Video
+export const Camera = ic("ph:camera-bold");
 export const VideoCamera = ic("ph:video-camera-bold");
 export const VideoOn = ic("ph:video-camera-bold");
 export const VideoCameraSlash = ic("ph:video-camera-slash-bold");
