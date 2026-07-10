@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { T } from '../theme/theme.js';
-import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle, FolderSimpleStar } from '../icons/icons.jsx';
+import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle, FolderSimpleStar, Link } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, EmptyState, FileIcon, Input, Select, DocumentViewer } from '../components/ui';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import { getAllSavedIds, saveResourceOffline, removeResourceOffline } from '../utils/offlineCache.js';
@@ -35,14 +35,27 @@ function titleFromFilename(name) {
 }
 
 function UploadPanel({ onClose, defaultSubject, dispatch }) {
+  const [mode, setMode] = useState('files'); // 'files' | 'link'
   const [uploadSubject, setUploadSubject] = useState(defaultSubject || '');
   const [uploadTopic, setUploadTopic] = useState('');
   const [queue, setQueue] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [linkTitle, setLinkTitle] = useState('');
   const fileInputRef = useRef(null);
 
   const topicSuggestions = TOPICS[uploadSubject] || [];
+
+  function handleAddLink() {
+    const url = linkUrl.trim();
+    if (!uploadSubject || !uploadTopic || !url) return;
+    const finalUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+    dispatch({ type: "ADD_RESOURCE", payload: { title: linkTitle.trim() || finalUrl, subject: uploadSubject, topic: uploadTopic, type: "link", fileUrl: finalUrl } });
+    dispatch({ type: "ADD_TOAST", payload: { message: "Link added to library.", variant: "success" } });
+    setLinkUrl(''); setLinkTitle('');
+    setTimeout(onClose, 400);
+  }
 
   function addFiles(files) {
     const items = Array.from(files).map(f => ({
@@ -107,10 +120,19 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
   return (
     <Card elevated style={{ marginBottom: 20, borderLeft: `3px solid ${T.accent}` }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: 0 }}>Upload Resources</h3>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: T.text, margin: 0 }}>Add Resources</h3>
         <button onClick={onClose} aria-label="Close upload panel" style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, padding: 4 }}>
           <X size={16} weight="bold" />
         </button>
+      </div>
+      {/* Mode toggle — upload a file, or add a live link (Google Docs/Slides, YouTube, webpage) */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+        {[{ v: "files", label: "Upload files" }, { v: "link", label: "Add link" }].map(m => (
+          <button key={m.v} onClick={() => setMode(m.v)}
+            style={{ padding: "7px 16px", borderRadius: T.r1, border: `1px solid ${mode === m.v ? T.accent : T.border}`, background: mode === m.v ? T.accentLight : T.bg, color: mode === m.v ? T.accentText : T.textSec, fontSize: 12, fontWeight: mode === m.v ? 700 : 500, cursor: "pointer", transition: "all 0.15s" }}>
+            {m.label}
+          </button>
+        ))}
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
         <div>
@@ -130,7 +152,18 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
           </datalist>
         </div>
       </div>
-      <div
+      {mode === 'link' && (
+        <div style={{ marginBottom: 14 }}>
+          <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>Link URL *</label>
+          <input value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="Google Docs/Slides, YouTube, or any web link…"
+            style={{ width: "100%", padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgCard, fontSize: 13, color: T.text, outline: "none", boxSizing: "border-box", fontFamily: T.fontBody, marginBottom: 10 }} />
+          <label style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, display: "block", marginBottom: 4 }}>Title <span style={{ fontWeight: 400, textTransform: "none" }}>— optional</span></label>
+          <input value={linkTitle} onChange={e => setLinkTitle(e.target.value)} placeholder="e.g. Model essay — Science & Society"
+            style={{ width: "100%", padding: "8px 12px", borderRadius: T.r1, border: `1px solid ${T.border}`, background: T.bgCard, fontSize: 13, color: T.text, outline: "none", boxSizing: "border-box", fontFamily: T.fontBody }} />
+          <div style={{ fontSize: 11, color: T.textTer, marginTop: 8, lineHeight: 1.5 }}>Live links always show the latest version and don't use storage. Google Docs/Slides and YouTube preview inline; other links open in a new tab. Make sure sharing is set to "anyone with the link".</div>
+        </div>
+      )}
+      {mode === 'files' && <div
         onDragOver={e => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
@@ -141,8 +174,8 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
         <div style={{ fontSize: 11, color: T.textTer }}>PDF, DOCX, or video files · multiple files supported</div>
         <input ref={fileInputRef} type="file" multiple accept=".pdf,.docx,.mp4,.mov,.avi,.mkv,.webm" style={{ display: "none" }}
           onChange={e => { addFiles(e.target.files); e.target.value = ''; }} />
-      </div>
-      {queue.length > 0 && (
+      </div>}
+      {mode === 'files' && queue.length > 0 && (
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: T.textTer, textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 8 }}>
             {queue.length} file{queue.length !== 1 ? 's' : ''} queued{uploadedCount > 0 ? ` · ${uploadedCount} uploaded` : ''}
@@ -182,10 +215,15 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
         </div>
       )}
       <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-        <Btn onClick={handleUpload} disabled={!uploadSubject || !uploadTopic || pendingCount === 0 || isUploading}>
-          <Upload size={14} weight="bold" />
-          {isUploading ? "Uploading…" : `Upload ${pendingCount > 0 ? pendingCount + ' file' + (pendingCount !== 1 ? 's' : '') : ''}`}
-        </Btn>
+        {mode === 'files'
+          ? <Btn onClick={handleUpload} disabled={!uploadSubject || !uploadTopic || pendingCount === 0 || isUploading}>
+              <Upload size={14} weight="bold" />
+              {isUploading ? "Uploading…" : `Upload ${pendingCount > 0 ? pendingCount + ' file' + (pendingCount !== 1 ? 's' : '') : ''}`}
+            </Btn>
+          : <Btn onClick={handleAddLink} disabled={!uploadSubject || !uploadTopic || !linkUrl.trim()}>
+              <Link size={14} weight="bold" /> Add link
+            </Btn>
+        }
         <Btn onClick={onClose} variant="secondary"><X size={14} weight="bold" /> Cancel</Btn>
         {isUploading && <span style={{ fontSize: 12, color: T.textSec }}>{uploadedCount} / {queue.length} complete</span>}
       </div>
@@ -194,7 +232,7 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
 }
 
 function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookmark, onDelete, onSetDifficulty, onToggleOffline, collections, onToggleCollection }) {
-  const bgByType = { pdf: T.dangerBg, video: "#DBEAFE", docx: T.accentLight };
+  const bgByType = { pdf: T.dangerBg, video: "#DBEAFE", docx: T.accentLight, link: "#0EA5A015" };
   const difficulty = meta?.difficulty;
   const [showCollPicker, setShowCollPicker] = useState(false);
   const allCols = Array.isArray(collections) ? collections : [];
@@ -238,7 +276,7 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookm
           )}
         </div>
         <div style={{ display: "flex", gap: 2, flexShrink: 0, position: "relative" }}>
-          {onToggleOffline && r.fileUrl && (
+          {onToggleOffline && r.fileUrl && r.type !== "link" && (
             <button onClick={(e) => { e.stopPropagation(); onToggleOffline(r); }} aria-label={isSaved ? "Remove from offline" : "Save for offline"}
               style={{ background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: T.r1 }}>
               <CheckCircle size={14} weight={isSaved ? "fill" : "regular"} color={isSaved ? T.success : T.textTer} />
@@ -395,7 +433,7 @@ function ContentLibrary({ state, dispatch, defaultSubject, enrolledSubjects }) {
 
   const TYPE_FILTERS = [
     { value: "all", label: "All" }, { value: "pdf", label: "PDF" },
-    { value: "video", label: "Video" }, { value: "docx", label: "DOCX" },
+    { value: "video", label: "Video" }, { value: "docx", label: "DOCX" }, { value: "link", label: "Link" },
   ];
   const DIFFICULTY_FILTERS = [
     { value: "all", label: "All levels" }, { value: "easy", label: "Easy", color: "#16a34a" },
