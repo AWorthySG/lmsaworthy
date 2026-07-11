@@ -6,6 +6,7 @@ import FileIcon from './FileIcon.jsx';
 import { SubjectBadge } from './Badge.jsx';
 import useWindowWidth from '../../hooks/useWindowWidth.js';
 import { isSavedOffline, saveResourceOffline, removeResourceOffline } from '../../utils/offlineCache.js';
+import { linkKind, toEmbedUrl } from '../../utils/helpers.js';
 
 export default function DocumentViewer({ resource, onClose }) {
   const dialogRef = useRef(null);
@@ -58,9 +59,13 @@ export default function DocumentViewer({ resource, onClose }) {
   };
 
   if (!resource) return null;
-  const isPdf = resource.type === "pdf" || (resource.fileUrl && resource.fileUrl.endsWith(".pdf"));
+  const isLink = resource.type === "link";
+  const isPdf = !isLink && (resource.type === "pdf" || (resource.fileUrl && resource.fileUrl.endsWith(".pdf")));
   const isVideo = resource.type === "video";
-  const absFileUrl = resource.fileUrl
+  const kind = isLink ? linkKind(resource.fileUrl) : null;
+  const embedUrl = isLink ? toEmbedUrl(resource.fileUrl) : '';
+  // Links have no downloadable/offline-cacheable file — suppress those controls for them.
+  const absFileUrl = (!isLink && resource.fileUrl)
     ? (resource.fileUrl.startsWith('http') ? resource.fileUrl : window.location.origin + resource.fileUrl)
     : '';
   return (
@@ -71,7 +76,7 @@ export default function DocumentViewer({ resource, onClose }) {
       <div style={{ position: "relative", width: "90%", maxWidth: 1000, height: "88vh", background: T.bgCard, borderRadius: T.r4, display: "flex", flexDirection: "column", overflow: "hidden", boxShadow: T.shadow3 }}>
         <div style={{ padding: "14px 20px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: T.r2, background: resource.type === "pdf" ? T.dangerBg : resource.type === "video" ? "#DBEAFE" : T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 36, height: 36, borderRadius: T.r2, background: resource.type === "pdf" ? T.dangerBg : resource.type === "video" ? "#DBEAFE" : resource.type === "link" ? "#0EA5A015" : T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <FileIcon type={resource.type} />
             </div>
             <div>
@@ -89,11 +94,23 @@ export default function DocumentViewer({ resource, onClose }) {
             )}
             {absFileUrl && <a href={absFileUrl} download style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><DownloadSimple size={14} weight="bold" /> Download</Btn></a>}
             {absFileUrl && isPdf && <a href={absFileUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><ArrowSquareOut size={14} weight="bold" /> Open</Btn></a>}
+            {isLink && resource.fileUrl && <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary" size="sm"><ArrowSquareOut size={14} weight="bold" /> Open</Btn></a>}
             <button ref={closeBtnRef} onClick={onClose} aria-label="Close document viewer" style={{ background: T.bgMuted, border: `1px solid ${T.border}`, borderRadius: T.r2, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><X size={16} weight="bold" color={T.textSec} /></button>
           </div>
         </div>
         <div style={{ flex: 1, overflow: "hidden" }}>
-          {isVideo && resource.videoUrl ? <iframe src={resource.videoUrl} style={{ width: "100%", height: "100%", border: "none" }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={resource.title} /> :
+          {isLink ? (
+            (kind === "gdoc" || kind === "youtube") ? (
+              <iframe src={embedUrl} style={{ width: "100%", height: "100%", border: "none" }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={resource.title} />
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 16, padding: 40, textAlign: "center" }}>
+                <div style={{ width: 72, height: 72, borderRadius: T.r4, background: "#0EA5A015", display: "flex", alignItems: "center", justifyContent: "center" }}><FileIcon type="link" size={32} /></div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: T.text }}>{resource.title}</div>
+                <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6, maxWidth: 420, wordBreak: "break-all" }}>{resource.fileUrl}</div>
+                <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn><ArrowSquareOut size={15} weight="bold" /> Open link</Btn></a>
+              </div>
+            )
+          ) : isVideo && resource.videoUrl ? <iframe src={resource.videoUrl} style={{ width: "100%", height: "100%", border: "none" }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={resource.title} /> :
            isPdf && absFileUrl && !isMobile ? <iframe src={resource.fileUrl?.startsWith('/') ? absFileUrl : `https://docs.google.com/viewer?url=${encodeURIComponent(absFileUrl)}&embedded=true`} style={{ width: "100%", height: "100%", border: "none" }} title={resource.title} /> :
            isPdf && resource.fileUrl && isMobile ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 20, padding: 32, textAlign: "center" }}>
@@ -109,7 +126,7 @@ export default function DocumentViewer({ resource, onClose }) {
             </div>
            ) : null}
           {/* Fallback for all non-video files (DOCX, or PDF that failed to load) */}
-          {(!isVideo || !resource.videoUrl) && !isPdf && resource.fileUrl ? (
+          {!isLink && (!isVideo || !resource.videoUrl) && !isPdf && resource.fileUrl ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 16, padding: 40, textAlign: "center" }}>
               <div style={{ width: 80, height: 80, borderRadius: T.r4, background: T.accentLight, display: "flex", alignItems: "center", justifyContent: "center" }}><FileDoc size={36} /></div>
               <div style={{ fontSize: 18, fontWeight: 700, color: T.text }}>{resource.title}</div>
@@ -119,7 +136,7 @@ export default function DocumentViewer({ resource, onClose }) {
                 <a href={`https://docs.google.com/viewer?url=${encodeURIComponent(resource.fileUrl.startsWith('http') ? resource.fileUrl : window.location.origin + resource.fileUrl)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}><Btn variant="secondary"><ArrowSquareOut size={15} /> Open in Google Docs</Btn></a>
               </div>
             </div>
-          ) : (!isVideo && !isPdf) ? <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 12, color: T.textSec, padding: 40, textAlign: "center" }}>
+          ) : (!isLink && !isVideo && !isPdf) ? <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 12, color: T.textSec, padding: 40, textAlign: "center" }}>
               <Warning size={32} />
               <div style={{ fontSize: 15, fontWeight: 600 }}>File not available</div>
               <div style={{ fontSize: 13 }}>This resource file could not be loaded. It may not have been uploaded to the server yet.</div>

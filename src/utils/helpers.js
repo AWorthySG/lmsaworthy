@@ -3,6 +3,32 @@ import { SUBJ_THEME, T } from "../theme/theme.js";
 
 export function getSubject(id) { return SUBJECTS.find((s) => s.id === id); }
 export function getSubjectTheme(id) { return SUBJ_THEME[id] || T.eng; }
+
+/* ━━━ LINK / EMBED RESOURCES ━━━ */
+// Classify an external resource URL so the viewer knows how to render it.
+export function linkKind(url) {
+  if (!url) return "other";
+  const u = url.toLowerCase();
+  if (u.includes("docs.google.com") || u.includes("drive.google.com")) return "gdoc";
+  if (u.includes("youtube.com") || u.includes("youtu.be")) return "youtube";
+  return "other";
+}
+
+// Convert a share URL into an embeddable one where we know the pattern (Google Docs/Slides/Sheets, YouTube).
+// Returns the original URL for anything we can't safely embed.
+export function toEmbedUrl(url) {
+  if (!url) return "";
+  const kind = linkKind(url);
+  if (kind === "youtube") {
+    const m = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?&/]+)/) || url.match(/youtube\.com\/embed\/([^?&/]+)/);
+    return m && m[1] ? `https://www.youtube.com/embed/${m[1]}` : url;
+  }
+  if (kind === "gdoc") {
+    // /edit or /view (with any trailing query/hash) → /preview, which embeds cleanly in an iframe
+    return url.replace(/\/(edit|view)(\?[^#]*)?(#.*)?$/, "/preview");
+  }
+  return url;
+}
 export function formatDate(d) { return new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); }
 
 export function detectQuestionType(text, GP1_QTYPES) {
