@@ -10,6 +10,7 @@ import { initialState, savePersistedState } from "./state/persistence.js";
 import { NAV, PAGE_TO_PATH, PATH_TO_PAGE } from "./data/routing.js";
 import useWindowWidth from "./hooks/useWindowWidth.js";
 import { requestPushPermission, sendHomeworkReminders, sendLocalNotification } from "./utils/notifications.js";
+import { getSubject } from "./utils/helpers.js";
 import useFirebaseSync from "./hooks/useFirebaseSync.js";
 import { PageErrorBoundary } from "./components/ui";
 import { EmptyStateIllustration } from "./components/ui/EmptyState.jsx";
@@ -360,10 +361,22 @@ function LMS({ authUser, userProfile }) {
   const searchResults = useMemo(() => {
     if (searchQuery.trim().length <= 1) return [];
     const q = searchQuery.toLowerCase();
+    const subjName = (id) => getSubject(id)?.name || id;
+    const matches = (...vals) => vals.some(v => v && String(v).toLowerCase().includes(q));
     return [
-      ...state.resources.filter(r => r.title.toLowerCase().includes(q)).slice(0, 3).map(r => ({ type: "file", label: r.title, page: "library" })),
-      ...(Array.isArray(state.homework) ? state.homework : []).filter(h => h.title.toLowerCase().includes(q)).slice(0, 2).map(h => ({ type: "clipboard", label: h.title, page: "homework" })),
-      ...(state.posts || []).filter(p => p.title.toLowerCase().includes(q)).slice(0, 2).map(p => ({ type: "chat", label: p.title, page: "community" })),
+      // Resources match title, topic, subject code, and subject name — not just the title
+      ...(Array.isArray(state.resources) ? state.resources : [])
+        .filter(r => matches(r.title, r.topic, r.subject, subjName(r.subject)))
+        .slice(0, 4)
+        .map(r => ({ type: "file", label: r.title, category: [subjName(r.subject), r.topic].filter(Boolean).join(" · "), page: "library" })),
+      ...(Array.isArray(state.homework) ? state.homework : [])
+        .filter(h => matches(h.title, h.topic, h.instructions, subjName(h.subject)))
+        .slice(0, 2)
+        .map(h => ({ type: "clipboard", label: h.title, category: subjName(h.subject), page: "homework" })),
+      ...(Array.isArray(state.posts) ? state.posts : [])
+        .filter(p => matches(p.title, p.content))
+        .slice(0, 2)
+        .map(p => ({ type: "chat", label: p.title, category: "Community", page: "community" })),
       ...NAV.filter(g => !(g.tutorOnly && state.role !== "tutor")).flatMap(g => g.items).filter(i => i.label.toLowerCase().includes(q)).map(i => ({ type: "link", label: i.label, page: i.id })),
     ].slice(0, 8);
   }, [searchQuery, state.resources, state.homework, state.posts, state.role]);
