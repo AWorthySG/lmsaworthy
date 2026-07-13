@@ -1,5 +1,6 @@
 import React from 'react';
 import { T } from '../../theme/theme.js';
+import { Warning } from '../../icons/icons.jsx';
 
 class PageErrorBoundary extends React.Component {
   constructor(props) {
@@ -40,7 +41,9 @@ class PageErrorBoundary extends React.Component {
             boxShadow: T.shadow2, padding: 40,
             maxWidth: 520, width: '100%', textAlign: 'center',
           }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+            <div style={{ width: 72, height: 72, borderRadius: T.r3, background: T.warningBg, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+              <Warning size={36} color={T.warning} />
+            </div>
 
             <h2 style={{
               fontFamily: T.fontDisplay,

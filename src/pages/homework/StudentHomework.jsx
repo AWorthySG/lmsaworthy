@@ -2,12 +2,13 @@ import React, { useState, useRef, useMemo } from 'react';
 import { T, SUBJ_THEME } from '../../theme/theme.js';
 import { ArrowLeft, ArrowRight, ClipboardText, Clock, Warning, CheckCircle, Upload, X, FilePdf, FileDoc, FileVideo, Camera } from '../../icons/icons.jsx';
 import { AvatarDisplay } from '../../components/gamification/StudentAvatar.jsx';
+import { EmptyStateIllustration } from '../../components/ui/EmptyState.jsx';
 import { getSubject } from '../../utils/helpers.js';
 import { firebaseStorage, storageRef, uploadBytes, getDownloadURL } from '../../config/firebase.js';
 
 const HW_STATUS = {
-  not_started: { label: "Not Started", color: "#8E99AE", bg: "#EFF1F7" },
-  in_progress: { label: "In Progress", color: "#024F94", bg: "#E8F4FD" },
+  not_started: { label: "Not Started", color: "#6B6760", bg: "#F2EFE8" },
+  in_progress: { label: "In Progress", color: "#00897B", bg: "#E0F7FA" },
   submitted: { label: "Submitted", color: "#D4940A", bg: "#FFF4E8" },
   graded: { label: "Graded", color: "#2BAA6E", bg: "#E6F7F0" },
 };
@@ -105,10 +106,10 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
     const isOverdue = selectedHw.dueDate < today;
 
     return (
-      <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-          <button onClick={() => setSelectedHw(null)} style={{ width: 32, height: 32, borderRadius: T.r1, background: T.bgMuted, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button onClick={() => setSelectedHw(null)} aria-label="Back to homework list" style={{ width: 32, height: 32, borderRadius: T.r1, background: T.bgMuted, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <ArrowLeft size={16} color={T.textSec} />
           </button>
           <div style={{ flex: 1 }}>
@@ -121,7 +122,7 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
           <span style={{ fontSize: 11, fontWeight: 700, color: statusInfo.color, background: statusInfo.bg, padding: "4px 12px", borderRadius: 20 }}>{statusInfo.label}</span>
         </div>
 
-        <div style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Instructions card */}
           <div style={{ background: subTheme.bg, borderRadius: T.r2, padding: "16px 18px", border: `1px solid ${subTheme.accent}33` }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: subTheme.accent, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Instructions</div>
@@ -253,7 +254,7 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
   const pendingCount = hw.length - submittedCount;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 96px)", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {/* Header */}
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
@@ -264,8 +265,8 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
               </div>
           }
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: T.text, margin: 0, fontFamily: T.fontDisplay }}>My Homework</h1>
-            <p style={{ color: T.textSec, fontSize: 13, margin: 0 }}>View assignments and submit your work</p>
+            <h1 style={{ fontSize: 28, fontWeight: 700, color: T.text, margin: 0, letterSpacing: -0.4, fontFamily: T.fontDisplay }}>My Homework</h1>
+            <p style={{ color: T.textSec, fontSize: 14, margin: 0, fontWeight: 500 }}>View assignments and submit your work</p>
           </div>
         </div>
         {/* Summary pills */}
@@ -285,11 +286,11 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
         </div>
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {hw.length === 0 && (
-          <div style={{ textAlign: "center", padding: "48px 20px", color: T.textTer }}>
-            <CheckCircle size={40} color={T.success} style={{ marginBottom: 12, opacity: 0.5 }} />
-            <div style={{ fontSize: 16, fontWeight: 700, color: T.textSec, marginBottom: 4 }}>All clear!</div>
+          <div style={{ textAlign: "center", padding: "40px 20px", color: T.textTer }}>
+            <EmptyStateIllustration type="celebration" size={110} />
+            <div style={{ fontSize: 16, fontWeight: 700, color: T.textSec, margin: "12px 0 4px" }}>All clear!</div>
             <div style={{ fontSize: 13 }}>No homework assigned yet. Enjoy your free time!</div>
           </div>
         )}
