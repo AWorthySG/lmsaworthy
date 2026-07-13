@@ -22,7 +22,6 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
   const cameraInputRef = useRef(null);
   const today = new Date().toISOString().split("T")[0];
 
-  const hw = (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === "active");
   // Match logged-in user to a student record by email to get their studentId.
   const myStudentId = useMemo(() => {
     const students = Array.isArray(state.students) ? state.students : [];
@@ -32,6 +31,12 @@ function StudentHomework({ state, dispatch, userProfile, authUser }) {
   }, [state.students, authUser, userProfile]);
   const allSubs = Array.isArray(state.submissions) ? state.submissions : [];
   const mySubs = myStudentId != null ? allSubs.filter(s => s.studentId === myStudentId) : [];
+  // Only show homework actually assigned to this student (they have a submission slot for it).
+  // Unmatched accounts fall back to the full active list so the page never looks broken.
+  const assignedHwIds = new Set(mySubs.map(s => s.homeworkId));
+  const hw = (Array.isArray(state.homework) ? state.homework : [])
+    .filter(h => h.status === "active")
+    .filter(h => myStudentId == null || assignedHwIds.has(h.id));
 
   function getMySubmission(hwId) { return mySubs.find(s => s.homeworkId === hwId); }
 

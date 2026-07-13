@@ -1,15 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { T } from '../theme/theme.js';
 import {
-  CheckCircle, ArrowRight, BookOpen, ClipboardText,
-  Bell, CalendarCheck, ChartLineUp, Handshake, FolderSimpleStar,
-  Users, Upload, CaretRight, ChatText, Sparkle,
+  ArrowRight, BookOpen, ClipboardText,
+  CalendarCheck, ChartLineUp, Handshake, FolderSimpleStar,
+  Users, Upload, CaretRight, ChatText,
   Megaphone, Scroll, GraduationCap, Notebook, BookmarkSimple, FilePdf, FileDoc, FileVideo,
   Compass,
 } from '../icons/icons.jsx';
 import { SubjectBadge } from '../components/ui/Badge.jsx';
 import { SubjectIllustration, DocumentViewer } from '../components/ui';
-import { getSubject, getSubjectTheme, getExamCountdowns, getWeeklyProgress, generateStudyPlan } from '../utils/helpers.js';
+import { getSubject, getSubjectTheme, getExamCountdowns, getWeeklyProgress } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 import { VOCAB_DRILLS } from '../data/vocabDrills.js';
 import useWindowWidth from '../hooks/useWindowWidth.js';
@@ -74,7 +74,7 @@ function Greeting({ authUser, userProfile, overdueCount, pendingCount, gradedCou
 }
 
 /* ━━━ FOCUS CARD — "Start here": up to 3 prioritised next steps ━━━ */
-function FocusCard({ state, dispatch }) {
+function FocusCard({ state, dispatch, enrolledSubjects }) {
   const today = new Date().toISOString().split('T')[0];
   const activeHw = (state.homework || []).filter(h => h.status === 'active');
   const subs = state.submissions || [];
@@ -119,8 +119,9 @@ function FocusCard({ state, dispatch }) {
     });
   }
 
-  // 3) Nearest exam → nudge to plan revision
-  const exams = getExamCountdowns(state?.customExams) || [];
+  // 3) Nearest exam → nudge to plan revision (only exams for subjects the student takes)
+  const exams = (getExamCountdowns(state?.customExams) || [])
+    .filter(e => !enrolledSubjects || !e.subject || enrolledSubjects.includes(e.subject));
   if (exams.length > 0) {
     const e = exams[0];
     steps.push({
@@ -180,74 +181,6 @@ function FocusCard({ state, dispatch }) {
         ))}
       </div>
     </div>
-  );
-}
-
-/* ━━━ TODAY'S PLAN ━━━ */
-function TodaysPlanCard({ state }) {
-  const today = new Date().toISOString().split('T')[0];
-  const todayHint = new Date().toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase();
-  const todayName = new Date().toLocaleDateString('en-SG', { weekday: 'long' });
-  const plan = generateStudyPlan(state);
-  const todayPlan = plan.find(d => d.day === todayName);
-
-  const hwTasks = state.homework
-    .filter(h => h.status === 'active' && h.dueDate <= today)
-    .map(h => {
-      const sub = (state.submissions || []).find(s => s.homeworkId === h.id);
-      return { label: h.title, subject: h.subject, meta: h.dueDate === today ? 'Due today' : 'Overdue', done: sub?.status === 'submitted' || sub?.status === 'graded', overdue: h.dueDate < today };
-    });
-
-  const planTasks = (todayPlan?.tasks || []).map(t => ({
-    label: `${t.type} — ${todayPlan.subjectId?.toUpperCase().slice(0, 3)} ${t.duration}`,
-    subject: todayPlan.subjectId, meta: t.duration, done: false, overdue: false,
-  }));
-
-  const tasks = [...hwTasks, ...planTasks].slice(0, 5);
-  const doneCount = tasks.filter(t => t.done).length;
-
-  return (
-    <DCard
-      title="Today's plan" hint={todayHint}
-      action={tasks.length > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 11, color: T.textTer, fontFamily: T.fontMono }}>{doneCount}/{tasks.length}</span>
-          <div style={{ width: 52, height: 4, borderRadius: 999, background: T.bgMuted, overflow: 'hidden' }}>
-            <div style={{ width: `${tasks.length > 0 ? (doneCount / tasks.length) * 100 : 0}%`, height: '100%', background: T.accent, borderRadius: 999 }} />
-          </div>
-        </div>
-      )}
-    >
-      {tasks.length === 0 ? (
-        <div style={{ padding: '6px 0', fontSize: 13, color: T.textTer, fontStyle: 'italic' }}>No tasks for today — great time to practise!</div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {tasks.map((task, i) => {
-            const theme = getSubjectTheme(task.subject) || T.eng;
-            return (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
-                <div style={{
-                  width: 20, height: 20, borderRadius: 6, flexShrink: 0,
-                  border: `1.5px solid ${task.done ? theme.accent : T.border}`,
-                  background: task.done ? theme.accent : 'transparent',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {task.done && <CheckCircle size={12} color="#fff" weight="fill" />}
-                </div>
-                <div style={{ flex: 1, minWidth: 0, fontSize: 13, fontWeight: 600, color: task.done ? T.textTer : T.text, textDecoration: task.done ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {task.label}
-                </div>
-                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 0.5, padding: '2px 6px', borderRadius: T.r1, background: theme.accent + '18', color: theme.accent, flexShrink: 0 }}>
-                  {(task.subject || 'GEN').slice(0, 3).toUpperCase()}
-                </span>
-                {task.overdue && <span style={{ fontSize: 10, fontWeight: 700, color: T.danger, flexShrink: 0 }}>LATE</span>}
-                <span style={{ fontSize: 11, color: T.textSec, minWidth: 50, textAlign: 'right', fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>{task.meta}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </DCard>
   );
 }
 
@@ -444,8 +377,10 @@ function WeekProgressCard({ state }) {
 }
 
 /* ━━━ EXAM COUNTDOWN ━━━ */
-function ExamCountdownCard({ state }) {
-  const exams = getExamCountdowns(state?.customExams).slice(0, 4);
+function ExamCountdownCard({ state, enrolledSubjects }) {
+  const exams = getExamCountdowns(state?.customExams)
+    .filter(e => !enrolledSubjects || !e.subject || enrolledSubjects.includes(e.subject))
+    .slice(0, 4);
   if (!exams.length) return null;
   return (
     <DCard title="Exam countdown">
@@ -527,50 +462,6 @@ function GradeHistoryCard({ state, dispatch }) {
           })}
         </div>
       )}
-    </DCard>
-  );
-}
-
-function RecentlyReturnedCard({ state, dispatch }) {
-  const allHwRC = Array.isArray(state.homework) ? state.homework : [];
-  const returned = (Array.isArray(state.submissions) ? state.submissions : [])
-    .filter(s => s.status === 'graded')
-    .sort((a, b) => (b.gradedAt || '').localeCompare(a.gradedAt || ''))
-    .slice(0, 3)
-    .map(s => ({ sub: s, hw: allHwRC.find(h => h.id === s.homeworkId) }))
-    .filter(({ hw }) => hw);
-
-  if (!returned.length) return null;
-
-  const gradeColor = g => {
-    if (!g) return T.textSec;
-    const u = g.toUpperCase();
-    if (u.startsWith('A')) return T.success;
-    if (u.startsWith('B')) return T.accent;
-    return T.warning;
-  };
-
-  return (
-    <DCard title="Recently returned" action={
-      <button onClick={() => dispatch({ type: 'SET_PAGE', payload: 'homework' })}
-        style={{ fontSize: 12, color: T.accent, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
-        See all →
-      </button>
-    }>
-      <div>
-        {returned.map(({ sub, hw }, i) => (
-          <div key={sub.id} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '9px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
-            <div style={{ width: 38, height: 38, borderRadius: T.r2, background: gradeColor(sub.grade) + '18', color: gradeColor(sub.grade), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13, flexShrink: 0 }}>
-              {sub.grade || '—'}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{hw.title}</div>
-              {sub.gradeComment && <div style={{ fontSize: 11, color: T.textSec, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.gradeComment.slice(0, 50)}</div>}
-            </div>
-            <span style={{ fontSize: 11, color: T.textTer, fontFamily: T.fontMono, flexShrink: 0 }}>{sub.gradedAt || ''}</span>
-          </div>
-        ))}
-      </div>
     </DCard>
   );
 }
@@ -700,12 +591,37 @@ function BookmarksCard({ state, dispatch }) {
 }
 
 /* ━━━ STUDENT DASHBOARD ━━━ */
-function StudentDashboard({ state, dispatch, authUser, userProfile }) {
+function StudentDashboard({ state, dispatch, authUser, userProfile, enrolledSubjects }) {
   const winW = useWindowWidth();
   const isMobile = winW < 768;
   const today = new Date().toISOString().split('T')[0];
-  const activeHw = (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === 'active');
-  const subs = Array.isArray(state.submissions) ? state.submissions : [];
+
+  // Match the logged-in account to a roster entry by email (same pattern as StudentHomework).
+  const myStudentId = useMemo(() => {
+    const students = Array.isArray(state.students) ? state.students : [];
+    const email = authUser?.email || userProfile?.email;
+    if (!email) return null;
+    return students.find(s => s.email?.toLowerCase() === email.toLowerCase())?.id ?? null;
+  }, [state.students, authUser, userProfile]);
+
+  // Scope every card to THIS student: only their own submissions, and only homework,
+  // sessions, and resources in the subjects they're enrolled in. An unmatched account
+  // sees no submission data at all — never another student's work or grades.
+  const scoped = useMemo(() => {
+    const inSubjects = (subj) => !enrolledSubjects || !subj || enrolledSubjects.includes(subj);
+    return {
+      ...state,
+      homework: (Array.isArray(state.homework) ? state.homework : []).filter(h => inSubjects(h.subject)),
+      submissions: myStudentId != null
+        ? (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.studentId === myStudentId)
+        : [],
+      sessions: (Array.isArray(state.sessions) ? state.sessions : []).filter(s => inSubjects(s.subject)),
+      resources: (Array.isArray(state.resources) ? state.resources : []).filter(r => inSubjects(r.subject)),
+    };
+  }, [state, enrolledSubjects, myStudentId]);
+
+  const activeHw = scoped.homework.filter(h => h.status === 'active');
+  const subs = scoped.submissions;
 
   const overdueCount = activeHw.filter(h => {
     const sub = subs.find(s => s.homeworkId === h.id);
@@ -720,20 +636,18 @@ function StudentDashboard({ state, dispatch, authUser, userProfile }) {
   return (
     <div>
       <Greeting authUser={authUser} userProfile={userProfile} overdueCount={overdueCount} pendingCount={pendingCount} gradedCount={gradedCount} />
-      <FocusCard state={state} dispatch={dispatch} />
+      <FocusCard state={scoped} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.55fr 1fr', gap: 18 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <TodaysPlanCard state={state} />
-          <AssignmentsCard state={state} dispatch={dispatch} />
+          <AssignmentsCard state={scoped} dispatch={dispatch} />
           <JumpInCard dispatch={dispatch} />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <WeekProgressCard state={state} />
-          <RecentSessionsCard state={state} dispatch={dispatch} />
-          <BookmarksCard state={state} dispatch={dispatch} />
-          <ExamCountdownCard state={state} />
-          <GradeHistoryCard state={state} dispatch={dispatch} />
-          <RecentlyReturnedCard state={state} dispatch={dispatch} />
+          <WeekProgressCard state={scoped} />
+          <RecentSessionsCard state={scoped} dispatch={dispatch} />
+          <BookmarksCard state={scoped} dispatch={dispatch} />
+          <ExamCountdownCard state={scoped} enrolledSubjects={enrolledSubjects} />
+          <GradeHistoryCard state={scoped} dispatch={dispatch} />
           <WordOfTheDayCard dispatch={dispatch} />
         </div>
       </div>
@@ -977,13 +891,14 @@ function TutorDashboard({ state, dispatch, authUser, userProfile }) {
 }
 
 /* ━━━ ROOT EXPORT ━━━ */
-function Dashboard({ state, dispatch, authUser, userProfile }) {
+function Dashboard({ state, dispatch, authUser, userProfile, enrolledSubjects }) {
   // Role-aware landing: A-Worthlings (students) get the calm, learning-focused
-  // StudentDashboard; tutors get the admin-oriented TutorDashboard.
+  // StudentDashboard scoped to their own data and enrolled subjects; tutors get
+  // the admin-oriented TutorDashboard with the full picture.
   if (state.role === 'tutor') {
     return <TutorDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
   }
-  return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
+  return <StudentDashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} enrolledSubjects={enrolledSubjects} />;
 }
 
 export { StudentDashboard };
