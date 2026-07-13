@@ -39,9 +39,9 @@ function ChartPanel({ monthlyData, subjectData, trendData, gradedSubjects, hasGr
           <div style={{ fontSize: 11, color: T.textTer, marginBottom: 12 }}>Grade scores over time (all subjects, last 20 submissions)</div>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: T.textTer }} />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: T.textTer }} tickFormatter={v => `${v}%`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,27,25,0.08)" />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#A09C94" }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: "#A09C94" }} tickFormatter={v => `${v}%`} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v, name) => [`${Math.round(v)}%`, name]} />
               <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
               {gradedSubjects.map((subj, i) => {
@@ -57,9 +57,9 @@ function ChartPanel({ monthlyData, subjectData, trendData, gradedSubjects, hasGr
       {tab === 1 && (
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={monthlyData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="date" tick={{ fontSize: 11, fill: T.textTer }} />
-            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: T.textTer }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,27,25,0.08)" />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#A09C94" }} />
+            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#A09C94" }} />
             <Tooltip contentStyle={tooltipStyle} formatter={(v) => [v, "Submissions"]} />
             <Bar dataKey="count" fill={T.accent} radius={[6, 6, 0, 0]} />
           </BarChart>
@@ -71,9 +71,9 @@ function ChartPanel({ monthlyData, subjectData, trendData, gradedSubjects, hasGr
         subjectData.length > 0 ? (
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={subjectData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textTer }} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: T.textTer }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,27,25,0.08)" />
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#A09C94" }} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#A09C94" }} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [v, "Submissions"]} />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>{subjectData.map((e, i) => <Cell key={i} fill={e.color} />)}</Bar>
             </BarChart>

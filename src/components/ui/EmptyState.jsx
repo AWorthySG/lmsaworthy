@@ -5,7 +5,7 @@ export function EmptyStateIllustration({ type = "default", size = 120 }) {
   const colors = { primary: T.accent, secondary: T.accentLight, bg: T.bgMuted, text: T.textTer };
   if (type === "no-results") return (
     <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="100" cy="100" r="80" fill={colors.bg} />
+      <circle cx="100" cy="100" r="80" style={{ fill: colors.bg }} />
       <rect x="60" y="70" width="80" height="10" rx="5" fill={colors.secondary} />
       <rect x="70" y="90" width="60" height="10" rx="5" fill={colors.secondary} />
       <rect x="65" y="110" width="70" height="10" rx="5" fill={colors.secondary} />
@@ -17,7 +17,7 @@ export function EmptyStateIllustration({ type = "default", size = 120 }) {
   );
   if (type === "celebration") return (
     <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="100" cy="100" r="60" fill={colors.bg} />
+      <circle cx="100" cy="100" r="60" style={{ fill: colors.bg }} />
       <path d="M80 105 L95 120 L125 80" stroke={colors.primary} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
       {[30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360].map((angle, i) => (
         <circle key={i} cx={100 + 75 * Math.cos(angle * Math.PI / 180)} cy={100 + 75 * Math.sin(angle * Math.PI / 180)} r={i % 3 === 0 ? 4 : 3} fill={i % 2 === 0 ? colors.primary : "#D4A254"} opacity={0.6 + (i % 3) * 0.15} />
@@ -26,7 +26,7 @@ export function EmptyStateIllustration({ type = "default", size = 120 }) {
   );
   if (type === "learning") return (
     <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="100" cy="100" r="80" fill={colors.bg} />
+      <circle cx="100" cy="100" r="80" style={{ fill: colors.bg }} />
       <rect x="55" y="80" width="50" height="65" rx="4" fill={colors.secondary} stroke={colors.primary} strokeWidth="2" />
       <rect x="65" y="90" width="30" height="4" rx="2" fill={colors.primary} opacity="0.4" />
       <rect x="65" y="100" width="25" height="4" rx="2" fill={colors.primary} opacity="0.3" />
@@ -40,7 +40,7 @@ export function EmptyStateIllustration({ type = "default", size = 120 }) {
   );
   return (
     <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="100" cy="100" r="80" fill={colors.bg} />
+      <circle cx="100" cy="100" r="80" style={{ fill: colors.bg }} />
       <rect x="60" y="80" width="80" height="50" rx="8" fill={colors.secondary} stroke={colors.primary} strokeWidth="2" />
       <circle cx="100" cy="70" r="15" fill={colors.primary} opacity="0.3" />
     </svg>

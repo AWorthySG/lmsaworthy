@@ -68,6 +68,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
     <style>
+      /* ── Theme variables — the neutral tokens in src/theme/theme.js resolve to
+             these. :root is the light (Bear-minimal warm white) palette; html.dark
+             swaps every surface/text/border to the warm-charcoal dark palette.
+             Keep :root values in sync with the var() fallbacks in theme.js. ── */
+      :root {
+        --c-bg: #FAFAF7;
+        --c-bg-sidebar: #F2EFE8;
+        --c-bg-card: #FFFFFF;
+        --c-bg-muted: #F4F1EB;
+        --c-bg-hover: #EDEAD3;
+        --c-text: #1C1B19;
+        --c-text-sec: #6B6760;
+        --c-text-ter: #A09C94;
+        --c-border: rgba(28,27,25,0.08);
+        --c-border-hover: rgba(28,27,25,0.16);
+        --c-success-bg: #EDFAF4;
+        --c-warning-bg: #FEF8E8;
+        --c-danger-bg: #FFF0EE;
+        --c-gold-light: #FBF3E2;
+        --c-sidebar-hover: rgba(28,27,25,0.04);
+        --c-sidebar-muted: rgba(28,27,25,0.03);
+      }
+      html.dark {
+        --c-bg: #171614;
+        --c-bg-sidebar: #1C1B19;
+        --c-bg-card: #232220;
+        --c-bg-muted: #2B2A27;
+        --c-bg-hover: #33312D;
+        --c-text: #F0EEE8;
+        --c-text-sec: #B3AEA3;
+        --c-text-ter: #837F76;
+        --c-border: rgba(240,238,232,0.10);
+        --c-border-hover: rgba(240,238,232,0.22);
+        --c-success-bg: rgba(22,163,74,0.14);
+        --c-warning-bg: rgba(212,148,10,0.14);
+        --c-danger-bg: rgba(224,80,64,0.14);
+        --c-gold-light: rgba(176,125,42,0.18);
+        --c-sidebar-hover: rgba(240,238,232,0.05);
+        --c-sidebar-muted: rgba(240,238,232,0.04);
+      }
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       /* Use min-height (not height) so content can grow beyond viewport — critical for iOS Chrome */
       html, body { min-height: 100%; min-height: 100dvh; }
@@ -77,7 +117,8 @@
         font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
         -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
         overflow: auto; letter-spacing: 0;
-        background: #FAFAF7;
+        background: var(--c-bg, #FAFAF7);
+        color: var(--c-text, #1C1B19);
       }
       h1, h2, h3, h4, h5, h6 { font-family: 'Nunito', sans-serif; letter-spacing: -0.01em; font-weight: 700; }
       .font-editorial { font-family: 'Nunito', sans-serif; font-style: normal; font-weight: 300; }
@@ -90,7 +131,7 @@
 
       /* Glass effect for sticky headers */
       .glass-header { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: rgba(248,247,244,0.85) !important; }
-      html.dark .glass-header { background: rgba(11,15,26,0.85) !important; }
+      html.dark .glass-header { background: rgba(23,22,20,0.85) !important; }
       ::selection { background: #D4E0FF; color: #1E1E2E; }
       /* Prevent iOS zoom on input focus — 16px is the threshold */
       input, textarea, select { font-size: 16px !important; }
@@ -183,7 +224,7 @@
       }
 
       /* ━━━ DARK MODE ━━━ */
-      html.dark body { background: #1C1B19; color: #E8E8ED; }
+      /* body colours flow from the theme variables above; keep only the texture */
       html.dark body { background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.015) 1px, transparent 0); }
       html.dark ::-webkit-scrollbar-thumb { background: #3A3834; }
       html.dark ::selection { background: #C0392B; color: #FFF; }
