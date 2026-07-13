@@ -2,7 +2,7 @@
 export const initialEvents = [
   {
     id: 1, title: "GP Essay Sprint Challenge", status: "active",
-    emoji: "✍️", color: "#EF8354",
+    emoji: "pencil", color: "#EF8354",
     startDate: "2026-03-20", endDate: "2026-03-27",
     description: "Write the best GP Paper 1 essay using the Timed Writer tool. Your essay will be graded by Jeremy. The top three essays win prizes! Use any question type — marks awarded for thesis clarity, example quality, and structural coherence.",
     howToParticipate: "Go to Timed Writer → complete a full 90-minute essay → submit. Your best attempt counts.",
@@ -20,7 +20,7 @@ export const initialEvents = [
   },
   {
     id: 3, title: "Practice Drills Speed Run", status: "upcoming",
-    emoji: "⚡", color: "#D4940A",
+    emoji: "lightning", color: "#D4940A",
     startDate: "2026-03-28", endDate: "2026-04-04",
     description: "Score the highest on a 25-question Practice Drill. Fastest time with highest accuracy wins. Can you identify all 6 question types, structures, and frameworks perfectly?",
     howToParticipate: "Go to Practice Drills → select 25 questions → complete the drill. Your best score + time is recorded.",
@@ -34,7 +34,7 @@ export const initialEvents = [
   },
   {
     id: 4, title: "Vocabulary Challenge — 7-Day Streak", status: "upcoming",
-    emoji: "📚", color: "#024F94",
+    emoji: "books", color: "#00897B",
     startDate: "2026-04-01", endDate: "2026-04-07",
     description: "Complete at least one Vocabulary Builder session every day for 7 consecutive days. Build your Paper 1 & 2 language arsenal while earning prizes for consistency.",
     howToParticipate: "Go to Vocabulary → complete any quiz (Synonym Match or Upgrade) each day for 7 days straight.",

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { T } from "./theme/theme.js";
-import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, ChatCircle, ArrowSquareOut, Users, Confetti, CheckCircle } from "./icons/icons.jsx";
+import { List, CaretDown, House, Books, ClipboardText, Handshake, Bell, MagnifyingGlass, Megaphone, PencilSimpleLine, FilePdf, ChatCircle, ArrowSquareOut, Users, Confetti, CheckCircle, X } from "./icons/icons.jsx";
 import { firebaseAuth, firebaseDb, ref, get, set, signOut, onAuthStateChanged } from "./config/firebase.js";
 import { appReducer } from "./state/reducer.js";
 import { initialState, savePersistedState } from "./state/persistence.js";
@@ -632,7 +632,7 @@ function LMS({ authUser, userProfile }) {
                       <div style={{ fontSize: 12, color: T.text, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{hw.title}</div>
                     </div>
                     <span onClick={e => { e.stopPropagation(); dismissGrade(sub.id); }} aria-label="Dismiss"
-                      style={{ color: T.textTer, fontSize: 11, padding: "0 2px", flexShrink: 0 }}>✕</span>
+                      style={{ color: T.textTer, padding: "0 2px", flexShrink: 0, display: "flex", alignItems: "center" }}><X size={12} weight="bold" /></span>
                   </button>
                 ))}
                 {unreadAnnouncements.map(post => (
@@ -643,7 +643,7 @@ function LMS({ authUser, userProfile }) {
                       <div style={{ fontSize: 12, color: T.text, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{post.title}</div>
                     </div>
                     <button onClick={() => dismissAnnouncement(post.id)} aria-label="Dismiss announcement"
-                      style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, fontSize: 11, padding: "0 2px", flexShrink: 0 }}>✕</button>
+                      style={{ background: "none", border: "none", cursor: "pointer", color: T.textTer, padding: "0 2px", flexShrink: 0, display: "flex", alignItems: "center" }}><X size={12} weight="bold" /></button>
                   </div>
                 ))}
                 {notifications.length === 0 && unreadAnnouncements.length === 0 && returnedGrades.length === 0 ? (
@@ -678,7 +678,7 @@ function LMS({ authUser, userProfile }) {
             <button onClick={() => { dispatch({ type: "SET_PAGE", payload: "community" }); setShowNotifs(false); }}
               style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.8)", fontWeight: 600, flexShrink: 0 }}>View</button>
             <button onClick={() => dismissAnnouncement(post.id)} aria-label="Dismiss"
-              style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 8px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>✕</button>
+              style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 8px", cursor: "pointer", color: "rgba(255,255,255,0.6)", display: "flex", alignItems: "center" }}><X size={12} weight="bold" /></button>
           </div>
         ))}
         {returnedGrades.slice(0, 1).map(({ sub, hw }) => (
@@ -691,7 +691,7 @@ function LMS({ authUser, userProfile }) {
             <button onClick={() => { dismissGrade(sub.id); dispatch({ type: "SET_PAGE", payload: "homework" }); }}
               style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: T.r1, padding: "4px 10px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 600, flexShrink: 0 }}>View feedback</button>
             <button onClick={() => dismissGrade(sub.id)} aria-label="Dismiss"
-              style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 8px", cursor: "pointer", fontSize: 11, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>✕</button>
+              style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: T.r1, padding: "4px 8px", cursor: "pointer", color: "rgba(255,255,255,0.6)", display: "flex", alignItems: "center" }}><X size={12} weight="bold" /></button>
           </div>
         ))}
 
@@ -743,7 +743,7 @@ function LMS({ authUser, userProfile }) {
                         <div style={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.label}</div>
                         {r.category && <div style={{ fontSize: 11, color: T.textTer, marginTop: 2 }}>{r.category}</div>}
                       </div>
-                      <span style={{ fontSize: 11, color: T.textTer, fontWeight: 500 }}>↵</span>
+                      <kbd style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: T.bgMuted, border: `1px solid ${T.border}`, color: T.textTer, fontFamily: T.fontMono }}>↵</kbd>
                     </motion.button>
                   ))}
                 </div>
