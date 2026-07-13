@@ -273,16 +273,26 @@ function LMS({ authUser, userProfile }) {
   const notifications = useMemo(() => {
     const notifs = [];
     const today = new Date().toISOString().split("T")[0];
+    const subs = Array.isArray(state.submissions) ? state.submissions : [];
     (Array.isArray(state.homework) ? state.homework : []).filter(h => h.status === "active" && h.dueDate >= today).forEach(h => {
+      if (!isTutor) {
+        // Students only see deadlines for their enrolled subjects…
+        if (enrolledSubjects && h.subject && !enrolledSubjects.includes(h.subject)) return;
+        // …and only for work actually assigned to them that isn't already handed in.
+        if (myStudentId != null) {
+          const mySub = subs.find(s => s.homeworkId === h.id && s.studentId === myStudentId);
+          if (!mySub || mySub.status === "submitted" || mySub.status === "graded") return;
+        }
+      }
       notifs.push({ type: "homework", msg: `"${h.title}" due ${h.dueDate}`, page: "homework" });
     });
     // Pending-grading count is a tutor concern only
     if (isTutor) {
-      const pendingGrades = (Array.isArray(state.submissions) ? state.submissions : []).filter(s => s.status === "submitted").length;
+      const pendingGrades = subs.filter(s => s.status === "submitted").length;
       if (pendingGrades > 0) notifs.push({ type: "grading", msg: `${pendingGrades} submission${pendingGrades > 1 ? "s" : ""} pending grading`, page: "homework" });
     }
     return notifs;
-  }, [state.homework, state.submissions, isTutor]);
+  }, [state.homework, state.submissions, isTutor, enrolledSubjects, myStudentId]);
 
   const [showNotifs, setShowNotifs] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(() => localStorage.getItem("aworthy-sidebar-collapsed") !== "true");
@@ -433,7 +443,7 @@ function LMS({ authUser, userProfile }) {
       case "checklist": return <LearningProgress state={state} dispatch={dispatch} enrolledSubjects={enrolledSubjects} />;
       case "collections": return <Collections state={state} dispatch={dispatch} />;
       case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} authUser={authUser} userProfile={userProfile} state={state} dispatch={dispatch} />;
-      default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} />;
+      default: return <Dashboard state={state} dispatch={dispatch} authUser={authUser} userProfile={userProfile} enrolledSubjects={enrolledSubjects} />;
     }
   };
 
