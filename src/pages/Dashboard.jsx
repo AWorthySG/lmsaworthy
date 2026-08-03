@@ -4,11 +4,11 @@ import {
   ArrowRight, BookOpen, ClipboardText,
   CalendarCheck, ChartLineUp, Handshake, FolderSimpleStar,
   Users, Upload, CaretRight, ChatText,
-  Megaphone, Scroll, GraduationCap, Notebook, BookmarkSimple, FilePdf, FileDoc, FileVideo,
+  Megaphone, Scroll, GraduationCap, Notebook, BookmarkSimple,
   Compass,
 } from '../icons/icons.jsx';
 import { SubjectBadge } from '../components/ui/Badge.jsx';
-import { SubjectIllustration, DocumentViewer } from '../components/ui';
+import { SubjectIllustration, DocumentViewer, FileIcon } from '../components/ui';
 import { getSubject, getSubjectTheme, getExamCountdowns, getWeeklyProgress } from '../utils/helpers.js';
 import { SUBJECTS } from '../data/subjects.js';
 import { VOCAB_DRILLS } from '../data/vocabDrills.js';
@@ -547,12 +547,6 @@ function BookmarksCard({ state, dispatch }) {
 
   if (!bookmarked.length) return null;
 
-  const fileIcon = (type) => {
-    if (type === 'pdf') return <FilePdf size={12} color="#dc2626" />;
-    if (type === 'docx') return <FileDoc size={12} color={T.accentText} />;
-    return <FileVideo size={12} color="#2563EB" />;
-  };
-
   return (
     <>
       {viewing && <DocumentViewer resource={viewing} onClose={() => setViewing(null)} />}
@@ -568,7 +562,7 @@ function BookmarksCard({ state, dispatch }) {
             return (
               <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', borderTop: i === 0 ? 'none' : `1px solid ${T.border}` }}>
                 <div style={{ width: 30, height: 30, borderRadius: T.r1, background: theme.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  {fileIcon(r.type)}
+                  <FileIcon type={r.type} size={13} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.title}</div>
