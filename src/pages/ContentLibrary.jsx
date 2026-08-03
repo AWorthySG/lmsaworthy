@@ -1,11 +1,15 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { T } from '../theme/theme.js';
-import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, Upload, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle, FolderSimpleStar, Link } from '../icons/icons.jsx';
+import { Books, Folder, FolderOpen, FolderSimple, FilePdf, FileDoc, FileVideo, FileHtml, Upload, BookmarkSimple, MagnifyingGlass, Plus, X, CaretRight, Hash, Trash, SortAscending, CheckCircle, FolderSimpleStar, Link } from '../icons/icons.jsx';
 import { Card, Btn, Badge, SubjectBadge, PageHeader, EmptyState, FileIcon, Input, Select, DocumentViewer } from '../components/ui';
 import { SUBJECTS, TOPICS } from '../data/subjects.js';
 import { getAllSavedIds, saveResourceOffline, removeResourceOffline } from '../utils/offlineCache.js';
 import { getSubject, getSubjectTheme, formatDate } from '../utils/helpers.js';
 import { firebaseStorage, storageRef, uploadBytesResumable, getDownloadURL } from '../config/firebase.js';
+
+// User-facing labels for resource types — "html" reads as "Study Doc" for tutors
+// and students, who think in terms of study material rather than file formats.
+const TYPE_LABEL = { html: "STUDY DOC", pdf: "PDF", docx: "DOCX", video: "VIDEO", link: "LINK" };
 
 const DIFFICULTY_CONFIG = {
   easy:   { label: "Easy",   color: "#16a34a", bg: "#dcfce7" },
@@ -25,6 +29,7 @@ function DifficultyBadge({ difficulty }) {
 
 function detectType(file) {
   if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) return 'pdf';
+  if (file.type === 'text/html' || /\.(html?|xhtml)$/i.test(file.name)) return 'html';
   if (file.name.toLowerCase().endsWith('.docx') || file.type.includes('wordprocessingml')) return 'docx';
   if (file.type.startsWith('video/') || /\.(mp4|mov|avi|mkv|webm)$/i.test(file.name)) return 'video';
   return 'pdf';
@@ -171,8 +176,8 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
         style={{ border: `2px dashed ${dragging ? T.accent : T.border}`, borderRadius: T.r2, background: dragging ? T.accentLight : T.bgMuted, padding: "28px 20px", textAlign: "center", cursor: "pointer", marginBottom: 14, transition: "all 0.15s" }}>
         <Upload size={24} color={dragging ? T.accent : T.textTer} style={{ display: "block", margin: "0 auto 8px" }} />
         <div style={{ fontSize: 13, fontWeight: 600, color: dragging ? T.accent : T.textSec, marginBottom: 4 }}>Drop files here or click to browse</div>
-        <div style={{ fontSize: 11, color: T.textTer }}>PDF, DOCX, or video files · multiple files supported</div>
-        <input ref={fileInputRef} type="file" multiple accept=".pdf,.docx,.mp4,.mov,.avi,.mkv,.webm" style={{ display: "none" }}
+        <div style={{ fontSize: 11, color: T.textTer }}>HTML study docs, PDF, DOCX, or video · multiple files supported</div>
+        <input ref={fileInputRef} type="file" multiple accept=".html,.htm,.pdf,.docx,.mp4,.mov,.avi,.mkv,.webm" style={{ display: "none" }}
           onChange={e => { addFiles(e.target.files); e.target.value = ''; }} />
       </div>}
       {mode === 'files' && queue.length > 0 && (
@@ -191,6 +196,7 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
                   <select value={item.type} onChange={e => updateQueueItem(item.uid, { type: e.target.value })}
                     disabled={item.status !== 'pending'} aria-label="File type"
                     style={{ fontSize: 10, border: `1px solid ${T.border}`, borderRadius: 4, padding: "2px 4px", background: T.bgCard, color: T.textSec, fontFamily: T.fontBody, flexShrink: 0 }}>
+                    <option value="html">Study Doc</option>
                     <option value="pdf">PDF</option>
                     <option value="docx">DOCX</option>
                     <option value="video">Video</option>
@@ -232,7 +238,7 @@ function UploadPanel({ onClose, defaultSubject, dispatch }) {
 }
 
 function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookmark, onDelete, onSetDifficulty, onToggleOffline, collections, onToggleCollection }) {
-  const bgByType = { pdf: T.dangerBg, video: "#DBEAFE", docx: T.accentLight, link: "#0EA5A015" };
+  const bgByType = { pdf: T.dangerBg, video: "#DBEAFE", docx: T.accentLight, link: "#0EA5A015", html: "#7C3AED15" };
   const difficulty = meta?.difficulty;
   const [showCollPicker, setShowCollPicker] = useState(false);
   const allCols = Array.isArray(collections) ? collections : [];
@@ -246,7 +252,7 @@ function ResourceCard({ r, meta, isTutor, isBookmarked, isSaved, onView, onBookm
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, fontWeight: 650, color: T.text, lineHeight: 1.4, marginBottom: 6, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.title}</div>
           <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-            <Badge color={T.textSec} bg={T.bgMuted} style={{ fontSize: 10 }}>{r.type.toUpperCase()}</Badge>
+            <Badge color={T.textSec} bg={T.bgMuted} style={{ fontSize: 10 }}>{TYPE_LABEL[r.type] || r.type.toUpperCase()}</Badge>
             {difficulty && <DifficultyBadge difficulty={difficulty} />}
             {isSaved && (
               <span style={{ fontSize: 10, fontWeight: 700, padding: "1px 7px", borderRadius: 999, background: T.success + "18", color: T.success, display: "inline-flex", alignItems: "center", gap: 3 }}>
@@ -432,7 +438,7 @@ function ContentLibrary({ state, dispatch, defaultSubject, enrolledSubjects }) {
   }
 
   const TYPE_FILTERS = [
-    { value: "all", label: "All" }, { value: "pdf", label: "PDF" },
+    { value: "all", label: "All" }, { value: "html", label: "Study Docs" }, { value: "pdf", label: "PDF" },
     { value: "video", label: "Video" }, { value: "docx", label: "DOCX" }, { value: "link", label: "Link" },
   ];
   const DIFFICULTY_FILTERS = [
@@ -578,6 +584,7 @@ function ContentLibrary({ state, dispatch, defaultSubject, enrolledSubjects }) {
                 const theme = getSubjectTheme(subj.id);
                 const subjResources = resources.filter((r) => r.subject === subj.id);
                 const topics = [...(allTopics[subj.id] || new Set())];
+                const htmlCount = subjResources.filter((r) => r.type === "html").length;
                 const pdfCount = subjResources.filter((r) => r.type === "pdf").length;
                 const videoCount = subjResources.filter((r) => r.type === "video").length;
                 const docxCount = subjResources.filter((r) => r.type === "docx").length;
@@ -593,6 +600,7 @@ function ContentLibrary({ state, dispatch, defaultSubject, enrolledSubjects }) {
                       </div>
                     </div>
                     <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+                      {htmlCount > 0 && <Badge color="#7C3AED" bg="#7C3AED15" style={{ fontSize: 10 }}><FileHtml size={11} weight="bold" /> {htmlCount} Study Doc{htmlCount !== 1 ? "s" : ""}</Badge>}
                       {pdfCount > 0 && <Badge color="#DC2626" bg={T.dangerBg} style={{ fontSize: 10 }}><FilePdf size={11} weight="bold" /> {pdfCount} PDF</Badge>}
                       {videoCount > 0 && <Badge color="#2563EB" bg="#DBEAFE" style={{ fontSize: 10 }}><FileVideo size={11} weight="bold" /> {videoCount} Video</Badge>}
                       {docxCount > 0 && <Badge color={T.accentText} bg={T.accentLight} style={{ fontSize: 10 }}><FileDoc size={11} weight="bold" /> {docxCount} DOCX</Badge>}
